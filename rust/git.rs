@@ -258,6 +258,18 @@ impl Repository {
             invocation: start.canonicalize().map_err(|e| GitError(e.to_string()))?,
         })
     }
+    /// Git returns an empty prefix when an explicit worktree is outside the cwd.
+    pub fn prefix(&self) -> Result<PathBuf> {
+        let prefix = path(trim_lf(&run(
+            &self.invocation,
+            ["rev-parse", "--show-prefix"],
+        )?))?;
+        if !prefix.as_os_str().is_empty() {
+            valid_path(&prefix)?;
+        }
+        // Drop Git's trailing separator without converting filename bytes.
+        Ok(prefix.components().collect())
+    }
     pub fn command<I, S>(&self, args: I) -> Result<Vec<u8>>
     where
         I: IntoIterator<Item = S>,
