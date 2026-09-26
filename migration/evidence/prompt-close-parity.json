@@ -1,0 +1,277 @@
+{
+  "schema": 1,
+  "source_commit": "ec6c5314613ecc6cc92266985b067b45587fa96a",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "PASS_SELECTED_SCRIPTS",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/prompt/exec-test",
+          "script_sha256": "9a755be87f6937665502bb136649b505fa4e6c081a2c638fce4d19bb0ff7732a",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "exec-without-arg-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-without-arg-doesnt-crash.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-only-flags-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-only-flags-doesnt-crash.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/prompt/exec-test/.test-result",
+          "receipt": "  [OK] exec-without-arg-doesnt-crash.screen assertion\n  [OK] exec-without-arg-doesnt-crash.stderr assertion\n  [OK] exec-only-flags-doesnt-crash.screen assertion\n  [OK] exec-only-flags-doesnt-crash.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/script/default-test",
+          "script_sha256": "245916f9bb4a2281cbab6bad51a3511bb05a1605028ed3c69bb6f16cf03c4008",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "segfault-regression-for-bc4f8e83c590058641c9e1654db300798e9cd106.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "view-close-no-quit-should-not-close-tig.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "view-is-open#1",
+              "status": "OK"
+            },
+            {
+              "id": "view-close-should-close-tig.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "view-is-closed#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/script/default-test/.test-result",
+          "receipt": "  [OK] segfault-regression-for-bc4f8e83c590058641c9e1654db300798e9cd106.stderr assertion\n  [OK] view-close-no-quit-should-not-close-tig.stderr assertion\n  [OK] view-is-open assertion\n  [OK] view-close-should-close-tig.stderr assertion\n  [OK] view-is-closed assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/src/tig",
+          "sha256": "436a2b19aa821e125b12123719d08fda2875bcd769dc8c8c40ca074aed5b45d9"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 2
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.16s\n",
+      "results": [
+        {
+          "script": "test/prompt/exec-test",
+          "script_sha256": "9a755be87f6937665502bb136649b505fa4e6c081a2c638fce4d19bb0ff7732a",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "exec-without-arg-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-without-arg-doesnt-crash.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-only-flags-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-only-flags-doesnt-crash.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/prompt/exec-test/.test-result",
+          "receipt": "  [OK] exec-without-arg-doesnt-crash.screen assertion\n  [OK] exec-without-arg-doesnt-crash.stderr assertion\n  [OK] exec-only-flags-doesnt-crash.screen assertion\n  [OK] exec-only-flags-doesnt-crash.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/script/default-test",
+          "script_sha256": "245916f9bb4a2281cbab6bad51a3511bb05a1605028ed3c69bb6f16cf03c4008",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "segfault-regression-for-bc4f8e83c590058641c9e1654db300798e9cd106.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "view-close-no-quit-should-not-close-tig.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "view-is-open#1",
+              "status": "OK"
+            },
+            {
+              "id": "view-close-should-close-tig.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "view-is-closed#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/script/default-test/.test-result",
+          "receipt": "  [OK] segfault-regression-for-bc4f8e83c590058641c9e1654db300798e9cd106.stderr assertion\n  [OK] view-close-no-quit-should-not-close-tig.stderr assertion\n  [OK] view-is-open assertion\n  [OK] view-close-should-close-tig.stderr assertion\n  [OK] view-is-closed assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/target/release/tig",
+          "sha256": "9c4d860e0d65f5d45150c3e5037e1eea10a0d653f32e4c92762fe7feb945b47f"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/target/release/test-graph",
+          "sha256": "c1dc1a3c45e909e259e6ae4196da28c69a3ba92ec1aac5a7f3811a762b86ff8a"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 2
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/prompt/exec-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "exec-without-arg-doesnt-crash.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "exec-without-arg-doesnt-crash.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "exec-only-flags-doesnt-crash.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "exec-only-flags-doesnt-crash.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/script/default-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "segfault-regression-for-bc4f8e83c590058641c9e1654db300798e9cd106.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "view-close-no-quit-should-not-close-tig.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "view-is-open#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "view-close-should-close-tig.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "view-is-closed#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ]
+}
