@@ -22,6 +22,7 @@ import shutil
 import signal
 import struct
 import subprocess
+import sys
 import tempfile
 import termios
 import time
@@ -200,6 +201,14 @@ def self_test():
             findings.append({'injection': 'foreign-helper', 'status': 'rejected'})
         else:
             raise AssertionError('foreign helper accepted')
+        stale = directory / 'stale.json'
+        stale.write_text('{"parity_gate": "PASS_SELECTED_SCRIPTS"}')
+        (directory / 'git').symlink_to(shutil.which('git'))
+        crashed = subprocess.run([sys.executable, __file__, str(script), '--output', str(stale)],
+                                 env={**env, 'PATH': str(directory)}, capture_output=True, text=True)
+        assert crashed.returncode != 0 and 'FileNotFoundError' in crashed.stderr
+        assert not stale.exists(), 'runner crash retained a previous passing report'
+        findings.append({'injection': 'missing-make-with-stale-pass-report', 'status': 'rejected and stale report removed'})
     dry = subprocess.check_output(['make', '-Bn', 'RUST_ONLY=1', str(script.relative_to(ROOT))],
                                   cwd=ROOT, text=True)
     assert 'cargo build' in dry and 'test/tools/test-graph.o' not in dry and 'src/tig.o' not in dry
@@ -227,9 +236,13 @@ def main():
         return 0
     if not math.isfinite(args.script_timeout) or args.script_timeout <= 0:
         parser.error('--script-timeout must be positive')
+    # A crashed build/runner must not leave a previous passing report in place.
+    args.output.unlink(missing_ok=True)
     tracked = subprocess.check_output(['git', 'ls-files', '-z', 'test/*-test'], cwd=ROOT).decode().split('\0')
     originals = {ROOT / name for name in tracked if name}
     scripts = sorted({p.resolve() for p in args.scripts}) if args.scripts else sorted(originals)
+    if not scripts:
+        parser.error('No original test scripts selected')
     for script in scripts:
         if script not in originals or not script.is_file():
             parser.error(f'Not an original test script: {script}')
