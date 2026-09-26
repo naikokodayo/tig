@@ -219,20 +219,30 @@ pub fn prepare_with_context(
     // from a view that has not supplied reference context at all.
     if let Some(reference) = selected_ref {
         let branch = reference.strip_prefix("refs/heads/").unwrap_or("");
-        let tag = reference.strip_prefix("refs/tags/").unwrap_or("");
-        // Keep the display ref unambiguous when a branch has the same name.
+        let mut tag = reference.strip_prefix("refs/tags/").unwrap_or("");
+        // Checkout prefers a same-named branch, and Git can resolve a short
+        // tag as a pseudoref. Keep short display names only when unambiguous.
         if !tag.is_empty()
-            && repo
+            && (repo
                 .refs()?
                 .iter()
                 .any(|r| r.name == format!("refs/heads/{tag}"))
+                || query(
+                    repo,
+                    &[
+                        "rev-parse",
+                        "--symbolic-full-name",
+                        "--verify",
+                        "--end-of-options",
+                        tag,
+                    ],
+                ) != reference)
         {
+            tag = reference;
             variables.insert("ref", reference.into());
         }
         variables.insert("branch", branch.into());
-        // Git also resolves short names as pseudorefs (HEAD, ORIG_HEAD, ...).
-        // Always retain the selected tag's namespace for command arguments.
-        variables.insert("tag", if tag.is_empty() { "" } else { reference }.into());
+        variables.insert("tag", tag.into());
     }
     // refs_select() sets the viewed head to this ref's OID. Other views need
     // their viewed-head context supplied before this variable can be supported.
@@ -343,6 +353,18 @@ mod tests {
             git_dir: root.join(".git"),
             bare: false,
         };
+        repo.command([
+            "-c",
+            "user.name=Ref Fixture",
+            "-c",
+            "user.email=ref@example.invalid",
+            "commit",
+            "--allow-empty",
+            "-qm",
+            "initial fixture",
+        ])
+        .unwrap();
+        repo.command(["tag", "v1"]).unwrap();
         let make = |name| {
             prepare(
                 &repo,
@@ -381,7 +403,7 @@ mod tests {
             Some("refs/tags/v1"),
         )
         .unwrap();
-        assert_eq!(tag.argv, ["echo", "refs/tags/v1", ""]);
+        assert_eq!(tag.argv, ["echo", "v1", ""]);
         assert_eq!(
             make(Some("refs/remotes/origin/selected")).unwrap().argv[1],
             ""
@@ -482,7 +504,6 @@ mod tests {
         ])
         .unwrap();
         repo.command(["branch", "v1"]).unwrap();
-        repo.command(["tag", "v1"]).unwrap();
         let checkout = prepare(
             &repo,
             "@git checkout -q %(tag)",
@@ -522,6 +543,15 @@ mod tests {
         for name in ["HEAD", "ORIG_HEAD"] {
             let reference = format!("refs/tags/{name}");
             repo.command(["update-ref", &reference, &older]).unwrap();
+            let display = prepare(
+                &repo,
+                "!echo %(tag)",
+                &older,
+                Path::new(""),
+                Some(&reference),
+            )
+            .unwrap();
+            assert_eq!(display.argv[1], reference.as_str());
             repo.command(["checkout", "--detach", "-q", &newer])
                 .unwrap();
             repo.command(["update-ref", "ORIG_HEAD", &newer]).unwrap();
