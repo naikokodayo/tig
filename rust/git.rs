@@ -52,14 +52,31 @@ where
     I: IntoIterator<Item = S>,
     S: AsRef<OsStr>,
 {
-    let output = Command::new("git")
+    let mut command = Command::new("git");
+    // Environment equivalents keep Git's global execution policy separate from
+    // the subcommand argv, as in upstream's trace. Preserve inherited config.
+    let count = std::env::var("GIT_CONFIG_COUNT")
+        .unwrap_or_else(|_| "0".into())
+        .parse::<usize>()
+        .map_err(|_| GitError("Invalid GIT_CONFIG_COUNT".into()))?;
+    command
         .current_dir(cwd)
-        .args(["--no-pager", "--literal-pathspecs", "-c", "color.ui=false"])
         .args(args)
+        .env("GIT_PAGER", "cat")
+        .env("GIT_LITERAL_PATHSPECS", "1")
+        .env(
+            "GIT_CONFIG_COUNT",
+            count
+                .checked_add(1)
+                .ok_or_else(|| GitError("Invalid GIT_CONFIG_COUNT".into()))?
+                .to_string(),
+        )
+        .env(format!("GIT_CONFIG_KEY_{count}"), "color.ui")
+        .env(format!("GIT_CONFIG_VALUE_{count}"), "false")
         .env("GIT_TERMINAL_PROMPT", "0")
         .env("LC_ALL", "C")
-        .stdin(Stdio::null())
-        .output()
+        .stdin(Stdio::null());
+    let output = crate::trace::output(&mut command)
         .map_err(|e| GitError(format!("Could not run git: {e}")))?;
     if !output.status.success() {
         return Err(GitError(format!(
@@ -70,6 +87,94 @@ where
     }
     Ok(output.stdout)
 }
+// Both history decorations and the refs view use the same filtered ref records.
+fn parse_remote_refs(bytes: &[u8], head: &str) -> Result<Vec<Reference>> {
+    let input = std::str::from_utf8(bytes)
+        .map_err(|_| GitError("TIG_LS_REMOTE returned non-UTF-8 refs".into()))?;
+    let mut refs: Vec<Reference> = Vec::new();
+    for line in input.lines().filter(|s| !s.trim().is_empty()) {
+        let fields: Vec<_> = line.split_whitespace().collect();
+        if fields.len() != 2
+            || !matches!(fields[0].len(), 40 | 64)
+            || !fields[0].bytes().all(|b| b.is_ascii_hexdigit())
+            || !(fields[1] == "HEAD" || fields[1].starts_with("refs/"))
+        {
+            return Err(GitError("Malformed TIG_LS_REMOTE ref record".into()));
+        }
+        let (oid, name) = (fields[0], fields[1]);
+        if name == "HEAD" && !head.is_empty() {
+            continue;
+        }
+        if let Some(name) = name.strip_suffix("^{}") {
+            let reference = refs
+                .iter_mut()
+                .find(|r| r.name == name)
+                .ok_or_else(|| GitError("Peeled ref has no preceding tag".into()))?;
+            reference.target = oid.into();
+        } else {
+            refs.push(Reference {
+                name: name.into(),
+                oid: oid.into(),
+                target: String::new(),
+                current: name == head || name == "HEAD",
+            });
+        }
+    }
+    Ok(refs)
+}
+
+fn decorate_history(commits: &mut [Commit], references: &[Reference], upstream: &str) {
+    use crate::refs_view::{kind, numeric};
+    let mut ordered: Vec<_> = references.iter().collect();
+    ordered.sort_by(|a, b| {
+        kind(a, upstream)
+            .cmp(&kind(b, upstream))
+            .then_with(|| numeric(&a.name, &b.name))
+    });
+    let mut decorations: std::collections::HashMap<&str, Vec<String>> =
+        std::collections::HashMap::new();
+    for reference in ordered
+        .iter()
+        .filter(|r| !r.name.starts_with("refs/replace/"))
+    {
+        let oid = if reference.target.is_empty() {
+            &reference.oid
+        } else {
+            &reference.target
+        };
+        let label = if reference.current {
+            format!("HEAD -> {}", reference.name)
+        } else if reference.name.starts_with("refs/tags/") {
+            format!("tag: {}", reference.name)
+        } else {
+            reference.name.clone()
+        };
+        decorations.entry(oid).or_default().push(label);
+    }
+    for reference in ordered
+        .iter()
+        .filter(|r| r.name.starts_with("refs/replace/"))
+    {
+        let original = &reference.name["refs/replace/".len()..];
+        let label = decorations
+            .remove(original)
+            .and_then(|v| v.into_iter().next())
+            .map(|s| {
+                s.trim_start_matches("HEAD -> ")
+                    .trim_start_matches("refs/heads/")
+                    .to_owned()
+            })
+            .unwrap_or_else(|| "replaced".into());
+        decorations.insert(original, vec![format!("replace: {label}")]);
+    }
+    for commit in commits {
+        commit.decorations = decorations
+            .get(commit.oid.as_str())
+            .map(|v| v.join(", "))
+            .unwrap_or_default();
+    }
+}
+
 fn valid_path(path: &Path) -> Result<()> {
     if path.as_os_str().is_empty()
         || path
@@ -175,6 +280,18 @@ impl Repository {
             invocation: start.canonicalize().map_err(|e| GitError(e.to_string()))?,
         })
     }
+    /// Git returns an empty prefix when an explicit worktree is outside the cwd.
+    pub fn prefix(&self) -> Result<PathBuf> {
+        let prefix = path(trim_lf(&run(
+            &self.invocation,
+            ["rev-parse", "--show-prefix"],
+        )?))?;
+        if !prefix.as_os_str().is_empty() {
+            valid_path(&prefix)?;
+        }
+        // Drop Git's trailing separator without converting filename bytes.
+        Ok(prefix.components().collect())
+    }
     pub fn command<I, S>(&self, args: I) -> Result<Vec<u8>>
     where
         I: IntoIterator<Item = S>,
@@ -197,6 +314,7 @@ impl Repository {
         let mut args = vec![
             "log".to_owned(),
             "--topo-order".into(),
+            "--parents".into(),
             "--no-show-signature".into(),
             "--decorate=full".into(),
             "--format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI".into(),
@@ -222,6 +340,12 @@ impl Repository {
             &self.invocation
         };
         let mut result = parse_history(&run(directory, args)?)?;
+        let references = self.refs()?;
+        let upstream = self
+            .command(["rev-parse", "--symbolic-full-name", "@{upstream}"])
+            .map(|b| text(trim_lf(&b)))
+            .unwrap_or_default();
+        decorate_history(&mut result, &references, &upstream);
         if options.first_parent {
             for commit in &mut result {
                 commit.parents.truncate(1);
@@ -243,11 +367,38 @@ impl Repository {
         }
     }
     pub fn refs(&self) -> Result<Vec<Reference>> {
+        if let Some(command) = std::env::var_os("TIG_LS_REMOTE").filter(|s| !s.is_empty()) {
+            let command = command
+                .to_str()
+                .ok_or_else(|| GitError("TIG_LS_REMOTE must be UTF-8".into()))?;
+            let args = crate::config::words(command).map_err(GitError)?;
+            let (program, args) = args
+                .split_first()
+                .ok_or_else(|| GitError("Empty TIG_LS_REMOTE command".into()))?;
+            let output = Command::new(program)
+                .args(args)
+                .current_dir(&self.root)
+                .stdin(Stdio::null())
+                .output()
+                .map_err(|e| GitError(format!("Could not run TIG_LS_REMOTE: {e}")))?;
+            if !output.status.success() {
+                return Err(GitError(format!(
+                    "TIG_LS_REMOTE exited with {}: {}",
+                    output.status,
+                    text(&output.stderr).trim()
+                )));
+            }
+            let head = self
+                .command(["symbolic-ref", "--quiet", "HEAD"])
+                .map(|b| text(trim_lf(&b)))
+                .unwrap_or_default();
+            return parse_remote_refs(&output.stdout, &head);
+        }
         let bytes = self.command([
             "for-each-ref",
             "--format=%(refname)%00%(objectname)%00%(*objectname)%00%(HEAD)",
         ])?;
-        bytes
+        let mut references: Vec<Reference> = bytes
             .split(|b| *b == b'\n')
             .filter(|r| !r.is_empty())
             .map(|row| {
@@ -262,7 +413,18 @@ impl Repository {
                     current: f[3] == b"*",
                 })
             })
-            .collect()
+            .collect::<Result<_>>()?;
+        if self.command(["symbolic-ref", "--quiet", "HEAD"]).is_err() {
+            if let Ok(oid) = self.revision("HEAD") {
+                references.push(Reference {
+                    name: "HEAD".into(),
+                    oid,
+                    target: String::new(),
+                    current: true,
+                });
+            }
+        }
+        Ok(references)
     }
     pub fn show(
         &self,
@@ -294,6 +456,14 @@ impl Repository {
         Ok(text(&self.diff_bytes(staged, file)?))
     }
     pub fn diff_bytes(&self, staged: bool, file: Option<&Path>) -> Result<Vec<u8>> {
+        self.diff_bytes_filtered(staged, file, &[])
+    }
+    pub fn diff_bytes_filtered(
+        &self,
+        staged: bool,
+        file: Option<&Path>,
+        filters: &[String],
+    ) -> Result<Vec<u8>> {
         let mut args: Vec<OsString> = [
             "diff",
             "--no-relative",
@@ -315,11 +485,21 @@ impl Repository {
         if let Some(file) = file {
             valid_path(file)?;
             args.push(file.into());
+        } else {
+            // Literal query pathspecs stay after --; mutation paths are validated separately.
+            args.extend(filters.iter().map(OsString::from));
         }
         self.command(args)
     }
     /// Read the worktree/index diff without overriding Git's configured prefixes.
     pub fn worktree_diff_bytes(&self, file: Option<&Path>) -> Result<Vec<u8>> {
+        self.worktree_diff_bytes_filtered(file, &[])
+    }
+    pub fn worktree_diff_bytes_filtered(
+        &self,
+        file: Option<&Path>,
+        filters: &[String],
+    ) -> Result<Vec<u8>> {
         if let Some(file) = file {
             valid_path(file)?;
         }
@@ -344,6 +524,8 @@ impl Repository {
         args.push("--".into());
         if let Some(file) = file {
             args.push(file.into());
+        } else {
+            args.extend(filters.iter().map(OsString::from));
         }
         self.command(args)
     }
@@ -453,6 +635,47 @@ impl Repository {
     pub fn status(&self) -> Result<Vec<StatusEntry>> {
         parse_status(&self.command(["status", "--porcelain=v1", "-z", "--untracked-files=all"])?)
     }
+    /// The status view reads each group from Git, including Git's path filtering.
+    pub fn status_filtered(
+        &self,
+        paths: &[String],
+        show_untracked: bool,
+    ) -> Result<Vec<StatusEntry>> {
+        let query = |args: &[&str]| {
+            self.command(
+                args.iter()
+                    .copied()
+                    .chain(std::iter::once("--"))
+                    .chain(paths.iter().map(String::as_str)),
+            )
+        };
+        let mut entries = if self.is_unborn()? {
+            parse_status_paths(
+                &query(&["ls-files", "-z", "--cached", "--exclude-standard"])?,
+                'A',
+            )?
+        } else {
+            parse_status_diff(
+                &query(&[
+                    "diff-index",
+                    "-z",
+                    "--diff-filter=ACDMRTXB",
+                    "-C",
+                    "--cached",
+                    "HEAD",
+                ])?,
+                true,
+            )?
+        };
+        entries.extend(parse_status_diff(&query(&["diff-files", "-z"])?, false)?);
+        if show_untracked {
+            entries.extend(parse_status_paths(
+                &query(&["ls-files", "-z", "--others", "--exclude-standard"])?,
+                '?',
+            )?);
+        }
+        Ok(entries)
+    }
     pub fn tree(&self, revision: &str, directory: &Path) -> Result<Vec<TreeEntry>> {
         let oid = self.revision(revision)?;
         let mut spec = OsString::from(format!("{oid}:"));
@@ -523,6 +746,69 @@ fn records(bytes: &[u8]) -> Result<impl Iterator<Item = &[u8]>> {
         .split(|b| *b == 0)
         .take(bytes.iter().filter(|b| **b == 0).count()))
 }
+fn parse_status_paths(bytes: &[u8], index: char) -> Result<Vec<StatusEntry>> {
+    records(bytes)?
+        .map(|name| {
+            let path = path(name)?;
+            valid_path(&path)?;
+            Ok(StatusEntry {
+                index,
+                worktree: ' ',
+                path,
+                original_path: None,
+            })
+        })
+        .collect()
+}
+
+fn parse_status_diff(bytes: &[u8], staged: bool) -> Result<Vec<StatusEntry>> {
+    let mut fields = records(bytes)?;
+    let mut entries: Vec<StatusEntry> = Vec::new();
+    while let Some(header) = fields.next() {
+        let header =
+            std::str::from_utf8(header).map_err(|_| GitError("Invalid diff header".into()))?;
+        let fields_header: Vec<_> = header.split_whitespace().collect();
+        if fields_header.len() != 5 || !fields_header[0].starts_with(':') {
+            return Err(GitError("Malformed raw diff record".into()));
+        }
+        let mark = fields_header[4]
+            .chars()
+            .next()
+            .ok_or_else(|| GitError("Missing diff status".into()))?;
+        if !"ACDMRTUXB".contains(mark) {
+            return Err(GitError("Invalid diff status".into()));
+        }
+        let mut next_path = || -> Result<PathBuf> {
+            let name = fields
+                .next()
+                .ok_or_else(|| GitError("Missing diff path".into()))?;
+            let name = path(name)?;
+            valid_path(&name)?;
+            Ok(name)
+        };
+        let first = next_path()?;
+        let (path, original_path) = if matches!(mark, 'R' | 'C') {
+            (next_path()?, Some(first))
+        } else {
+            (first, None)
+        };
+        // Git emits U followed by M for the same conflicted worktree path.
+        if entries
+            .last()
+            .is_some_and(|entry| entry.conflicted() && entry.path == path)
+        {
+            continue;
+        }
+        entries.push(StatusEntry {
+            index: if staged { mark } else { ' ' },
+            worktree: if staged { ' ' } else { mark },
+            path,
+            original_path,
+        });
+    }
+    Ok(entries)
+}
+
 pub fn parse_status(bytes: &[u8]) -> Result<Vec<StatusEntry>> {
     let mut fields = records(bytes)?;
     let mut entries = Vec::new();
@@ -825,6 +1111,52 @@ mod tests {
     use std::sync::atomic::{AtomicU64, Ordering};
     static NEXT: AtomicU64 = AtomicU64::new(0);
     #[test]
+    fn filtered_refs_feed_history_and_replacement_decorations() {
+        let oid = "1".repeat(40);
+        let tag = "2".repeat(40);
+        let replaced = "3".repeat(40);
+        let input = format!("{oid} HEAD\n{oid} refs/heads/main\n{oid} refs/heads/topic\n{tag} refs/tags/v1\n{oid} refs/tags/v1^{{}}\n{tag} refs/replace/{replaced}\n");
+        let refs = parse_remote_refs(input.as_bytes(), "refs/heads/main").unwrap();
+        assert_eq!(refs.len(), 4);
+        assert!(refs[0].current);
+        assert_eq!(refs[2].target, oid);
+        let commit = |id: &str| {
+            parse_history(format!("{id}\0\0Author\02020-01-01T00:00:00+00:00\0Title\0stale\0a@b\0Author\0a@b\02020-01-01T00:00:00+00:00\0").as_bytes()).unwrap().remove(0)
+        };
+        let mut commits = vec![commit(&oid), commit(&replaced)];
+        decorate_history(&mut commits, &refs, "");
+        assert_eq!(
+            commits[0].decorations,
+            "HEAD -> refs/heads/main, refs/heads/topic, tag: refs/tags/v1"
+        );
+        assert_eq!(commits[1].decorations, "replace: replaced");
+        let remotes = parse_remote_refs(
+            format!("{oid} refs/remotes/origin/HEAD\n{oid} refs/remotes/origin/main\n").as_bytes(),
+            "",
+        )
+        .unwrap();
+        decorate_history(&mut commits, &remotes, "refs/remotes/origin/main");
+        assert_eq!(
+            commits[0].decorations,
+            "refs/remotes/origin/main, refs/remotes/origin/HEAD"
+        );
+        let mut filtered = parse_remote_refs(
+            format!("{oid} refs/heads/topic\n{tag} refs/replace/{oid}\n").as_bytes(),
+            "refs/heads/main",
+        )
+        .unwrap();
+        decorate_history(&mut commits, &filtered, "");
+        assert_eq!(commits[0].decorations, "replace: topic");
+        filtered.clear();
+        decorate_history(&mut commits, &filtered, "");
+        assert!(commits.iter().all(|c| c.decorations.is_empty()));
+        assert!(parse_remote_refs(b"invalid refs/heads/main", "").is_err());
+        assert!(parse_remote_refs(format!("{oid} refs/tags/v1^{{}}").as_bytes(), "").is_err());
+        assert!(parse_remote_refs(&[0xff], "").is_err());
+        assert!(parse_remote_refs(format!("{oid} HEAD").as_bytes(), "").unwrap()[0].current);
+    }
+
+    #[test]
     fn history_option_values_and_paths_do_not_become_graph_flags() {
         for args in [
             vec!["--committer", "--no-merges"],
@@ -887,6 +1219,55 @@ mod tests {
             let _ = fs::remove_dir_all(&self.0);
         }
     }
+    #[test]
+    fn filtered_status_preserves_paths_renames_and_conflicts() {
+        let f = Fixture::new();
+        let repo = f.repo();
+        fs::create_dir(f.0.join("sub")).unwrap();
+        fs::write(f.0.join("sub/old\nname"), "base\n").unwrap();
+        fs::write(f.0.join("other"), "base\n").unwrap();
+        repo.command(["add", "."]).unwrap();
+        let initial = repo.status_filtered(&["sub".into()], true).unwrap();
+        assert_eq!(initial.len(), 1);
+        assert_eq!(initial[0].index, 'A');
+        repo.command(["commit", "-qm", "base"]).unwrap();
+        repo.command(["mv", "sub/old\nname", "sub/new\tname"])
+            .unwrap();
+        fs::write(f.0.join("sub/untracked"), "new\n").unwrap();
+        fs::write(f.0.join("other"), "changed\n").unwrap();
+        let index = fs::read(repo.git_dir.join("index")).unwrap();
+        let entries = repo.status_filtered(&["sub".into()], true).unwrap();
+        assert_eq!(entries.len(), 2);
+        assert_eq!(entries[0].index, 'R');
+        assert_eq!(entries[0].path, Path::new("sub/new\tname"));
+        assert_eq!(
+            entries[0].original_path.as_deref(),
+            Some(Path::new("sub/old\nname"))
+        );
+        assert_eq!(entries[1].index, '?');
+        assert_eq!(
+            repo.status_filtered(&["sub".into()], false).unwrap(),
+            entries[..1]
+        );
+        assert_eq!(fs::read(repo.git_dir.join("index")).unwrap(), index);
+        assert!(repo
+            .status_filtered(&[":(glob)*".into()], true)
+            .unwrap()
+            .is_empty());
+        let header = format!(":100644 100644 {} {}", "0".repeat(40), "0".repeat(40));
+        let conflicts =
+            parse_status_diff(format!("{header} U\0a\0{header} M\0a\0").as_bytes(), false).unwrap();
+        assert_eq!(conflicts.len(), 1);
+        assert!(conflicts[0].conflicted());
+        for invalid in [
+            format!("{header} R100\0old\0"),
+            format!("{header} M\0../escape\0"),
+            format!("{header} M\0truncated"),
+        ] {
+            assert!(parse_status_diff(invalid.as_bytes(), false).is_err());
+        }
+    }
+
     #[test]
     fn raw_date_fixture_and_invalid_headers() {
         let input = include_str!("../test/main/date-test.in");
@@ -1017,6 +1398,25 @@ mod tests {
             .worktree_diff_bytes(Some(Path::new("../file")))
             .is_err());
     }
+    #[test]
+    fn path_filtered_history_connects_visible_commits() {
+        let fixture = Fixture::new();
+        let repo = fixture.repo();
+        for (file, value) in [
+            ("selected", "first"),
+            ("other", "hidden"),
+            ("selected", "last"),
+        ] {
+            fs::write(fixture.0.join(file), value).unwrap();
+            repo.command(["add", file]).unwrap();
+            repo.command(["commit", "-qm", value]).unwrap();
+        }
+        let commits = repo.history(&["--".into(), "selected".into()], 0).unwrap();
+        assert_eq!(commits.len(), 2);
+        assert_eq!(commits[0].parents, [commits[1].oid.clone()]);
+        assert!(commits[1].parents.is_empty());
+    }
+
     #[test]
     fn show_applies_context_and_word_diff_without_changing_history() {
         let fixture = Fixture::new();

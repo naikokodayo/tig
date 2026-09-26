@@ -512,8 +512,9 @@ fn apply_once(repo: &Repository, patch: &[u8], reverse: bool, check: bool) -> Re
     if check {
         command.arg("--check");
     }
+    command.arg("-");
+    crate::trace::command(&command);
     let mut child = command
-        .arg("-")
         .spawn()
         .map_err(|e| error(&format!("Could not run git apply: {e}")))?;
     let mut stdin = child
@@ -527,6 +528,7 @@ fn apply_once(repo: &Repository, patch: &[u8], reverse: bool, check: bool) -> Re
         .join()
         .map_err(|_| error("Git patch writer failed"))?;
     let output = result.map_err(|e| error(&format!("Could not wait for git apply: {e}")))?;
+    crate::trace::append(&output.stderr);
     if !output.status.success() {
         return Err(error(&format!(
             "git apply {}: {}",

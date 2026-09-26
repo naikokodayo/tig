@@ -1,0 +1,23 @@
+   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.96s
+     Running unittests rust/main.rs (target/debug/deps/tig-33ccf7946334abad)
+
+running 1 test
+test tests::first_tree_open_uses_invocation_directory_once ... FAILED
+
+failures:
+
+---- tests::first_tree_open_uses_invocation_directory_once stdout ----
+thread 'tests::first_tree_open_uses_invocation_directory_once' panicked at rust/main.rs:3143:9:
+assertion `left == right` failed
+  left: ""
+ right: "common/src"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    tests::first_tree_open_uses_invocation_directory_once
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.38s
+
+error: test failed, to rerun pass `--bin tig`

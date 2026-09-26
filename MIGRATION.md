@@ -35,8 +35,9 @@ License: GPL-2.0-or-later; original history, COPYING and copyright notices retai
   Unknown or unavailable selection variables fail explicitly. No implicit shell.
 - `rust/refs_view.rs`, `rust/tree_view.rs`: reference and directory rows,
   metadata, columns, filters, sorting, annotated tags and recursive trees.
-  Custom `TIG_LS_REMOTE` loading, exact reference sort ties and all mailmap/date
-  configuration effects still need compatibility work.
+  Custom `TIG_LS_REMOTE` loading now feeds both refs rows and main decorations.
+  Exact reference sort ties and all mailmap/date configuration effects still
+  need compatibility work.
 - `rust/help_view.rs`: live help rows from active bindings and upstream request
   descriptions, including section collapse and help search.
 - `rust/main.rs`: initial terminal application using Crossterm, with owned view
@@ -606,6 +607,124 @@ Runtime requirements, evaluated Rust alternatives, differential/upstream
 receipts and the still-open performance/full-migration boundaries are in the
 [updated date compatibility record](migration/chrono-date-compatibility.md#非本地-s系统-posix-桥接).
 
+### Configuration compatibility diagnostics and shared column truncation
+
+This slice starts at fork main `15ee9762`, in an independent clone. The full
+strict `upstream-rust-only-after-stage-save-refs.json` remains historical at
+`2fb2a871`; it is not relabelled as current-main evidence. PR #12's diff-input,
+stat-width and navigation changes are not included or duplicated here.
+
+The config parser now diagnoses removed options, legacy key notation, renamed
+bindings/colors and old date modes with upstream wording. Supported replacements
+are retained before issuing their warnings; obsolete options remain rejected.
+Unknown view-column diagnostics use the original value. Field trimming is shared
+by grep, main, tree and blame: `utf8`/`utf-8` renders `⋯`, one-cell literal values
+are honored, and empty/wide/multi-cell delimiters fall back to `~`. Grep filename
+clipping/padding now measures terminal cells, including wide/combining characters.
+This covers displayed fields, not save-options normalization of delimiter spelling
+or implementation of terminal color attributes.
+
+Validation at source `5e9f51a37dd7e376681914bfd231767a1c0c3f4b` on macOS arm64,
+Rust 1.81 (the next commit adds only documentation/evidence):
+
+- Formatting, all **74 unit tests**, Clippy with warnings denied, release build,
+  and **130 real PTY checks** pass. New checks first reproduced the diagnostic
+  and delimiter failures and now pass; original C sources/tests are unchanged.
+  First-party unsafe remains forbidden, with no new dependency.
+- Fresh paired baseline for the six requested original scripts: C passes all
+  **26 assertions**; Rust fails all six scripts with **13 passing / 13 failing
+  assertions**, plus **2 runtime failure checks**.
+- Final requested scope: C still passes **26/26**; Rust passes three scripts,
+  with **19 passing / 7 failing assertions**, plus the same **2 runtime checks**.
+  Newly passing scripts are `compat-error-test`, `truncation-test`, and
+  `view-column-test` (all **17/17 assertions** in this fixed slice).
+- Expanded scope is all 17 tigrc scripts, all four grep scripts, and main/default,
+  tree/default, tree/recurse, blame/default: C passes **25/25 scripts, 142/142
+  assertions**; Rust passes **21 scripts**, with **132 passing / 10 failing
+  assertions**, plus **3 runtime failure checks**. There are no skips.
+
+The three requested failures still concern command-output paging
+(`command-value-long-test`), unsupported selected `refname` expansion
+(`escape-var-test`), and prompt-variable/quoted command handling (`quote-test`).
+The expanded blame/default test also fails its diff/navigation cases. These are
+failures, including missing output, not skipped assertions. The full suite was
+not rerun and the migration parity gate remains **OPEN**.
+
+`migration/evidence/config-render-before.json` and `config-render-after.json`
+retain strict C/Rust routes, raw transcripts, per-script verdicts and hashes.
+`config-render-checks.json`/`.log` and `config-render-pty.json` bind the scoped
+checks to the same tested source and Rust binary. The paired runner exits 1
+with `BLOCKED`, as required by the remaining failures. Reproduce the expanded
+pair with `python3 rust/tests/upstream-suite.py test/tigrc/*-test test/grep/*-test
+test/main/default-test test/tree/default-test test/tree/recurse-test
+test/blame/default-test` (one shell command).
+### Tree startup directories and editor paths
+
+At source `bf5d0d85ce159bdb38f7bb4dd416e0d021bd162b`, first opening the tree
+uses the canonical invocation directory relative to Git's worktree root. It
+applies that prefix only once, including after closing and reopening the view;
+a failed load does not consume initialization. Bare repositories use an empty
+prefix. Repository discovery continues to distinguish a submodule's or linked
+worktree's root from its separate Git directory. Editor arguments retain the
+repository-relative filename and execute at that worktree root, not in the
+superproject or Git metadata directory.
+
+The strict paired runner passes **32/32 C assertions** and **31/32 Rust
+assertions** across all six original tree scripts. Both submodule-editor and
+worktree-editor now pass all six assertions, including screens, editor content,
+working directory, Git directory and superproject context. Before this change,
+the three targeted scripts passed 13/16 Rust assertions at main `15ee9762`;
+this reproduction is separate from the older `2fb2a87` full-suite snapshot.
+
+**Remaining difference:** `test/tree/file-name-test` still fails
+`first-child-dir.screen`. C `tree_read` strips the directory's byte length from
+Git's quoted filename before decoding it, displaying a truncated octal-escaped
+name without history metadata. Rust's NUL-delimited parser retains `as测试asd`
+and its metadata. This patch does not imitate that corrupted display/path or
+change the original assertion. A regression verifies the real Unicode blob and
+editor argument, including the leading-dash directory's `./` editor protection.
+The full parity gate remains **OPEN**.
+
+Rust 1.81 formatting, **72 Rust tests**, Clippy with warnings denied and **135
+PTY checks** pass, including a new interactive startup-directory/parent case.
+Original C sources, headers and tests are unchanged; first-party unsafe remains
+forbidden. The [receipt](migration/evidence/tree-paths/receipt.json) binds source
+and binary hashes to the before/after paired runs, failing-then-passing regression,
+and PTY evidence. No full upstream suite or end-to-end benchmark was rerun.
+
+
+### Refs filtering and replacement follow-up
+
+The unchanged `test/refs/filter-test` and `test/refs/replace-test` first reproduced
+four failed Rust assertions while C passed all four, matching the historical
+`2fb2a871` strict snapshot. `Repository::refs` now executes `TIG_LS_REMOTE` as
+explicit argv using the existing config tokenizer; a shell runs only when the
+configured program itself is a shell. Nonzero commands and malformed output fail
+explicitly. Main history uses the same reference source and existing numeric/type
+ordering as refs, including tracking-remote priority. Replacement-only records
+remain main decorations, named replaced branches keep their name, and the refs
+list omits anonymous replacement rows. Filtered-out HEAD is not synthesized back
+into the refs view; ordinary detached HEAD still has a shared reference record.
+
+At source `9cb10a19`, formatting, **72 Rust tests**, Clippy with warnings denied,
+and **130 real PTY checks** pass. All nine original refs scripts plus main default,
+main search and column width pass **90/90 actual assertions on each of C and Rust**,
+with no missing assertions or runtime failures. Before/after paired transcripts,
+binary hashes, exact source hashes and check logs are in
+[`refs-filter-replace/checks.json`](migration/evidence/refs-filter-replace/checks.json)
+and the linked receipts. The runner's commit field is the clean starting base;
+its tested dirty sources are explicitly bound to `9cb10a19` by that manifest.
+C sources, original tests, dependencies, and `rust/main.rs` are unchanged.
+
+This is a focused slice, not a full-suite rerun or byte-for-byte terminal parity
+claim. Raw-stdin history decorations, all reference-format subclasses, duplicate
+custom command records, annotated-tag/branch name collisions in main, and complex
+replacement alias/chain behavior have not been established by this receipt.
+Loading remains synchronous and uncached; this is not a performance claim.
+The full migration gate remains open. PR #12/#13 main-view changes are outside
+this diff; the custom command spawn will need the same trace integration as other
+external commands when the separate trace slice is integrated.
+
 ### Diff review fix and main synchronization
 
 The review found that Enter → maximize → next retained fullscreen presentation
@@ -691,3 +810,117 @@ PR #12 is integrated through main `b0eabd2c`; no open PR #13 changes were copied
 Original C, original tests, dependencies and Actions are unchanged by this
 slice, and first-party Rust still forbids unsafe. This is focused evidence,
 not a full-suite rerun or a completed migration.
+### Configuration slice review fixes and main 297e1787 synchronization
+
+Merged main `297e1787` (including PR #12); the only conflict was the appended
+migration record, resolved by retaining both records. Source
+`0f1835c2a174051409789ffa3c15db0b3296bba8` fixes three review findings:
+
+- Setting an existing date column from `custom` to an invalid/removed display
+  now installs `default` before returning C's diagnostic. Both `*-view-date`
+  and `*-view-date-display` retain other column attributes. Whole-view
+  replacement still discards failed new columns, as C does. Tests cover file
+  and interactive entry points, local/short, uppercase and unknown modes.
+- Field width measurement now counts the same Unicode scalars as clipping.
+  ZWJ emoji cannot be partially clipped without the truncation marker because
+  of a grapheme-width/scalar-width mismatch. Main, tree, blame and grep use
+  this measurement for field limits and padding.
+- Legacy color lookup separates the explicit view prefix before mapping the
+  area, preserving that prefix over the replacement's default view.
+  `tree.tree-head` maps to `tree.header`, `diff.tree-head` to `diff.header`,
+  and `main.main-revgraph` is rejected with its obsolete diagnostic.
+
+The three regression assertions first failed on the previous implementation.
+The new runnable `python3 rust/tests/config-recovery.py` also compares C/Rust
+screens, diagnostics and saved color targets in **16 passing PTY cases**.
+At the source above, Rust 1.81 formatting, **76 unit tests**, Clippy with
+warnings denied, release build and **130 application PTY checks** all pass.
+Receipts are `migration/evidence/config-render-review-checks.json`/`.log`,
+`config-render-review-recovery.json`, and `config-render-review-pty.json`.
+Their source manifest and binary hashes agree with the paired original run.
+
+The original-script scope is the previous 25 plus main/date and main/emoji:
+C passes **27 scripts / 156 assertions**. Rust passes **23 scripts** with
+**146 passing / 10 failing assertions** and **3 runtime failure checks**;
+there are no skips. The same four scripts fail: command-value-long,
+escape-var, quote, and blame/default. All three originally fixed tigrc
+scripts still pass. `config-render-review-upstream.json` retains the raw
+results and remains `BLOCKED`; these scoped results do not close full parity.
+Earlier receipts remain tied to their earlier sources. The following commit
+changes only documentation and evidence. First-party unsafe remains forbidden;
+original C/test files and dependencies are unchanged.
+### Tree review fix: explicit worktree outside the invocation directory
+
+Review reproduced `prefix not found` when `GIT_DIR` and `GIT_WORK_TREE` point
+to a valid repository but the process cwd is outside its worktree. The previous
+filesystem-prefix assumption is replaced with `git rev-parse --show-prefix`
+executed in the discovery directory. Git supplies the empty prefix for this
+case. Nonempty paths still require repository-relative normal components;
+component collection removes Git's trailing separator without decoding filename
+bytes. The discovery directory is private again. First-open/failed-load behavior
+is retained.
+
+Merged main `297e1787` (PR #12) into the published branch. The open-view conflict
+preserves main's requested rendering width and this branch's directory
+initialization; both migration records remain intact. At integrated source
+`be9ebd86ba16238dd66ff709e8d25b2e0e9dc9eb`, fmt, **73 Rust tests**, Clippy with
+warnings denied, **139 PTY checks**, **8 paired diff navigation comparisons**
+and **6 diff input checks** pass. The new real-environment PTY case failed on
+the previous binary and passes now; a separate C/Rust scripted PTY comparison
+produces identical root-tree screens from an external cwd.
+
+The 11 unchanged original tree/diff scripts pass **99/99 C assertions** and
+**98/99 Rust assertions**. The sole remaining difference is the previously
+recorded Unicode filename screen; the parity gate remains OPEN. No full suite
+or benchmark was run. Updated source/binary hashes, negative regression and
+all focused evidence are in the [review-fix receipt](migration/evidence/tree-paths/review-fix/receipt.json).
+
+
+### Refs follow-up sync after PR #12
+
+Merged main `297e1787`; the only conflict was appended migration documentation,
+resolved by retaining both records. No refs change was needed in `rust/main.rs`.
+At merge source `e8fdc0f2`, fmt, **73 Rust tests**, Clippy, **130 PTY checks**,
+**6 diff-input checks**, and **8 paired diff-navigation checks** pass. The earlier
+12-script refs/main/width scope plus two diff-stat/navigation originals now passes
+**96/96 assertions on both C and Rust across 14 scripts**. No missing assertions
+or runtime failures occurred. The exact source/binary manifest and new receipts
+are in [`refs-filter-replace-sync/checks.json`](migration/evidence/refs-filter-replace-sync/checks.json).
+Earlier receipts remain unchanged; this does not close the full migration gate.
+
+### Configuration review fixes after refs main integration
+
+After pushing the review fixes, main advanced to `b056a7ac` (PR #17). Merged it
+without rewriting history; both appended documentation records are retained and
+the refs changes in the shared renderer coexist with scalar field measurement.
+At source `5ec2d9879f378b1eacf03647546196b3e3b05765`, formatting, **77 unit tests**,
+Clippy, release build, **16 C/Rust recovery checks**, and **130 PTY checks** pass.
+The expanded original pairing adds all nine refs scripts: C passes **36 scripts
+and 178 assertions**; Rust passes **32 scripts**, with **168 passing / 10 failing
+assertions** and **3 runtime failure checks**, no skips. The same four scripts
+remain failed: command-value-long, escape-var, quote, and blame/default.
+
+`migration/evidence/config-render-main-sync-{checks,recovery,pty,upstream}.json`
+and `config-render-main-sync-checks.log` record this final integration's source
+manifest and matching binary hashes. The preceding 297e1787 receipts remain
+historical. This is still scoped validation with an open full-migration gate;
+the next commit adds only this record and its evidence.
+
+### Configuration review fixes after tree main integration
+
+Main advanced again to `86ce7680` (PR #15). Source
+`7979862af0570c965d2f9f6530ff4b23017c00e8` merges it, retaining both appended
+migration records and both adjacent tree/grep unit tests. Formatting, **78 unit
+tests**, Clippy, release build, **16 C/Rust recovery checks**, and **139 PTY checks**
+pass. The targeted merge check pairs the six requested tigrc scripts and all six
+tree scripts: C passes **12 scripts / 58 assertions**; Rust passes **8 scripts**,
+with **50 passing / 8 failing assertions**, **2 runtime failure checks**, no skips.
+The three command failures remain; tree/file-name retains the same first-child
+Unicode filename snapshot mismatch recorded by PR #15's review-fix receipt.
+The obsolete diagnostic and truncation scripts still pass, as do both tree
+editor scripts. This is not a rerun of the earlier 36-script scope or full suite.
+
+`migration/evidence/config-render-tree-sync-{checks,recovery,pty,upstream}.json`
+and the checks log bind this latest source and binaries. Earlier wider receipts
+remain attributed to their own commits. The next commit is documentation and
+evidence only. The three P2 fixes are ready for re-review; full parity stays open.

@@ -1,0 +1,61 @@
+{
+  "scope": "Post-PR12 integration; focused parity only",
+  "tested_source_commit": "e8fdc0f28b6acada9c7d064960df2d3580ffa441",
+  "integrated_main": "297e17874081741663500af14133759790d12e73",
+  "source_sha256": {
+    "Cargo.lock": "4dff74ef4ccdb94d739984c33d6b06c217c12144f4095dde5e16bf10902ebbb5",
+    "Cargo.toml": "9c0a27f7f353f722308d07664ba1645e9dc6dfe35a94201839f7b4cd93752c69",
+    "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
+    "rust/commands.rs": "d277d85bab05c246bb5ed0ca18e62c8b1058780b2e60e38357691bd083cc2944",
+    "rust/config.rs": "2937ef5185e995c46b111ae05238397b67bc7b3ea700f77b632ca96bc21cc638",
+    "rust/date.rs": "1efe556b4746b2c220949673a40add71ce8bda44aaa68ae0b04f49d9c4f371c7",
+    "rust/git.rs": "dd5523f152e61458a6c7d03d3d168d41f888d3be9d590814d69923fc671e9952",
+    "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
+    "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+    "rust/help_view.rs": "029b06cf5c7c88523fe4fb4f3374f737f7fbffd7807169dcd8b8f207cf87b158",
+    "rust/lib.rs": "91d7fefb621f5c5abfdba0f03a8f1e494f906fb495335fafeba4a12972e7403c",
+    "rust/main.rs": "b75cc0683f4600227c37c3cddb307be86baf3b3e027a3692efcfa29cde5116f2",
+    "rust/model.rs": "5771eceed341a5ace3db7772b70db092d3f1e2038aaaed85afa8c91ec9a844b7",
+    "rust/patch.rs": "c2219dd3a28d15d811f1f1de2ca1c5d3b20162d32d48f53e1778ff9639040152",
+    "rust/refs_view.rs": "38c310d91de37f22d0e29f6a3ce1c9a8f90a21a28f267895cd95c2a9259ad8bb",
+    "rust/render.rs": "cbb6b434ac2308ed2a2ca487959ef832d5bd57d6dee12e0e47d239126e6bfa7c",
+    "rust/tests/date-compatibility.py": "730fb29be21cd0eab61e97d7789116505227d4d58fe70640af4d9acff2c205fa",
+    "rust/tests/date-percent-s.py": "3a837e0703587ba8f9909d630d700bd17f14bfc34b1e1fe105201e7600df6c4c",
+    "rust/tests/diff-input.py": "a3b5c4ab386484e78f959b469c76a16e53ebbaa69983ad7f157104fa0f3474c3",
+    "rust/tests/diff-navigation.py": "ac38d3cb56fc1bad1b628465cc85d67446e0439e6317d25a3e723c621b99e639",
+    "rust/tests/graph-differential.py": "666efeca9ee6cd79cb8bd70cf5639f00438a6b6dff7135ad03f98e53de8d7c8e",
+    "rust/tests/graph-v1-differential.py": "9e144d33dd228875d5a90b8068871102139ce3989324d98e6ffc5ce7d8830ace",
+    "rust/tests/terminal-smoke.py": "f19f377c89bf60b5c22bd7ef186169362f323293ac92c75c698d7318fd31a926",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "rust/tree_view.rs": "32289d27da92f6297d80178bb181b7c2952ec9bced29632272dcd96b8104814b"
+  },
+  "binary_sha256": {
+    "src/tig": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+    "test/tools/test-graph": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849",
+    "target/release/tig": "bf7f202ee8b2e7e42b26f0993356c00fb03ca39ae8b60e5440f7871fa7698a59",
+    "target/release/test-graph": "9e94e8573732f664d2b420f5cb5605dfba026d24d12762f0826a126a1030517d"
+  },
+  "checks": {
+    "fmt": "pass",
+    "unit_tests": 73,
+    "clippy_warnings_denied": "pass",
+    "pty_checks": 130,
+    "diff_input_checks": 6,
+    "paired_diff_navigation_checks": 8,
+    "original_scripts": 14,
+    "c_assertions_passed": 96,
+    "rust_assertions_passed": 96,
+    "missing_assertions": 0
+  },
+  "receipts_sha256": {
+    "migration/evidence/refs-filter-replace-sync/clippy.log": "1586b9633cb3d76ff299cbae128937b0bcd1fa3f302a38c6e494b5e21c342a4a",
+    "migration/evidence/refs-filter-replace-sync/diff-input.log": "2ba8bc60ef9829aef92cac7fa52a452e8cffdc02b0a7aba26867c04b603538c6",
+    "migration/evidence/refs-filter-replace-sync/diff-navigation.json": "1b31a7dbb2c2b860210874324440d2cd8d999eca3995195ac3d76ada8b307ea2",
+    "migration/evidence/refs-filter-replace-sync/fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "migration/evidence/refs-filter-replace-sync/pty.json": "ce8e9c2fda2b5114fa8b71e1a09c827f676f0f725995f54b47c443a76b148975",
+    "migration/evidence/refs-filter-replace-sync/pty.log": "ebd9204da9cc2f562009f27d8b04c3b3831fe650f3379684baf98e9c6a75d926",
+    "migration/evidence/refs-filter-replace-sync/unit.log": "fd8b14e0085371ed46f60d7dd5d73286e80c27f60a00c54414fbdd1a4b1ff7e0",
+    "migration/evidence/refs-filter-replace-sync/upstream.json": "5286b0bf45186b07a00e7be5141154080b060c565e7d1d69c35fab670c1dca08",
+    "migration/evidence/refs-filter-replace-sync/upstream.log": "dfb878ea9419c0c71f96a1de4d830583b5d2b5c2a66be6e73a5668bf61f7f9f9"
+  }
+}

@@ -1,0 +1,21 @@
+    Checking tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-trace-status)
+error[E0061]: this method takes 1 argument but 0 arguments were supplied
+    --> rust/main.rs:1642:34
+     |
+1642 | ...                   self.enter()?;
+     |                            ^^^^^-- argument #1 of type `bool` is missing
+     |
+note: method defined here
+    --> rust/main.rs:1028:8
+     |
+1028 |     fn enter(&mut self, split: bool) -> Result<()> {
+     |        ^^^^^            -----------
+help: provide the argument
+     |
+1642 |                             self.enter(/* bool */)?;
+     |                                       ~~~~~~~~~~~~
+
+For more information about this error, try `rustc --explain E0061`.
+error: could not compile `tig-rs` (bin "tig") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `tig-rs` (bin "tig" test) due to 1 previous error

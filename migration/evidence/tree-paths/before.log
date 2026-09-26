@@ -1,0 +1,7 @@
+c: pass    test/tree/file-name-test
+c: pass    test/tree/submodule-editor-test
+c: pass    test/tree/worktree-editor-test
+rust: fail    test/tree/file-name-test
+rust: fail    test/tree/submodule-editor-test
+rust: fail    test/tree/worktree-editor-test
+BLOCKED: /tmp/tree-before.json

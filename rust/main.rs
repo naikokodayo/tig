@@ -249,16 +249,14 @@ fn grep_columns(config: &Config) -> (bool, Option<usize>, Option<usize>, bool, u
     (show_file, file_width, file_maxwidth, show_line, interval)
 }
 
-fn grep_filename(label: &str, width: usize) -> String {
-    let count = label.chars().count();
-    if count > width {
-        let mut text: String = label.chars().take(width.saturating_sub(1)).collect();
-        text.push('~');
-        text
-    } else {
-        format!("{label}{}", " ".repeat(width.saturating_sub(count)))
-    }
+fn grep_filename(label: &str, width: usize, config: &Config) -> String {
+    let text = tig_rs::render::trim_field(&tig_rs::render::sanitize(label), width, config);
+    format!(
+        "{text}{}",
+        " ".repeat(width.saturating_sub(cell_width(&text)))
+    )
 }
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum ChangeKind {
     Untracked,
@@ -423,6 +421,7 @@ struct App {
     config: Config,
     view: View,
     help: Option<HelpView>,
+    tree_initialized: bool,
     previous: Vec<View>,
     pending_command: Option<tig_rs::commands::PreparedCommand>,
     other: Option<View>,
@@ -470,12 +469,34 @@ impl App {
         view.untracked = self.view.untracked && matches!(name, "stage" | "status");
         Ok(view)
     }
+    fn file_filter(&self) -> &[String] {
+        if self.config.bool_value("file-filter", true) {
+            self.args
+                .iter()
+                .position(|arg| arg == "--")
+                .map_or(&[][..], |i| &self.args[i + 1..])
+        } else {
+            &[]
+        }
+    }
+    fn stage_diff(&self, staged: bool, file: Option<&std::path::Path>) -> Result<Vec<u8>> {
+        let repo = self.repo()?;
+        Ok(if !staged && file.is_none() {
+            repo.worktree_diff_bytes_filtered(None, self.file_filter())?
+        } else {
+            repo.diff_bytes_filtered(staged, file, self.file_filter())?
+        })
+    }
     fn status_view(&self, untracked_only: bool) -> Result<View> {
         let repo = self.repo()?;
-        let entries = repo.status()?;
+        let show_untracked = self.config.bool_value("status-show-untracked-files", true);
+        let header = repo.status_header()?;
+        let entries = repo.status_filtered(self.file_filter(), show_untracked)?;
         let mut v = View::new("status");
         v.untracked = untracked_only;
-        v.push(repo.status_header()?, Item::Text);
+        v.args = self.args.clone();
+        v.revision = self.revision.clone();
+        v.push(header, Item::Text);
         for (group, title) in [
             (0, "Changes to be committed:"),
             (1, "Changes not staged for commit:"),
@@ -485,6 +506,10 @@ impl App {
                 continue;
             }
             v.push(title.into(), Item::Text);
+            if group == 2 && !show_untracked {
+                v.push("  (not shown)".into(), Item::Text);
+                continue;
+            }
             let start = v.rows.len();
             for e in &entries {
                 if let Some(mark) = status_mark(e, group) {
@@ -677,18 +702,12 @@ impl App {
                         &String::from_utf8_lossy(&fs::read(repo.root.join(&self.path))?),
                     ));
                 }
-                let raw = if !self.view.staged && self.path.as_os_str().is_empty() {
-                    repo.worktree_diff_bytes(None)?
+                let file = if self.path.as_os_str().is_empty() {
+                    None
                 } else {
-                    repo.diff_bytes(
-                        self.view.staged,
-                        if self.path.as_os_str().is_empty() {
-                            None
-                        } else {
-                            Some(&self.path)
-                        },
-                    )?
+                    Some(self.path.as_path())
                 };
+                let raw = self.stage_diff(self.view.staged, file)?;
                 let mut view = View::text(name, &String::from_utf8_lossy(&raw));
                 view.raw_patch = raw;
                 return Ok(view);
@@ -774,15 +793,16 @@ impl App {
                     )
                     .into());
                 }
-                let output = Command::new("git")
+                let mut command = Command::new("git");
+                command
                     .current_dir(&repo.root)
                     .args(["--no-pager", "--literal-pathspecs", "-c", "color.ui=false"])
                     .args(["grep", "--no-color", "-n", "-z", "--full-name", "-I"])
                     .args(&self.args)
                     .env("GIT_TERMINAL_PROMPT", "0")
                     .env("LC_ALL", "C")
-                    .stdin(Stdio::null())
-                    .output()?;
+                    .stdin(Stdio::null());
+                let output = tig_rs::trace::output(&mut command)?;
                 if !output.status.success() && output.status.code() != Some(1) {
                     return Err(format!(
                         "git grep exited with {}: {}",
@@ -803,7 +823,7 @@ impl App {
                 let width = width
                     .unwrap_or_else(|| {
                         hits.iter()
-                            .map(|hit| hit.label.chars().count())
+                            .map(|hit| cell_width(&tig_rs::render::sanitize(&hit.label)))
                             .max()
                             .unwrap_or(0)
                     })
@@ -824,7 +844,7 @@ impl App {
                     }
                     let mut row = String::new();
                     if show_file {
-                        row.push_str(&grep_filename(&hit.label, width));
+                        row.push_str(&grep_filename(&hit.label, width, &self.config));
                         row.push(' ');
                     }
                     if show_line {
@@ -862,7 +882,19 @@ impl App {
         if name == "help" {
             self.help = Some(HelpView::new(&self.config, &self.view.name));
         }
-        let next = self.load_width(name, width)?;
+        // C tree_open applies repo.prefix only to the first tree view.
+        let old_path = self.path.clone();
+        if name == "tree" && !self.tree_initialized {
+            self.path = self.repo()?.prefix()?;
+        }
+        let next = match self.load_width(name, width) {
+            Ok(next) => next,
+            Err(error) => {
+                self.path = old_path;
+                return Err(error);
+            }
+        };
+        self.tree_initialized |= name == "tree";
         self.previous.push(std::mem::replace(&mut self.view, next));
         Ok(())
     }
@@ -873,11 +905,7 @@ impl App {
             self.status_view(true)?
         } else {
             let staged = kind == ChangeKind::Staged;
-            let raw = if staged {
-                self.repo()?.diff_bytes(true, None)?
-            } else {
-                self.repo()?.worktree_diff_bytes(None)?
-            };
+            let raw = self.stage_diff(staged, None)?;
             let mut view = View::text("stage", &String::from_utf8_lossy(&raw));
             view.staged = staged;
             view.raw_patch = raw;
@@ -1117,7 +1145,7 @@ impl App {
                 let raw = if e.index == '?' {
                     fs::read(self.repo()?.root.join(&e.path))?
                 } else {
-                    self.repo()?.diff_bytes(staged, Some(&e.path))?
+                    self.stage_diff(staged, Some(&e.path))?
                 };
                 let text = String::from_utf8_lossy(&raw);
                 self.path = e.path;
@@ -1698,6 +1726,9 @@ impl App {
                 if self.view.name == "stage" =>
             {
                 if self.view.untracked {
+                    if self.view.rows.is_empty() {
+                        return Ok(true);
+                    }
                     if action != "status-update" {
                         return Err("Select a tracked diff to stage individual lines".into());
                     }
@@ -1708,6 +1739,22 @@ impl App {
                         .find(|entry| entry.path == self.path)
                         .ok_or("File no longer in status")?;
                     self.repo()?.stage(&entry)?;
+                    self.refresh_parent()?;
+                    if self
+                        .other
+                        .as_ref()
+                        .is_some_and(|parent| parent.name == "status")
+                    {
+                        self.swap_panes();
+                        if matches!(self.selected(), Item::Status(_, false)) {
+                            self.enter(self.split)?;
+                        } else {
+                            self.other = None;
+                            self.split = false;
+                            self.parent_focused = false;
+                        }
+                        return Ok(true);
+                    }
                 } else {
                     let raw = &self.view.raw_patch;
                     let mut offset = 0;
@@ -2042,7 +2089,7 @@ impl App {
 }
 
 fn cell_width(text: &str) -> usize {
-    text.chars().map(|c| c.width().unwrap_or(0)).sum()
+    tig_rs::render::cell_width(text)
 }
 fn log_header_offset(line: &str) -> Option<usize> {
     line.find("commit ").filter(|&i| {
@@ -2260,6 +2307,7 @@ mod editor_tests {
             config: Config::defaults(),
             view,
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -2347,6 +2395,7 @@ mod editor_tests {
             config: Config::default(),
             view,
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -2572,6 +2621,9 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
             && stage_stat_header(&view.rows, view.selected).is_some() =>
         {
             "Press '<Enter>' to jump to file diff".into()
+        }
+        _ if view.name == "stage" && view.untracked => {
+            format!("Untracked file {}", view.path.display())
         }
         _ if view.name == "stage" => {
             let kind = if view.staged { "Staged" } else { "Unstaged" };
@@ -2857,6 +2909,9 @@ fn run() -> Result<()> {
     for message in &config.diagnostics {
         eprintln!("tig warning: {message}");
     }
+    if cli.view == "status" && !cli.git_args.iter().any(|arg| arg == "--") {
+        cli.git_args.insert(0, "--".into());
+    }
     let invocation = env::current_dir()?;
     let repo = Repository::discover(&invocation).ok();
     let (width, height) = terminal::size().unwrap_or((80, 24));
@@ -2865,6 +2920,7 @@ fn run() -> Result<()> {
         config,
         view: View::new(&cli.view),
         help: None,
+        tree_initialized: false,
         previous: vec![],
         pending_command: None,
         other: None,
@@ -3217,6 +3273,7 @@ mod tests {
             config,
             view: View::new("main"),
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -3437,12 +3494,130 @@ mod tests {
     }
 
     #[test]
+    fn grep_filename_uses_cells_and_the_configured_delimiter() {
+        let mut config = Config::defaults();
+        config
+            .apply_command("set truncation-delimiter = _")
+            .unwrap();
+        assert_eq!(grep_filename("LICENSE", 5, &config), "LICE_");
+        assert_eq!(grep_filename("作者名", 5, &config), "作者_");
+        assert_eq!(grep_filename("作者名", 4, &config), "作_ ");
+        assert_eq!(grep_filename("e\u{301}界", 4, &config), "e\u{301}界 ");
+        assert_eq!(grep_filename("filename", 0, &config), "");
+    }
+
+    #[test]
+    fn first_tree_open_uses_invocation_directory_once() {
+        let root = env::temp_dir().join(format!("tig-tree-start-{}", std::process::id()));
+        fs::create_dir_all(&root).unwrap();
+        assert!(Command::new("tar")
+            .args([
+                "-xzf",
+                concat!(
+                    env!("CARGO_MANIFEST_DIR"),
+                    "/test/files/scala-js-benchmarks.tgz"
+                ),
+                "-C"
+            ])
+            .arg(&root)
+            .status()
+            .unwrap()
+            .success());
+        Repository::discover(&root)
+            .unwrap()
+            .command(["reset", "--hard"])
+            .unwrap();
+        let repo = Repository::discover(root.join("common/src")).unwrap();
+        let mut app = App {
+            repo: Some(repo),
+            config: Config::defaults(),
+            view: View::new("main"),
+            help: None,
+            tree_initialized: false,
+            previous: vec![],
+            pending_command: None,
+            other: None,
+            split: false,
+            parent_focused: false,
+            revision: "HEAD".into(),
+            path: PathBuf::new(),
+            args: vec![],
+            message: String::new(),
+            search: String::new(),
+            width: 80,
+            height: 20,
+        };
+        app.revision = "missing-revision".into();
+        assert!(app.action("view-tree").is_err());
+        assert!(!app.tree_initialized);
+        assert!(app.path.as_os_str().is_empty());
+        app.revision = "HEAD".into();
+        app.action("view-tree").unwrap();
+        assert_eq!(app.view.path, PathBuf::from("common/src"));
+        assert_eq!(app.view.rows[0], "Directory path /common/src/");
+        assert_eq!(app.edit_target(), None); // Parent entry is never editable.
+        app.action("parent").unwrap();
+        assert_eq!(app.view.path, PathBuf::from("common"));
+        app.action("parent").unwrap();
+        assert!(app.view.path.as_os_str().is_empty());
+        app.view.selected = app
+            .view
+            .items
+            .iter()
+            .position(|item| matches!(item, Item::Tree(e) if e.path == PathBuf::from("README.md")))
+            .unwrap();
+        assert_eq!(app.edit_target(), Some((PathBuf::from("README.md"), 0)));
+        app.edit().unwrap();
+        assert_eq!(
+            app.pending_command.as_ref().unwrap().argv.last().unwrap(),
+            "README.md"
+        );
+        // Closing and reopening must not reapply the startup prefix.
+        app.view = View::new("main");
+        app.previous.clear();
+        app.path.clear();
+        app.action("view-tree").unwrap();
+        assert!(app.view.path.as_os_str().is_empty());
+        // Display escaping must never change the selected Git/editor path.
+        fs::create_dir(root.join("-- foo bar")).unwrap();
+        let file = PathBuf::from("-- foo bar/as测试asd");
+        fs::write(root.join(&file), "unicode blob\n").unwrap();
+        let repo = app.repo().unwrap();
+        repo.command(["add", "--", "-- foo bar"]).unwrap();
+        repo.command([
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.invalid",
+            "commit",
+            "-qm",
+            "Unicode filename",
+        ])
+        .unwrap();
+        app.path = "-- foo bar".into();
+        app.open("tree", app.width).unwrap();
+        app.view.selected = 2;
+        assert!(app.view.rows[2].ends_with("as测试asd"));
+        assert_eq!(app.edit_target(), Some((file.clone(), 0)));
+        app.edit().unwrap();
+        assert_eq!(
+            app.pending_command.as_ref().unwrap().argv.last().unwrap(),
+            &PathBuf::from(".").join(&file).into_os_string()
+        );
+        app.enter(true).unwrap();
+        assert_eq!(app.view.path, file);
+        assert_eq!(app.view.rows, ["unicode blob"]);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
     fn unclosed_binding_argument_cannot_become_a_valid_toggle() {
         let mut app = App {
             repo: None,
             config: Config::defaults(),
             view: View::new("main"),
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -3484,6 +3659,7 @@ mod tests {
             config: Config::defaults(),
             view: View::new("grep"),
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -3568,6 +3744,7 @@ mod tests {
             config: Config::defaults(),
             view,
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -3618,6 +3795,7 @@ mod tests {
             config: Config::defaults(),
             view: View::new("main"),
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -3689,6 +3867,37 @@ mod tests {
             app.repo().unwrap().command(["show", ":tracked"]).unwrap(),
             b"working\n"
         );
+        for split in [true, false] {
+            fs::write(root.join("advance-a"), "first\n").unwrap();
+            fs::write(root.join("advance-b"), "second\n").unwrap();
+            app.view = app.status_view(false).unwrap();
+            app.view.selected = app.view.items.iter().position(|item|
+                matches!(item, Item::Status(entry, false) if entry.path == PathBuf::from("advance-a"))).unwrap();
+            app.enter(true).unwrap();
+            if !split {
+                app.action("maximize").unwrap();
+            }
+            app.action("status-update").unwrap();
+            assert_eq!(app.view.name, "stage");
+            assert_eq!(app.view.path, PathBuf::from("advance-b"));
+            assert_eq!(
+                app.split, split,
+                "auto-advance must preserve the pane layout"
+            );
+            assert!(!app.parent_focused);
+            assert_eq!(
+                app.repo().unwrap().command(["show", ":advance-a"]).unwrap(),
+                b"first\n"
+            );
+            assert!(app.repo().unwrap().command(["show", ":advance-b"]).is_err());
+            app.action("view-close").unwrap();
+            app.repo()
+                .unwrap()
+                .command(["reset", "--", "advance-a"])
+                .unwrap();
+            fs::remove_file(root.join("advance-a")).unwrap();
+            fs::remove_file(root.join("advance-b")).unwrap();
+        }
         fs::remove_dir_all(root).unwrap();
     }
     #[test]
@@ -3755,6 +3964,7 @@ mod tests {
             config: Config::default(),
             view: child,
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: Some(parent),
@@ -3820,6 +4030,7 @@ mod tests {
             config: Config::defaults(),
             view: View::text("diff", "first\nsecond"),
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: Some(View::text("main", "parent\nother commit")),

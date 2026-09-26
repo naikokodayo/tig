@@ -1,0 +1,95 @@
+{
+  "source_commit": "f087f86db38b45925f350a17ae9c6de535266cc6",
+  "synced_main": "b056a7ac",
+  "checks": [
+    {
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "--all-targets"
+      ],
+      "log": "compile.log",
+      "sha256": "df9c9b0a4954eb975e9fd52dde555bf72b3233ac08842693331269d1bf80046d",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--check"
+      ],
+      "log": "fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked"
+      ],
+      "log": "unit.log",
+      "sha256": "b57a5dad9532b87e2db7a55a5464e411e03a6cfacc214a773c75a9004d537f27",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "log": "clippy.log",
+      "sha256": "3485ebac8af6ff9acff1e01b2149e40edf098e6b554f1c927a77c2090eda8d56",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "--release",
+        "--bins"
+      ],
+      "log": "release.log",
+      "sha256": "d322e41561eae1fcb4d843ba2dd3e1f1f37dc7f0101a2e99eb43c36f64ff25d3",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "rust/tests/status-filter.py",
+        "--output",
+        "migration/evidence/trace-status/main-sync/status-filter.json"
+      ],
+      "log": "status-filter.log",
+      "sha256": "87f607c475583f9dcfa5776440bfe32b5b9ad028ff9d821eaa33d860ccfe7040",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import importlib.util; from pathlib import Path; s=importlib.util.spec_from_file_location('smoke','rust/tests/terminal-smoke.py'); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); m.EVIDENCE=Path('migration/evidence/trace-status/main-sync/pty.json'); m.main()"
+      ],
+      "log": "pty-first-attempt.log",
+      "sha256": "f16dbb83d2ec6e917999b8c2f4f1fa6e3aec4c9305bc2de6e0fd565d8f29e70c",
+      "exit_code": 1
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import importlib.util; from pathlib import Path; s=importlib.util.spec_from_file_location('smoke','rust/tests/terminal-smoke.py'); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); m.EVIDENCE=Path('migration/evidence/trace-status/main-sync/pty.json'); m.main()"
+      ],
+      "log": "pty.log",
+      "sha256": "826cb8214fb5a78a88c3e49fc6cb14d3f9a87aef3add914d2fa299d6e8e945ac",
+      "exit_code": 0,
+      "note": "Same binary retry; first SIGHUP terminal attribute failure retained"
+    }
+  ]
+}

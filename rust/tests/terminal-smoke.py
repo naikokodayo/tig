@@ -45,6 +45,9 @@ def main():
                                TIGRC_SYSTEM='', TIGRC_USER='/dev/null',
                                GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='/dev/null')
 
+            trace = home / 'commands.trace'
+            environment['TIG_TRACE'] = str(trace)
+
             def git(*args):
                 return subprocess.check_output(['git', *args], cwd=repo, env=environment,
                                                stderr=subprocess.STDOUT).decode()
@@ -256,17 +259,17 @@ def main():
             assert 'hidden second line' not in echoed
             expect('foreground command prompt', [':'], b':')
             expect('foreground command waits for Enter', ['git version', 'Press Enter to continue'],
-                   b'exec !git --version\r')
+                   b'exec !git -c pty.foreground=foreground-private-marker --version\r')
             assert termios.tcgetattr(slave) == before
             expect('foreground command resumes raw UI after Enter', [f'[main] {newest} - commit 1 of 2'], b'\r')
             assert not termios.tcgetattr(slave)[3] & termios.ICANON
             expect('quick command prompt', [':'], b':')
             quick = expect('successful quick command resumes without Enter', [f'[main] {newest} - commit 1 of 2'],
-                           b'exec >git --version\r')
+                           b'exec >git -c pty.quick=quick-private-marker --version\r')
             assert 'Press Enter to continue' not in quick
             expect('failed quick command prompt', [':'], b':')
             expect('failed quick command still waits for Enter', ['Command exited with', 'Press Enter to continue'],
-                   b'exec >git not-a-real-pty-subcommand\r')
+                   b'exec >git -c pty.failed=failed-private-marker not-a-real-pty-subcommand\r')
             assert termios.tcgetattr(slave) == before
             expect('failed command resumes after Enter', [f'[main] {newest} - commit 1 of 2'], b'\r')
             expect('move off HEAD before default H', [f'[main] {oldest} - commit 2 of 2'], b'j')
@@ -278,6 +281,12 @@ def main():
             expect('H preserves quoted argv and echoes result', [f'[main] {newest} - commit 1 of 2', 'quoted H value'], b'H',
                    raw_required=(b'\x1b[24;1Hquoted H value\x1b[0m',))
             evidence['checks'].append({'name': 'foreground canonical tty, resumed raw UI, echo and quoted argv verified', 'passed': True})
+            traced = trace.read_bytes()
+            assert b'pty.fixture literal spaces ; $(touch should-not-exist)' in traced
+            assert b'pty.binding=quoted H value config --get pty.binding' in traced
+            for marker in (b'foreground-private-marker', b'quick-private-marker', b'failed-private-marker'):
+                assert marker not in traced, f'foreground argv leaked into TIG_TRACE: {marker!r}'
+            evidence['checks'].append({'name': 'TIG_TRACE includes captured commands but excludes foreground argv', 'passed': True})
             tree_oid = git('rev-parse', 'HEAD:nested').strip()
             blob_oid = git('rev-parse', 'HEAD:fixture.txt').strip()
             expect('tree opens', ['fixture.txt', f'[tree] {tree_oid} - file 1 of 2'], b't')
@@ -318,6 +327,20 @@ def main():
             before, selector = start(('blame', '--', 'fixture.txt'))
             expect('blame -- file', ['first line', 'second line', f'[blame] {oldest}:fixture.txt - line 1 of 2'])
             finish('blame session quit')
+            before, selector = start(cwd=repo / 'nested')
+            expect('subdirectory main opens', ['[main]'])
+            expect('first tree uses startup directory', ['Directory path /nested/', 'child.txt', '[tree] Open parent directory'], b't')
+            expect('startup tree parent reaches worktree root', ['Directory path /', 'fixture.txt', f'[tree] {tree_oid} - file 1 of 2'], b'\r')
+            finish('subdirectory tree session quit')
+            environment.update(GIT_DIR=str(repo / '.git'), GIT_WORK_TREE=str(repo))
+            assert subprocess.check_output(['git', 'rev-parse', '--show-prefix'], cwd=home,
+                                           env=environment) == b'\n'
+            before, selector = start(cwd=home)
+            expect('external cwd with explicit Git environment opens main', ['[main]'])
+            expect('external cwd opens root tree', ['Directory path /', 'fixture.txt', f'[tree] {tree_oid} - file 1 of 2'], b't')
+            finish('external cwd tree session quit')
+            environment.pop('GIT_DIR')
+            environment.pop('GIT_WORK_TREE')
             before, selector = start(('blame', '--', 'child.txt'), repo / 'nested')
             expect('blame resolves subdirectory relative file', ['nested fixture line', f'[blame] {oldest}:nested/child.txt - line 1 of 1'])
             finish('subdirectory blame session quit')

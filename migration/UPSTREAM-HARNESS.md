@@ -71,10 +71,11 @@ checks the physical PTY size, and verifies missing-assertion mapping.
 
 ## Known semantic gaps
 
-* Rust does not produce the `TIG_TRACE` required by
-  `test/main/filter-args-test` and `test/status/file-filter-test`. C reaches three assertions; Rust exits at the
-  first trace read. The runner reports this failure and maps the three
-  assertions as `NOT_REACHED`; it never manufactures an empty/fake trace.
+* Rust now produces real `TIG_TRACE` output. The two trace-dependent scripts
+  reach every assertion; different rev-parse/log command forms still fail
+  their original exact trace assertions. See [TRACE-STATUS.md](TRACE-STATUS.md)
+  and `evidence/trace-status-after.json` for the bounded checkpoint. Historical
+  snapshots below retain their original missing-receipt verdicts.
 * A Rust graph helper exists and is now selected explicitly. Successful
   graph fixture assertions cover their output only, not every graph state,
   interactive rendering, C memory checks, or all graph attributes.

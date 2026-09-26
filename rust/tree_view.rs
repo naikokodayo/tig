@@ -11,7 +11,6 @@ use std::{
     ffi::OsString,
     path::{Component, Path, PathBuf},
 };
-use unicode_width::UnicodeWidthStr;
 
 #[derive(Clone, Debug)]
 pub struct TreeRow {
@@ -295,7 +294,11 @@ fn draw(
         } else if col.name == "id" {
             config.usize_value("id-width", 7).max(1)
         } else {
-            values.iter().map(|s| s.width()).max().unwrap_or(0)
+            values
+                .iter()
+                .map(|s| render::cell_width(s))
+                .max()
+                .unwrap_or(0)
         };
         if col.name == "line-number" {
             cells = cells.clamp(3, 9);
@@ -310,19 +313,12 @@ fn draw(
         for (row, value) in rows.iter_mut().zip(&values) {
             let mut value_clipped = render::clip(value, cells);
             if matches!(col.name, "author" | "committer" | "file-name")
-                && value.width() > cells
+                && render::cell_width(value) > cells
                 && (col.name == "file-name" || cells > 10)
             {
-                let delimiter = config.value("truncation-delimiter").unwrap_or("~");
-                let delimiter = render::sanitize(if delimiter == "utf-8" {
-                    "…"
-                } else {
-                    delimiter
-                });
-                value_clipped = render::clip(value, cells.saturating_sub(delimiter.width()));
-                value_clipped.push_str(&render::clip(&delimiter, cells));
+                value_clipped = render::trim_field(value, cells, config);
             }
-            let padding = " ".repeat(cells.saturating_sub(value_clipped.width()));
+            let padding = " ".repeat(cells.saturating_sub(render::cell_width(&value_clipped)));
             if matches!(col.name, "file-size" | "line-number") {
                 row.push_str(&padding);
                 row.push_str(&value_clipped);
