@@ -2959,6 +2959,53 @@ mod tests {
         app.revision = app.repo().unwrap().revision("HEAD").unwrap();
         fs::write(root.join(&app.revision), "revision-shaped filename").unwrap();
         assert!(app.load("diff").is_ok());
+        fs::write(
+            root.join("Build.scala"),
+            "different file at repository root",
+        )
+        .unwrap();
+        app.repo().unwrap().command(["add", "Build.scala"]).unwrap();
+        app.repo()
+            .unwrap()
+            .command([
+                "-c",
+                "user.name=Test",
+                "-c",
+                "user.email=test@example.invalid",
+                "commit",
+                "-qm",
+                "unrelated root file",
+            ])
+            .unwrap();
+        app.repo = Some(Repository::discover(root.join("project")).unwrap());
+        app.args = vec!["--follow".into(), "Build.scala".into()];
+        assert_eq!(app.load("main").unwrap().rows, implicit_path.rows);
+        app.args = vec!["--follow".into(), "--".into(), "project/Build.scala".into()];
+        assert_eq!(app.load("main").unwrap().rows, implicit_path.rows);
+        let expected = app
+            .repo()
+            .unwrap()
+            .history(
+                &["HEAD".into(), "--".into(), "project/Build.scala".into()],
+                0,
+            )
+            .unwrap();
+        assert_eq!(
+            app.repo()
+                .unwrap()
+                .history(&["HEAD".into(), "Build.scala".into()], 0)
+                .unwrap(),
+            expected
+        );
+        app.repo()
+            .unwrap()
+            .command(["branch", "Build.scala"])
+            .unwrap();
+        assert!(app
+            .repo()
+            .unwrap()
+            .history(&["Build.scala".into()], 0)
+            .is_err());
         fs::remove_dir_all(root).unwrap();
     }
 

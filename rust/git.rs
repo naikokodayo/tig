@@ -22,6 +22,7 @@ pub struct Repository {
     pub root: PathBuf,
     pub git_dir: PathBuf,
     pub bare: bool,
+    pub(crate) invocation: PathBuf,
 }
 fn text(bytes: &[u8]) -> String {
     String::from_utf8_lossy(bytes).into_owned()
@@ -166,6 +167,7 @@ impl Repository {
             root,
             git_dir,
             bare,
+            invocation: start.canonicalize().map_err(|e| GitError(e.to_string()))?,
         })
     }
     pub fn command<I, S>(&self, args: I) -> Result<Vec<u8>>
@@ -184,6 +186,7 @@ impl Repository {
             &spec,
         ])?)))
     }
+    /// Paths after -- are root-relative; implicit paths use the discovery directory.
     pub fn history(&self, revisions: &[String], limit: usize) -> Result<Vec<Commit>> {
         let options = HistoryOptions::parse(revisions)?;
         let mut args = vec![
@@ -205,7 +208,12 @@ impl Repository {
         }
         // Preserve Git's revision/path disambiguation when no -- was supplied.
         args.extend(revisions.iter().cloned());
-        let mut result = parse_history(&self.command(args)?)?;
+        let directory = if revisions.iter().any(|arg| arg == "--") {
+            &self.root
+        } else {
+            &self.invocation
+        };
+        let mut result = parse_history(&run(directory, args)?)?;
         if options.first_parent {
             for commit in &mut result {
                 commit.parents.truncate(1);
