@@ -3479,6 +3479,25 @@ fn run() -> Result<()> {
     for dir in &cli.directories {
         env::set_current_dir(dir)?;
     }
+    // Git shell aliases run at the worktree root; restore the caller's cwd
+    // before config, repository discovery and revision/path disambiguation.
+    if let Some(prefix) = env::var_os("GIT_PREFIX").filter(|value| !value.is_empty()) {
+        let prefix = PathBuf::from(prefix);
+        if !prefix
+            .components()
+            .all(|part| matches!(part, Component::Normal(_)))
+        {
+            return Err("GIT_PREFIX must be a relative path without '..'".into());
+        }
+        let root = env::current_dir()?;
+        let directory = root.join(prefix).canonicalize()?;
+        if !directory.starts_with(&root) {
+            return Err("GIT_PREFIX escapes the worktree".into());
+        }
+        env::set_current_dir(directory)?;
+        env::set_var("GIT_WORK_TREE", root);
+        env::set_var("GIT_PREFIX", "");
+    }
     let mut config = Config::load();
     if matches!(cli.view.as_str(), "main" | "diff") {
         config.take_diff_options(&mut cli.git_args);
