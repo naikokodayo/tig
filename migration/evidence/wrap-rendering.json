@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "e6cf7246425b2277ed7ac185730aa815a483ff91",
+  "source_commit": "0d4d8328e451a9deab8f77d44367fe882ef182a3",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -340,7 +340,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig)\n    Finished `release` profile [optimized] target(s) in 48.49s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.25s\n",
       "results": [
         {
           "script": "test/blob/wrap-lines-test",
@@ -638,7 +638,7 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target/release/tig",
-          "sha256": "0e8c586d4f361cce7ac3ba89a3d92bdc080502026cb68b98973c28a0ee5a1048"
+          "sha256": "c26fafb3291d1bb890535b81a6e30702d7aa434bf28fb093c86c6b27f32ff544"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target/release/test-graph",
@@ -1131,6 +1131,36 @@
       }
     ]
   },
+  "known_failure": {
+    "script": "test/diff/diff-stat-test",
+    "reason": "Existing unsupported save-view command; separate from wrapping. Retained as failure, not excluded from the paired verdict.",
+    "baseline_source_commit": "ac78df21291964083a6cb13a08da5d127fdcc60e",
+    "baseline_result": {
+      "script": "test/diff/diff-stat-test",
+      "script_sha256": "2e3504a253b87cb00c42babbf7014ca384fbe2951bba56232a10ef5a688e151d",
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "fail",
+      "reasons": [
+        "failed_checks"
+      ],
+      "checks": {
+        "FAIL": 2
+      },
+      "assertions": [
+        {
+          "id": "view.data#1",
+          "status": "FAIL"
+        }
+      ],
+      "receipt_path": "test/tmp/diff/diff-stat-test/.test-result",
+      "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] view.data not found\n",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": "| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Not implemented in Rust yet: save-view HOME/view.data\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] view.data not found\r\n"
+    },
+    "stderr": "tig: Not implemented in Rust yet: save-view HOME/view.data\n"
+  },
   "source_sha256": {
     "Cargo.lock": "4dff74ef4ccdb94d739984c33d6b06c217c12144f4095dde5e16bf10902ebbb5",
     "Cargo.toml": "9c0a27f7f353f722308d07664ba1645e9dc6dfe35a94201839f7b4cd93752c69",
@@ -1194,7 +1224,7 @@
     "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
     "rust/help_view.rs": "029b06cf5c7c88523fe4fb4f3374f737f7fbffd7807169dcd8b8f207cf87b158",
     "rust/lib.rs": "81e3bdf035141234a178271b092b084f6e105bf159f1e2af4b21e8483d20a088",
-    "rust/main.rs": "c591731e699ce880f364511a186a37c50a8b9bcd86849b29f96379bbdd1cd339",
+    "rust/main.rs": "bcb7d6c9ca5938b44f1cc6fa05beadefe982667674919d1e7cbb532ddf9afc9a",
     "rust/model.rs": "f1131c9182b02c51a5e9307a194669cec4f835fbd0d5d26b24e1e977336e8dda",
     "rust/patch.rs": "11b9b2d0dd871b36462ad9ac371203cc9a53ee0539797dcbe698429291d2685c",
     "rust/refs_view.rs": "35e6d25a83bb9651b5b268b00c75a4c81468746a3158556e2d44bf1e12b11267",
@@ -1209,9 +1239,10 @@
     "rust/tests/graph-differential.py": "666efeca9ee6cd79cb8bd70cf5639f00438a6b6dff7135ad03f98e53de8d7c8e",
     "rust/tests/graph-v1-differential.py": "9e144d33dd228875d5a90b8068871102139ce3989324d98e6ffc5ce7d8830ace",
     "rust/tests/main-command-refresh.py": "8516d8d98e1a0b483cd66d8b648cce1c51003617a37d7fcda9ac8fa3c43ce7aa",
-    "rust/tests/status-filter.py": "99dfb28d0d4719c7abd940a6a22d08bc73a03a27eac30cb1924f42e165963789",
+    "rust/tests/status-filter.py": "f59fae82a50882417f79c2d82f37275c23d1fabd1ca78a16dcd3d7d12ddf75c6",
     "rust/tests/terminal-smoke.py": "a09c21e70201587e58c116f2d9a9f7849c6472da6ebe3c0750dd56eb562173a4",
     "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "rust/tests/wrap-rendering.py": "551b8200fea5d62e92a676b1b28c428ef57854449c83fb5bd5459497daaaec5e",
     "rust/trace.rs": "4fb87248de03495a20b7d4f3863c971c30000a07c1f688d55b2625b22bcf8c23",
     "rust/tree_view.rs": "c2292d0afab8e20f08579f536bedd00cb9926f099021f9c6d2c56bd56db9ac4a",
     "src/apps.c": "43c3081ffad52b97e5673bad7c1188b18c1a8b871eabcf1a7cf7e6206354a6ff",
@@ -1254,8 +1285,8 @@
     "src/view.c": "61d005305e6074d89db95852f426da513e5f75052752b5546f8466964133471c",
     "src/watch.c": "122588c5516075588c86fda5014c0cacef7d88026dea150df1b1b0bce1e224a7"
   },
-  "source_manifest_sha256": "a47a49c218b7a037589fa9daaadb5f864025c6a7392b05431895cf5470f0b9c7",
-  "source_tree": "5a2c373d7fa11383ef44fdc286d0aa1a31cb4bab",
+  "source_manifest_sha256": "de2d6455735c16ad62a1b9941cdbe07f13ad8393bbf44cbd7bf2df083b1d4f33",
+  "source_tree": "4d9475f37366759eb1ccadc7fd432a66f47f83b7",
   "verification": {
     "cargo fmt --check": {
       "exit_code": 0,
@@ -1263,47 +1294,200 @@
     },
     "cargo test --all-targets": {
       "exit_code": 0,
-      "log": "   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.08s\n     Running unittests rust/lib.rs (target/debug/deps/tig_rs-5e4c9ca2cfbe52d4)\n\nrunning 59 tests\ntest commands::tests::expansion_preserves_arguments_and_requires_known_variables ... ok\ntest config::tests::cli_preserves_git_arguments_and_separator ... ok\ntest config::tests::config_diagnostics_recover_without_changing_prompt_errors ... ok\ntest config::tests::command_quotes_comments_continuations_and_sequences ... ok\ntest config::tests::diff_cli_switches_update_shared_config_without_eating_paths_or_filter_values ... ok\ntest config::tests::prefixed_legacy_colors_keep_the_callers_view ... ok\ntest config::tests::source_cycles_missing_and_recovery ... ok\ntest config::tests::source_summaries_belong_only_to_files_with_direct_errors ... ok\ntest config::tests::append_colors_and_numeric_boundaries ... ok\ntest config::tests::original_main_default_toggle_sequence ... ok\ntest config::tests::original_view_column_fixture_and_atomic_errors ... ok\ntest date::tests::tig_dates_and_relative_boundaries ... ok\ntest git::tests::blame_porcelain_keeps_dates_and_historical_path ... ok\ntest config::tests::original_compatibility_diagnostics_apply_supported_replacements ... ok\ntest git::tests::filtered_refs_feed_history_and_replacement_decorations ... ok\ntest config::tests::config_enum_error_order_and_date_column_boundary ... ok\ntest git::tests::history_option_values_and_paths_do_not_become_graph_flags ... ok\ntest config::tests::upstream_defaults_and_overrides ... ok\ntest git::tests::nul_parsers_preserve_paths_and_reject_truncation ... ok\ntest git::tests::raw_date_fixture_and_invalid_headers ... ok\ntest config::tests::typed_toggles_validate_and_preserve_state ... ok\ntest commands::tests::launched_nonzero_exit_is_distinct_from_spawn_failure ... ok\ntest config::tests::show_revision_respects_end_of_options_and_path_separator ... ok\ntest graph::golden_tests::upstream_graph_fixtures ... ok\ntest graph::tests::linear_merge_and_boundary ... ok\ntest graph::tests::raw_parents_and_colors ... ok\ntest graph_v1::tests::boundary_root_and_octopus ... ok\ntest graph_v1::tests::merge_and_shared_ancestor ... ok\ntest graph_v1::tests::merge_in_right_column_retains_v1_metadata ... ok\ntest help_view::tests::default_and_collapsed_help_follow_active_bindings ... ok\ntest help_view::tests::user_commands_and_key_names_are_searchable ... ok\ntest git::tests::applying_mailbox_without_head_name_uses_current_branch ... ok\ntest patch::tests::malformed_and_unsupported_patches_fail ... ok\ntest git::tests::path_filtered_history_connects_visible_commits ... ok\ntest git::tests::branch_status_tracks_upstream_and_detached_tags ... ok\ntest git::tests::worktree_diff_preserves_conflict_and_configured_prefixes_without_changing_index ... ok\ntest git::tests::filtered_status_preserves_paths_renames_and_conflicts ... ok\ntest patch::tests::configured_diff_prefix_cannot_stage_a_different_path ... ok\ntest refs_view::tests::tig_reference_numeric_order ... ok\ntest render::tests::auto_graphics_respects_locale_precedence ... ok\ntest render::tests::blame_uses_configured_dates_columns_and_rename_paths ... ok\ntest git::tests::show_applies_context_and_word_diff_without_changing_history ... ok\ntest render::tests::dates_email_and_overrides ... ok\ntest render::tests::reference_formats_and_graph_switches ... ok\ntest render::tests::unicode_padding_clipping_and_controls ... ok\ntest render::tests::upstream_width_fixture ... ok\ntest render::tests::zero_wall_time_is_blank_without_rejecting_unix_zero ... ok\ntest config::tests::saved_options_round_trip_and_never_overwrite ... ok\ntest patch::tests::unprefixed_patch_cannot_stage_same_named_root_file ... ok\ntest trace::tests::trace_records_actual_commands_appends_and_never_changes_exit_status ... ok\ntest tree_view::tests::modes_units_and_history_paths ... ok\ntest patch::tests::replacement_selection_and_no_newline_markers ... ok\ntest render::tests::configured_truncation_delimiters_and_fallbacks ... ok\ntest patch::tests::single_line_hunk_reverse_and_failure_are_index_only ... ok\ntest git::tests::real_repository_roundtrip_and_literal_staging ... ok\ntest refs_view::tests::refs_metadata_filter_and_columns ... ok\ntest patch::tests::partial_blocks_and_split_hunks_keep_context_markers_and_index_safety ... ok\ntest tree_view::tests::upstream_tree_screen_rows ... ok\ntest commands::tests::selected_branch_never_uses_an_unrelated_checked_out_branch ... ok\n\ntest result: ok. 59 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.31s\n\n     Running unittests rust/bin/test-graph.rs (target/debug/deps/test_graph-b5e0d8f8108b1d6b)\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n     Running unittests rust/main.rs (target/debug/deps/tig-33ccf7946334abad)\n\nrunning 25 tests\ntest tests::changes_follow_index_order_and_do_not_stage_unmerged_entries ... ok\ntest tests::diff_stat_jump_ignores_commit_message_bars ... ok\ntest editor_tests::maps_stat_and_patch_rows_to_file_and_new_line ... ok\ntest editor_tests::deleted_diff_line_uses_old_path_and_old_hunk_count ... ok\ntest tests::diff_reload_tracks_source_line_within_the_same_file ... ok\ntest editor_tests::patch_header_delimiters_preserve_spaces_and_quoted_tabs ... ok\ntest editor_tests::preserves_literal_prefixes_and_ignores_commit_body ... ok\ntest tests::diff_line_column_and_title_leave_patch_rows_intact ... ok\ntest tests::grep_options_never_turn_pattern_or_option_values_into_revisions ... ok\ntest tests::grep_nul_fields_preserve_colons_newlines_and_revision_paths ... ok\ntest editor_tests::aggregate_stage_stats_jump_to_matching_patch_and_file ... ok\ntest tests::log_message_cannot_replace_selected_commit ... ok\ntest tests::terminal_content_is_safe_and_cell_clipped ... ok\ntest tests::explicit_diff_detaches_parent_and_vertical_split_reserves_separator ... ok\ntest tests::titles_split_focus_close_and_refresh_keep_context ... ok\ntest editor_tests::blame_history_path_is_not_a_worktree_edit_target ... ok\ntest tests::wrapped_pager_rows_preserve_source_and_navigation ... ok\ntest tests::grep_filename_uses_cells_and_the_configured_delimiter ... ok\ntest tests::unclosed_binding_argument_cannot_become_a_valid_toggle ... ok\ntest tests::nested_grep_tree_cannot_open_root_relative_tree_view ... ok\ntest tests::failed_grep_query_keeps_previous_arguments ... ok\ntest tests::grep_tree_expression_reads_blob_from_its_own_tree ... ok\ntest tests::first_tree_open_uses_invocation_directory_once ... ok\ntest tests::staging_last_untracked_file_refreshes_synthetic_main_parent ... ok\ntest tests::main_graph_uses_history_traversal_options ... ok\n\ntest result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.64s\n\n"
+      "log": "   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.12s\n     Running unittests rust/lib.rs (target/debug/deps/tig_rs-5e4c9ca2cfbe52d4)\n\nrunning 59 tests\ntest config::tests::cli_preserves_git_arguments_and_separator ... ok\ntest commands::tests::expansion_preserves_arguments_and_requires_known_variables ... ok\ntest config::tests::command_quotes_comments_continuations_and_sequences ... ok\ntest config::tests::config_diagnostics_recover_without_changing_prompt_errors ... ok\ntest config::tests::append_colors_and_numeric_boundaries ... ok\ntest config::tests::original_compatibility_diagnostics_apply_supported_replacements ... ok\ntest config::tests::source_cycles_missing_and_recovery ... ok\ntest config::tests::prefixed_legacy_colors_keep_the_callers_view ... ok\ntest config::tests::source_summaries_belong_only_to_files_with_direct_errors ... ok\ntest config::tests::original_main_default_toggle_sequence ... ok\ntest date::tests::tig_dates_and_relative_boundaries ... ok\ntest config::tests::diff_cli_switches_update_shared_config_without_eating_paths_or_filter_values ... ok\ntest git::tests::blame_porcelain_keeps_dates_and_historical_path ... ok\ntest config::tests::original_view_column_fixture_and_atomic_errors ... ok\ntest git::tests::filtered_refs_feed_history_and_replacement_decorations ... ok\ntest config::tests::upstream_defaults_and_overrides ... ok\ntest git::tests::history_option_values_and_paths_do_not_become_graph_flags ... ok\ntest git::tests::nul_parsers_preserve_paths_and_reject_truncation ... ok\ntest config::tests::typed_toggles_validate_and_preserve_state ... ok\ntest git::tests::raw_date_fixture_and_invalid_headers ... ok\ntest config::tests::config_enum_error_order_and_date_column_boundary ... ok\ntest commands::tests::launched_nonzero_exit_is_distinct_from_spawn_failure ... ok\ntest config::tests::show_revision_respects_end_of_options_and_path_separator ... ok\ntest graph::golden_tests::upstream_graph_fixtures ... ok\ntest graph::tests::linear_merge_and_boundary ... ok\ntest graph::tests::raw_parents_and_colors ... ok\ntest graph_v1::tests::boundary_root_and_octopus ... ok\ntest graph_v1::tests::merge_and_shared_ancestor ... ok\ntest graph_v1::tests::merge_in_right_column_retains_v1_metadata ... ok\ntest help_view::tests::default_and_collapsed_help_follow_active_bindings ... ok\ntest help_view::tests::user_commands_and_key_names_are_searchable ... ok\ntest git::tests::applying_mailbox_without_head_name_uses_current_branch ... ok\ntest patch::tests::malformed_and_unsupported_patches_fail ... ok\ntest git::tests::path_filtered_history_connects_visible_commits ... ok\ntest git::tests::branch_status_tracks_upstream_and_detached_tags ... ok\ntest config::tests::saved_options_round_trip_and_never_overwrite ... ok\ntest git::tests::filtered_status_preserves_paths_renames_and_conflicts ... ok\ntest git::tests::worktree_diff_preserves_conflict_and_configured_prefixes_without_changing_index ... ok\ntest refs_view::tests::tig_reference_numeric_order ... ok\ntest patch::tests::configured_diff_prefix_cannot_stage_a_different_path ... ok\ntest render::tests::blame_uses_configured_dates_columns_and_rename_paths ... ok\ntest render::tests::auto_graphics_respects_locale_precedence ... ok\ntest render::tests::dates_email_and_overrides ... ok\ntest render::tests::reference_formats_and_graph_switches ... ok\ntest render::tests::unicode_padding_clipping_and_controls ... ok\ntest render::tests::upstream_width_fixture ... ok\ntest render::tests::zero_wall_time_is_blank_without_rejecting_unix_zero ... ok\ntest trace::tests::trace_records_actual_commands_appends_and_never_changes_exit_status ... ok\ntest git::tests::show_applies_context_and_word_diff_without_changing_history ... ok\ntest tree_view::tests::modes_units_and_history_paths ... ok\ntest render::tests::configured_truncation_delimiters_and_fallbacks ... ok\ntest patch::tests::unprefixed_patch_cannot_stage_same_named_root_file ... ok\ntest patch::tests::replacement_selection_and_no_newline_markers ... ok\ntest patch::tests::single_line_hunk_reverse_and_failure_are_index_only ... ok\ntest git::tests::real_repository_roundtrip_and_literal_staging ... ok\ntest refs_view::tests::refs_metadata_filter_and_columns ... ok\ntest patch::tests::partial_blocks_and_split_hunks_keep_context_markers_and_index_safety ... ok\ntest tree_view::tests::upstream_tree_screen_rows ... ok\ntest commands::tests::selected_branch_never_uses_an_unrelated_checked_out_branch ... ok\n\ntest result: ok. 59 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.13s\n\n     Running unittests rust/bin/test-graph.rs (target/debug/deps/test_graph-b5e0d8f8108b1d6b)\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n     Running unittests rust/main.rs (target/debug/deps/tig-33ccf7946334abad)\n\nrunning 25 tests\ntest tests::changes_follow_index_order_and_do_not_stage_unmerged_entries ... ok\ntest tests::diff_stat_jump_ignores_commit_message_bars ... ok\ntest editor_tests::maps_stat_and_patch_rows_to_file_and_new_line ... ok\ntest editor_tests::preserves_literal_prefixes_and_ignores_commit_body ... ok\ntest editor_tests::deleted_diff_line_uses_old_path_and_old_hunk_count ... ok\ntest editor_tests::patch_header_delimiters_preserve_spaces_and_quoted_tabs ... ok\ntest tests::diff_reload_tracks_source_line_within_the_same_file ... ok\ntest editor_tests::aggregate_stage_stats_jump_to_matching_patch_and_file ... ok\ntest tests::diff_line_column_and_title_leave_patch_rows_intact ... ok\ntest tests::grep_nul_fields_preserve_colons_newlines_and_revision_paths ... ok\ntest tests::grep_options_never_turn_pattern_or_option_values_into_revisions ... ok\ntest tests::log_message_cannot_replace_selected_commit ... ok\ntest tests::terminal_content_is_safe_and_cell_clipped ... ok\ntest tests::failed_grep_query_keeps_previous_arguments ... ok\ntest tests::titles_split_focus_close_and_refresh_keep_context ... ok\ntest tests::wrapped_pager_rows_preserve_source_and_navigation ... ok\ntest tests::explicit_diff_detaches_parent_and_vertical_split_reserves_separator ... ok\ntest tests::nested_grep_tree_cannot_open_root_relative_tree_view ... ok\ntest editor_tests::blame_history_path_is_not_a_worktree_edit_target ... ok\ntest tests::grep_filename_uses_cells_and_the_configured_delimiter ... ok\ntest tests::unclosed_binding_argument_cannot_become_a_valid_toggle ... ok\ntest tests::grep_tree_expression_reads_blob_from_its_own_tree ... ok\ntest tests::first_tree_open_uses_invocation_directory_once ... ok\ntest tests::staging_last_untracked_file_refreshes_synthetic_main_parent ... ok\ntest tests::main_graph_uses_history_traversal_options ... ok\n\ntest result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.71s\n\n"
     },
     "cargo clippy --all-targets -- -D warnings": {
       "exit_code": 0,
-      "log": "    Checking libc v0.2.189\n    Checking log v0.4.34\n    Checking cfg-if v1.0.5\n    Checking memchr v2.8.3\n    Checking scopeguard v1.2.0\n    Checking smallvec v1.16.2\n    Checking regex-syntax v0.8.11\n    Checking bitflags v2.13.2\n    Checking num-traits v0.2.19\n    Checking unicode-width v0.2.0\n    Checking lock_api v0.4.14\n    Checking aho-corasick v1.1.5\n    Checking chrono v0.4.45\n    Checking errno v0.3.14\n    Checking parking_lot_core v0.9.12\n    Checking mio v1.2.3\n    Checking signal-hook-registry v1.4.8\n    Checking rustix v0.38.44\n    Checking parking_lot v0.12.5\n    Checking signal-hook v0.3.18\n    Checking signal-hook-mio v0.2.5\n    Checking crossterm v0.28.1\n    Checking regex-automata v0.4.18\n    Checking regex v1.13.1\n    Checking tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 11.71s\n"
+      "log": "    Checking tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.76s\n"
     }
   },
-  "known_failure": {
-    "script": "test/diff/diff-stat-test",
-    "reason": "Existing unsupported save-view command; separate from wrapping. Retained as failure, not excluded from the paired verdict.",
-    "baseline_source_commit": "ac78df21291964083a6cb13a08da5d127fdcc60e",
-    "baseline_result": {
-      "script": "test/diff/diff-stat-test",
-      "script_sha256": "2e3504a253b87cb00c42babbf7014ca384fbe2951bba56232a10ef5a688e151d",
-      "exit_code": 0,
-      "timed_out": false,
-      "status": "fail",
-      "reasons": [
-        "failed_checks"
-      ],
-      "checks": {
-        "FAIL": 2
+  "review_regressions": {
+    "command": "python3 rust/tests/wrap-rendering.py",
+    "probe_sha256": "551b8200fea5d62e92a676b1b28c428ef57854449c83fb5bd5459497daaaec5e",
+    "before": {
+      "source_commit": "e5a15444d72de65d68cb47428754e549e1ad3e26",
+      "binary_sha256": {
+        "src/tig": "e40f261ef1a50ebc5bc8c912fa827fb05a863d334739c38ee0691ec20ac1ed77",
+        "target/release/tig": "b50ef6273fb76a4774a1b2d984f4bc9beddda0790b2fab4625b4afbdd59efe23"
       },
-      "assertions": [
+      "checks": [
         {
-          "id": "view.data#1",
-          "status": "FAIL"
+          "mode": "c",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "first\nNEWxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nlast\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] f - line 2 of 3                                                      100%\n",
+          "transcript": "\u001b[?1049h\u001b[22;0;0t\u001b[1;30r\u001b(B\u001b[m\u001b[4l\u001b[?7h\u001b[?25l\u001b[?1h\u001b=\u001b[H\u001b[2J\u001b(B\u001b[0;1m2026-09-27 05:49 +0800 Wrap Test * [master] NEW\u001b(B\u001b[0m\u001b[K\r\u001b[2d2026-09-27 05:49 +0800 Wrap Test I OLD\u001b[K\r\u001b[29d\u001b(B\u001b[0;1m[main] 4654d9e6124f9f6a6521d8b0c72213348485e975 - commit 1 of 2 \u001b[12b100%\u001b[29;80H\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[Hfirst\u001b[K\r\u001b[2dNEWx\u001b[75bx\u001b[3;1H\u001b(B\u001b[0;1m+x\u001b[77bx\u001b[4;1H\u001b(B\u001b[0m+x\u001b[33b\u001b[K\r\u001b[5dlast\u001b[K\u001b[29;2H\u001b(B\u001b[0;1mblob] f - line 2 of 3\u001b[41X\u001b[80G\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[30;1H\u001b[?1049l\u001b[23;0;0t\r\u001b[?1l\u001b>",
+          "name": "blob continuation title",
+          "passed": true
+        },
+        {
+          "mode": "c",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "commit 4654d9e6124f9f6a6521d8b0c72213348485e975\nRefs: [master]\nAuthor:     Wrap Test <wrap@example.invalid>\nAuthorDate: Sun Sep 27 05:49:02 2026 +0800\nCommit:     Wrap Test <wrap@example.invalid>\nCommitDate: Sun Sep 27 05:49:02 2026 +0800\n \n    NEW\n---\n f | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n \ndiff --git a/f b/f\nindex 5b8b756..aae7bfd 100644\n--- a/f\n+++ b/f\n@@ -1,3 +1,3 @@\n first\n-OLDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+NEWxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n last\n \n \n \n[diff] Changes to 'f' - line 20 of 21                                       100%\n",
+          "transcript": "\u001b[?1049h\u001b[22;0;0t\u001b[1;30r\u001b(B\u001b[m\u001b[4l\u001b[?7h\u001b[?25l\u001b[?1h\u001b=\u001b[H\u001b[2J\u001b(B\u001b[0;1mcommit 4654d9e6124f9f6a6521d8b0c72213348485e975\u001b(B\u001b[0m\u001b[K\r\u001b[2dRefs: [master]\u001b[K\r\u001b[3dAuthor:     Wrap Test <wrap@example.invalid>\u001b[K\r\u001b[4dAuthorDate: Sun Sep 27 05:49:02 2026 +0800\u001b[K\r\u001b[5dCommit:     Wrap Test <wrap@example.invalid>\u001b[K\r\u001b[6dCommitDate: Sun Sep 27 05:49:02 2026 +0800\u001b[K\r\u001b[7d\u001b[K\u001b[8d    NEW\u001b[K\r\u001b[9d---\u001b[K\r\u001b[10d f | 2 +-\u001b[K\r\u001b[11d 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[K\r\u001b[12d\u001b[K\u001b[13ddiff --git a/f b/f\u001b[K\r\u001b[14dindex 5b8b756..aae7bfd 100644\u001b[K\r\u001b[15d--- a/f\u001b[K\r\u001b[16d+++ b/f\u001b[K\r\u001b[17d@@ -1,3 +1,3 @@\u001b[K\r\u001b[18d first\u001b[K\r\u001b[19d-OLDx\u001b[74bx\u001b[20;1H+x\u001b[77bx\u001b[21;1H+x\u001b[34b\u001b[K\r\u001b[22d+NEWx\u001b[74bx\u001b[23;1H+x\u001b[77bx\u001b[24;1H+x\u001b[34b\u001b[K\r\u001b[25d last\u001b[K\r\u001b[29d\u001b(B\u001b[0;1m[diff] 4654d9e6124f9f6a6521d8b0c72213348485e975 - line 1 of 21\u001b[14X\u001b[77G100%\u001b[29;80H\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[Hcommit 4654d9e6124f9f6a6521d8b0c72213348485e975\r\u001b[23d\u001b(B\u001b[0;1m+x\u001b[77bx\u001b[29;8HChanges to 'f' - line 20 of 21\u001b[25X\u001b[80G\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[30;1H\u001b[?1049l\u001b[23;0;0t\r\u001b[?1l\u001b>",
+          "name": "diff continuation title",
+          "title": "[diff] Changes to 'f' - line 20 of 21                                       100%",
+          "passed": true
+        },
+        {
+          "mode": "rust",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "first\nNEWxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nlast\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[blob] f - line 3 of 5                                                      100%\n",
+          "transcript": "",
+          "name": "blob continuation title",
+          "passed": false
+        },
+        {
+          "mode": "rust",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "commit 4654d9e6124f9f6a6521d8b0c72213348485e975\nRefs: [master]\nAuthor:     Wrap Test <wrap@example.invalid>\nAuthorDate: Sun Sep 27 05:49:02 2026 +0800\nCommit:     Wrap Test <wrap@example.invalid>\nCommitDate: Sun Sep 27 05:49:02 2026 +0800\n\n    NEW\n---\n f | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n\ndiff --git a/f b/f\nindex 5b8b756..aae7bfd 100644\n--- a/f\n+++ b/f\n@@ -1,3 +1,3 @@\n first\n-OLDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+NEWxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n last\n\n\n\n[diff] Changes to 'f' - line 23 of 25                                       100%\n",
+          "transcript": "",
+          "name": "diff continuation title",
+          "title": "[diff] Changes to 'f' - line 23 of 25                                       100%",
+          "passed": false
+        },
+        {
+          "mode": "c",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "  1| first\n  2| OLDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n  3| last\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blame] afde147c8f967bde75b25fe2e77aba7a9619da80:f - line 2 of 3                                                                                            100%\n",
+          "transcript": "\u001b[?1049h\u001b[22;0;0t\u001b[1;30r\u001b(B\u001b[m\u001b[4l\u001b[?7h\u001b[?25l\u001b[?1h\u001b=\u001b[H\u001b[2J\u001b(B\u001b[0;1mcommit 4654d9e6124f9f6a6521d8b0c72213348485e975\u001b(B\u001b[0m\u001b[K\r\u001b[2dRefs: [master]\u001b[K\r\u001b[3dAuthor:     Wrap Test <wrap@example.invalid>\u001b[K\r\u001b[4dAuthorDate: Sun Sep 27 05:49:02 2026 +0800\u001b[K\r\u001b[5dCommit:     Wrap Test <wrap@example.invalid>\u001b[K\r\u001b[6dCommitDate: Sun Sep 27 05:49:02 2026 +0800\u001b[K\r\u001b[7d\u001b[K\u001b[8d    NEW\u001b[K\r\u001b[9d---\u001b[K\r\u001b[10d f | 2 +-\u001b[K\r\u001b[11d 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[K\r\u001b[12d\u001b[K\u001b[13ddiff --git a/f b/f\u001b[K\r\u001b[14dindex 5b8b756..aae7bfd 100644\u001b[K\r\u001b[15d--- a/f\u001b[K\r\u001b[16d+++ b/f\u001b[K\r\u001b[17d@@ -1,3 +1,3 @@\u001b[K\r\u001b[18d first\u001b[K\r\u001b[19d-OLDx\u001b[154bx\u001b[20;1H+NEWx\u001b[154bx\u001b[21;1H last\u001b[K\r\u001b[29d\u001b(B\u001b[0;1m[diff] 4654d9e6124f9f6a6521d8b0c72213348485e975 - line 1 of 21\u001b[94X\u001b[157G100%\u001b[29;160H\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[H  1| first\u001b[K\r\u001b[2d\u001b(B\u001b[0;1m  2| OLDx\u001b[150bx\u001b[3;1H\u001b(B\u001b[0m  3| last\u001b[K\r\u001b[4d\u001b(B\u001b[m\u001b[K\u001b[5d\u001b[K\u001b[6d\u001b[K\u001b[7d\u001b[K\u001b[8d\u001b[K\u001b[9d\u001b[K\u001b[10d\u001b[K\u001b[11d\u001b[K\u001b[12d\u001b[K\u001b[13d\u001b[K\u001b[14d\u001b[K\u001b[15d\u001b[K\u001b[16d\u001b[K\u001b[17d\u001b[K\u001b[18d\u001b[K\u001b[19d\u001b[K\u001b[20d\u001b[K\u001b[21d\u001b[K\u001b[29;2H\u001b(B\u001b[0;1mblame] afde147c8f967bde75b25fe2e77aba7a9619da80:f - line 2 of 3\u001b[160G\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[30;1H\u001b[?1049l\u001b[23;0;0t\r\u001b[?1l\u001b>",
+          "name": "trace -OLD source line",
+          "expected_revision": "afde147c8f967bde75b25fe2e77aba7a9619da80",
+          "passed": true
+        },
+        {
+          "mode": "rust",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "  1| first\n  2| NEWxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n  3| last\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[blame] 4654d9e6124f9f6a6521d8b0c72213348485e975:f - line 2 of 3                                                                                            100%\n",
+          "transcript": "",
+          "name": "trace -OLD source line",
+          "expected_revision": "afde147c8f967bde75b25fe2e77aba7a9619da80",
+          "passed": false
+        },
+        {
+          "mode": "c",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "  1| first\n  2| NEWxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n  3| last\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blame] 4654d9e6124f9f6a6521d8b0c72213348485e975:f - line 2 of 3                                                                                            100%\n",
+          "transcript": "\u001b[?1049h\u001b[22;0;0t\u001b[1;30r\u001b(B\u001b[m\u001b[4l\u001b[?7h\u001b[?25l\u001b[?1h\u001b=\u001b[H\u001b[2J\u001b(B\u001b[0;1mcommit 4654d9e6124f9f6a6521d8b0c72213348485e975\u001b(B\u001b[0m\u001b[K\r\u001b[2dRefs: [master]\u001b[K\r\u001b[3dAuthor:     Wrap Test <wrap@example.invalid>\u001b[K\r\u001b[4dAuthorDate: Sun Sep 27 05:49:02 2026 +0800\u001b[K\r\u001b[5dCommit:     Wrap Test <wrap@example.invalid>\u001b[K\r\u001b[6dCommitDate: Sun Sep 27 05:49:02 2026 +0800\u001b[K\r\u001b[7d\u001b[K\u001b[8d    NEW\u001b[K\r\u001b[9d---\u001b[K\r\u001b[10d f | 2 +-\u001b[K\r\u001b[11d 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[K\r\u001b[12d\u001b[K\u001b[13ddiff --git a/f b/f\u001b[K\r\u001b[14dindex 5b8b756..aae7bfd 100644\u001b[K\r\u001b[15d--- a/f\u001b[K\r\u001b[16d+++ b/f\u001b[K\r\u001b[17d@@ -1,3 +1,3 @@\u001b[K\r\u001b[18d first\u001b[K\r\u001b[19d-OLDx\u001b[154bx\u001b[20;1H+NEWx\u001b[154bx\u001b[21;1H last\u001b[K\r\u001b[29d\u001b(B\u001b[0;1m[diff] 4654d9e6124f9f6a6521d8b0c72213348485e975 - line 1 of 21\u001b[94X\u001b[157G100%\u001b[29;160H\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[H  1| first\u001b[K\r\u001b[2d\u001b(B\u001b[0;1m  2| NEWx\u001b[150bx\u001b[3;1H\u001b(B\u001b[0m  3| last\u001b[K\r\u001b[4d\u001b(B\u001b[m\u001b[K\u001b[5d\u001b[K\u001b[6d\u001b[K\u001b[7d\u001b[K\u001b[8d\u001b[K\u001b[9d\u001b[K\u001b[10d\u001b[K\u001b[11d\u001b[K\u001b[12d\u001b[K\u001b[13d\u001b[K\u001b[14d\u001b[K\u001b[15d\u001b[K\u001b[16d\u001b[K\u001b[17d\u001b[K\u001b[18d\u001b[K\u001b[19d\u001b[K\u001b[20d\u001b[K\u001b[21d\u001b[K\u001b[29;2H\u001b(B\u001b[0;1mblame] 4654d9e6124f9f6a6521d8b0c72213348485e975:f - line 2 of 3\u001b[160G\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[30;1H\u001b[?1049l\u001b[23;0;0t\r\u001b[?1l\u001b>",
+          "name": "trace [+]NEW source line",
+          "expected_revision": "4654d9e6124f9f6a6521d8b0c72213348485e975",
+          "passed": true
+        },
+        {
+          "mode": "rust",
+          "exit_code": 1,
+          "timed_out": false,
+          "screen": "",
+          "transcript": "tig: No blame for selected line\r\n",
+          "name": "trace [+]NEW source line",
+          "expected_revision": "4654d9e6124f9f6a6521d8b0c72213348485e975",
+          "passed": false
         }
-      ],
-      "receipt_path": "test/tmp/diff/diff-stat-test/.test-result",
-      "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] view.data not found\n",
-      "skip": "",
-      "skipped_cases": {},
-      "transcript": "| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Not implemented in Rust yet: save-view HOME/view.data\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] view.data not found\r\n"
+      ]
     },
-    "stderr": "tig: Not implemented in Rust yet: save-view HOME/view.data\n"
+    "before_exit_code": 1,
+    "before_stderr": "Traceback (most recent call last):\n  File \"/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/rust/tests/wrap-rendering.py\", line 94, in <module>\n    main()\n  File \"/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/rust/tests/wrap-rendering.py\", line 90, in main\n    assert all(check['passed'] for check in checks), 'Wrapped terminal regression failed'\nAssertionError: Wrapped terminal regression failed\n",
+    "after": {
+      "source_commit": "0d4d8328e451a9deab8f77d44367fe882ef182a3",
+      "binary_sha256": {
+        "src/tig": "e40f261ef1a50ebc5bc8c912fa827fb05a863d334739c38ee0691ec20ac1ed77",
+        "target/release/tig": "c26fafb3291d1bb890535b81a6e30702d7aa434bf28fb093c86c6b27f32ff544"
+      },
+      "checks": [
+        {
+          "mode": "c",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "first\nNEWxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nlast\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] f - line 2 of 3                                                      100%\n",
+          "transcript": "\u001b[?1049h\u001b[22;0;0t\u001b[1;30r\u001b(B\u001b[m\u001b[4l\u001b[?7h\u001b[?25l\u001b[?1h\u001b=\u001b[H\u001b[2J\u001b(B\u001b[0;1m2026-09-27 05:50 +0800 Wrap Test * [master] NEW\u001b(B\u001b[0m\u001b[K\r\u001b[2d2026-09-27 05:50 +0800 Wrap Test I OLD\u001b[K\r\u001b[29d\u001b(B\u001b[0;1m[main] 9ecb7b1778e61d669dc2842f1526191d75e267e9 - commit 1 of 2 \u001b[12b100%\u001b[29;80H\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[Hfirst\u001b[K\r\u001b[2dNEWx\u001b[75bx\u001b[3;1H\u001b(B\u001b[0;1m+x\u001b[77bx\u001b[4;1H\u001b(B\u001b[0m+x\u001b[33b\u001b[K\r\u001b[5dlast\u001b[K\u001b[29;2H\u001b(B\u001b[0;1mblob] f - line 2 of 3\u001b[41X\u001b[80G\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[30;1H\u001b[?1049l\u001b[23;0;0t\r\u001b[?1l\u001b>",
+          "name": "blob continuation title",
+          "passed": true
+        },
+        {
+          "mode": "c",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "commit 9ecb7b1778e61d669dc2842f1526191d75e267e9\nRefs: [master]\nAuthor:     Wrap Test <wrap@example.invalid>\nAuthorDate: Sun Sep 27 05:50:17 2026 +0800\nCommit:     Wrap Test <wrap@example.invalid>\nCommitDate: Sun Sep 27 05:50:17 2026 +0800\n \n    NEW\n---\n f | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n \ndiff --git a/f b/f\nindex 5b8b756..aae7bfd 100644\n--- a/f\n+++ b/f\n@@ -1,3 +1,3 @@\n first\n-OLDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+NEWxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n last\n \n \n \n[diff] Changes to 'f' - line 20 of 21                                       100%\n",
+          "transcript": "\u001b[?1049h\u001b[22;0;0t\u001b[1;30r\u001b(B\u001b[m\u001b[4l\u001b[?7h\u001b[?25l\u001b[?1h\u001b=\u001b[H\u001b[2J\u001b(B\u001b[0;1mcommit 9ecb7b1778e61d669dc2842f1526191d75e267e9\u001b(B\u001b[0m\u001b[K\r\u001b[2dRefs: [master]\u001b[K\r\u001b[3dAuthor:     Wrap Test <wrap@example.invalid>\u001b[K\r\u001b[4dAuthorDate: Sun Sep 27 05:50:17 2026 +0800\u001b[K\r\u001b[5dCommit:     Wrap Test <wrap@example.invalid>\u001b[K\r\u001b[6dCommitDate: Sun Sep 27 05:50:17 2026 +0800\u001b[K\r\u001b[7d\u001b[K\u001b[8d    NEW\u001b[K\r\u001b[9d---\u001b[K\r\u001b[10d f | 2 +-\u001b[K\r\u001b[11d 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[K\r\u001b[12d\u001b[K\u001b[13ddiff --git a/f b/f\u001b[K\r\u001b[14dindex 5b8b756..aae7bfd 100644\u001b[K\r\u001b[15d--- a/f\u001b[K\r\u001b[16d+++ b/f\u001b[K\r\u001b[17d@@ -1,3 +1,3 @@\u001b[K\r\u001b[18d first\u001b[K\r\u001b[19d-OLDx\u001b[74bx\u001b[20;1H+x\u001b[77bx\u001b[21;1H+x\u001b[34b\u001b[K\r\u001b[22d+NEWx\u001b[74bx\u001b[23;1H+x\u001b[77bx\u001b[24;1H+x\u001b[34b\u001b[K\r\u001b[25d last\u001b[K\r\u001b[29d\u001b(B\u001b[0;1m[diff] 9ecb7b1778e61d669dc2842f1526191d75e267e9 - line 1 of 21\u001b[14X\u001b[77G100%\u001b[29;80H\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[Hcommit 9ecb7b1778e61d669dc2842f1526191d75e267e9\r\u001b[23d\u001b(B\u001b[0;1m+x\u001b[77bx\u001b[29;8HChanges to 'f' - line 20 of 21\u001b[25X\u001b[80G\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[30;1H\u001b[?1049l\u001b[23;0;0t\r\u001b[?1l\u001b>",
+          "name": "diff continuation title",
+          "title": "[diff] Changes to 'f' - line 20 of 21                                       100%",
+          "passed": true
+        },
+        {
+          "mode": "rust",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "first\nNEWxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\nlast\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[blob] f - line 2 of 3                                                      100%\n",
+          "transcript": "",
+          "name": "blob continuation title",
+          "passed": true
+        },
+        {
+          "mode": "rust",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "commit 9ecb7b1778e61d669dc2842f1526191d75e267e9\nRefs: [master]\nAuthor:     Wrap Test <wrap@example.invalid>\nAuthorDate: Sun Sep 27 05:50:17 2026 +0800\nCommit:     Wrap Test <wrap@example.invalid>\nCommitDate: Sun Sep 27 05:50:17 2026 +0800\n\n    NEW\n---\n f | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)\n\ndiff --git a/f b/f\nindex 5b8b756..aae7bfd 100644\n--- a/f\n+++ b/f\n@@ -1,3 +1,3 @@\n first\n-OLDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+NEWxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n last\n\n\n\n[diff] Changes to 'f' - line 20 of 21                                       100%\n",
+          "transcript": "",
+          "name": "diff continuation title",
+          "title": "[diff] Changes to 'f' - line 20 of 21                                       100%",
+          "passed": true
+        },
+        {
+          "mode": "c",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "  1| first\n  2| OLDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n  3| last\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blame] 83cf4c5dad8f84547ee0d72fbc44dd996a280018:f - line 2 of 3                                                                                            100%\n",
+          "transcript": "\u001b[?1049h\u001b[22;0;0t\u001b[1;30r\u001b(B\u001b[m\u001b[4l\u001b[?7h\u001b[?25l\u001b[?1h\u001b=\u001b[H\u001b[2J\u001b(B\u001b[0;1mcommit 9ecb7b1778e61d669dc2842f1526191d75e267e9\u001b(B\u001b[0m\u001b[K\r\u001b[2dRefs: [master]\u001b[K\r\u001b[3dAuthor:     Wrap Test <wrap@example.invalid>\u001b[K\r\u001b[4dAuthorDate: Sun Sep 27 05:50:17 2026 +0800\u001b[K\r\u001b[5dCommit:     Wrap Test <wrap@example.invalid>\u001b[K\r\u001b[6dCommitDate: Sun Sep 27 05:50:17 2026 +0800\u001b[K\r\u001b[7d\u001b[K\u001b[8d    NEW\u001b[K\r\u001b[9d---\u001b[K\r\u001b[10d f | 2 +-\u001b[K\r\u001b[11d 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[K\r\u001b[12d\u001b[K\u001b[13ddiff --git a/f b/f\u001b[K\r\u001b[14dindex 5b8b756..aae7bfd 100644\u001b[K\r\u001b[15d--- a/f\u001b[K\r\u001b[16d+++ b/f\u001b[K\r\u001b[17d@@ -1,3 +1,3 @@\u001b[K\r\u001b[18d first\u001b[K\r\u001b[19d-OLDx\u001b[154bx\u001b[20;1H+NEWx\u001b[154bx\u001b[21;1H last\u001b[K\r\u001b[29d\u001b(B\u001b[0;1m[diff] 9ecb7b1778e61d669dc2842f1526191d75e267e9 - line 1 of 21\u001b[94X\u001b[157G100%\u001b[29;160H\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[H  1| first\u001b[K\r\u001b[2d\u001b(B\u001b[0;1m  2| OLDx\u001b[150bx\u001b[3;1H\u001b(B\u001b[0m  3| last\u001b[K\r\u001b[4d\u001b(B\u001b[m\u001b[K\u001b[5d\u001b[K\u001b[6d\u001b[K\u001b[7d\u001b[K\u001b[8d\u001b[K\u001b[9d\u001b[K\u001b[10d\u001b[K\u001b[11d\u001b[K\u001b[12d\u001b[K\u001b[13d\u001b[K\u001b[14d\u001b[K\u001b[15d\u001b[K\u001b[16d\u001b[K\u001b[17d\u001b[K\u001b[18d\u001b[K\u001b[19d\u001b[K\u001b[20d\u001b[K\u001b[21d\u001b[K\u001b[29;2H\u001b(B\u001b[0;1mblame] 83cf4c5dad8f84547ee0d72fbc44dd996a280018:f - line 2 of 3\u001b[160G\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[30;1H\u001b[?1049l\u001b[23;0;0t\r\u001b[?1l\u001b>",
+          "name": "trace -OLD source line",
+          "expected_revision": "83cf4c5dad8f84547ee0d72fbc44dd996a280018",
+          "passed": true
+        },
+        {
+          "mode": "rust",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "  1| first\n  2| OLDxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n  3| last\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[blame] 83cf4c5dad8f84547ee0d72fbc44dd996a280018:f - line 2 of 3                                                                                            100%\n",
+          "transcript": "",
+          "name": "trace -OLD source line",
+          "expected_revision": "83cf4c5dad8f84547ee0d72fbc44dd996a280018",
+          "passed": true
+        },
+        {
+          "mode": "c",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "  1| first\n  2| NEWxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n  3| last\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blame] 9ecb7b1778e61d669dc2842f1526191d75e267e9:f - line 2 of 3                                                                                            100%\n",
+          "transcript": "\u001b[?1049h\u001b[22;0;0t\u001b[1;30r\u001b(B\u001b[m\u001b[4l\u001b[?7h\u001b[?25l\u001b[?1h\u001b=\u001b[H\u001b[2J\u001b(B\u001b[0;1mcommit 9ecb7b1778e61d669dc2842f1526191d75e267e9\u001b(B\u001b[0m\u001b[K\r\u001b[2dRefs: [master]\u001b[K\r\u001b[3dAuthor:     Wrap Test <wrap@example.invalid>\u001b[K\r\u001b[4dAuthorDate: Sun Sep 27 05:50:17 2026 +0800\u001b[K\r\u001b[5dCommit:     Wrap Test <wrap@example.invalid>\u001b[K\r\u001b[6dCommitDate: Sun Sep 27 05:50:17 2026 +0800\u001b[K\r\u001b[7d\u001b[K\u001b[8d    NEW\u001b[K\r\u001b[9d---\u001b[K\r\u001b[10d f | 2 +-\u001b[K\r\u001b[11d 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[K\r\u001b[12d\u001b[K\u001b[13ddiff --git a/f b/f\u001b[K\r\u001b[14dindex 5b8b756..aae7bfd 100644\u001b[K\r\u001b[15d--- a/f\u001b[K\r\u001b[16d+++ b/f\u001b[K\r\u001b[17d@@ -1,3 +1,3 @@\u001b[K\r\u001b[18d first\u001b[K\r\u001b[19d-OLDx\u001b[154bx\u001b[20;1H+NEWx\u001b[154bx\u001b[21;1H last\u001b[K\r\u001b[29d\u001b(B\u001b[0;1m[diff] 9ecb7b1778e61d669dc2842f1526191d75e267e9 - line 1 of 21\u001b[94X\u001b[157G100%\u001b[29;160H\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[?12l\u001b[?25h\u001b[?25l\u001b[H  1| first\u001b[K\r\u001b[2d\u001b(B\u001b[0;1m  2| NEWx\u001b[150bx\u001b[3;1H\u001b(B\u001b[0m  3| last\u001b[K\r\u001b[4d\u001b(B\u001b[m\u001b[K\u001b[5d\u001b[K\u001b[6d\u001b[K\u001b[7d\u001b[K\u001b[8d\u001b[K\u001b[9d\u001b[K\u001b[10d\u001b[K\u001b[11d\u001b[K\u001b[12d\u001b[K\u001b[13d\u001b[K\u001b[14d\u001b[K\u001b[15d\u001b[K\u001b[16d\u001b[K\u001b[17d\u001b[K\u001b[18d\u001b[K\u001b[19d\u001b[K\u001b[20d\u001b[K\u001b[21d\u001b[K\u001b[29;2H\u001b(B\u001b[0;1mblame] 9ecb7b1778e61d669dc2842f1526191d75e267e9:f - line 2 of 3\u001b[160G\u001b(B\u001b[m\u001b[?12l\u001b[?25h\u001b[30;1H\u001b[?1049l\u001b[23;0;0t\r\u001b[?1l\u001b>",
+          "name": "trace [+]NEW source line",
+          "expected_revision": "9ecb7b1778e61d669dc2842f1526191d75e267e9",
+          "passed": true
+        },
+        {
+          "mode": "rust",
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "  1| first\n  2| NEWxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n  3| last\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[blame] 9ecb7b1778e61d669dc2842f1526191d75e267e9:f - line 2 of 3                                                                                            100%\n",
+          "transcript": "",
+          "name": "trace [+]NEW source line",
+          "expected_revision": "9ecb7b1778e61d669dc2842f1526191d75e267e9",
+          "passed": true
+        }
+      ]
+    },
+    "after_exit_code": 0,
+    "after_stderr": "",
+    "reference": "Titles are paired with C wrapping enabled. Rust continuation blame is checked against C unwrapped source-line blame because C itself counts patch fragments in its trace loop."
   },
   "notes": [
+    "Rebased onto main 5f7ac639; all checks rerun on the combined source.",
     "No full 154-script suite run for this slice.",
     "C source, upstream assertions, and MIGRATION.md are unchanged by this branch.",
-    "Scope: blob and diff wrapping; log/pager/stage wrapping is not included.",
-    "Verification preceded the rebase onto documentation/evidence-only main 72133541; all source files are unchanged by that rebase."
+    "Scope: blob and diff wrapping; log/pager/stage wrapping is not included."
   ]
 }
