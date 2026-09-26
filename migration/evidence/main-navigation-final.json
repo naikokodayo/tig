@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "85dad36b3e40cf18c52b6399df9923b04afc9459",
+  "source_commit": "3ae580f8e3a9c4843f9112d130179d97e460777e",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -44,11 +44,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/diff/line-number-test/.test-result",
-          "receipt": "  [OK] added-line-number.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/diff/maximized-navigation-test",
@@ -82,11 +79,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/diff/maximized-navigation-test/.test-result",
-          "receipt": "  [OK] split.screen assertion\n  [OK] maximized.screen assertion\n  [OK] maximized-after-next.screen assertion\n  [OK] diff.screen assertion\n  [OK] diff-after-next.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/diff/open-after-split-test",
@@ -116,11 +110,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/diff/open-after-split-test/.test-result",
-          "receipt": "  [OK] split.screen assertion\n  [OK] split-after-next.screen assertion\n  [OK] diff.screen assertion\n  [OK] diff-after-next.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/boundary-test",
@@ -138,11 +129,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/boundary-test/.test-result",
-          "receipt": "  [OK] merge-view.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/default-test",
@@ -180,11 +168,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/default-test/.test-result",
-          "receipt": "  [OK] main-default.screen assertion\n  [OK] main-ref-format.screen assertion\n  [OK] main-remotes-hidden.screen assertion\n  [OK] main-no-refs.screen assertion\n  [OK] main-no-graph.screen assertion\n  [OK] main-with-diff.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/goto-test",
@@ -230,11 +215,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/goto-test/.test-result",
-          "receipt": "  [OK] commit-1.screen assertion\n  [OK] commit-1-back.screen assertion\n  [OK] commit-2.screen assertion\n  [OK] commit-2-again.screen assertion\n  [OK] commit-5.screen assertion\n  [OK] commit-5-still.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] commit-3.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/graph-argument-test",
@@ -264,11 +246,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/graph-argument-test/.test-result",
-          "receipt": "  [OK] follow.screen assertion\n  [OK] follow.stderr assertion\n  [OK] first-parent.screen assertion\n  [OK] first-parent.stderr assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/jump-ends-test",
@@ -314,11 +293,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/jump-ends-test/.test-result",
-          "receipt": "  [OK] main-goto-1.screen assertion\n  [OK] main-goto-1.stderr assertion\n  [OK] main-goto-max.screen assertion\n  [OK] main-goto-max.stderr assertion\n  [OK] main-goto-max-plus-1.screen assertion\n  [OK] main-goto-max-plus-1.stderr assertion\n  [OK] main-goto-max-plus-2.screen assertion\n  [OK] main-goto-max-plus-2.stderr assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/main-options-test",
@@ -336,11 +312,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/main-options-test/.test-result",
-          "receipt": "  [OK] with-10-lines.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/merge-test",
@@ -358,11 +331,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/merge-test/.test-result",
-          "receipt": "  [OK] main-with-conflict.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/no-merges-test",
@@ -380,11 +350,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/no-merges-test/.test-result",
-          "receipt": "  [OK] no-merges.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/refresh-test",
@@ -430,11 +397,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/refresh-test/.test-result",
-          "receipt": "  [OK] main-with-unstaged.screen assertion\n  [OK] main-after-add-a.screen assertion\n  [OK] main-after-add-all.screen assertion\n  [OK] main-after-commit.screen assertion\n  [OK] main-after-reset-soft.screen assertion\n  [OK] main-after-reset-a-and-bc.screen assertion\n  [OK] main-after-reset-hard.screen assertion\n  [OK] main-after-tag.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/search-test",
@@ -480,11 +444,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/search-test/.test-result",
-          "receipt": "  [OK] main-search-author.screen assertion\n  [OK] main-search-author-empty.screen assertion\n  [OK] main-search-author-find-next.screen assertion\n  [OK] main-search-title.screen assertion\n  [OK] main-search-title-no-match.screen assertion\n  [OK] main-search-refs.screen assertion\n  [OK] main-search-time.screen assertion\n  [OK] main-search-smart-case.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/show-changes-test",
@@ -534,11 +495,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/show-changes-test/.test-result",
-          "receipt": "  [OK] main-with-unstaged.screen assertion\n  [OK] main-with-unstaged-split.screen assertion\n  [OK] main-with-unstaged-and-staged-split.screen assertion\n  [OK] main-with-staged.screen assertion\n  [OK] main-with-staged-split.screen assertion\n  [OK] main-with-staged-and-unstaged.screen assertion\n  [OK] main-with-renamed.screen assertion\n  [OK] main-with-conflict.screen assertion\n  [OK] main-all-refs.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/start-on-line-test",
@@ -556,11 +514,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/start-on-line-test/.test-result",
-          "receipt": "  [OK] position.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/update-unstaged-changes-test",
@@ -582,11 +537,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/update-unstaged-changes-test/.test-result",
-          "receipt": "  [OK] start.screen assertion\n  [OK] result.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/view-split-test",
@@ -616,11 +568,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/view-split-test/.test-result",
-          "receipt": "  [OK] main-vsplit-default.screen assertion\n  [OK] main-vsplit-25-75.screen assertion\n  [OK] main-hsplit-default.screen assertion\n  [OK] main-hsplit-50-50.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/prompt/exec-test",
@@ -650,11 +599,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/prompt/exec-test/.test-result",
-          "receipt": "  [OK] exec-without-arg-doesnt-crash.screen assertion\n  [OK] exec-without-arg-doesnt-crash.stderr assertion\n  [OK] exec-only-flags-doesnt-crash.screen assertion\n  [OK] exec-only-flags-doesnt-crash.stderr assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/status/refresh-test",
@@ -712,11 +658,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/status/refresh-test/.test-result",
-          "receipt": "  [OK] status-with-unstaged.screen assertion\n  [OK] status-after-add-a.screen assertion\n  [OK] status-after-add-all.screen assertion\n  [OK] status-after-commit.screen assertion\n  [OK] status-after-reset-soft.screen assertion\n  [OK] status-after-reset-a-and-bc.screen assertion\n  [OK] status-after-checkout-bc.screen assertion\n  [OK] status-after-reset-hard.screen assertion\n  [OK] status-after-touch-new-file.screen assertion\n  [OK] status-after-rm-a.screen assertion\n  [OK] status-after-checkout-a.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/tree/default-test",
@@ -758,11 +701,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/tree/default-test/.test-result",
-          "receipt": "  [OK] tree-default.screen assertion\n  [OK] tree-default-author.screen assertion\n  [OK] tree-default-date.screen assertion\n  [OK] tree-default-file-size.screen assertion\n  [OK] tree-default-mode.screen assertion\n  [OK] tree-common.screen assertion\n  [OK] tree-d8-stubs.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         }
       ],
       "binaries": {
@@ -786,7 +726,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.07s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.09s\n",
       "results": [
         {
           "script": "test/diff/line-number-test",
@@ -804,11 +744,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/diff/line-number-test/.test-result",
-          "receipt": "  [OK] added-line-number.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/diff/maximized-navigation-test",
@@ -842,11 +779,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/diff/maximized-navigation-test/.test-result",
-          "receipt": "  [OK] split.screen assertion\n  [OK] maximized.screen assertion\n  [OK] maximized-after-next.screen assertion\n  [OK] diff.screen assertion\n  [OK] diff-after-next.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/diff/open-after-split-test",
@@ -876,11 +810,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/diff/open-after-split-test/.test-result",
-          "receipt": "  [OK] split.screen assertion\n  [OK] split-after-next.screen assertion\n  [OK] diff.screen assertion\n  [OK] diff-after-next.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/boundary-test",
@@ -898,11 +829,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/boundary-test/.test-result",
-          "receipt": "  [OK] merge-view.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/default-test",
@@ -940,11 +868,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/default-test/.test-result",
-          "receipt": "  [OK] main-default.screen assertion\n  [OK] main-ref-format.screen assertion\n  [OK] main-remotes-hidden.screen assertion\n  [OK] main-no-refs.screen assertion\n  [OK] main-no-graph.screen assertion\n  [OK] main-with-diff.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/goto-test",
@@ -990,11 +915,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/goto-test/.test-result",
-          "receipt": "  [OK] commit-1.screen assertion\n  [OK] commit-1-back.screen assertion\n  [OK] commit-2.screen assertion\n  [OK] commit-2-again.screen assertion\n  [OK] commit-5.screen assertion\n  [OK] commit-5-still.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] commit-3.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/graph-argument-test",
@@ -1024,11 +946,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/graph-argument-test/.test-result",
-          "receipt": "  [OK] follow.screen assertion\n  [OK] follow.stderr assertion\n  [OK] first-parent.screen assertion\n  [OK] first-parent.stderr assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/jump-ends-test",
@@ -1074,11 +993,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/jump-ends-test/.test-result",
-          "receipt": "  [OK] main-goto-1.screen assertion\n  [OK] main-goto-1.stderr assertion\n  [OK] main-goto-max.screen assertion\n  [OK] main-goto-max.stderr assertion\n  [OK] main-goto-max-plus-1.screen assertion\n  [OK] main-goto-max-plus-1.stderr assertion\n  [OK] main-goto-max-plus-2.screen assertion\n  [OK] main-goto-max-plus-2.stderr assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/main-options-test",
@@ -1120,11 +1036,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/merge-test/.test-result",
-          "receipt": "  [OK] main-with-conflict.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/no-merges-test",
@@ -1142,11 +1055,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/no-merges-test/.test-result",
-          "receipt": "  [OK] no-merges.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/refresh-test",
@@ -1192,11 +1102,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/refresh-test/.test-result",
-          "receipt": "  [OK] main-with-unstaged.screen assertion\n  [OK] main-after-add-a.screen assertion\n  [OK] main-after-add-all.screen assertion\n  [OK] main-after-commit.screen assertion\n  [OK] main-after-reset-soft.screen assertion\n  [OK] main-after-reset-a-and-bc.screen assertion\n  [OK] main-after-reset-hard.screen assertion\n  [OK] main-after-tag.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/search-test",
@@ -1242,11 +1149,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/search-test/.test-result",
-          "receipt": "  [OK] main-search-author.screen assertion\n  [OK] main-search-author-empty.screen assertion\n  [OK] main-search-author-find-next.screen assertion\n  [OK] main-search-title.screen assertion\n  [OK] main-search-title-no-match.screen assertion\n  [OK] main-search-refs.screen assertion\n  [OK] main-search-time.screen assertion\n  [OK] main-search-smart-case.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/show-changes-test",
@@ -1296,11 +1200,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/show-changes-test/.test-result",
-          "receipt": "  [OK] main-with-unstaged.screen assertion\n  [OK] main-with-unstaged-split.screen assertion\n  [OK] main-with-unstaged-and-staged-split.screen assertion\n  [OK] main-with-staged.screen assertion\n  [OK] main-with-staged-split.screen assertion\n  [OK] main-with-staged-and-unstaged.screen assertion\n  [OK] main-with-renamed.screen assertion\n  [OK] main-with-conflict.screen assertion\n  [OK] main-all-refs.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/start-on-line-test",
@@ -1318,11 +1219,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/start-on-line-test/.test-result",
-          "receipt": "  [OK] position.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/update-unstaged-changes-test",
@@ -1344,11 +1242,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/main/update-unstaged-changes-test/.test-result",
-          "receipt": "  [OK] start.screen assertion\n  [OK] result.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/main/view-split-test",
@@ -1415,11 +1310,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/prompt/exec-test/.test-result",
-          "receipt": "  [OK] exec-without-arg-doesnt-crash.screen assertion\n  [OK] exec-without-arg-doesnt-crash.stderr assertion\n  [OK] exec-only-flags-doesnt-crash.screen assertion\n  [OK] exec-only-flags-doesnt-crash.stderr assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/status/refresh-test",
@@ -1477,11 +1369,8 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/status/refresh-test/.test-result",
-          "receipt": "  [OK] status-with-unstaged.screen assertion\n  [OK] status-after-add-a.screen assertion\n  [OK] status-after-add-all.screen assertion\n  [OK] status-after-commit.screen assertion\n  [OK] status-after-reset-soft.screen assertion\n  [OK] status-after-reset-a-and-bc.screen assertion\n  [OK] status-after-checkout-bc.screen assertion\n  [OK] status-after-reset-hard.screen assertion\n  [OK] status-after-touch-new-file.screen assertion\n  [OK] status-after-rm-a.screen assertion\n  [OK] status-after-checkout-a.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         },
         {
           "script": "test/tree/default-test",
@@ -1523,21 +1412,18 @@
               "status": "OK"
             }
           ],
-          "receipt_path": "test/tmp/tree/default-test/.test-result",
-          "receipt": "  [OK] tree-default.screen assertion\n  [OK] tree-default-author.screen assertion\n  [OK] tree-default-date.screen assertion\n  [OK] tree-default-file-size.screen assertion\n  [OK] tree-default-mode.screen assertion\n  [OK] tree-common.screen assertion\n  [OK] tree-d8-stubs.screen assertion\n",
           "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
+          "skipped_cases": {}
         }
       ],
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/target/release/tig",
-          "sha256": "7f1390a3c752abe13fed198fc544f1ea4cba849c6a890f6f7ff69e6df9bf2a4e"
+          "sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/target/release/test-graph",
-          "sha256": "0517ed576c8105526599f09574aef07dfe5ae3645bf610b43da05ebf42133d6c"
+          "sha256": "a6ef9931a15d6ad838b43c660d18484e24bfcd8c5a70c96f8dbc4ad896f5f852"
         }
       },
       "binaries_unchanged": true,
@@ -2159,6 +2045,7 @@
       ]
     }
   ],
+  "integrated_main": "0d80d9851627831a7d80a6f911c2d8fe40f8a435",
   "source_manifest_sha256": {
     "Cargo.lock": "4dff74ef4ccdb94d739984c33d6b06c217c12144f4095dde5e16bf10902ebbb5",
     "Cargo.toml": "9c0a27f7f353f722308d07664ba1645e9dc6dfe35a94201839f7b4cd93752c69",
@@ -2216,28 +2103,33 @@
     "include/tig/view.h": "fefa46c91dfba697688d8f56c4e8139a9a4582355c7a230ed32d825ce8f42f3b",
     "include/tig/watch.h": "ee834d19effee9360a2480d3087172ff7eeb8084d28ce6fd6216e9a9ec341141",
     "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
-    "rust/commands.rs": "d277d85bab05c246bb5ed0ca18e62c8b1058780b2e60e38357691bd083cc2944",
-    "rust/config.rs": "2937ef5185e995c46b111ae05238397b67bc7b3ea700f77b632ca96bc21cc638",
-    "rust/date.rs": "1efe556b4746b2c220949673a40add71ce8bda44aaa68ae0b04f49d9c4f371c7",
-    "rust/git.rs": "6f1df24caeb65d8bc48c3362ea95ef160f623eed2a4a665d2bd13bf14e3f9f5e",
+    "rust/commands.rs": "5289316798c285a6055ff040aec0f7d355cfca6905bb8702d952a7b612104b19",
+    "rust/config.rs": "2818658ce690aa15596b13040bfbfba812fecf8ba83dcb93671650ee7585d623",
+    "rust/date.rs": "51d16041689246691bcfacc8a2f2654e39ae2a123c5aec770c449bfc6ced24f4",
+    "rust/git.rs": "ab12c51280142e4cea295673cefa8e8187068163225293c357ef6758920ceafb",
     "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
     "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
     "rust/help_view.rs": "029b06cf5c7c88523fe4fb4f3374f737f7fbffd7807169dcd8b8f207cf87b158",
-    "rust/lib.rs": "91d7fefb621f5c5abfdba0f03a8f1e494f906fb495335fafeba4a12972e7403c",
-    "rust/main.rs": "79db156c364f9fa459971b37e7bbea02033919c68e560fdc27df6f5a29b0d530",
-    "rust/model.rs": "11606a9947c88b3a464c789cae73a3008781bfea99cdf4189190f9aa8d53449d",
-    "rust/patch.rs": "c2219dd3a28d15d811f1f1de2ca1c5d3b20162d32d48f53e1778ff9639040152",
-    "rust/refs_view.rs": "e1b4c050ba80f8003583c299a9d6f643d1837ce04c5cb657d67cc444de9ef461",
-    "rust/render.rs": "970017231cee590319399a745d72aeb35a89ec9f82e6916b55be421f1938e2ab",
+    "rust/lib.rs": "81e3bdf035141234a178271b092b084f6e105bf159f1e2af4b21e8483d20a088",
+    "rust/main.rs": "4c8f760cc4c2a65413eaa962b7c05b95aa1e5889f4618769a0257edaf5177c30",
+    "rust/model.rs": "f1131c9182b02c51a5e9307a194669cec4f835fbd0d5d26b24e1e977336e8dda",
+    "rust/patch.rs": "11b9b2d0dd871b36462ad9ac371203cc9a53ee0539797dcbe698429291d2685c",
+    "rust/refs_view.rs": "35e6d25a83bb9651b5b268b00c75a4c81468746a3158556e2d44bf1e12b11267",
+    "rust/render.rs": "8571c26f7663439502962f8cb889d038dcde3f9d09d272d670a1fdf408282a32",
+    "rust/tests/blame-navigation.py": "bc7b60c9821929dca18484ccc5e912f34e10bb817807fe760641e9360b365eb7",
+    "rust/tests/blame-review.py": "12d94d23c4a2466e4150fee7c30f38534c5c7dfdda680ff8b15492f8d734a973",
+    "rust/tests/config-recovery.py": "0bd908d544c7ea3cb94a9a4e109b9b81dfdaf626e25e795ceed0eb87c829851a",
     "rust/tests/date-compatibility.py": "730fb29be21cd0eab61e97d7789116505227d4d58fe70640af4d9acff2c205fa",
     "rust/tests/date-percent-s.py": "3a837e0703587ba8f9909d630d700bd17f14bfc34b1e1fe105201e7600df6c4c",
     "rust/tests/diff-input.py": "a3b5c4ab386484e78f959b469c76a16e53ebbaa69983ad7f157104fa0f3474c3",
     "rust/tests/diff-navigation.py": "ac38d3cb56fc1bad1b628465cc85d67446e0439e6317d25a3e723c621b99e639",
     "rust/tests/graph-differential.py": "666efeca9ee6cd79cb8bd70cf5639f00438a6b6dff7135ad03f98e53de8d7c8e",
     "rust/tests/graph-v1-differential.py": "9e144d33dd228875d5a90b8068871102139ce3989324d98e6ffc5ce7d8830ace",
-    "rust/tests/terminal-smoke.py": "3d4fde91f9b4dcd14134d8db7a65e926c59a719fc5f06910eb8aa441d83bf9aa",
+    "rust/tests/status-filter.py": "99dfb28d0d4719c7abd940a6a22d08bc73a03a27eac30cb1924f42e165963789",
+    "rust/tests/terminal-smoke.py": "a09c21e70201587e58c116f2d9a9f7849c6472da6ebe3c0750dd56eb562173a4",
     "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
-    "rust/tree_view.rs": "2c952930b13b16dc98f1607fbab68dd911252d491388fed0b512c2a30afa0755",
+    "rust/trace.rs": "4fb87248de03495a20b7d4f3863c971c30000a07c1f688d55b2625b22bcf8c23",
+    "rust/tree_view.rs": "c2292d0afab8e20f08579f536bedd00cb9926f099021f9c6d2c56bd56db9ac4a",
     "src/apps.c": "43c3081ffad52b97e5673bad7c1188b18c1a8b871eabcf1a7cf7e6206354a6ff",
     "src/argv.c": "d8de624659202094264d41b183035219965a315f917b67ebe23b5db5415cc514",
     "src/blame.c": "55feb3aae006e3de2d567600c998d0b1f254bb3fab467f327d27079d93d72cc1",
@@ -2278,5 +2170,879 @@
     "src/view.c": "61d005305e6074d89db95852f426da513e5f75052752b5546f8466964133471c",
     "src/watch.c": "122588c5516075588c86fda5014c0cacef7d88026dea150df1b1b0bce1e224a7",
     "tigrc": "aa897801785995fec07f43cedb3dee06cf2124e5bd1475d6e22ba7badfcded5b"
-  }
+  },
+  "binary_sha256": {
+    "src/tig": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+    "test/tools/test-graph": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849",
+    "target/release/tig": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+    "target/release/test-graph": "a6ef9931a15d6ad838b43c660d18484e24bfcd8c5a70c96f8dbc4ad896f5f852"
+  },
+  "assertion_totals": {
+    "c": {
+      "OK": 94
+    },
+    "rust": {
+      "OK": 92,
+      "FAIL": 2
+    }
+  },
+  "retention": "One final receipt. Passing transcript/receipt duplicates omitted; all assertion outcomes and raw failure transcripts retained. Intermediate before/after evidence remains in Git at 83c06b656dd8927419d95d1df612bb207dd4378a.",
+  "reproduce_original_pairing": [
+    "rustup",
+    "run",
+    "1.81.0",
+    "python3",
+    "rust/tests/upstream-suite.py",
+    "--output",
+    "/tmp/main-navigation-pair.json",
+    "test/diff/line-number-test",
+    "test/diff/maximized-navigation-test",
+    "test/diff/open-after-split-test",
+    "test/main/boundary-test",
+    "test/main/default-test",
+    "test/main/goto-test",
+    "test/main/graph-argument-test",
+    "test/main/jump-ends-test",
+    "test/main/main-options-test",
+    "test/main/merge-test",
+    "test/main/no-merges-test",
+    "test/main/refresh-test",
+    "test/main/search-test",
+    "test/main/show-changes-test",
+    "test/main/start-on-line-test",
+    "test/main/update-unstaged-changes-test",
+    "test/main/view-split-test",
+    "test/prompt/exec-test",
+    "test/status/refresh-test",
+    "test/tree/default-test"
+  ],
+  "unchanged_relative_to_integrated_main": [
+    "src",
+    "include",
+    "compat",
+    "test",
+    "Cargo.toml",
+    "Cargo.lock",
+    ".github"
+  ],
+  "first_party_unsafe_policy": {
+    "rust/lib.rs": true,
+    "rust/main.rs": true
+  },
+  "validation": [
+    {
+      "command": "rustup run 1.81.0 cargo fmt --check",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": "rustup run 1.81.0 cargo test --locked --all-targets",
+      "exit_code": 0,
+      "output": "test result: ok. 59 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.33s\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\ntest result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.38s"
+    },
+    {
+      "command": "rustup run 1.81.0 cargo clippy --locked --all-targets -- -D warnings",
+      "exit_code": 0,
+      "output": "    Checking tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.52s\n"
+    },
+    {
+      "command": "rustup run 1.81.0 cargo build --locked --release --bins",
+      "exit_code": 0,
+      "output": "   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation)\n    Finished `release` profile [optimized] target(s) in 26.98s\n"
+    },
+    {
+      "command": "python3 rust/tests/diff-input.py",
+      "exit_code": 0,
+      "output": "6 diff input checks passed\n"
+    }
+  ],
+  "pty": {
+    "scope": "Implemented Rust UI workflows only; not upstream parity",
+    "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+    "checks": [
+      {
+        "name": "working changes precede history",
+        "passed": true
+      },
+      {
+        "name": "save options to quoted path",
+        "passed": true
+      },
+      {
+        "name": "save options keeps unquoted hash in path",
+        "passed": true
+      },
+      {
+        "name": "save options refuses overwrite",
+        "passed": true
+      },
+      {
+        "name": "save options reports missing directory",
+        "passed": true
+      },
+      {
+        "name": "hide working changes for history navigation",
+        "passed": true
+      },
+      {
+        "name": "comma selects main parent",
+        "passed": true
+      },
+      {
+        "name": "refresh preserves main history",
+        "passed": true
+      },
+      {
+        "name": "less-than restores main position",
+        "passed": true
+      },
+      {
+        "name": "empty main history stays open",
+        "passed": true
+      },
+      {
+        "name": "prompt command opens pager",
+        "passed": true
+      },
+      {
+        "name": "command pager closes to main",
+        "passed": true
+      },
+      {
+        "name": "j selects second commit",
+        "passed": true
+      },
+      {
+        "name": "Enter opens selected commit diff",
+        "passed": true
+      },
+      {
+        "name": "Tab focuses split parent",
+        "passed": true
+      },
+      {
+        "name": "main command refreshes displayed diff refs",
+        "passed": true
+      },
+      {
+        "name": "Tab focuses split child",
+        "passed": true
+      },
+      {
+        "name": "K loads previous parent commit into diff",
+        "passed": true
+      },
+      {
+        "name": "J loads next parent commit into diff",
+        "passed": true
+      },
+      {
+        "name": "O maximizes focused diff",
+        "passed": true
+      },
+      {
+        "name": "q returns to selected history row",
+        "passed": true
+      },
+      {
+        "name": "reopen split for command pager",
+        "passed": true
+      },
+      {
+        "name": "split command pager maximizes",
+        "passed": true
+      },
+      {
+        "name": "split command pager closes to main",
+        "passed": true
+      },
+      {
+        "name": "search prompt",
+        "passed": true
+      },
+      {
+        "name": "search selects matching commit",
+        "passed": true
+      },
+      {
+        "name": "status opens at header",
+        "passed": true
+      },
+      {
+        "name": "select unstaged fixture",
+        "passed": true
+      },
+      {
+        "name": "u stages fixture",
+        "passed": true
+      },
+      {
+        "name": "stage verified against Git index",
+        "passed": true
+      },
+      {
+        "name": "Enter opens cached diff",
+        "passed": true
+      },
+      {
+        "name": "R preserves cached diff",
+        "passed": true
+      },
+      {
+        "name": "back from cached diff",
+        "passed": true
+      },
+      {
+        "name": "u unstages fixture",
+        "passed": true
+      },
+      {
+        "name": "unstage verified against Git index",
+        "passed": true
+      },
+      {
+        "name": "open two-line unstaged patch",
+        "passed": true
+      },
+      {
+        "name": "line staging search prompt",
+        "passed": true
+      },
+      {
+        "name": "select added line A",
+        "passed": true
+      },
+      {
+        "name": "1 stages only selected line",
+        "passed": true
+      },
+      {
+        "name": "single-line stage index and unchanged worktree",
+        "passed": true
+      },
+      {
+        "name": "back to status after line stage",
+        "passed": true
+      },
+      {
+        "name": "refresh partially staged status",
+        "passed": true
+      },
+      {
+        "name": "select cached partial file",
+        "passed": true
+      },
+      {
+        "name": "open cached partial patch",
+        "passed": true
+      },
+      {
+        "name": "line unstage search prompt",
+        "passed": true
+      },
+      {
+        "name": "select cached added line A",
+        "passed": true
+      },
+      {
+        "name": "1 unstages only selected line and closes empty stage",
+        "passed": true
+      },
+      {
+        "name": "single-line unstage empty index and unchanged worktree",
+        "passed": true
+      },
+      {
+        "name": "refresh fully unstaged status",
+        "passed": true
+      },
+      {
+        "name": "open hunk for staging",
+        "passed": true
+      },
+      {
+        "name": "hunk staging search prompt",
+        "passed": true
+      },
+      {
+        "name": "select line within hunk",
+        "passed": true
+      },
+      {
+        "name": "u stages complete hunk and closes empty stage",
+        "passed": true
+      },
+      {
+        "name": "whole-hunk stage includes both lines and preserves worktree",
+        "passed": true
+      },
+      {
+        "name": "refresh fully staged status",
+        "passed": true
+      },
+      {
+        "name": "open cached hunk",
+        "passed": true
+      },
+      {
+        "name": "hunk unstaging search prompt",
+        "passed": true
+      },
+      {
+        "name": "select cached hunk line",
+        "passed": true
+      },
+      {
+        "name": "cached u unstages complete hunk and closes empty stage",
+        "passed": true
+      },
+      {
+        "name": "whole-hunk unstage empties index and preserves worktree",
+        "passed": true
+      },
+      {
+        "name": "back from status",
+        "passed": true
+      },
+      {
+        "name": "external argv command prompt",
+        "passed": true
+      },
+      {
+        "name": "silent external argv command returns to history",
+        "passed": true
+      },
+      {
+        "name": "external command literal argv without implicit shell",
+        "passed": true
+      },
+      {
+        "name": "external path command prompt",
+        "passed": true
+      },
+      {
+        "name": "external command handles literal special filename",
+        "passed": true
+      },
+      {
+        "name": "external argv stages exact spaced special-character filename",
+        "passed": true
+      },
+      {
+        "name": "external cleanup command prompt",
+        "passed": true
+      },
+      {
+        "name": "external argv cleanup returns to history",
+        "passed": true
+      },
+      {
+        "name": "echo command prompt",
+        "passed": true
+      },
+      {
+        "name": "plus command displays first stdout line",
+        "passed": true
+      },
+      {
+        "name": "foreground command prompt",
+        "passed": true
+      },
+      {
+        "name": "foreground command waits for Enter",
+        "passed": true
+      },
+      {
+        "name": "foreground command resumes raw UI after Enter",
+        "passed": true
+      },
+      {
+        "name": "quick command prompt",
+        "passed": true
+      },
+      {
+        "name": "successful quick command resumes without Enter",
+        "passed": true
+      },
+      {
+        "name": "failed quick command prompt",
+        "passed": true
+      },
+      {
+        "name": "failed quick command still waits for Enter",
+        "passed": true
+      },
+      {
+        "name": "failed command resumes after Enter",
+        "passed": true
+      },
+      {
+        "name": "move off HEAD before default H",
+        "passed": true
+      },
+      {
+        "name": "default H resolves HEAD and selects newest commit",
+        "passed": true
+      },
+      {
+        "name": "quoted key binding prompt",
+        "passed": true
+      },
+      {
+        "name": "install quoted H command binding",
+        "passed": true
+      },
+      {
+        "name": "H preserves quoted argv and echoes result",
+        "passed": true
+      },
+      {
+        "name": "foreground canonical tty, resumed raw UI, echo and quoted argv verified",
+        "passed": true
+      },
+      {
+        "name": "TIG_TRACE includes captured commands but excludes foreground argv",
+        "passed": true
+      },
+      {
+        "name": "tree opens",
+        "passed": true
+      },
+      {
+        "name": "select root blob",
+        "passed": true
+      },
+      {
+        "name": "Enter opens blob",
+        "passed": true
+      },
+      {
+        "name": "q returns to tree",
+        "passed": true
+      },
+      {
+        "name": "select nested tree",
+        "passed": true
+      },
+      {
+        "name": "open nested tree",
+        "passed": true
+      },
+      {
+        "name": "back restores parent tree",
+        "passed": true
+      },
+      {
+        "name": "R preserves parent tree",
+        "passed": true
+      },
+      {
+        "name": "resize redraws clipped status at row 11",
+        "passed": true
+      },
+      {
+        "name": "quit leaves alternate screen and restores cursor",
+        "passed": true
+      },
+      {
+        "name": "quit leaves alternate screen and restores cursor terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "+2 selects second row after working changes",
+        "passed": true
+      },
+      {
+        "name": "+2 session quit",
+        "passed": true
+      },
+      {
+        "name": "+2 session quit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "blame -- file",
+        "passed": true
+      },
+      {
+        "name": "blame session quit",
+        "passed": true
+      },
+      {
+        "name": "blame session quit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "subdirectory main opens",
+        "passed": true
+      },
+      {
+        "name": "first tree uses startup directory",
+        "passed": true
+      },
+      {
+        "name": "startup tree parent reaches worktree root",
+        "passed": true
+      },
+      {
+        "name": "subdirectory tree session quit",
+        "passed": true
+      },
+      {
+        "name": "subdirectory tree session quit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "external cwd with explicit Git environment opens main",
+        "passed": true
+      },
+      {
+        "name": "external cwd opens root tree",
+        "passed": true
+      },
+      {
+        "name": "external cwd tree session quit",
+        "passed": true
+      },
+      {
+        "name": "external cwd tree session quit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "blame resolves subdirectory relative file",
+        "passed": true
+      },
+      {
+        "name": "subdirectory blame session quit",
+        "passed": true
+      },
+      {
+        "name": "subdirectory blame session quit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "SIGTERM session history",
+        "passed": true
+      },
+      {
+        "name": "signal while search prompt active",
+        "passed": true
+      },
+      {
+        "name": "SIGTERM exit",
+        "passed": true
+      },
+      {
+        "name": "SIGTERM exit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "SIGHUP session history",
+        "passed": true
+      },
+      {
+        "name": "SIGHUP exit",
+        "passed": true
+      },
+      {
+        "name": "SIGHUP exit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "SIGINT session history",
+        "passed": true
+      },
+      {
+        "name": "SIGINT exit",
+        "passed": true
+      },
+      {
+        "name": "SIGINT exit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "untracked row precedes history",
+        "passed": true
+      },
+      {
+        "name": "untracked row opens untracked-only status",
+        "passed": true
+      },
+      {
+        "name": "select untracked file",
+        "passed": true
+      },
+      {
+        "name": "stage last untracked file and return to main",
+        "passed": true
+      },
+      {
+        "name": "untracked staging changes only Git index",
+        "passed": true
+      },
+      {
+        "name": "synthetic status session quit",
+        "passed": true
+      },
+      {
+        "name": "synthetic status session quit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "partial block status",
+        "passed": true
+      },
+      {
+        "name": "select partial block file",
+        "passed": true
+      },
+      {
+        "name": "open partial block patch",
+        "passed": true
+      },
+      {
+        "name": "split block search prompt",
+        "passed": true
+      },
+      {
+        "name": "select block for splitting",
+        "passed": true
+      },
+      {
+        "name": "backslash splits hunk with shared context",
+        "passed": true
+      },
+      {
+        "name": "split partial search prompt",
+        "passed": true
+      },
+      {
+        "name": "select change within split hunk",
+        "passed": true
+      },
+      {
+        "name": "2 stages contiguous block only",
+        "passed": true
+      },
+      {
+        "name": "partial block refreshes status without R",
+        "passed": true
+      },
+      {
+        "name": "select staged block",
+        "passed": true
+      },
+      {
+        "name": "open staged block",
+        "passed": true
+      },
+      {
+        "name": "partial unstage search prompt",
+        "passed": true
+      },
+      {
+        "name": "select block to unstage",
+        "passed": true
+      },
+      {
+        "name": "2 unstages block and closes empty stage",
+        "passed": true
+      },
+      {
+        "name": "split and partial block stage/unstage preserve worktree and update only selected index block",
+        "passed": true
+      },
+      {
+        "name": "partial block session quit",
+        "passed": true
+      },
+      {
+        "name": "partial block session quit terminal restoration",
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "transcript_sha256": "edc9a41d7acc08c49a9e0ef1a3c8c29b380a79f62e29bfaa2dd5f9ac9a32fd2d",
+    "reproduce": "python3 rust/tests/terminal-smoke.py (this run redirected its EVIDENCE output to /tmp)"
+  },
+  "diff_navigation": {
+    "source_commit": "3ae580f8e3a9c4843f9112d130179d97e460777e",
+    "binary_sha256": {
+      "src/tig": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+      "target/release/tig": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d"
+    },
+    "results": [
+      {
+        "width": 180,
+        "stats": {
+          "c": {
+            "split": " ...ong-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "next": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "previous": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "refresh": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +"
+          },
+          "rust": {
+            "split": " ...ong-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "next": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "previous": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "refresh": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +"
+          }
+        }
+      },
+      {
+        "width": 181,
+        "stats": {
+          "c": {
+            "split": " ...ong-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "next": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "previous": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "refresh": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +"
+          },
+          "rust": {
+            "split": " ...ong-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "next": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "previous": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "refresh": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +"
+          }
+        }
+      }
+    ]
+  },
+  "blame_navigation": {
+    "scope": "Additional real-PTY rename/boundary regressions; not full parity",
+    "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+    "checks": [
+      "recursive blame uses historical quoted path and original line",
+      "parent follows previous filename and maps the inserted line",
+      "back restores original blame position",
+      "parent of a root line leaves the view usable",
+      "parent preserves the blame revision lower bound",
+      "read-only navigation preserves index and worktree"
+    ]
+  },
+  "blame_review": {
+    "scope": "Ten paired C/Rust probes and two Rust quoted-tab regressions; replacement Enter preserves C semantics. C quoted-tab tracing stays in diff and is not a parity pass.",
+    "source_commit": "3ae580f8e3a9c4843f9112d130179d97e460777e",
+    "checks": [
+      {
+        "name": "c: replacement Enter round trip",
+        "binary": "src/tig",
+        "binary_sha256": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+        "expected_revision": "6a5e1d8b51c28bb459a0bd479064c491b25e9dc2",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "rust: replacement Enter round trip",
+        "binary": "target/release/tig",
+        "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+        "expected_revision": "6a5e1d8b51c28bb459a0bd479064c491b25e9dc2",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "c: deleted line in 'deletion'",
+        "binary": "src/tig",
+        "binary_sha256": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+        "expected_revision": "639fcec385ea54f53eedd51c3c7cf5048f05386d",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "c: added line in 'deletion'",
+        "binary": "src/tig",
+        "binary_sha256": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+        "expected_revision": "f5692566401b045aa62ba88042b1c681d8b7f0d8",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "rust: deleted line in 'deletion'",
+        "binary": "target/release/tig",
+        "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+        "expected_revision": "639fcec385ea54f53eedd51c3c7cf5048f05386d",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "rust: added line in 'deletion'",
+        "binary": "target/release/tig",
+        "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+        "expected_revision": "f5692566401b045aa62ba88042b1c681d8b7f0d8",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "c: deleted line in 'space name'",
+        "binary": "src/tig",
+        "binary_sha256": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+        "expected_revision": "c914612c52b309c2bb10c16e5787a27314b2bc64",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "c: added line in 'space name'",
+        "binary": "src/tig",
+        "binary_sha256": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+        "expected_revision": "d5490eaf3d3dd40dfed2a5233e2d632ff7b2628a",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "rust: deleted line in 'space name'",
+        "binary": "target/release/tig",
+        "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+        "expected_revision": "c914612c52b309c2bb10c16e5787a27314b2bc64",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "rust: added line in 'space name'",
+        "binary": "target/release/tig",
+        "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+        "expected_revision": "d5490eaf3d3dd40dfed2a5233e2d632ff7b2628a",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "rust: deleted line in 'tab\\tname'",
+        "binary": "target/release/tig",
+        "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+        "expected_revision": "8b3807995052891e7e304bb8023f5ba7e4e2b6b7",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "rust: added line in 'tab\\tname'",
+        "binary": "target/release/tig",
+        "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+        "expected_revision": "887f3742c8010d6148d63f27b4e19f419eaf2bf9",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      }
+    ]
+  },
+  "supplemental_commands": [
+    "python3 rust/tests/diff-navigation.py",
+    "python3 rust/tests/blame-navigation.py",
+    "python3 rust/tests/blame-review.py"
+  ],
+  "known_limits": [
+    "main/main-options-test ignores configured history limit",
+    "main/view-split-test narrow date column consumes one separator cell",
+    "Command output appends stderr after stdout; interleaving is not preserved",
+    "Commands and loaders remain synchronous"
+  ]
 }
