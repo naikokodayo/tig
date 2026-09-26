@@ -37,3 +37,4 @@ tig.spec
 tig.cygport
 tools/doc-gen
 tig.dSYM
+/target/

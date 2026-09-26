@@ -1,0 +1,49 @@
+      TEST  test/main/default-test
+            | Failed 7 out of 7 test(s)
+            | [stderr] tig: HOME/.tigrc:1: Invalid value for vertical-split: no
+            | [stderr] tig: Not implemented in Rust yet: set reference-format = (branch) [tag] @remote
+            | [FAIL] unexpected status code: 1 (should be 0)
+            | [FAIL] main-default.screen != expected/main-default.screen
+            | diff --git a/expected/main-default.screen b/main-default.screen
+            | index 6df9f1d..3eb9bc2 100644
+            | --- a/expected/main-default.screen
+            | +++ b/main-default.screen
+            | @@ -1,15 +1,15 @@
+            | -2010-04-07 05:37 +0000 Max Power             o [master] {origin/master} {origin/
+            | -2010-03-29 17:15 +0000 Jørgen Thygesen Brahe o Commit 10 D
+            | -2010-03-21 04:53 +0000 作者                  o Commit 10 C
+            | -2010-03-12 16:31 +0000 René Lévesque         o Commit 10 B
+            | -2010-03-04 04:09 +0000 A. U. Thor            o Commit 10 A
+            | -2010-02-23 15:46 +0000 Max Power             o Commit 9 E
+            | -2010-02-15 03:24 +0000 Jørgen Thygesen Brahe o Commit 9 D
+            | -2010-02-06 15:02 +0000 作者                  o Commit 9 C
+            | -2010-01-29 02:40 +0000 René Lévesque         o Commit 9 B
+            | -2010-01-20 14:18 +0000 A. U. Thor            o Commit 9 A
+            | -2010-01-12 01:56 +0000 Max Power             o Commit 8 E
+            | -2010-01-03 13:33 +0000 Jørgen Thygesen Brahe o Commit 8 D
+            | -2009-12-26 01:11 +0000 作者                  o Commit 8 C
+            | -2009-12-17 12:49 +0000 René Lévesque         o <v1.0> Commit 8 B
+            | -[main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 50             28%
+            | +2010-04-07T05:37:40Z Max Power          ∙ [HEAD -> master, origin/master, origin
+            | +2010-03-29T17:15:30Z Jørgen Thygesen Brahe ∙ Commit 10 D
+            | +2010-03-21T04:53:20Z 作者                 ∙ Commit 10 C
+            | +2010-03-12T16:31:10Z René Lévesque      ∙ Commit 10 B
+            | +2010-03-04T04:09:00Z A. U. Thor         ∙ Commit 10 A
+            | +2010-02-23T15:46:50Z Max Power          ∙ Commit 9 E
+            | +2010-02-15T03:24:40Z Jørgen Thygesen Brahe ∙ Commit 9 D
+            | +2010-02-06T15:02:30Z 作者                 ∙ Commit 9 C
+            | +2010-01-29T02:40:20Z René Lévesque      ∙ Commit 9 B
+            | +2010-01-20T14:18:10Z A. U. Thor         ∙ Commit 9 A
+            | +2010-01-12T01:56:00Z Max Power          ∙ Commit 8 E
+            | +2010-01-03T13:33:50Z Jørgen Thygesen Brahe ∙ Commit 8 D
+            | +2009-12-26T01:11:40Z 作者                 ∙ Commit 8 C
+            | +2009-12-17T12:49:30Z René Lévesque      ∙ [tag: v1.0] Commit 8 B
+            | +[main] 1 of 50
+            | [FAIL] main-ref-format.screen not found
+            | [FAIL] main-remotes-hidden.screen not found
+            | [FAIL] main-no-refs.screen not found
+            | [FAIL] main-no-graph.screen not found
+            | [FAIL] main-with-diff.screen not found
+      TEST  test/status/default-test
+/bin/sh: test/status/default-test: No such file or directory
+make: *** [test/status/default-test] Error 127

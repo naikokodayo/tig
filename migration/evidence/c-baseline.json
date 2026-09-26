@@ -1,0 +1,20 @@
+{
+  "revision": "7d841c9302456b8c8f0629a559344137dc4faa4f",
+  "platform": "macOS-26.6-arm64-arm-64bit",
+  "build_command": "make -j4 DIST_VERSION=2.6.1-12-g7d841c93 all",
+  "test_command": "env GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=init.defaultBranch GIT_CONFIG_VALUE_0=master make test",
+  "summary": "Passed 572 assertions in 152 tests (2 skipped)",
+  "skipped": [
+    {
+      "test": "test/diff/diff-highlight-color-test",
+      "reason": "The test requires diff-highlight, usually found in share/git-core-contrib"
+    },
+    {
+      "test": "test/graph/gh-490-heap-buffer-overflow-test",
+      "reason": "The test requires clang and is only run via `make test-address-sanitizer`"
+    }
+  ],
+  "inherited_environment_attempt": "Failed 57 of 573 assertions in 152 tests (2 skipped)",
+  "changes_to_assertions": false,
+  "scope": "Original C baseline only; not Rust application parity"
+}

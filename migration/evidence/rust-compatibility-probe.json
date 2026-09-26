@@ -1,0 +1,17 @@
+{
+  "gate": "OPEN",
+  "rust_complete": false,
+  "tests": [
+    "test/main/default-test",
+    "test/status/start-on-line-test"
+  ],
+  "assertions": 8,
+  "failed": 8,
+  "assertions_modified": false,
+  "adapter": "SYSTEM_TIG=1 and PATH pointing to Rust release; command-scoped init.defaultBranch=master",
+  "limits": [
+    "Probe of two original executable tests, not all154.",
+    "SYSTEM_TIG=1 still builds the C graph helper. Graph parity is measured separately."
+  ],
+  "invalid_attempt": "First probe named nonexistent test/status/default-test; preserved as harness error and excluded from assertion totals."
+}

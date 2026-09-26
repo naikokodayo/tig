@@ -1,0 +1,32 @@
+[package]
+name = "tig-rs"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.81"
+license = "GPL-2.0-or-later"
+description = "Safe Rust migration of Tig; compatibility work in progress"
+repository = "https://github.com/naikokodayo/tig"
+default-run = "tig"
+
+[lib]
+path = "rust/lib.rs"
+
+[[bin]]
+name = "tig"
+path = "rust/main.rs"
+
+[[bin]]
+name = "test-graph"
+path = "rust/bin/test-graph.rs"
+
+[dependencies]
+crossterm = "=0.28.1"
+unicode-width = "=0.2.0"
+signal-hook = "=0.3.18"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+
+[lints.rust]
+unsafe_code = "forbid"

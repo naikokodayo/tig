@@ -1,0 +1,23 @@
+name: Rust migration checkpoint
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  rust:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pinned Rust toolchain
+        run: rustup toolchain install 1.81.0 --profile minimal --component clippy,rustfmt
+      - name: Format, tests and lint
+        run: |
+          cargo +1.81.0 fmt --all -- --check
+          cargo +1.81.0 test --locked --all-targets
+          cargo +1.81.0 clippy --locked --all-targets -- -D warnings
+      - name: Build and test real terminal workflows
+        run: |
+          cargo +1.81.0 build --locked --release
+          python3 rust/tests/terminal-smoke.py
