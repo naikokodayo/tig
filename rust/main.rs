@@ -1301,6 +1301,7 @@ impl App {
         }) {
             let selected_ref = match self.selected() {
                 Item::Ref(_, name) => name,
+                Item::Text if self.view.name == "refs" => Some(String::new()),
                 _ => None,
             };
             self.select_context();
@@ -1322,6 +1323,15 @@ impl App {
                 line,
                 selected_ref.as_deref(),
             )?);
+            return Ok(true);
+        }
+        if action.split_whitespace().next() == Some("save-options") {
+            let args = tig_rs::config::words(action)?;
+            let path = args.get(1).map_or("tig-options.txt", String::as_str);
+            self.message = match self.config.save(std::path::Path::new(path)) {
+                Ok(()) => format!("Saved options to {path}"),
+                Err(error) => format!("Failed to save options: {error}"),
+            };
             return Ok(true);
         }
         if matches!(action, "toggle sort-field" | "toggle sort-order") {

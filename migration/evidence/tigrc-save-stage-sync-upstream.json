@@ -1,0 +1,268 @@
+{
+  "schema": 1,
+  "source_commit": "67253a75a961cb3658cb79fc0753a4268a616e74",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "PASS_SELECTED_SCRIPTS",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/tigrc/append-option-test",
+          "script_sha256": "546c25bf07c2f5752f284cc8ad5044a29e13d088bda94b07aeb94ad47140cf5e",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "append-tigrc#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/append-option-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n  [OK] append-tigrc assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/builtin-save-test",
+          "script_sha256": "ff85928014ef52b015e2c567847e7fc2b3b092004d6d246685872466e3fe40cd",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/builtin-save-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/save-option-test",
+          "script_sha256": "c08dfc0d9e8d50be5f5dd059d51efd503f9dcf2eff5d10805a492a5b637c504d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "saved-tigrc#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/save-option-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n  [OK] saved-tigrc assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tigrc-command-task-clone/src/tig",
+          "sha256": "1a174bbde7b306b00d3750ca4560d60d0650e87b699fc880dd06aef0b1fdffad"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tigrc-command-task-clone/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 3
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tigrc-command-task-clone/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tigrc-command-task-clone/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tigrc-command-task-clone/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tigrc-command-task-clone)\n    Finished `release` profile [optimized] target(s) in 31.38s\n",
+      "results": [
+        {
+          "script": "test/tigrc/append-option-test",
+          "script_sha256": "546c25bf07c2f5752f284cc8ad5044a29e13d088bda94b07aeb94ad47140cf5e",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "append-tigrc#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/append-option-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n  [OK] append-tigrc assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/builtin-save-test",
+          "script_sha256": "ff85928014ef52b015e2c567847e7fc2b3b092004d6d246685872466e3fe40cd",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/builtin-save-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/save-option-test",
+          "script_sha256": "c08dfc0d9e8d50be5f5dd059d51efd503f9dcf2eff5d10805a492a5b637c504d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "saved-tigrc#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/save-option-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n  [OK] saved-tigrc assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tigrc-command-task-clone/target/release/tig",
+          "sha256": "6b3b842c4d995e3f9d0190a96c10a40ca947e588487f171ff2b72d8a46ad97cd"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tigrc-command-task-clone/target/release/test-graph",
+          "sha256": "c1dc1a3c45e909e259e6ae4196da28c69a3ba92ec1aac5a7f3811a762b86ff8a"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 3
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/tigrc/append-option-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "append-tigrc#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tigrc/builtin-save-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tigrc/save-option-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "saved-tigrc#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ]
+}
