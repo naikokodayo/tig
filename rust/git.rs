@@ -222,7 +222,13 @@ impl Repository {
             })
             .collect()
     }
-    pub fn show(&self, revision: &str, context: usize, word_diff: bool) -> Result<String> {
+    pub fn show(
+        &self,
+        revision: &str,
+        context: usize,
+        word_diff: bool,
+        width: usize,
+    ) -> Result<String> {
         let oid = self.revision(revision)?;
         Ok(text(&self.command([
             "show",
@@ -230,7 +236,7 @@ impl Repository {
             "--no-textconv",
             "--no-show-signature",
             "--format=fuller",
-            "--stat",
+            &format!("--stat={width}"),
             "--patch",
             &format!("-U{context}"),
             if word_diff {
@@ -961,7 +967,7 @@ mod tests {
         repo.command(["commit", "-qam", "change"]).unwrap();
         for context in [0, 3, 4, 5, 8] {
             for word in [false, true] {
-                let show = repo.show("HEAD", context, word).unwrap();
+                let show = repo.show("HEAD", context, word, 80).unwrap();
                 let span = if context == 0 {
                     "10".into()
                 } else {
@@ -1033,7 +1039,7 @@ mod tests {
         let blame = repo.blame(Some("HEAD"), Path::new(":(glob)*")).unwrap();
         assert_eq!(blame.len(), 2);
         assert_eq!(blame[1].line, 2);
-        assert!(repo.show("HEAD", 3, false).unwrap().contains("initial"));
+        assert!(repo.show("HEAD", 3, false, 80).unwrap().contains("initial"));
         fs::rename(f.0.join(":(glob)*"), f.0.join("renamed")).unwrap();
         repo.command(["add", "--all", "--", ":(glob)*", "renamed"])
             .unwrap();
@@ -1055,7 +1061,7 @@ mod tests {
                 original_path: None
             })
             .is_err());
-        assert!(repo.show("--output=oops", 3, false).is_err());
+        assert!(repo.show("--output=oops", 3, false, 80).is_err());
         assert!(repo.history(&["--format=oops".into()], 1).is_err());
     }
 }
