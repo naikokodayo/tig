@@ -1,0 +1,208 @@
+{
+  "scope": "Rust save-options slice; full Rust migration remains incomplete",
+  "base_commit": "34684f799a5b44e7074aa4967c53c10608119f10",
+  "toolchain": "Rust 1.81.0",
+  "binary_sha256": "5451390924fdb11c7c4d3ade7520289b42615e3a92eb24618f037f130be1503a",
+  "unit_tests": 65,
+  "fmt": "pass",
+  "clippy_all_targets_deny_warnings": "pass",
+  "release_build": "pass",
+  "pty_checks_passed": 111,
+  "pty_save_checks": [
+    {
+      "name": "save options to quoted path",
+      "passed": true
+    },
+    {
+      "name": "save options refuses overwrite",
+      "passed": true
+    },
+    {
+      "name": "save options reports missing directory",
+      "passed": true
+    }
+  ],
+  "c_loads_rust_saved_defaults": {
+    "exit_code": 0,
+    "stderr": ""
+  },
+  "original_tigrc_scripts": {
+    "append-option-test": {
+      "ok": 2,
+      "fail": 0,
+      "failures": []
+    },
+    "builtin-error-test": {
+      "ok": 1,
+      "fail": 0,
+      "failures": []
+    },
+    "builtin-save-test": {
+      "ok": 1,
+      "fail": 0,
+      "failures": []
+    },
+    "command-value-long-test": {
+      "ok": 1,
+      "fail": 1,
+      "failures": [
+        "[FAIL] pager.screen != expected/pager.screen"
+      ]
+    },
+    "compat-error-test": {
+      "ok": 0,
+      "fail": 1,
+      "failures": [
+        "[FAIL] stderr != expected/stderr"
+      ]
+    },
+    "contrib-tigrc-test": {
+      "ok": 1,
+      "fail": 0,
+      "failures": []
+    },
+    "env-vars-test": {
+      "ok": 2,
+      "fail": 0,
+      "failures": []
+    },
+    "escape-var-test": {
+      "ok": 0,
+      "fail": 2,
+      "failures": [
+        "[FAIL] unexpected status code: 1 (should be 0)",
+        "[FAIL] shell-command.txt not found"
+      ]
+    },
+    "parse-test": {
+      "ok": 2,
+      "fail": 0,
+      "failures": []
+    },
+    "quote-test": {
+      "ok": 1,
+      "fail": 6,
+      "failures": [
+        "[FAIL] unexpected status code: 1 (should be 0)",
+        "[FAIL] stderr != expected/stderr",
+        "[FAIL] quoted-prompt-with-spaces.screen not found",
+        "[FAIL] mid-quoted-prompt-with-spaces.screen not found",
+        "[FAIL] single-quoted-arg-with-escaped-chars.screen not found",
+        "[FAIL] double-quoted-arg-with-escaped-chars.screen not found"
+      ]
+    },
+    "save-option-test": {
+      "ok": 2,
+      "fail": 0,
+      "failures": []
+    },
+    "source-test": {
+      "ok": 10,
+      "fail": 0,
+      "failures": []
+    },
+    "tigrc-manpage-examples-test": {
+      "ok": 1,
+      "fail": 0,
+      "failures": []
+    },
+    "truncation-test": {
+      "ok": 10,
+      "fail": 4,
+      "failures": [
+        "[FAIL] delimiter-literal.screen != expected/delimiter-literal.screen",
+        "[FAIL] delimiter-quoted-literal.screen != expected/delimiter-quoted-literal.screen",
+        "[FAIL] delimiter-special-value.screen != expected/delimiter-special-value.screen",
+        "[FAIL] delimiter-utf8-literal.screen != expected/delimiter-utf8-literal.screen"
+      ]
+    },
+    "view-column-test": {
+      "ok": 1,
+      "fail": 1,
+      "failures": [
+        "[FAIL] stderr != expected/stderr"
+      ]
+    },
+    "width-test": {
+      "ok": 54,
+      "fail": 0,
+      "failures": []
+    },
+    "xdg-config-home-test": {
+      "ok": 8,
+      "fail": 0,
+      "failures": []
+    }
+  },
+  "original_scripts_changed": false,
+  "summary": {
+    "scripts": 17,
+    "ok": 97,
+    "fail": 15
+  },
+  "review_revalidation": {
+    "source_commit": "08cf8515b79225c59ee6fba6184faaa2fd5da8cd",
+    "merged_main": "e1cf5eeb",
+    "binary_sha256": "9a36199841d3c55d69c09a9cb8bd7d63e34a895c1fa3b99c82cd345b83b3192a",
+    "unit_tests": 68,
+    "fmt": "pass",
+    "clippy_all_targets_deny_warnings": "pass",
+    "release_build": "pass",
+    "pty_checks_passed": 112,
+    "date_compatibility_checks_passed": 29,
+    "upstream_harness_self_test": "pass",
+    "wrong_path_regression": {
+      "before": "assertion failed: save-options wrote the truncated path",
+      "after": "C and Rust both create the full unquoted hash filename; truncated path absent",
+      "pty_check": "save options keeps unquoted hash in path"
+    },
+    "paired_original_tigrc": {
+      "c": {
+        "scripts": {
+          "pass": 17
+        },
+        "checks": {
+          "OK": 110
+        },
+        "actual_assertions": {
+          "OK": 110
+        }
+      },
+      "rust": {
+        "scripts": {
+          "pass": 11,
+          "fail": 6
+        },
+        "checks": {
+          "OK": 97,
+          "FAIL": 15
+        },
+        "actual_assertions": {
+          "OK": 97,
+          "FAIL": 13
+        }
+      }
+    },
+    "paired_receipt": "tigrc-save-review-upstream.json"
+  },
+  "stage_sync_revalidation": {
+    "source_commit": "67253a75a961cb3658cb79fc0753a4268a616e74",
+    "merged_main": "ffcb9310f028ca5ea7302cded3e4d7783e13a0b6",
+    "binary_sha256": "6b3b842c4d995e3f9d0190a96c10a40ca947e588487f171ff2b72d8a46ad97cd",
+    "fmt": "pass",
+    "unit_tests": 69,
+    "clippy_all_targets_deny_warnings": "pass",
+    "release_build": "pass",
+    "pty_checks_passed": 130,
+    "date_compatibility_checks_passed": 29,
+    "saved_scripts_c": {
+      "pass": 3
+    },
+    "saved_scripts_rust": {
+      "pass": 3
+    },
+    "paired_gate": "PASS_SELECTED_SCRIPTS",
+    "paired_receipt": "tigrc-save-stage-sync-upstream.json",
+    "scope": "Three save scripts only; prior 17-script tigrc category results remain pinned to 08cf851."
+  }
+}
