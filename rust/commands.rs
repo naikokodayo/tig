@@ -20,6 +20,12 @@ pub struct PreparedCommand {
     pub echo: bool,
     pub quick: bool,
 }
+#[derive(Clone, Copy)]
+pub enum ReferenceContext<'a> {
+    Ref(&'a str),
+    /// Full, priority-ordered decorations produced by Git's history loader.
+    Commit(&'a str),
+}
 pub struct ExpansionInput<'a> {
     pub args: &'a [String],
     pub prompt_answers: &'a [String],
@@ -120,7 +126,7 @@ pub fn prepare(
         revision,
         path,
         0,
-        selected_ref,
+        selected_ref.map(ReferenceContext::Ref),
         ExpansionInput {
             args: &[],
             prompt_answers: &[],
@@ -128,18 +134,39 @@ pub fn prepare(
     )
 }
 
-/// `Some("")` supplies the refs heading's empty selection; `None` means the
-/// caller has no reference context and selection-only variables stay unsupported.
+/// Empty reference context clears selection variables; absent context keeps
+/// selection-only variables unsupported.
 pub fn prepare_with_context(
     repo: &Repository,
     command: &str,
     revision: &str,
     path: &Path,
     line: usize,
-    selected_ref: Option<&str>,
+    context: Option<ReferenceContext<'_>>,
     expansion: ExpansionInput<'_>,
 ) -> Result<PreparedCommand> {
-    if let Some(reference) = selected_ref.filter(|name| !name.is_empty() && *name != "HEAD") {
+    let commit_context = matches!(context, Some(ReferenceContext::Commit(_)));
+    let references: Vec<_> = match context {
+        Some(ReferenceContext::Ref(name)) => vec![name],
+        Some(ReferenceContext::Commit(decorations)) => decorations
+            .split(", ")
+            .filter(|name| !name.is_empty() && !name.starts_with("replace: "))
+            .map(|name| {
+                name.strip_prefix("HEAD -> ")
+                    .or_else(|| name.strip_prefix("tag: "))
+                    .unwrap_or(name)
+            })
+            .collect(),
+        None => Vec::new(),
+    };
+    let selected_ref = context
+        .as_ref()
+        .map(|_| references.first().copied().unwrap_or(""));
+    for reference in references
+        .iter()
+        .copied()
+        .filter(|name| !name.is_empty() && *name != "HEAD")
+    {
         // Selection names are data, never Git options. Validate the full name
         // before shortening it for commands such as `git checkout %(branch)`.
         if !reference.starts_with("refs/") {
@@ -220,6 +247,7 @@ pub fn prepare_with_context(
         (
             "ref",
             selected_ref
+                .filter(|_| !commit_context)
                 .map(|name| {
                     name.strip_prefix("refs/heads/")
                         .or_else(|| name.strip_prefix("refs/tags/"))
@@ -237,8 +265,21 @@ pub fn prepare_with_context(
     }
     // A known refs selection can have an empty branch/tag. Keep that distinct
     // from a view that has not supplied reference context at all.
-    if let Some(reference) = selected_ref {
-        let branch = reference.strip_prefix("refs/heads/").unwrap_or("");
+    if selected_ref.is_some() {
+        variables.insert("branch", "".into());
+        variables.insert("tag", "".into());
+        if commit_context {
+            variables.insert("remote", "origin".into());
+        }
+    }
+    // C's ref_update_env walks backwards so the first ref of each kind wins.
+    for reference in references.iter().rev().copied() {
+        if let Some(branch) = reference
+            .strip_prefix("refs/heads/")
+            .or_else(|| (reference == "HEAD").then_some("HEAD"))
+        {
+            variables.insert("branch", branch.into());
+        }
         let mut tag = reference.strip_prefix("refs/tags/").unwrap_or("");
         // Checkout prefers a same-named branch, and Git can resolve a short
         // tag as a pseudoref. Keep short display names only when unambiguous.
@@ -259,34 +300,38 @@ pub fn prepare_with_context(
                 ) != reference)
         {
             tag = reference;
-            variables.insert("ref", reference.into());
+            if !commit_context && selected_ref == Some(reference) {
+                variables.insert("ref", reference.into());
+            }
         }
-        variables.insert("branch", branch.into());
-        variables.insert("tag", tag.into());
+        if !tag.is_empty() {
+            variables.insert("tag", tag.into());
+        }
+        if let Some(reference) = reference.strip_prefix("refs/remotes/") {
+            let remotes = query(repo, &["remote"]);
+            if let Some(remote) = remotes
+                .lines()
+                .filter(|name| {
+                    reference
+                        .strip_prefix(name)
+                        .is_some_and(|tail| tail.starts_with('/'))
+                })
+                .max_by_key(|name| name.len())
+                .or_else(|| reference.split_once('/').map(|(remote, _)| remote))
+            {
+                let branch = &reference[remote.len() + 1..];
+                if branch.starts_with('-') {
+                    return Err(GitError("Selected branch must not start with '-'".into()));
+                }
+                variables.insert("remote", remote.into());
+                variables.insert("branch", branch.into());
+            }
+        }
     }
     // refs_select() sets the viewed head to this ref's OID. Other views need
     // their viewed-head context supplied before this variable can be supported.
-    if selected_ref.is_some() {
+    if selected_ref.is_some() && !commit_context {
         variables.insert("head", revision.into());
-    }
-    if let Some(reference) = selected_ref.and_then(|name| name.strip_prefix("refs/remotes/")) {
-        let remotes = query(repo, &["remote"]);
-        if let Some(remote) = remotes
-            .lines()
-            .filter(|name| {
-                reference
-                    .strip_prefix(name)
-                    .is_some_and(|tail| tail.starts_with('/'))
-            })
-            .max_by_key(|name| name.len())
-        {
-            let branch = &reference[remote.len() + 1..];
-            if branch.starts_with('-') {
-                return Err(GitError("Selected branch must not start with '-'".into()));
-            }
-            variables.insert("remote", remote.into());
-            variables.insert("branch", branch.into());
-        }
     }
     variables.insert("file", path.as_os_str().to_owned());
     variables.insert(
@@ -299,9 +344,17 @@ pub fn prepare_with_context(
                     .unwrap_or(name)
             })
             .filter(|name| !name.is_empty())
-            .unwrap_or(&head)
+            .unwrap_or(if commit_context { "" } else { &head })
             .into(),
     );
+    if selected_ref.is_some_and(|name| name.starts_with("refs/tags/")) {
+        variables.insert("refname", variables["tag"].clone());
+    }
+    if let Some(ReferenceContext::Commit(decorations)) = context {
+        if let Some(name) = decorations.strip_prefix("replace: ") {
+            variables.insert("refname", name.split(", ").next().unwrap_or(name).into());
+        }
+    }
     variables.insert("lineno", line.to_string().into());
     variables.insert(
         "directory",
@@ -536,7 +589,7 @@ mod tests {
         assert_eq!(tag.argv, ["echo", "v1", ""]);
         assert_eq!(
             make(Some("refs/remotes/origin/selected")).unwrap().argv[1],
-            ""
+            "selected"
         );
         assert_eq!(
             prepare(
@@ -603,9 +656,63 @@ mod tests {
                 .argv[1],
             "upstream/nested"
         );
-        assert!(remote_command(Some("refs/remotes/upstreamish/main")).is_err());
+        assert_eq!(
+            remote_command(Some("refs/remotes/upstreamish/main"))
+                .unwrap()
+                .argv[1],
+            "upstreamish"
+        );
         assert!(remote_command(Some("refs/heads/main")).is_err());
         assert!(remote_command(None).is_err());
+        for (decorations, expected) in [
+            (
+                "refs/heads/topic;literal, refs/remotes/upstream/main, tag: refs/tags/v1",
+                ["topic;literal", "v1", "upstream"],
+            ),
+            (
+                "HEAD -> refs/heads/checked-out, refs/heads/aaa",
+                ["checked-out", "", "origin"],
+            ),
+            ("HEAD -> HEAD", ["HEAD", "", "origin"]),
+            ("", ["", "", "origin"]),
+        ] {
+            let command = prepare_with_context(
+                &repo,
+                "!echo %(branch) %(tag) %(remote)",
+                "selected-oid",
+                Path::new(""),
+                0,
+                Some(ReferenceContext::Commit(decorations)),
+                ExpansionInput {
+                    args: &[],
+                    prompt_answers: &[],
+                },
+            )
+            .unwrap();
+            assert_eq!(command.argv[1..], expected);
+        }
+        for invalid in [
+            "refs/heads/-danger",
+            "refs/heads/safe, refs/remotes/upstream/-danger",
+            "refs/heads/has space",
+        ] {
+            assert!(
+                prepare_with_context(
+                    &repo,
+                    "!echo %(branch)",
+                    "selected-oid",
+                    Path::new(""),
+                    0,
+                    Some(ReferenceContext::Commit(invalid)),
+                    ExpansionInput {
+                        args: &[],
+                        prompt_answers: &[]
+                    },
+                )
+                .is_err(),
+                "{invalid}"
+            );
+        }
         let command = prepare(&repo, "!echo 'two words'", "HEAD", Path::new(""), None).unwrap();
         assert_eq!(command.display(), "\"echo\" \"two words\"");
         let editor = prepare_with_context(

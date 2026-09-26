@@ -156,18 +156,30 @@ fn parse_remote_refs(bytes: &[u8], head: &str) -> Result<Vec<Reference>> {
 
 fn decorate_history(commits: &mut [Commit], references: &[Reference], upstream: &str) {
     use crate::refs_view::{kind, numeric};
-    let mut ordered: Vec<_> = references.iter().collect();
-    ordered.sort_by(|a, b| {
-        kind(a, upstream)
-            .cmp(&kind(b, upstream))
-            .then_with(|| numeric(&a.name, &b.name))
-    });
-    let mut decorations: std::collections::HashMap<&str, Vec<String>> =
+    let mut decorations: std::collections::HashMap<&str, Vec<(&Reference, String)>> =
         std::collections::HashMap::new();
-    for reference in ordered
-        .iter()
-        .filter(|r| !r.name.starts_with("refs/replace/"))
-    {
+    let compare = |a: &(&Reference, String), b: &(&Reference, String)| {
+        kind(a.0, upstream)
+            .cmp(&kind(b.0, upstream))
+            .then_with(|| numeric(&a.0.name, &b.0.name))
+    };
+    // C applies replacements in input order: clear refs loaded so far, then
+    // allow later refs (notably tags after refs/replace/) onto the same commit.
+    for reference in references {
+        if let Some(original) = reference.name.strip_prefix("refs/replace/") {
+            let label = decorations
+                .remove(original)
+                .and_then(|v| v.into_iter().min_by(compare))
+                .map(|(_, label)| {
+                    label
+                        .trim_start_matches("HEAD -> ")
+                        .trim_start_matches("refs/heads/")
+                        .to_owned()
+                })
+                .unwrap_or_else(|| "replaced".into());
+            decorations.insert(original, vec![(reference, format!("replace: {label}"))]);
+            continue;
+        }
         let oid = if reference.target.is_empty() {
             &reference.oid
         } else {
@@ -180,28 +192,20 @@ fn decorate_history(commits: &mut [Commit], references: &[Reference], upstream: 
         } else {
             reference.name.clone()
         };
-        decorations.entry(oid).or_default().push(label);
+        decorations.entry(oid).or_default().push((reference, label));
     }
-    for reference in ordered
-        .iter()
-        .filter(|r| r.name.starts_with("refs/replace/"))
-    {
-        let original = &reference.name["refs/replace/".len()..];
-        let label = decorations
-            .remove(original)
-            .and_then(|v| v.into_iter().next())
-            .map(|s| {
-                s.trim_start_matches("HEAD -> ")
-                    .trim_start_matches("refs/heads/")
-                    .to_owned()
-            })
-            .unwrap_or_else(|| "replaced".into());
-        decorations.insert(original, vec![format!("replace: {label}")]);
+    for labels in decorations.values_mut() {
+        labels.sort_by(compare);
     }
     for commit in commits {
         commit.decorations = decorations
             .get(commit.oid.as_str())
-            .map(|v| v.join(", "))
+            .map(|v| {
+                v.iter()
+                    .map(|(_, label)| label.as_str())
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            })
             .unwrap_or_default();
     }
 }
@@ -536,12 +540,15 @@ impl Repository {
             .collect::<Result<_>>()?;
         if self.command(["symbolic-ref", "--quiet", "HEAD"]).is_err() {
             if let Ok(oid) = self.revision("HEAD") {
-                references.push(Reference {
-                    name: "HEAD".into(),
-                    oid,
-                    target: String::new(),
-                    current: true,
-                });
+                references.insert(
+                    0,
+                    Reference {
+                        name: "HEAD".into(),
+                        oid,
+                        target: String::new(),
+                        current: true,
+                    },
+                );
             }
         }
         Ok(references)

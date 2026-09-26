@@ -1714,9 +1714,16 @@ impl App {
                 .into();
                 return Ok(true);
             }
-            let selected_ref = match self.selected() {
-                Item::Ref(_, name) if self.view.name == "refs" => name,
-                Item::Text if self.view.name == "refs" => Some(String::new()),
+            use tig_rs::commands::ReferenceContext;
+            let selection = self.selected();
+            let selected_ref = match &selection {
+                Item::Commit(commit) if self.view.name == "main" => {
+                    Some(ReferenceContext::Commit(&commit.decorations))
+                }
+                Item::Ref(_, name) if self.view.name == "refs" => {
+                    name.as_deref().map(ReferenceContext::Ref)
+                }
+                Item::Text if self.view.name == "refs" => Some(ReferenceContext::Ref("")),
                 _ => None,
             };
             self.select_context();
@@ -1737,7 +1744,7 @@ impl App {
                 &self.revision,
                 &file,
                 line,
-                selected_ref.as_deref(),
+                selected_ref,
                 tig_rs::commands::ExpansionInput {
                     args: &self.args,
                     prompt_answers: &prompt_answers,
