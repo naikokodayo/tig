@@ -1,0 +1,302 @@
+      TEST  test/stage/default-test
+            | Failed 13 out of 14 test(s)
+            |   [OK] status.screen assertion
+            | [FAIL] staged-changes.screen != expected/staged-changes.screen
+            | diff --git a/expected/staged-changes.screen b/staged-changes.screen
+            | index 0b4cbba..3c90946 100644
+            | --- a/expected/staged-changes.screen
+            | +++ b/staged-changes.screen
+            | @@ -1,19 +1,19 @@
+            | - b.c | 6 ++----
+            | - e/f | 6 ++----
+            | - g h | 6 ++----
+            | - 3 files changed, 6 insertions(+), 12 deletions(-)
+            | -
+            | -diff --git a/b.c b/b.c
+            | -index 0d8560f..81a0f74 100644
+            | ---- a/b.c
+            | -+++ b/b.c
+            | -@@ -1,4 +1,4 @@
+            | --b.c
+            | -+b.c CHANGED
+            | - 1
+            | - 2
+            | - 3
+            | -@@ -6,6 +6,4 @@ b.c
+            | - 5
+            | - 6
+            | -[stage] Press '<Enter>' to jump to file diff - line 1 of 65                  27%
+            | +On branch master
+            | +Changes to be committed:
+            | +M .j
+            | +M a
+            | +Changes not staged for commit:
+            | +M b.c
+            | +M e/f
+            | +M g h
+            | +Untracked files:
+            | +  (no files)
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +[status] Nothing to update                                                  100%
+            | [FAIL] unstaged-changes.screen not found
+            | [FAIL] staged-changes.screen != expected/staged-changes.screen
+            | diff --git a/expected/staged-changes.screen b/staged-changes.screen
+            | index 0b4cbba..3c90946 100644
+            | --- a/expected/staged-changes.screen
+            | +++ b/staged-changes.screen
+            | @@ -1,19 +1,19 @@
+            | - b.c | 6 ++----
+            | - e/f | 6 ++----
+            | - g h | 6 ++----
+            | - 3 files changed, 6 insertions(+), 12 deletions(-)
+            | -
+            | -diff --git a/b.c b/b.c
+            | -index 0d8560f..81a0f74 100644
+            | ---- a/b.c
+            | -+++ b/b.c
+            | -@@ -1,4 +1,4 @@
+            | --b.c
+            | -+b.c CHANGED
+            | - 1
+            | - 2
+            | - 3
+            | -@@ -6,6 +6,4 @@ b.c
+            | - 5
+            | - 6
+            | -[stage] Press '<Enter>' to jump to file diff - line 1 of 65                  27%
+            | +On branch master
+            | +Changes to be committed:
+            | +M .j
+            | +M a
+            | +Changes not staged for commit:
+            | +M b.c
+            | +M e/f
+            | +M g h
+            | +Untracked files:
+            | +  (no files)
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +[status] Nothing to update                                                  100%
+            | [FAIL] unstaged-changes.screen not found
+            | [FAIL] staged-changes-for-a-shortcut.screen != expected/staged-changes-for-a-shortcut.screen
+            | diff --git a/expected/staged-changes-for-a-shortcut.screen b/staged-changes-for-a-shortcut.screen
+            | index 2839025..7c8cee1 100644
+            | --- a/expected/staged-changes-for-a-shortcut.screen
+            | +++ b/staged-changes-for-a-shortcut.screen
+            | @@ -1,19 +1,19 @@
+            | - a | 6 ++----
+            | - 1 file changed, 2 insertions(+), 4 deletions(-)
+            | - 
+            | -diff --git a/a b/a
+            | -index 12d1d9e..0a4a332 100644
+            | ---- a/a
+            | -+++ b/a
+            | -@@ -1,4 +1,4 @@
+            | --a
+            | -+a CHANGED
+            | - 1
+            | - 2
+            | - 3
+            | -@@ -6,6 +6,4 @@ a
+            | - 5
+            | - 6
+            | - 7
+            | --8
+            | -[stage] Press '<Enter>' to jump to file diff - line 1 of 23                  78%
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +[stage] Unstaged changes to 'a'                                               0%
+            | [FAIL] staged-changes.screen != expected/staged-changes.screen
+            | diff --git a/expected/staged-changes.screen b/staged-changes.screen
+            | index 1f29c70..3c90946 100644
+            | --- a/expected/staged-changes.screen
+            | +++ b/staged-changes.screen
+            | @@ -1,19 +1,19 @@
+            | - .j | 6 ++----
+            | - a  | 6 ++----
+            | - 2 files changed, 4 insertions(+), 8 deletions(-)
+            | -
+            | -diff --git a/.j b/.j
+            | -index e697dfd..9d8ef3d 100644
+            | ---- a/.j
+            | -+++ b/.j
+            | -@@ -1,4 +1,4 @@
+            | --.j
+            | -+.j CHANGED
+            | - 1
+            | - 2
+            | - 3
+            | -@@ -6,6 +6,4 @@
+            | - 5
+            | - 6
+            | - 7
+            | -[stage] Press '<Enter>' to jump to file diff - line 1 of 44                  40%
+            | +On branch master
+            | +Changes to be committed:
+            | +M .j
+            | +M a
+            | +Changes not staged for commit:
+            | +M b.c
+            | +M e/f
+            | +M g h
+            | +Untracked files:
+            | +  (no files)
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +[status] Nothing to update                                                  100%
+            | [FAIL] staged-changes-for-a.screen != expected/staged-changes-for-a.screen
+            | diff --git a/expected/staged-changes-for-a.screen b/staged-changes-for-a.screen
+            | index 169cc95..3c90946 100644
+            | --- a/expected/staged-changes-for-a.screen
+            | +++ b/staged-changes-for-a.screen
+            | @@ -1,19 +1,19 @@
+            | - 5
+            | - 6
+            | - 7
+            | --8
+            | --9
+            | --10
+            | -\ No newline at end of file
+            | -+8
+            | -\ No newline at end of file
+            | -diff --git a/a b/a
+            | -index 12d1d9e..0a4a332 100644
+            | ---- a/a
+            | -+++ b/a
+            | -@@ -1,4 +1,4 @@
+            | --a
+            | -+a CHANGED
+            | - 1
+            | - 2
+            | -[stage] Staged changes to 'a' - line 25 of 44                                75%
+            | +On branch master
+            | +Changes to be committed:
+            | +M .j
+            | +M a
+            | +Changes not staged for commit:
+            | +M b.c
+            | +M e/f
+            | +M g h
+            | +Untracked files:
+            | +  (no files)
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +
+            | +[status] Nothing to update                                                  100%
+            | [FAIL] unstaged-changes.screen not found
+            | [FAIL] unstaged-changes-default-title.screen not found
+            | [FAIL] unstaged-changes-staged-bc-line.screen not found
+            | [FAIL] unstaged-changes-staged-bc-chunk.screen not found
+            | [FAIL] unstaged-changes-staged-bc-last-chunk.screen not found
+            | [FAIL] unstaged-changes-staged-all.screen not found
+      TEST  test/stage/update-part-test
+            | Failed 6 out of 6 test(s)
+            | [stderr] tig: Not implemented in Rust yet: stage-update-part
+            | [FAIL] unexpected status code: 1 (should be 0)
+            | [FAIL] default-diff.screen != expected/default-diff.screen
+            | diff --git a/expected/default-diff.screen b/default-diff.screen
+            | index 51cbd53..a0e7ad0 100644
+            | --- a/expected/default-diff.screen
+            | +++ b/default-diff.screen
+            | @@ -31,4 +31,4 @@ index 12d1d9e..931fee6 100644
+            |  
+            |  
+            |  
+            | -[stage] Press '<Enter>' to jump to file diff - line 1 of 25                 100%
+            | +[stage] Unstaged changes to 'a' - line 1 of 25                              100%
+            | [FAIL] update-part-any.screen not found
+            | [FAIL] update-part-first.screen not found
+            | [FAIL] update-part-last.screen not found
+            | [FAIL] update-part-single.screen not found
+      TEST  test/stage/split-chunk-test
+            | Failed 3 out of 3 test(s)
+            | [stderr] tig: Not implemented in Rust yet: stage-split-chunk
+            | [FAIL] unexpected status code: 1 (should be 0)
+            | [FAIL] default-diff.screen != expected/default-diff.screen
+            | diff --git a/expected/default-diff.screen b/default-diff.screen
+            | index 51cbd53..a0e7ad0 100644
+            | --- a/expected/default-diff.screen
+            | +++ b/default-diff.screen
+            | @@ -31,4 +31,4 @@ index 12d1d9e..931fee6 100644
+            |  
+            |  
+            |  
+            | -[stage] Press '<Enter>' to jump to file diff - line 1 of 25                 100%
+            | +[stage] Unstaged changes to 'a' - line 1 of 25                              100%
+            | [FAIL] split-diff.screen not found
+      TEST  test/stage/gh-410-test
+            | Failed 2 out of 3 test(s)
+            |   [OK] status-before.screen assertion
+            | [FAIL] unstaged-changes.screen != expected/unstaged-changes.screen
+            | diff --git a/expected/unstaged-changes.screen b/unstaged-changes.screen
+            | index 83186dc..394d3b8 100644
+            | --- a/expected/unstaged-changes.screen
+            | +++ b/unstaged-changes.screen
+            | @@ -8,4 +8,4 @@ index e965047..7197273 100644
+            |  @@ -1 +1,2 @@
+            |   Hello
+            |  +Hello2
+            | -[stage] Press '<Enter>' to jump to file diff - line 1 of 10                 100%
+            | +[stage] Unstaged changes to 'hello.txt' - line 1 of 10                      100%
+            | [FAIL] status-after.screen != expected/status-after.screen
+            | diff --git a/expected/status-after.screen b/status-after.screen
+            | index 3cd4a19..21ac505 100644
+            | --- a/expected/status-after.screen
+            | +++ b/status-after.screen
+            | @@ -1,11 +1,11 @@
+            |  On branch master
+            |  Changes to be committed:
+            | -M hello.txt
+            | -Changes not staged for commit:
+            |    (no files)
+            | +Changes not staged for commit:
+            | +M hello.txt
+            |  Untracked files:
+            |    (no files)
+            |  
+            |  
+            |  
+            | -[status] Press u to unstage 'hello.txt' for commit                          100%
+            | +[status] Press u to stage 'hello.txt' for commit                            100%
+   SUMMARY  Failed 24 of 26 assertions in 4 tests
+make: *** [test] Error 24

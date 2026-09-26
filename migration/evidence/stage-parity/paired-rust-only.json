@@ -1,0 +1,2306 @@
+{
+  "schema": 1,
+  "source_commit": "053885c90452c878c91b2ccb0b4e8c1aba38ffc4",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "BLOCKED",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/main/untracked-test",
+          "script_sha256": "1903b8792865653883d9590fcd7f876a94823fa89e350b7e1d81c32d365ea13f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/untracked-test/.test-result",
+          "receipt": "  [OK] start.screen assertion\n  [OK] result.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/update-unstaged-changes-test",
+          "script_sha256": "241f169bbd0c507256bb23b2a56963cd1dafd3325a642693d7f21c5ef871ce8c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/update-unstaged-changes-test/.test-result",
+          "receipt": "  [OK] start.screen assertion\n  [OK] result.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/stage/default-test",
+          "script_sha256": "d58bba43a0248c8c2bea7551e41f8c8dec4dfd993dd8dbb156f8325d895d7493",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 14
+          },
+          "assertions": [
+            {
+              "id": "status.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "staged-changes.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "staged-changes.screen#2",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes.screen#2",
+              "status": "OK"
+            },
+            {
+              "id": "staged-changes-for-a-shortcut.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "staged-changes.screen#3",
+              "status": "OK"
+            },
+            {
+              "id": "staged-changes-for-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes.screen#3",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes-default-title.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes-staged-bc-line.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes-staged-bc-chunk.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes-staged-bc-last-chunk.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes-staged-all.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/stage/default-test/.test-result",
+          "receipt": "  [OK] status.screen assertion\n  [OK] staged-changes.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] staged-changes.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] staged-changes-for-a-shortcut.screen assertion\n  [OK] staged-changes.screen assertion\n  [OK] staged-changes-for-a.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] unstaged-changes-default-title.screen assertion\n  [OK] unstaged-changes-staged-bc-line.screen assertion\n  [OK] unstaged-changes-staged-bc-chunk.screen assertion\n  [OK] unstaged-changes-staged-bc-last-chunk.screen assertion\n  [OK] unstaged-changes-staged-all.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/stage/gh-410-test",
+          "script_sha256": "6cace115203d853e9db07dc5abb28ce2adb5ba897227da1d0966ac16e0dd4334",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "status-before.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/stage/gh-410-test/.test-result",
+          "receipt": "  [OK] status-before.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] status-after.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/stage/maximized-unstaged-changes-test",
+          "script_sha256": "c99eda695fff484318792ca50fcb135d4a05d4c0754c1d696d998116ee3e509e",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "maximized.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/stage/maximized-unstaged-changes-test/.test-result",
+          "receipt": "  [OK] split.screen assertion\n  [OK] maximized.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/stage/split-chunk-test",
+          "script_sha256": "0aa8614f911de18145b25164645805cc89b7eba159349bdb8181a7284c8c6969",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "default-diff.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "split-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/stage/split-chunk-test/.test-result",
+          "receipt": "  [OK] default-diff.screen assertion\n  [OK] split-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/stage/update-part-test",
+          "script_sha256": "57949ae5596c712dcfeedf32d7535b805177823814b0a648e9ecf72354723bbb",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "default-diff.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "update-part-any.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "update-part-first.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "update-part-last.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "update-part-single.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/stage/update-part-test/.test-result",
+          "receipt": "  [OK] default-diff.screen assertion\n  [OK] update-part-any.screen assertion\n  [OK] update-part-first.screen assertion\n  [OK] update-part-last.screen assertion\n  [OK] update-part-single.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/file-filter-test",
+          "script_sha256": "ada6618b55d4a2c054e4858f336bf67b389b17b98a11cb5404bd93ac9d818c80",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "status-path-filter.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-path-filter.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "rev-parse.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-index.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-files.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "ls-files.trace#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/file-filter-test/.test-result",
+          "receipt": "  [OK] status-path-filter.screen assertion\n  [OK] status-path-filter.stderr assertion\n  [OK] rev-parse.trace assertion\n  [OK] diff-index.trace assertion\n  [OK] diff-files.trace assertion\n  [OK] ls-files.trace assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/file-name-test",
+          "script_sha256": "2f1f9fea59a3a08f7bdf5d2fa6b767c72c94e922bc51167ab73bc84e28ee70c1",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "status-with-untracked.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-with-file-0.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-with-file-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-with-file-2.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-with-file-3.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/file-name-test/.test-result",
+          "receipt": "  [OK] status-with-untracked.screen assertion\n  [OK] status-with-file-0.screen assertion\n  [OK] status-with-file-1.screen assertion\n  [OK] status-with-file-2.screen assertion\n  [OK] status-with-file-3.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/file-var-test",
+          "script_sha256": "2e23ee40b15e443f4953a3e3319a886cd7912cc64c488476d5a76b9e7471a960",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "before-rm-file.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "after-rm-file.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/file-var-test/.test-result",
+          "receipt": "  [OK] before-rm-file.screen assertion\n  [OK] after-rm-file.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/on-branch-test",
+          "script_sha256": "775b495bf60d2e373109c6fc8d194b3f84ecb2b2db9d1ac8fc9d54c8402d4508",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 24
+          },
+          "assertions": [
+            {
+              "id": "on-branch-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "on-branch-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "bisecting-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bisecting-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "on-detached-head.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "on-detached-head.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "on-detached-tag.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "on-detached-tag.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "merging-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "merging-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "rebasing-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "rebasing-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "applying-mailbox-to-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "applying-mailbox-to-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "interactive-rebase-of-branch.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "interactive-rebase-of-branch.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-on-branch-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-bisecting-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-on-detached-head.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-on-detached-tag.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-merging-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-rebasing-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-applying-mailbox-to-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-interactive-rebase-of-branch.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/on-branch-test/.test-result",
+          "receipt": "  [OK] on-branch-master.screen assertion\n  [OK] on-branch-master.stderr assertion\n  [OK] bisecting-master.screen assertion\n  [OK] bisecting-master.stderr assertion\n  [OK] on-detached-head.screen assertion\n  [OK] on-detached-head.stderr assertion\n  [OK] on-detached-tag.screen assertion\n  [OK] on-detached-tag.stderr assertion\n  [OK] merging-master.screen assertion\n  [OK] merging-master.stderr assertion\n  [OK] rebasing-master.screen assertion\n  [OK] rebasing-master.stderr assertion\n  [OK] applying-mailbox-to-master.screen assertion\n  [OK] applying-mailbox-to-master.stderr assertion\n  [OK] interactive-rebase-of-branch.screen assertion\n  [OK] interactive-rebase-of-branch.stderr assertion\n  [OK] all-on-branch-master.screen assertion\n  [OK] all-bisecting-master.screen assertion\n  [OK] all-on-detached-head.screen assertion\n  [OK] all-on-detached-tag.screen assertion\n  [OK] all-merging-master.screen assertion\n  [OK] all-rebasing-master.screen assertion\n  [OK] all-applying-mailbox-to-master.screen assertion\n  [OK] all-interactive-rebase-of-branch.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/on-branch-tracking-info-test",
+          "script_sha256": "9ad1fafc5b022748b11d2382663d330f0715dfefa92c413d9324c36e86dd5efe",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 12
+          },
+          "assertions": [
+            {
+              "id": "up-to-date-with-remote-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "up-to-date-with-remote-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "behind-remote-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "behind-remote-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "ahead-of-remote-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "ahead-of-remote-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "diverged-from-remote-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diverged-from-remote-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-up-to-date-with-remote-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-behind-remote-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-ahead-of-remote-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-diverged-from-remote-master.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/on-branch-tracking-info-test/.test-result",
+          "receipt": "  [OK] up-to-date-with-remote-master.screen assertion\n  [OK] up-to-date-with-remote-master.stderr assertion\n  [OK] behind-remote-master.screen assertion\n  [OK] behind-remote-master.stderr assertion\n  [OK] ahead-of-remote-master.screen assertion\n  [OK] ahead-of-remote-master.stderr assertion\n  [OK] diverged-from-remote-master.screen assertion\n  [OK] diverged-from-remote-master.stderr assertion\n  [OK] all-up-to-date-with-remote-master.screen assertion\n  [OK] all-behind-remote-master.screen assertion\n  [OK] all-ahead-of-remote-master.screen assertion\n  [OK] all-diverged-from-remote-master.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/refresh-test",
+          "script_sha256": "8da82f46fb86373992e5546fadbff84a17eaef025b7d0f39966dd005025dd6a5",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 11
+          },
+          "assertions": [
+            {
+              "id": "status-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-add-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-add-all.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-commit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-reset-soft.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-reset-a-and-bc.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-checkout-bc.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-reset-hard.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-touch-new-file.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-rm-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-checkout-a.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/refresh-test/.test-result",
+          "receipt": "  [OK] status-with-unstaged.screen assertion\n  [OK] status-after-add-a.screen assertion\n  [OK] status-after-add-all.screen assertion\n  [OK] status-after-commit.screen assertion\n  [OK] status-after-reset-soft.screen assertion\n  [OK] status-after-reset-a-and-bc.screen assertion\n  [OK] status-after-checkout-bc.screen assertion\n  [OK] status-after-reset-hard.screen assertion\n  [OK] status-after-touch-new-file.screen assertion\n  [OK] status-after-rm-a.screen assertion\n  [OK] status-after-checkout-a.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/repo-var-test",
+          "script_sha256": "6163b10a7e99c242c60f2a08ed1b7022ea19784d286ad28eb8599b79a8b5566d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "status.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/repo-var-test/.test-result",
+          "receipt": "  [OK] status.screen assertion\n  [OK] vars_assert_count assertion\n  [OK] vars assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/start-on-line-test",
+          "script_sha256": "ad71655911fcedb5f33ee3de20c0ac945fdcc5ca210ee8c47651fdc90ad837dc",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/start-on-line-test/.test-result",
+          "receipt": "  [OK] position.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/submodule-editor-test",
+          "script_sha256": "037dcd5a7c53d40da6126ec07c5ac7d6f3307526168f664900687ae5c9f3b4a6",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "status.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/submodule-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] status.screen assertion\n  [OK] editor.log assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/untracked-files-test",
+          "script_sha256": "b3c1c5362794ea95ee0a476662eb534b411a12e52aa4409c659f480a1a585aba",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "initial.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "initial.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "inside-dir-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "inside-dir-a.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-show-untracked-files-option-off.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-show-untracked-files-option-off.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/untracked-files-test/.test-result",
+          "receipt": "  [OK] initial.screen assertion\n  [OK] initial.stderr assertion\n  [OK] inside-dir-a.screen assertion\n  [OK] inside-dir-a.stderr assertion\n  [OK] status-show-untracked-files-option-off.screen assertion\n  [OK] status-show-untracked-files-option-off.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/worktree-editor-test",
+          "script_sha256": "65959faa68b69b6ff2dadb4437ab1f12d9ca83241e4d02d102529baa05257f71",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "status.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/worktree-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] status.screen assertion\n  [OK] editor.log assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/worktree-test",
+          "script_sha256": "f80c49d8bf02d02b5b75438bb5551592949214f0fb09444c68e3db031a1c9f19",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "worktree.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/worktree-test/.test-result",
+          "receipt": "  [OK] worktree.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "<clone>/src/tig",
+          "sha256": "878c14cfc9384e62e78d6a2773200fd77f47fe6b3d6826159079c1ce7c6d1b96"
+        },
+        "test-graph": {
+          "path": "<clone>/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 19
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"<clone>/target\"\ntest -x \"<clone>/target/release/tig\"\ntest -x \"<clone>/target/release/test-graph\"\n   Compiling libc v0.2.189\n   Compiling signal-hook v0.3.18\n   Compiling parking_lot_core v0.9.12\n   Compiling memchr v2.8.3\n   Compiling cfg-if v1.0.5\n   Compiling log v0.4.34\n   Compiling scopeguard v1.2.0\n   Compiling rustix v0.38.44\n   Compiling smallvec v1.16.2\n   Compiling bitflags v2.13.2\n   Compiling regex-syntax v0.8.11\n   Compiling lock_api v0.4.14\n   Compiling unicode-width v0.2.0\n   Compiling aho-corasick v1.1.5\n   Compiling regex-automata v0.4.18\n   Compiling errno v0.3.14\n   Compiling mio v1.2.3\n   Compiling signal-hook-registry v1.4.8\n   Compiling parking_lot v0.12.5\n   Compiling signal-hook-mio v0.2.5\n   Compiling crossterm v0.28.1\n   Compiling regex v1.13.1\n   Compiling tig-rs v0.1.0 (<clone>)\n    Finished `release` profile [optimized] target(s) in 24.59s\n",
+      "results": [
+        {
+          "script": "test/main/untracked-test",
+          "script_sha256": "1903b8792865653883d9590fcd7f876a94823fa89e350b7e1d81c32d365ea13f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/untracked-test/.test-result",
+          "receipt": "  [OK] start.screen assertion\n  [OK] result.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/update-unstaged-changes-test",
+          "script_sha256": "241f169bbd0c507256bb23b2a56963cd1dafd3325a642693d7f21c5ef871ce8c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/update-unstaged-changes-test/.test-result",
+          "receipt": "  [OK] start.screen assertion\n  [OK] result.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/stage/default-test",
+          "script_sha256": "d58bba43a0248c8c2bea7551e41f8c8dec4dfd993dd8dbb156f8325d895d7493",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 14
+          },
+          "assertions": [
+            {
+              "id": "status.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "staged-changes.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "staged-changes.screen#2",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes.screen#2",
+              "status": "OK"
+            },
+            {
+              "id": "staged-changes-for-a-shortcut.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "staged-changes.screen#3",
+              "status": "OK"
+            },
+            {
+              "id": "staged-changes-for-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes.screen#3",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes-default-title.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes-staged-bc-line.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes-staged-bc-chunk.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes-staged-bc-last-chunk.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes-staged-all.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/stage/default-test/.test-result",
+          "receipt": "  [OK] status.screen assertion\n  [OK] staged-changes.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] staged-changes.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] staged-changes-for-a-shortcut.screen assertion\n  [OK] staged-changes.screen assertion\n  [OK] staged-changes-for-a.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] unstaged-changes-default-title.screen assertion\n  [OK] unstaged-changes-staged-bc-line.screen assertion\n  [OK] unstaged-changes-staged-bc-chunk.screen assertion\n  [OK] unstaged-changes-staged-bc-last-chunk.screen assertion\n  [OK] unstaged-changes-staged-all.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/stage/gh-410-test",
+          "script_sha256": "6cace115203d853e9db07dc5abb28ce2adb5ba897227da1d0966ac16e0dd4334",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "status-before.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/stage/gh-410-test/.test-result",
+          "receipt": "  [OK] status-before.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] status-after.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/stage/maximized-unstaged-changes-test",
+          "script_sha256": "c99eda695fff484318792ca50fcb135d4a05d4c0754c1d696d998116ee3e509e",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "maximized.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/stage/maximized-unstaged-changes-test/.test-result",
+          "receipt": "  [OK] split.screen assertion\n  [OK] maximized.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/stage/split-chunk-test",
+          "script_sha256": "0aa8614f911de18145b25164645805cc89b7eba159349bdb8181a7284c8c6969",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 1,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "default-diff.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "split-diff.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/stage/split-chunk-test/.test-result",
+          "receipt": "  [OK] default-diff.screen assertion\n[FAIL] split-diff.screen != expected/split-diff.screen\n\u001b[1mdiff --git a/expected/split-diff.screen b/split-diff.screen\u001b[m\n\u001b[1mindex 775edde..7736b0f 100644\u001b[m\n\u001b[1m--- a/expected/split-diff.screen\u001b[m\n\u001b[1m+++ b/split-diff.screen\u001b[m\n\u001b[36m@@ -23,7 +23,7 @@\u001b[m \u001b[mindex 12d1d9e..931fee6 100644\u001b[m\n -6\u001b[m\n +edited-too\u001b[m\n  7\u001b[m\n\u001b[31m-@@ -8,4 +8,1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -8,4 +8,2 @@\u001b[m\n  7\u001b[m\n -8\u001b[m\n -9\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 2 test(s)\r\n|   [OK] default-diff.screen assertion\r\n| [FAIL] split-diff.screen != expected/split-diff.screen\r\n| \u001b[1mdiff --git a/expected/split-diff.screen b/split-diff.screen\u001b[m\r\n| \u001b[1mindex 775edde..7736b0f 100644\u001b[m\r\n| \u001b[1m--- a/expected/split-diff.screen\u001b[m\r\n| \u001b[1m+++ b/split-diff.screen\u001b[m\r\n| \u001b[36m@@ -23,7 +23,7 @@\u001b[m \u001b[mindex 12d1d9e..931fee6 100644\u001b[m\r\n|  -6\u001b[m\r\n|  +edited-too\u001b[m\r\n|   7\u001b[m\r\n| \u001b[31m-@@ -8,4 +8,1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m@@ -8,4 +8,2 @@\u001b[m\r\n|   7\u001b[m\r\n|  -8\u001b[m\r\n|  -9\u001b[m\r\n"
+        },
+        {
+          "script": "test/stage/update-part-test",
+          "script_sha256": "57949ae5596c712dcfeedf32d7535b805177823814b0a648e9ecf72354723bbb",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "default-diff.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "update-part-any.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "update-part-first.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "update-part-last.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "update-part-single.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/stage/update-part-test/.test-result",
+          "receipt": "  [OK] default-diff.screen assertion\n  [OK] update-part-any.screen assertion\n  [OK] update-part-first.screen assertion\n  [OK] update-part-last.screen assertion\n  [OK] update-part-single.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/file-filter-test",
+          "script_sha256": "ada6618b55d4a2c054e4858f336bf67b389b17b98a11cb5404bd93ac9d818c80",
+          "exit_code": 1,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "script_exit_nonzero",
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 1,
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "status-path-filter.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "status-path-filter.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/file-filter-test/.test-result",
+          "receipt": "[FAIL] status-path-filter.screen != expected/status-path-filter.screen\n\u001b[1mdiff --git a/expected/status-path-filter.screen b/status-path-filter.screen\u001b[m\n\u001b[1mindex 5c643ad..d8b07d7 100644\u001b[m\n\u001b[1m--- a/expected/status-path-filter.screen\u001b[m\n\u001b[1m+++ b/status-path-filter.screen\u001b[m\n\u001b[36m@@ -2,13 +2,13 @@\u001b[m \u001b[mOn branch master\u001b[m\n Changes to be committed:\u001b[m\n   (no files)\u001b[m\n Changes not staged for commit:\u001b[m\n\u001b[32m+\u001b[m\u001b[32mM other/staged\u001b[m\n M subdir/staged\u001b[m\n Untracked files:\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? other/untracked\u001b[m\n ? subdir/untracked\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n [status] Nothing to update                                                                                          100%\u001b[m\n  [OK] status-path-filter.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "test/status/file-filter-test: line 54: <clone>/test/tmp/status/file-filter-test/trace: No such file or directory\r\n| Failed 1 out of 2 test(s)\r\n| [FAIL] status-path-filter.screen != expected/status-path-filter.screen\r\n| \u001b[1mdiff --git a/expected/status-path-filter.screen b/status-path-filter.screen\u001b[m\r\n| \u001b[1mindex 5c643ad..d8b07d7 100644\u001b[m\r\n| \u001b[1m--- a/expected/status-path-filter.screen\u001b[m\r\n| \u001b[1m+++ b/status-path-filter.screen\u001b[m\r\n| \u001b[36m@@ -2,13 +2,13 @@\u001b[m \u001b[mOn branch master\u001b[m\r\n|  Changes to be committed:\u001b[m\r\n|    (no files)\u001b[m\r\n|  Changes not staged for commit:\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mM other/staged\u001b[m\r\n|  M subdir/staged\u001b[m\r\n|  Untracked files:\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? other/untracked\u001b[m\r\n|  ? subdir/untracked\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n|  [status] Nothing to update                                                                                          100%\u001b[m\r\n|   [OK] status-path-filter.stderr assertion\r\n"
+        },
+        {
+          "script": "test/status/file-name-test",
+          "script_sha256": "2f1f9fea59a3a08f7bdf5d2fa6b767c72c94e922bc51167ab73bc84e28ee70c1",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 1,
+            "FAIL": 4
+          },
+          "assertions": [
+            {
+              "id": "status-with-untracked.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-with-file-0.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "status-with-file-1.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "status-with-file-2.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "status-with-file-3.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/status/file-name-test/.test-result",
+          "receipt": "  [OK] status-with-untracked.screen assertion\n[FAIL] status-with-file-0.screen != expected/status-with-file-0.screen\n\u001b[1mdiff --git a/expected/status-with-file-0.screen b/status-with-file-0.screen\u001b[m\n\u001b[1mindex 8adabe8..7140f90 100644\u001b[m\n\u001b[1m--- a/expected/status-with-file-0.screen\u001b[m\n\u001b[1m+++ b/status-with-file-0.screen\u001b[m\n\u001b[36m@@ -11,4 +11,4 @@\u001b[m \u001b[mUntracked files:                                            |\u001b[m\n ? 可愛いコー特集                                            |\u001b[m\n                                                             |\u001b[m\n                                                             |\u001b[m\n\u001b[31m-[status] Press u to stage '0' for addition              100%|[stage] Untracked file 0                                 0%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[status] Press u to stage '0' for addition              100%|[stage] Unstaged changes to '0'                          0%\u001b[m\n[FAIL] status-with-file-1.screen not found\n[FAIL] status-with-file-2.screen not found\n[FAIL] status-with-file-3.screen not found\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 4 out of 5 test(s)\r\n|   [OK] status-with-untracked.screen assertion\r\n| [FAIL] status-with-file-0.screen != expected/status-with-file-0.screen\r\n| \u001b[1mdiff --git a/expected/status-with-file-0.screen b/status-with-file-0.screen\u001b[m\r\n| \u001b[1mindex 8adabe8..7140f90 100644\u001b[m\r\n| \u001b[1m--- a/expected/status-with-file-0.screen\u001b[m\r\n| \u001b[1m+++ b/status-with-file-0.screen\u001b[m\r\n| \u001b[36m@@ -11,4 +11,4 @@\u001b[m \u001b[mUntracked files:                                            |\u001b[m\r\n|  ? 可愛いコー特集                                            |\u001b[m\r\n|                                                              |\u001b[m\r\n|                                                              |\u001b[m\r\n| \u001b[31m-[status] Press u to stage '0' for addition              100%|[stage] Untracked file 0                                 0%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[status] Press u to stage '0' for addition              100%|[stage] Unstaged changes to '0'                          0%\u001b[m\r\n| [FAIL] status-with-file-1.screen not found\r\n| [FAIL] status-with-file-2.screen not found\r\n| [FAIL] status-with-file-3.screen not found\r\n"
+        },
+        {
+          "script": "test/status/file-var-test",
+          "script_sha256": "2e23ee40b15e443f4953a3e3319a886cd7912cc64c488476d5a76b9e7471a960",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "before-rm-file.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "after-rm-file.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/file-var-test/.test-result",
+          "receipt": "  [OK] before-rm-file.screen assertion\n  [OK] after-rm-file.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/on-branch-test",
+          "script_sha256": "775b495bf60d2e373109c6fc8d194b3f84ecb2b2db9d1ac8fc9d54c8402d4508",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 24
+          },
+          "assertions": [
+            {
+              "id": "on-branch-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "on-branch-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "bisecting-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bisecting-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "on-detached-head.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "on-detached-head.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "on-detached-tag.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "on-detached-tag.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "merging-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "merging-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "rebasing-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "rebasing-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "applying-mailbox-to-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "applying-mailbox-to-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "interactive-rebase-of-branch.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "interactive-rebase-of-branch.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-on-branch-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-bisecting-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-on-detached-head.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-on-detached-tag.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-merging-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-rebasing-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-applying-mailbox-to-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-interactive-rebase-of-branch.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/on-branch-test/.test-result",
+          "receipt": "  [OK] on-branch-master.screen assertion\n  [OK] on-branch-master.stderr assertion\n  [OK] bisecting-master.screen assertion\n  [OK] bisecting-master.stderr assertion\n  [OK] on-detached-head.screen assertion\n  [OK] on-detached-head.stderr assertion\n  [OK] on-detached-tag.screen assertion\n  [OK] on-detached-tag.stderr assertion\n  [OK] merging-master.screen assertion\n  [OK] merging-master.stderr assertion\n  [OK] rebasing-master.screen assertion\n  [OK] rebasing-master.stderr assertion\n  [OK] applying-mailbox-to-master.screen assertion\n  [OK] applying-mailbox-to-master.stderr assertion\n  [OK] interactive-rebase-of-branch.screen assertion\n  [OK] interactive-rebase-of-branch.stderr assertion\n  [OK] all-on-branch-master.screen assertion\n  [OK] all-bisecting-master.screen assertion\n  [OK] all-on-detached-head.screen assertion\n  [OK] all-on-detached-tag.screen assertion\n  [OK] all-merging-master.screen assertion\n  [OK] all-rebasing-master.screen assertion\n  [OK] all-applying-mailbox-to-master.screen assertion\n  [OK] all-interactive-rebase-of-branch.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/on-branch-tracking-info-test",
+          "script_sha256": "9ad1fafc5b022748b11d2382663d330f0715dfefa92c413d9324c36e86dd5efe",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 12
+          },
+          "assertions": [
+            {
+              "id": "up-to-date-with-remote-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "up-to-date-with-remote-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "behind-remote-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "behind-remote-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "ahead-of-remote-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "ahead-of-remote-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "diverged-from-remote-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diverged-from-remote-master.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-up-to-date-with-remote-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-behind-remote-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-ahead-of-remote-master.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "all-diverged-from-remote-master.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/on-branch-tracking-info-test/.test-result",
+          "receipt": "  [OK] up-to-date-with-remote-master.screen assertion\n  [OK] up-to-date-with-remote-master.stderr assertion\n  [OK] behind-remote-master.screen assertion\n  [OK] behind-remote-master.stderr assertion\n  [OK] ahead-of-remote-master.screen assertion\n  [OK] ahead-of-remote-master.stderr assertion\n  [OK] diverged-from-remote-master.screen assertion\n  [OK] diverged-from-remote-master.stderr assertion\n  [OK] all-up-to-date-with-remote-master.screen assertion\n  [OK] all-behind-remote-master.screen assertion\n  [OK] all-ahead-of-remote-master.screen assertion\n  [OK] all-diverged-from-remote-master.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/refresh-test",
+          "script_sha256": "8da82f46fb86373992e5546fadbff84a17eaef025b7d0f39966dd005025dd6a5",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 11
+          },
+          "assertions": [
+            {
+              "id": "status-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-add-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-add-all.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-commit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-reset-soft.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-reset-a-and-bc.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-checkout-bc.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-reset-hard.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-touch-new-file.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-rm-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-checkout-a.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/refresh-test/.test-result",
+          "receipt": "  [OK] status-with-unstaged.screen assertion\n  [OK] status-after-add-a.screen assertion\n  [OK] status-after-add-all.screen assertion\n  [OK] status-after-commit.screen assertion\n  [OK] status-after-reset-soft.screen assertion\n  [OK] status-after-reset-a-and-bc.screen assertion\n  [OK] status-after-checkout-bc.screen assertion\n  [OK] status-after-reset-hard.screen assertion\n  [OK] status-after-touch-new-file.screen assertion\n  [OK] status-after-rm-a.screen assertion\n  [OK] status-after-checkout-a.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/repo-var-test",
+          "script_sha256": "6163b10a7e99c242c60f2a08ed1b7022ea19784d286ad28eb8599b79a8b5566d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "status.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/repo-var-test/.test-result",
+          "receipt": "  [OK] status.screen assertion\n  [OK] vars_assert_count assertion\n  [OK] vars assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/start-on-line-test",
+          "script_sha256": "ad71655911fcedb5f33ee3de20c0ac945fdcc5ca210ee8c47651fdc90ad837dc",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/start-on-line-test/.test-result",
+          "receipt": "  [OK] position.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/submodule-editor-test",
+          "script_sha256": "037dcd5a7c53d40da6126ec07c5ac7d6f3307526168f664900687ae5c9f3b4a6",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "status.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/submodule-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] status.screen assertion\n  [OK] editor.log assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/untracked-files-test",
+          "script_sha256": "b3c1c5362794ea95ee0a476662eb534b411a12e52aa4409c659f480a1a585aba",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 5,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "initial.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "initial.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "inside-dir-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "inside-dir-a.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-show-untracked-files-option-off.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "status-show-untracked-files-option-off.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/untracked-files-test/.test-result",
+          "receipt": "  [OK] initial.screen assertion\n  [OK] initial.stderr assertion\n  [OK] inside-dir-a.screen assertion\n  [OK] inside-dir-a.stderr assertion\n[FAIL] status-show-untracked-files-option-off.screen != expected/status-show-untracked-files-option-off.screen\n\u001b[1mdiff --git a/expected/status-show-untracked-files-option-off.screen b/status-show-untracked-files-option-off.screen\u001b[m\n\u001b[1mindex 29861d3..c17d2b6 100644\u001b[m\n\u001b[1m--- a/expected/status-show-untracked-files-option-off.screen\u001b[m\n\u001b[1m+++ b/status-show-untracked-files-option-off.screen\u001b[m\n\u001b[36m@@ -8,14 +8,14 @@\u001b[m \u001b[mM b.c\u001b[m\n M e/f\u001b[m\n M g h\u001b[m\n Untracked files:\u001b[m\n\u001b[31m-  (not shown)\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? dir-a/aa.1\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? dir-a/aa.2\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? dir-a/aa.3\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? dir-b/bb.1\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? root.1\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? root.2\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? root.3\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? root.4\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? root.5\u001b[m\n \u001b[m\n [status] Nothing to update                                                  100%\u001b[m\n  [OK] status-show-untracked-files-option-off.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 6 test(s)\r\n|   [OK] initial.screen assertion\r\n|   [OK] initial.stderr assertion\r\n|   [OK] inside-dir-a.screen assertion\r\n|   [OK] inside-dir-a.stderr assertion\r\n| [FAIL] status-show-untracked-files-option-off.screen != expected/status-show-untracked-files-option-off.screen\r\n| \u001b[1mdiff --git a/expected/status-show-untracked-files-option-off.screen b/status-show-untracked-files-option-off.screen\u001b[m\r\n| \u001b[1mindex 29861d3..c17d2b6 100644\u001b[m\r\n| \u001b[1m--- a/expected/status-show-untracked-files-option-off.screen\u001b[m\r\n| \u001b[1m+++ b/status-show-untracked-files-option-off.screen\u001b[m\r\n| \u001b[36m@@ -8,14 +8,14 @@\u001b[m \u001b[mM b.c\u001b[m\r\n|  M e/f\u001b[m\r\n|  M g h\u001b[m\r\n|  Untracked files:\u001b[m\r\n| \u001b[31m-  (not shown)\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? dir-a/aa.1\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? dir-a/aa.2\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? dir-a/aa.3\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? dir-b/bb.1\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? root.1\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? root.2\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? root.3\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? root.4\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? root.5\u001b[m\r\n|  \u001b[m\r\n|  [status] Nothing to update                                                  100%\u001b[m\r\n|   [OK] status-show-untracked-files-option-off.stderr assertion\r\n"
+        },
+        {
+          "script": "test/status/worktree-editor-test",
+          "script_sha256": "65959faa68b69b6ff2dadb4437ab1f12d9ca83241e4d02d102529baa05257f71",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "status.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/worktree-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] status.screen assertion\n  [OK] editor.log assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/worktree-test",
+          "script_sha256": "f80c49d8bf02d02b5b75438bb5551592949214f0fb09444c68e3db031a1c9f19",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "worktree.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/worktree-test/.test-result",
+          "receipt": "  [OK] worktree.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "<clone>/target/release/tig",
+          "sha256": "f58a32921f2a348041eefc29a34053cba9d34fe9e7d23861e83f6e8e8b899806"
+        },
+        "test-graph": {
+          "path": "<clone>/target/release/test-graph",
+          "sha256": "2788b8398e8acdcff6c2e9daec2ebe746007a8cddf9c4d5a391e89ba16cdb8c7"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 15,
+        "fail": 4
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/main/untracked-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "start.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "result.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/update-unstaged-changes-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "start.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "result.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/stage/default-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "status.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "staged-changes.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "unstaged-changes.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "staged-changes.screen#2",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "unstaged-changes.screen#2",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "staged-changes-for-a-shortcut.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "staged-changes.screen#3",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "staged-changes-for-a.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "unstaged-changes.screen#3",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "unstaged-changes-default-title.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "unstaged-changes-staged-bc-line.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "unstaged-changes-staged-bc-chunk.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "unstaged-changes-staged-bc-last-chunk.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "unstaged-changes-staged-all.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/stage/gh-410-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "status-before.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "unstaged-changes.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/stage/maximized-unstaged-changes-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "split.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "maximized.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/stage/split-chunk-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "default-diff.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "split-diff.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/stage/update-part-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "default-diff.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "update-part-any.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "update-part-first.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "update-part-last.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "update-part-single.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/status/file-filter-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "status-path-filter.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "status-path-filter.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "rev-parse.trace#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        },
+        {
+          "id": "diff-index.trace#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        },
+        {
+          "id": "diff-files.trace#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        },
+        {
+          "id": "ls-files.trace#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        }
+      ]
+    },
+    {
+      "script": "test/status/file-name-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "status-with-untracked.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-with-file-0.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "status-with-file-1.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "status-with-file-2.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "status-with-file-3.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/status/file-var-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "before-rm-file.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "after-rm-file.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/status/on-branch-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "on-branch-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "on-branch-master.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bisecting-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bisecting-master.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "on-detached-head.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "on-detached-head.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "on-detached-tag.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "on-detached-tag.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "merging-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "merging-master.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "rebasing-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "rebasing-master.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "applying-mailbox-to-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "applying-mailbox-to-master.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "interactive-rebase-of-branch.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "interactive-rebase-of-branch.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "all-on-branch-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "all-bisecting-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "all-on-detached-head.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "all-on-detached-tag.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "all-merging-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "all-rebasing-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "all-applying-mailbox-to-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "all-interactive-rebase-of-branch.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/status/on-branch-tracking-info-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "up-to-date-with-remote-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "up-to-date-with-remote-master.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "behind-remote-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "behind-remote-master.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "ahead-of-remote-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "ahead-of-remote-master.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diverged-from-remote-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diverged-from-remote-master.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "all-up-to-date-with-remote-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "all-behind-remote-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "all-ahead-of-remote-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "all-diverged-from-remote-master.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/status/refresh-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "status-with-unstaged.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-add-a.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-add-all.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-commit.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-reset-soft.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-reset-a-and-bc.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-checkout-bc.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-reset-hard.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-touch-new-file.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-rm-a.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-checkout-a.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/status/repo-var-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "status.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/status/start-on-line-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "position.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/status/submodule-editor-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "editor.log#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/status/untracked-files-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "initial.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "initial.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "inside-dir-a.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "inside-dir-a.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-show-untracked-files-option-off.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "status-show-untracked-files-option-off.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/status/worktree-editor-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "editor.log#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/status/worktree-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "worktree.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ]
+}
