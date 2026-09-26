@@ -1,0 +1,93 @@
+{
+  "scope": "Main-view traversal flags only; not full main navigation or application parity",
+  "parity_gate": "BLOCKED",
+  "rust_complete": false,
+  "source_commit": "b614633bc1e01476de46727307b9479f05a8b427",
+  "synced_main": "03f6a29f",
+  "upstream_c_source": "7d841c9302456b8c8f0629a559344137dc4faa4f",
+  "original_c_and_selected_scripts_unmodified": true,
+  "rust_binary_sha256": "f9494349221beb8a5c1847a19072f54c72884e7c00c1c3f77b3ed90a794872e7",
+  "rust_sources_sha256": {
+    "rust/git.rs": "d0210d652894b149d196f2c6e16ddf0630d1afa2259c42af46664da940e330bd",
+    "rust/main.rs": "a9978f931dc76e9d0f4b798f13541d90a8d4c02ad1fef44e22824ee98eef3dfe"
+  },
+  "toolchain": "rustc 1.81.0 (eeb90cda1 2024-09-04)",
+  "checks": {
+    "fmt": true,
+    "unit_tests": 66,
+    "clippy_D_warnings": true,
+    "release_build": true,
+    "pty_checks": 108,
+    "first_party_unsafe": "forbid"
+  },
+  "verification_log": "main-graph-checks.log",
+  "pty_receipt": "main-graph-pty.json",
+  "before_receipt": {
+    "log": "main-graph-rust-before.log",
+    "source_commit": "a28f69d",
+    "script_order": [
+      "test/main/goto-test",
+      "test/main/graph-argument-test",
+      "test/main/vertical-lines-test",
+      "test/main/refresh-test",
+      "test/main/commit-order-edge-case-test"
+    ]
+  },
+  "paired_upstream": {
+    "receipt": "main-graph-upstream.json",
+    "command": "rustup run 1.81.0 python3 rust/tests/upstream-suite.py test/main/*-test test/refs/default-test test/diff/line-number-test --output migration/evidence/main-graph-upstream.json",
+    "scripts": 37,
+    "c": {
+      "pass": 37
+    },
+    "rust": {
+      "fail": 22,
+      "pass": 14,
+      "skip": 1
+    },
+    "c_assertions_passed": 121,
+    "rust_OK_records": 70,
+    "rust_FAIL_records": 47,
+    "helper_used_as_main_view_evidence": false
+  },
+  "fixed_original_scripts": {
+    "test/main/graph-argument-test": 4,
+    "test/main/no-merges-test": 1
+  },
+  "main_FAIL_records": 46,
+  "historical_main_FAIL_records": 51,
+  "historical_comparison": "rust-upstream-eleventh.json is a mixed-route historical receipt, not a fresh full-suite baseline. Only graph-argument (4 FAIL records) and no-merges (1 FAIL record) disappear from its main failure map.",
+  "remaining_main_FAIL_records": {
+    "test/main/all-arg-test": 2,
+    "test/main/boundary-test": 2,
+    "test/main/branch-var-test": 2,
+    "test/main/commit-order-edge-case-test": 1,
+    "test/main/date-test": 9,
+    "test/main/escape-control-characters-test": 1,
+    "test/main/git-alias-test": 1,
+    "test/main/goto-test": 9,
+    "test/main/jump-ends-test": 2,
+    "test/main/mailmap-test": 1,
+    "test/main/main-options-test": 1,
+    "test/main/merge-test": 2,
+    "test/main/no-matching-commmits-test": 1,
+    "test/main/pretty-raw-test": 1,
+    "test/main/refresh-test": 1,
+    "test/main/stdin-test": 1,
+    "test/main/submodule-test": 1,
+    "test/main/unbind-default-quit-key-test": 2,
+    "test/main/vertical-lines-test": 3,
+    "test/main/view-split-test": 3
+  },
+  "missing_receipt": [
+    "test/main/filter-args-test: Rust lacks TIG_TRACE; the paired C assertions are NOT_REACHED"
+  ],
+  "skipped": [
+    "test/main/search-preload-test: Rust lacks readline"
+  ],
+  "limitations": [
+    "Main parent/back navigation, --merge/--boundary, commit-order settings, split column widths/line glyphs and command/pager refresh are outside this slice and still fail original scripts.",
+    "Implicit file arguments are resolved from repository root; subdirectory invocations must use the existing explicit -- path normalization.",
+    "No claim of full 154-script application parity or terminal-color parity. Original failure records include runtime errors and missing screens, not only assertion mismatches."
+  ]
+}
