@@ -932,6 +932,34 @@ fn diff_stat_cells(text: &str) -> Option<Vec<&str>> {
     Some(cells)
 }
 
+/// Reuse the reference's enum order and literal built-in rules, as Config does
+/// for named color areas. New metadata prefixes need no second Rust table.
+fn builtin_line_type(row: &str) -> &'static str {
+    static RULES: std::sync::OnceLock<Vec<(String, String)>> = std::sync::OnceLock::new();
+    let rules = RULES.get_or_init(|| {
+        let named = include_str!("../include/tig/line.h")
+            .lines()
+            .filter_map(|line| {
+                let (name, rest) = line.trim().strip_prefix("_(")?.split_once(',')?;
+                let prefix = rest.split('"').nth(1)?.replace("\\\\", "\\");
+                (!prefix.is_empty()).then(|| (prefix, name.to_ascii_lowercase().replace('_', "-")))
+            });
+        let literals = include_str!("../tigrc").lines().filter_map(|line| {
+            let prefix = line.trim().strip_prefix("color \"")?.split('"').next()?;
+            (!prefix.is_empty()).then(|| (prefix.to_owned(), String::new()))
+        });
+        named.chain(literals).collect()
+    });
+    rules
+        .iter()
+        .find_map(|(prefix, kind)| {
+            row.get(..prefix.len())
+                .filter(|start| start.eq_ignore_ascii_case(prefix))
+                .map(|_| kind.as_str())
+        })
+        .unwrap_or("default")
+}
+
 /// Diagnostic text/cell export for ordinary diffs (the C save-view contract).
 pub fn diff_view_data(rows: &[String], selected: usize) -> String {
     use std::fmt::Write;
@@ -949,45 +977,7 @@ pub fn diff_view_data(rows: &[String], selected: usize) -> String {
             "diff-stat"
         } else {
             reading_stat = false;
-            let kind = [
-                ("diff --", "diff-header"),
-                ("--- ", "diff-del-file"),
-                ("+++ ", "diff-add-file"),
-                ("---", "diff-start"),
-                ("@@", "diff-chunk"),
-                ("+", "diff-add"),
-                (" +", "diff-add2"),
-                ("-", "diff-del"),
-                (" -", "diff-del2"),
-                ("index ", "diff-index"),
-                ("old mode ", "diff-oldmode"),
-                ("new mode ", "diff-newmode"),
-                ("new file mode ", "diff-newfmode"),
-                ("deleted file mode ", "diff-delfmode"),
-                ("rename from ", "diff-rename-from"),
-                ("rename to ", "diff-rename-to"),
-                ("similarity ", "diff-similarity"),
-                ("\\ No newline at end of file", "diff-no-newline"),
-                ("Merge: ", "pp-merge"),
-                ("Refs: ", "pp-refs"),
-                ("Reflog: ", "pp-reflog"),
-                ("Reflog message: ", "pp-reflogmsg"),
-                ("commit ", "commit"),
-                ("parent ", "parent"),
-                ("tree ", "tree"),
-                ("author ", "author"),
-                ("committer ", "committer"),
-                // Built-in color rules have no enum name in C's diagnostic dump.
-                ("Author: ", ""),
-                ("Date: ", ""),
-            ]
-            .into_iter()
-            .find_map(|(prefix, kind)| {
-                row.get(..prefix.len())
-                    .filter(|start| start.eq_ignore_ascii_case(prefix))
-                    .map(|_| kind)
-            })
-            .unwrap_or("default");
+            let kind = builtin_line_type(row);
             match kind {
                 "diff-header" => {
                     after_diff = true;
@@ -1042,6 +1032,24 @@ pub fn diff_view_data(rows: &[String], selected: usize) -> String {
 
 #[test]
 fn diff_stat_cells_preserve_paths_and_binary_boundaries() {
+    for prefix in [
+        "Author: ",
+        "Commit: ",
+        "Tagger: ",
+        "Date: ",
+        "AuthorDate: ",
+        "CommitDate: ",
+        "TaggerDate: ",
+    ] {
+        assert_eq!(builtin_line_type(&format!("{prefix}value")), "");
+    }
+    assert_eq!(builtin_line_type("commit abc"), "commit");
+    assert_eq!(builtin_line_type("--- a/file"), "diff-del-file");
+    assert_eq!(
+        builtin_line_type("\\ No newline at end of file"),
+        "diff-no-newline"
+    );
+    assert_eq!(builtin_line_type("中文行"), "default");
     for (row, expected) in [
         (" 名+称-|x | 2 +-", vec![" 名+称-|x ", "| 2 ", "+", "-"]),
         (

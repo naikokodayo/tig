@@ -1760,6 +1760,10 @@ impl App {
             if self.view.name != "diff" || self.config.bool_value("word-diff", false) {
                 return Err("save-view currently supports ordinary diff views only".into());
             }
+            // Wrapped rows lack retained line/cell types; never reclassify fragments.
+            if self.config.bool_value("wrap-lines", false) || self.view.wrapping.is_some() {
+                return Err("save-view does not support wrapped diff views yet".into());
+            }
             self.screen();
             let (vertical, parent, child) = self.pane_sizes();
             let (width, height) = if self.split && self.other.is_some() {
@@ -1773,7 +1777,12 @@ impl App {
                 (self.width, self.height.saturating_sub(2))
             };
             let mut data = format!("View: {}\n", self.view.name);
-            if let Some(previous) = self.previous.last() {
+            let previous = if self.parent_focused {
+                self.previous.last()
+            } else {
+                self.other.as_ref().or_else(|| self.previous.last())
+            };
+            if let Some(previous) = previous {
                 data.push_str(&format!("Prev: {}\n", previous.name));
             }
             if !self.parent_focused {
