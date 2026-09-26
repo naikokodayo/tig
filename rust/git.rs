@@ -1023,29 +1023,57 @@ pub fn parse_history(bytes: &[u8]) -> Result<Vec<Commit>> {
         })
         .collect())
 }
-/// Read the header and first nonempty subject of Git's --pretty=raw stream.
+fn parse_raw_identity(ident: &str) -> Result<(String, String, String)> {
+    let (ident, time) = ident
+        .rsplit_once("> ")
+        .ok_or_else(|| GitError("Invalid raw author header".into()))?;
+    let (name, email) = ident
+        .rsplit_once(" <")
+        .ok_or_else(|| GitError("Invalid raw author identity".into()))?;
+    Ok((
+        name.into(),
+        email.into(),
+        crate::date::raw(time).map_err(GitError)?,
+    ))
+}
+
+/// Read Git's --pretty=raw stream or Tig's NUL-separated one-line records.
 /// Keep these records owned so column toggles can redraw without rereading stdin.
 pub fn parse_raw_history(input: &str) -> Result<Vec<Commit>> {
     let mut commits: Vec<Commit> = Vec::new();
     let mut in_header = false;
     let valid_oid =
         |oid: &str| matches!(oid.len(), 40 | 64) && oid.bytes().all(|c| c.is_ascii_hexdigit());
-    for line in input.lines() {
+    // C's line reader removes LF only; a trailing CR is subject data.
+    for line in input.split_terminator('\n') {
         if let Some(header) = line.strip_prefix("commit ") {
-            let mut ids = header.split_whitespace();
+            let fields: Vec<_> = header.split('\0').collect();
+            let compact = fields.len() > 1;
+            if compact && fields.len() != 4 {
+                return Err(GitError("Invalid compact raw commit fields".into()));
+            }
+            // Git's %m marker is separate from the ID, never part of a revision.
+            let header = fields[0];
+            let boundary = header.starts_with('-');
+            let header = header.strip_prefix(['<', '>', '-']).unwrap_or(header);
+            let valid_id = |id: &str| {
+                valid_oid(id)
+                    || (compact
+                        && (4..=64).contains(&id.len())
+                        && id.bytes().all(|c| c.is_ascii_hexdigit()))
+            };
+            let mut ids = header.split_ascii_whitespace();
             let oid = ids
                 .next()
                 .ok_or_else(|| GitError("Missing raw commit ID".into()))?;
-            let boundary = oid.starts_with('-');
-            let oid = oid.strip_prefix('-').unwrap_or(oid);
-            if !valid_oid(oid) {
+            if !valid_id(oid) {
                 return Err(GitError("Invalid raw commit ID".into()));
             }
             let parents: Vec<String> = ids.map(str::to_owned).collect();
-            if !parents.iter().all(|id| valid_oid(id)) {
+            if !parents.iter().all(|id| valid_id(id)) {
                 return Err(GitError("Invalid raw parent ID".into()));
             }
-            commits.push(Commit {
+            let mut commit = Commit {
                 oid: oid.into(),
                 boundary,
                 parents,
@@ -1057,8 +1085,18 @@ pub fn parse_raw_history(input: &str) -> Result<Vec<Commit>> {
                 committer_date: String::new(),
                 subject: String::new(),
                 decorations: String::new(),
-            });
-            in_header = true;
+            };
+            if compact {
+                (commit.author, commit.author_email, commit.date) = parse_raw_identity(fields[1])?;
+                (
+                    commit.committer,
+                    commit.committer_email,
+                    commit.committer_date,
+                ) = parse_raw_identity(fields[2])?;
+                commit.subject = fields[3].into();
+            }
+            commits.push(commit);
+            in_header = !compact;
             continue;
         }
         let Some(commit) = commits.last_mut() else {
@@ -1078,21 +1116,15 @@ pub fn parse_raw_history(input: &str) -> Result<Vec<Commit>> {
                 .split_once(' ')
                 .filter(|(kind, _)| matches!(*kind, "author" | "committer"))
             {
-                let (ident, time) = ident
-                    .rsplit_once("> ")
-                    .ok_or_else(|| GitError("Invalid raw author header".into()))?;
-                let (name, email) = ident
-                    .rsplit_once(" <")
-                    .ok_or_else(|| GitError("Invalid raw author identity".into()))?;
-                let date = crate::date::raw(time).map_err(GitError)?;
+                let (name, email, date) = parse_raw_identity(ident)?;
                 if kind == "author" {
-                    commit.author = name.into();
-                    commit.author_email = email.into();
-                    commit.date = date;
+                    (commit.author, commit.author_email, commit.date) = (name, email, date);
                 } else {
-                    commit.committer = name.into();
-                    commit.committer_email = email.into();
-                    commit.committer_date = date;
+                    (
+                        commit.committer,
+                        commit.committer_email,
+                        commit.committer_date,
+                    ) = (name, email, date);
                 }
             }
         } else if commit.subject.is_empty() {
@@ -1490,6 +1522,55 @@ mod tests {
             parse_raw_history(&body).unwrap()[0].subject,
             "commit this subject"
         );
+    }
+
+    #[test]
+    fn compact_raw_history_and_untrusted_fields() {
+        let input = include_str!("../test/main/escape-control-characters-test.in");
+        let commits = parse_raw_history(input).unwrap();
+        assert_eq!(commits.len(), 19);
+        assert_eq!(commits[0].oid, "7363156");
+        assert_eq!(commits[0].parents, ["e75e9f3"]);
+        assert_eq!(commits[0].author, "a");
+        assert_eq!(commits[0].author_email, "b.c");
+        assert_eq!(commits[0].date, "2015-08-19T11:12:48-07:00");
+        assert_eq!(commits[0].committer_date, commits[0].date);
+        assert!(commits[18].parents.is_empty());
+        assert_eq!(
+            crate::render::sanitize(&commits[1].subject),
+            "extend conditional group GBM_BO_USE_LINEAR  over both usages"
+        );
+        let record = input.lines().next().unwrap();
+        assert!(parse_raw_history(&format!("{record}\r\n")).unwrap()[0]
+            .subject
+            .ends_with('\r'));
+        for marker in ["<", ">", "-", ""] {
+            let commit = parse_raw_history(&record.replacen(">", marker, 1))
+                .unwrap()
+                .remove(0);
+            assert_eq!(commit.boundary, marker == "-");
+            assert_eq!(commit.oid, "7363156");
+        }
+        for invalid in [
+            record.replace("7363156", "--output=/tmp/injected"),
+            record.replace("e75e9f3", "HEAD^{tree}"),
+            record.replace("7363156", "abc"),
+            record.replace("7363156", &"a".repeat(65)),
+            record.replace("1440007968 -0700", "broken"),
+            record.replace("a <b.c>", "broken"),
+            record.rsplit_once('\0').unwrap().0.to_owned(),
+            format!("{record}\0extra"),
+            record.replacen('>', "!", 1),
+        ] {
+            assert!(parse_raw_history(&invalid).is_err(), "{invalid:?}");
+        }
+        let hostile = record.replace("correctly v2", "\x1b[2J\x07\r\tend");
+        let commits = parse_raw_history(&hostile).unwrap();
+        let mut config = crate::config::Config::default();
+        config.parse("set main-view = commit-title:yes,graph=no,refs=no");
+        let rows = crate::render::render_commits(&config, &commits, 100).unwrap();
+        assert!(rows[0].contains("[2J   end"));
+        assert!(!rows[0].chars().any(char::is_control));
     }
 
     #[test]
