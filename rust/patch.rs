@@ -3,6 +3,7 @@
 // Original Tig © 2006-2026 Jonas Fonseca <jonas.fonseca@gmail.com>.
 use crate::git::{GitError, Repository, Result};
 use std::io::Write;
+use std::ops::Range;
 use std::process::{Command, Stdio};
 
 #[derive(Clone, Debug)]
@@ -139,6 +140,41 @@ impl Hunk {
             lines: Vec::new(),
         })
     }
+    fn change_range(&self, index: usize) -> Result<Range<usize>> {
+        if !self
+            .lines
+            .get(index)
+            .is_some_and(|row| matches!(row.first(), Some(b'+' | b'-')))
+        {
+            return Err(error("Select an added or removed line"));
+        }
+        let is_change = |row: &Vec<u8>| matches!(row.first(), Some(b'+' | b'-' | b'\\'));
+        let start = self.lines[..index]
+            .iter()
+            .rposition(|row| !is_change(row))
+            .map_or(0, |i| i + 1);
+        let end = self.lines[index..]
+            .iter()
+            .position(|row| !is_change(row))
+            .map_or(self.lines.len(), |i| index + i);
+        Ok(start..end)
+    }
+    fn write(&self, output: &mut Vec<u8>) -> Result<()> {
+        let (old, new) = self.counts()?;
+        write!(
+            output,
+            "@@ -{},{} +{},{} @@",
+            self.old_start, old, self.new_start, new
+        )
+        .map_err(|e| error(&e.to_string()))?;
+        output.extend_from_slice(&self.suffix);
+        output.push(b'\n');
+        for row in &self.lines {
+            output.extend_from_slice(row);
+            output.push(b'\n');
+        }
+        Ok(())
+    }
     fn counts(&self) -> Result<(usize, usize)> {
         let mut old = 0;
         let mut new = 0;
@@ -246,6 +282,78 @@ impl Patch {
         }
         Err(error("Patch row out of range"))
     }
+    /// Split at context separating changes, sharing that context on both sides.
+    /// Returns the replacement hunk bytes and its raw row range; never writes Git.
+    pub fn split_hunk(&self, file: usize, hunk: usize) -> Result<(Range<usize>, Vec<u8>)> {
+        let source = self
+            .files
+            .get(file)
+            .and_then(|file| file.hunks.get(hunk))
+            .ok_or_else(|| error("Hunk index out of range"))?;
+        let mut changes = Vec::new();
+        let mut index = 0;
+        while index < source.lines.len() {
+            if matches!(source.lines[index].first(), Some(b'+' | b'-')) {
+                let range = source.change_range(index)?;
+                index = range.end;
+                changes.push(range);
+            } else {
+                index += 1;
+            }
+        }
+        if changes.len() < 2 {
+            return Err(error("The chunk cannot be split"));
+        }
+        let mut output = Vec::new();
+        let mut old = source.old_start;
+        let mut new = source.new_start;
+        let mut previous_start = 0;
+        for (index, _) in changes.iter().enumerate() {
+            let start = if index == 0 {
+                0
+            } else {
+                changes[index - 1].end
+            };
+            let end = changes
+                .get(index + 1)
+                .map_or(source.lines.len(), |range| range.start);
+            for row in &source.lines[previous_start..start] {
+                old = old
+                    .checked_add(usize::from(matches!(row.first(), Some(b' ' | b'-'))))
+                    .ok_or_else(|| error("Hunk position overflow"))?;
+                new = new
+                    .checked_add(usize::from(matches!(row.first(), Some(b' ' | b'+'))))
+                    .ok_or_else(|| error("Hunk position overflow"))?;
+            }
+            let split = Hunk {
+                old_start: old,
+                new_start: new,
+                suffix: Vec::new(),
+                lines: source.lines[start..end].to_vec(),
+                old_count: 0,
+                new_count: 0,
+            };
+            split.write(&mut output)?;
+            previous_start = start;
+        }
+        let start = self.files[..file]
+            .iter()
+            .map(|file| {
+                file.headers.len()
+                    + file
+                        .hunks
+                        .iter()
+                        .map(|hunk| 1 + hunk.lines.len())
+                        .sum::<usize>()
+            })
+            .sum::<usize>()
+            + self.files[file].headers.len()
+            + self.files[file].hunks[..hunk]
+                .iter()
+                .map(|hunk| 1 + hunk.lines.len())
+                .sum::<usize>();
+        Ok((start..start + 1 + source.lines.len(), output))
+    }
     /// `line` indexes the hunk body (including marker rows). `reverse` selects
     /// changes from the index side for unstage, then apply_cached uses -R.
     pub fn select(
@@ -253,6 +361,34 @@ impl Patch {
         file: usize,
         hunk: usize,
         line: Option<usize>,
+        reverse: bool,
+    ) -> Result<Vec<u8>> {
+        self.select_range(
+            file,
+            hunk,
+            line.map(|line| line..line.saturating_add(1)),
+            reverse,
+        )
+    }
+    pub fn select_part(
+        &self,
+        file: usize,
+        hunk: usize,
+        line: usize,
+        reverse: bool,
+    ) -> Result<Vec<u8>> {
+        let source = self
+            .files
+            .get(file)
+            .and_then(|file| file.hunks.get(hunk))
+            .ok_or_else(|| error("Hunk index out of range"))?;
+        self.select_range(file, hunk, Some(source.change_range(line)?), reverse)
+    }
+    fn select_range(
+        &self,
+        file: usize,
+        hunk: usize,
+        lines: Option<Range<usize>>,
         reverse: bool,
     ) -> Result<Vec<u8>> {
         let file = self
@@ -279,7 +415,7 @@ impl Patch {
             ));
         }
         let mut selected = source.clone();
-        if let Some(index) = line {
+        if let Some(range) = lines {
             if file
                 .headers
                 .iter()
@@ -291,7 +427,7 @@ impl Patch {
             }
             let row = source
                 .lines
-                .get(index)
+                .get(range.start)
                 .ok_or_else(|| error("Line index out of range"))?;
             if !matches!(row.first(), Some(b'+' | b'-')) {
                 return Err(error("Select an added or removed line"));
@@ -306,7 +442,7 @@ impl Patch {
                     continue;
                 }
                 retained = true;
-                if i == index || row[0] == b' ' {
+                if range.contains(&i) || row[0] == b' ' {
                     selected.lines.push(row.clone());
                 } else if row[0] == if reverse { b'+' } else { b'-' } {
                     let mut context = row.clone();
@@ -351,18 +487,7 @@ impl Patch {
             output.extend_from_slice(header);
             output.push(b'\n');
         }
-        write!(
-            &mut output,
-            "@@ -{},{} +{},{} @@",
-            selected.old_start, old, selected.new_start, new
-        )
-        .map_err(|e| error(&e.to_string()))?;
-        output.extend_from_slice(&selected.suffix);
-        output.push(b'\n');
-        for row in &selected.lines {
-            output.extend_from_slice(row);
-            output.push(b'\n');
-        }
+        selected.write(&mut output)?;
         Ok(output)
     }
 }
@@ -657,6 +782,85 @@ mod tests {
         )
         .unwrap();
         assert!(f.index().starts_with(b"alpha\n"));
+    }
+    #[test]
+    fn partial_blocks_and_split_hunks_keep_context_markers_and_index_safety() {
+        let f = Fixture::new();
+        let original = b"a\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10";
+        let working = b"a CHANGED\n1\n2\nedited-too\n4\n5\nedited-too\n7\n8";
+        fs::write(f.root.join("space name"), original).unwrap();
+        f.repo.command(["add", "--", "space name"]).unwrap();
+        f.repo
+            .command(["commit", "-qm", "partial fixture"])
+            .unwrap();
+        fs::write(f.root.join("space name"), working).unwrap();
+        let raw = f.diff(false);
+        let patch = Patch::parse(&raw).unwrap();
+        assert_eq!(patch.files[0].hunks.len(), 1);
+        assert!(patch.select_part(0, 0, 2, false).is_err()); // context row
+        for reverse in [false, true] {
+            for selected in [b"-3".as_slice(), b"+edited-too", b"-10", b"+8"] {
+                f.repo
+                    .command(["reset", "-q", "HEAD", "--", "space name"])
+                    .unwrap();
+                if reverse {
+                    f.repo.command(["add", "--", "space name"]).unwrap();
+                }
+                let row = patch.files[0].hunks[0]
+                    .lines
+                    .iter()
+                    .position(|row| row == selected)
+                    .unwrap();
+                let bytes = patch.select_part(0, 0, row, reverse).unwrap();
+                apply_cached(&f.repo, &bytes, reverse).unwrap();
+                let mut expected =
+                    String::from_utf8_lossy(if reverse { working } else { original }).into_owned();
+                expected = if selected == b"-10" || selected == b"+8" {
+                    if reverse {
+                        expected + "\n9\n10"
+                    } else {
+                        expected.trim_end_matches("\n9\n10").into()
+                    }
+                } else if reverse {
+                    expected.replacen("edited-too", "3", 1)
+                } else {
+                    expected.replacen("\n3\n", "\nedited-too\n", 1)
+                };
+                assert_eq!(f.index(), expected.as_bytes());
+                assert_eq!(fs::read(f.root.join("space name")).unwrap(), working);
+            }
+        }
+        f.repo
+            .command(["reset", "-q", "HEAD", "--", "space name"])
+            .unwrap();
+        let (range, split) = patch.split_hunk(0, 0).unwrap();
+        let mut split_patch = raw
+            .split_inclusive(|byte| *byte == b'\n')
+            .take(range.start)
+            .flatten()
+            .copied()
+            .collect::<Vec<_>>();
+        split_patch.extend(split);
+        let split = Patch::parse(&split_patch).unwrap();
+        assert_eq!(split.files[0].hunks.len(), 4);
+        assert_eq!(
+            split.files[0]
+                .hunks
+                .iter()
+                .map(|h| (h.old_start, h.old_count, h.new_start, h.new_count))
+                .collect::<Vec<_>>(),
+            [(1, 3, 1, 3), (2, 5, 2, 5), (5, 4, 5, 4), (8, 4, 8, 2)]
+        );
+        for index in 0..4 {
+            apply_cached(
+                &f.repo,
+                &split.select(0, index, None, false).unwrap(),
+                false,
+            )
+            .unwrap();
+        }
+        assert_eq!(f.index(), working);
+        assert_eq!(fs::read(f.root.join("space name")).unwrap(), working);
     }
     #[test]
     fn malformed_and_unsupported_patches_fail() {
