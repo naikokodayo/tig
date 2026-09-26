@@ -640,3 +640,54 @@ and [original-script receipt](migration/evidence/diff-render-review-upstream.jso
 Reproduce the new paired check with `python3 rust/tests/diff-navigation.py`
 after building both C and Rust binaries. Original C/tests and dependencies are
 unchanged relative to the integrated main; first-party Rust still forbids unsafe.
+
+### Main navigation and refresh slice (2026-09-27)
+
+Main's `parent` and `<`/`back` now use view-owned position history, separate
+from closing a view. The saved row, vertical offset and horizontal offset
+survive direct refresh and parent refresh after staging. Empty history stays
+in main, a root/missing parent leaves the selection in place, and out-of-range
+numeric jumps no longer clamp to the final row.
+
+`--merge` now requests boundary commits as C does; explicit `--boundary` and
+raw boundary headers retain their marker through the owned commit model into
+both graph renderers. This restores the common ancestor needed by parent
+navigation. Diff headers also append Git's describe result when the commit
+has no direct tag, preserving the original split-view reference display.
+
+Prompt `:!command` opens a command-output pager with the existing safe argv
+expansion. Command completion refreshes both displayed panes and the cached
+main/status parent of a full-screen view. Opening it from a split maximizes
+the pager and retains
+the main predecessor, so closing cannot resurrect an old diff. Bound external
+commands and `:exec` retain their existing foreground/confirmation semantics.
+
+The baseline at `c097ffb8` ran the four requested unchanged scripts against C
+and Rust: C **28/28** assertions; Rust **14 passing / 14 failing** assertions
+plus one runtime failure, with all four scripts failing. The final source is
+`85dad36b`, identified by the [check receipt](migration/evidence/main-navigation-checks.json),
+alongside complete source and binary SHA-256 manifests. Final focused results are in
+[paired receipt](migration/evidence/main-navigation-after.json): C **20 scripts / 94 assertions pass**; Rust
+**18 scripts pass / 2 fail, 92 assertions pass / 2 fail**, with no skips or
+missing assertions. The four requested scripts reach **27/28** Rust assertions:
+`goto`, `jump-ends` and `refresh` pass in full; three of four `view-split`
+assertions pass. The strict runner still exits 1 with `BLOCKED`.
+
+Remaining observed failures: `main/view-split`'s narrow date column displays
+one extra character where C leaves its column separator; `main/main-options`
+still ignores the configured history limit. The latter already failed in the
+saved `c097ffb8` full snapshot. Command-output capture currently appends stderr
+after stdout, so interleaved output order is not compatible yet. Long-running
+commands still use the existing synchronous, buffered loader.
+
+Rust 1.81 formatting, **72 unit tests**, Clippy with warnings denied, release
+build, **140 controlling-PTY checks**, **38 date checks**, **6 diff-input
+checks**, and the paired maximized-diff stat-width regression pass. Independent
+review found and drove regressions for staging losing history, split pager
+predecessors, full-screen diff commands leaving cached main stale, and commands
+from the main pane leaving the displayed diff stale.
+The receipts and raw check logs are under `migration/evidence/main-navigation*`.
+PR #12 is integrated through main `b0eabd2c`; no open PR #13 changes were copied.
+Original C, original tests, dependencies and Actions are unchanged by this
+slice, and first-party Rust still forbids unsafe. This is focused evidence,
+not a full-suite rerun or a completed migration.
