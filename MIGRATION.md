@@ -356,3 +356,18 @@ and C's pathological empty/escaped timezone-format behavior are not claimed:
 unrecognized formats return explicit errors. Raw input supports ordinary Git
 headers, not a complete reflog/boundary/decorations parser. First-party unsafe
 code remains forbidden; original C files and tests are unchanged.
+
+### Date slice sync with PR #1
+
+Merged fork main `47f1a2b2` into the date branch without textual conflicts.
+Integration review found that raw-stdin detection also needed to honor the new
+`--end-of-options` boundary. A binary regression first reproduced raw text
+incorrectly opening main; the detector now stops at either option terminator.
+
+After that fix, Rust 1.81 fmt, **59 unit tests**, Clippy with warnings denied,
+release build, **15 isolated date/argument checks**, and **108 PTY checks** pass.
+The six original date-related scripts still pass **27/27**; the two original
+PR #1 diff-context scripts additionally pass **20/20**, for **47/47** focused
+assertions and zero failures. See [`date-sync.json`](migration/evidence/date-sync.json)
+and its checks/focused logs for the new binary hash. Earlier date receipts
+remain historical. The full upstream suite was not rerun.

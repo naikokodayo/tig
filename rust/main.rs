@@ -2607,7 +2607,7 @@ fn run() -> Result<()> {
         if cli
             .git_args
             .iter()
-            .take_while(|arg| *arg != "--")
+            .take_while(|arg| !matches!(arg.as_str(), "--" | "--end-of-options"))
             .any(|arg| arg == "--pretty=raw")
         {
             let commits = tig_rs::git::parse_raw_history(&text)?;

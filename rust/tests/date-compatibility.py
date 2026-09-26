@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 BINARY = ROOT / 'target/release/tig'
 
 
-def check(temporary, timestamp, setting, expected, **overrides):
+def check(temporary, timestamp, setting, expected, args=('--pretty=raw',), **overrides):
     directory = Path(temporary)
     config = directory / 'tigrc'
     config.write_text('set main-view = date:default commit-title:yes,graph=no,refs=no\n' + setting)
@@ -22,14 +22,14 @@ def check(temporary, timestamp, setting, expected, **overrides):
     env.update(overrides)
     raw = (f'commit {"a" * 40}\nauthor A <a@example.invalid> {timestamp}\n'
            f'committer A <a@example.invalid> {timestamp}\n\n    subject\n')
-    result = subprocess.run([str(BINARY), '--pretty=raw'], input=raw, text=True,
+    result = subprocess.run([str(BINARY), *args], input=raw, text=True,
                             capture_output=True, cwd=directory, env=env, timeout=10)
     if expected is None:
         assert result.returncode != 0 and 'tig: ' in result.stderr, result
         assert 'panicked' not in result.stderr, result.stderr
     else:
         assert result.returncode == 0 and not result.stderr, result.stderr
-        assert screen.read_text().splitlines()[0].rstrip() == expected + ' subject', screen.read_text()
+        assert screen.read_text().splitlines()[0].rstrip() == expected, screen.read_text()
 
 
 with tempfile.TemporaryDirectory(prefix='tig-date-') as temporary:
@@ -59,5 +59,8 @@ with tempfile.TemporaryDirectory(prefix='tig-date-') as temporary:
     else:
         print('SKIP: fr_FR UTF-8 locale is not installed')
     for timestamp, setting, expected, overrides in cases:
-        check(temporary, timestamp, setting, expected, **overrides)
-    print(f'{len(cases)} date compatibility checks passed')
+        check(temporary, timestamp, setting, None if expected is None else expected + ' subject', **overrides)
+    for boundary in ['--', '--end-of-options']:
+        check(temporary, '1440961292 +0900', '', 'commit ' + 'a' * 40,
+              args=(boundary, '--pretty=raw'))
+    print(f'{len(cases) + 2} date compatibility checks passed')
