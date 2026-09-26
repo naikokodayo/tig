@@ -936,33 +936,7 @@ fn diff_stat_cells(text: &str) -> Option<Vec<&str>> {
     Some(cells)
 }
 
-/// Reuse the reference's enum order and literal built-in rules, as Config does
-/// for named color areas. New metadata prefixes need no second Rust table.
-fn builtin_line_type(row: &str) -> &'static str {
-    static RULES: std::sync::OnceLock<Vec<(String, String)>> = std::sync::OnceLock::new();
-    let rules = RULES.get_or_init(|| {
-        let named = include_str!("../include/tig/line.h")
-            .lines()
-            .filter_map(|line| {
-                let (name, rest) = line.trim().strip_prefix("_(")?.split_once(',')?;
-                let prefix = rest.split('"').nth(1)?.replace("\\\\", "\\");
-                (!prefix.is_empty()).then(|| (prefix, name.to_ascii_lowercase().replace('_', "-")))
-            });
-        let literals = include_str!("../tigrc").lines().filter_map(|line| {
-            let prefix = line.trim().strip_prefix("color \"")?.split('"').next()?;
-            (!prefix.is_empty()).then(|| (prefix.to_owned(), String::new()))
-        });
-        named.chain(literals).collect()
-    });
-    rules
-        .iter()
-        .find_map(|(prefix, kind)| {
-            row.get(..prefix.len())
-                .filter(|start| start.eq_ignore_ascii_case(prefix))
-                .map(|_| kind.as_str())
-        })
-        .unwrap_or("default")
-}
+use crate::line::builtin_line_type;
 
 /// Diagnostic text/cell export for ordinary diffs (the C save-view contract).
 pub fn diff_view_data(rows: &[String], selected: usize) -> String {
