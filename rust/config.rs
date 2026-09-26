@@ -857,6 +857,28 @@ impl Config {
             .or_else(|| self.bindings.get(&("generic".into(), key)))
             .map(Vec::as_slice)
     }
+    pub fn key_sequence_pending(&self, view: &str, key: &str) -> bool {
+        let action = self.action(view, key);
+        if action.is_some_and(|action| action.first().is_some_and(|name| name != "none")) {
+            return false;
+        }
+        let Ok(key) = normalize_key(key) else {
+            return false;
+        };
+        let matches = |map: &str| {
+            self.bindings
+                .iter()
+                .filter(|((name, sequence), action)| {
+                    name == map
+                        && sequence.starts_with(&key)
+                        && action.first().is_some_and(|name| name != "none")
+                })
+                .count()
+        };
+        // C counts generic matches only when no local binding masks the key,
+        // or when another generic sequence can follow the masked binding.
+        matches(view) > 0 || matches("generic") > usize::from(action.is_some())
+    }
     pub fn value(&self, name: &str) -> Option<&str> {
         self.settings.get(name)?.first().map(String::as_str)
     }

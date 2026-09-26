@@ -1863,6 +1863,7 @@ impl App {
         }
         .max(1) as isize;
         match action {
+            "none" => (),
             "quit" => return Ok(false),
             "parent" if self.view.name == "main" => {
                 if self.view.history.last().map(|pos| pos.0) != Some(self.view.selected) {
@@ -2370,9 +2371,13 @@ impl App {
                 self.action(&format!("goto {n}"))?;
             } else {
                 let action = if line.starts_with(':') {
-                    line.to_string()
+                    Some(line.to_string())
                 } else {
                     self.binding(line)
+                };
+                let Some(action) = action else {
+                    self.message = "Unknown key, press h for help".into();
+                    continue;
                 };
                 self.prompt_answers.clear();
                 for _ in tig_rs::commands::prompt_labels(&action) {
@@ -2405,28 +2410,25 @@ impl App {
         }
         Ok(())
     }
-    fn binding(&self, key: &str) -> String {
-        self.config
-            .action(&self.view.name, key)
-            .map(|a| {
-                if a.first().is_some_and(|arg| {
-                    arg.starts_with(':') && !arg.starts_with(":!") && arg != ":echo"
-                }) {
-                    return a.join(" ");
-                }
-                a.iter()
-                    .enumerate()
-                    .map(|(index, arg)| {
-                        if index == 0 {
-                            arg.clone()
-                        } else {
-                            format!("\"{}\"", arg.replace('\\', "\\\\").replace('"', "\\\""))
-                        }
-                    })
-                    .collect::<Vec<_>>()
-                    .join(" ")
-            })
-            .unwrap_or_else(|| key.into())
+    fn binding(&self, key: &str) -> Option<String> {
+        self.config.action(&self.view.name, key).map(|a| {
+            if a.first()
+                .is_some_and(|arg| arg.starts_with(':') && !arg.starts_with(":!") && arg != ":echo")
+            {
+                return a.join(" ");
+            }
+            a.iter()
+                .enumerate()
+                .map(|(index, arg)| {
+                    if index == 0 {
+                        arg.clone()
+                    } else {
+                        format!("\"{}\"", arg.replace('\\', "\\\\").replace('"', "\\\""))
+                    }
+                })
+                .collect::<Vec<_>>()
+                .join(" ")
+        })
     }
 }
 
@@ -3566,6 +3568,7 @@ fn run() -> Result<()> {
     }
     app.center_selection();
     let mut terminal = Terminal::open()?;
+    let mut key_sequence = String::new();
     loop {
         terminal.draw(&mut app)?;
         let action = match terminal.read()? {
@@ -3574,13 +3577,37 @@ fn run() -> Result<()> {
                 app.height = h as usize;
                 continue;
             }
-            Event::Mouse(m) => match m.kind {
-                MouseEventKind::ScrollUp => "move-up".into(),
-                MouseEventKind::ScrollDown => "move-down".into(),
-                _ => continue,
-            },
-            Event::Key(k) => app.binding(&key_name(k.code, k.modifiers)),
+            Event::Mouse(m) => {
+                key_sequence.clear();
+                app.message.clear();
+                match m.kind {
+                    MouseEventKind::ScrollUp => Some("move-up".into()),
+                    MouseEventKind::ScrollDown => Some("move-down".into()),
+                    _ => continue,
+                }
+            }
+            Event::Key(k) => {
+                if !key_sequence.is_empty() && k.code == KeyCode::Esc {
+                    key_sequence.clear();
+                    app.message.clear();
+                    continue;
+                }
+                key_sequence.push_str(&key_name(k.code, k.modifiers));
+                if app
+                    .config
+                    .key_sequence_pending(&app.view.name, &key_sequence)
+                {
+                    app.message = format!("Keys: {key_sequence}");
+                    continue;
+                }
+                app.binding(&key_sequence)
+            }
             _ => continue,
+        };
+        key_sequence.clear();
+        let Some(action) = action else {
+            app.message = "Unknown key, press h for help".into();
+            continue;
         };
         app.message.clear();
         if action == "search" || action == "search-back" {
@@ -3875,7 +3902,7 @@ mod tests {
         assert_eq!(app.view.name, "main");
         assert!(app.split && app.other.is_some());
         app.action("parent").unwrap();
-        assert!(app.action(&app.binding("<")).unwrap());
+        assert!(app.action(&app.binding("<").unwrap()).unwrap());
         assert_eq!((app.view.selected, app.view.top, app.view.left), position);
         app.other = None;
         app.split = false;
@@ -4172,7 +4199,7 @@ mod tests {
             app.config
                 .parse(&format!("bind generic a :toggle {quote}author"));
             let before = app.config.settings.clone();
-            let command = app.binding("a");
+            let command = app.binding("a").unwrap();
             assert!(app.action(&command).is_err());
             assert_eq!(app.config.settings, before);
             assert_eq!(
