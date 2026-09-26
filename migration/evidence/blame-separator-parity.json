@@ -1,0 +1,192 @@
+{
+  "scope": "Blame separator and selected-row rendering parity",
+  "base_commit": "26674406c6e3977f5b6c78dd8d1f750cd0749f2a",
+  "tested_commit": "0738b0709a2ecfc3e4c095652ca0b9528fac1d10",
+  "source_sha256": {
+    "rust/main.rs": "cfd1ca5896ca2d8ed0a516766485debc83152d517d401b2e7d03865652a7a217",
+    "rust/render.rs": "f5412a37afde0c4d328fd58dd3642f51e32a8c48f967125aa7554b2bb1086dfa"
+  },
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "binary_sha256": {
+    "c": {
+      "tig": "1e17da10f6e7073465b261b016364529796c9131c8adeb4011a031ef82181436",
+      "test-graph": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+    },
+    "rust": {
+      "tig": "c8d42c25dcd08151ebe2c4364249d82540c1883233da2ec20dfba2d049d653d2",
+      "test-graph": "cef42b529157a36aeaa22dfa939b47b5f10cf800da2ff5155f386f01d718ec79"
+    }
+  },
+  "paired_original_scripts": {
+    "test/blame/blob-blame-test": {
+      "c": {
+        "status": "pass",
+        "checks": {
+          "OK": 1
+        }
+      },
+      "rust": {
+        "status": "pass",
+        "checks": {
+          "OK": 1
+        }
+      }
+    },
+    "test/blame/default-test": {
+      "c": {
+        "status": "pass",
+        "checks": {
+          "OK": 4
+        }
+      },
+      "rust": {
+        "status": "pass",
+        "checks": {
+          "OK": 4
+        }
+      }
+    },
+    "test/blame/initial-diff-test": {
+      "c": {
+        "status": "pass",
+        "checks": {
+          "OK": 2
+        }
+      },
+      "rust": {
+        "status": "pass",
+        "checks": {
+          "OK": 2
+        }
+      }
+    },
+    "test/blame/navigation-parent-test": {
+      "c": {
+        "status": "pass",
+        "checks": {
+          "OK": 1
+        }
+      },
+      "rust": {
+        "status": "pass",
+        "checks": {
+          "OK": 1
+        }
+      }
+    },
+    "test/blame/revargs-test": {
+      "c": {
+        "status": "pass",
+        "checks": {
+          "OK": 2
+        }
+      },
+      "rust": {
+        "status": "pass",
+        "checks": {
+          "OK": 2
+        }
+      }
+    },
+    "test/blame/start-on-line-test": {
+      "c": {
+        "status": "pass",
+        "checks": {
+          "OK": 1
+        }
+      },
+      "rust": {
+        "status": "pass",
+        "checks": {
+          "OK": 1
+        }
+      }
+    },
+    "test/blame/stash-test": {
+      "c": {
+        "status": "pass",
+        "checks": {
+          "OK": 3
+        }
+      },
+      "rust": {
+        "status": "pass",
+        "checks": {
+          "OK": 3
+        }
+      }
+    },
+    "test/diff/line-number-test": {
+      "c": {
+        "status": "pass",
+        "checks": {
+          "OK": 1
+        }
+      },
+      "rust": {
+        "status": "pass",
+        "checks": {
+          "OK": 1
+        }
+      }
+    },
+    "test/log/log-graph-test": {
+      "c": {
+        "status": "pass",
+        "checks": {
+          "OK": 1
+        }
+      },
+      "rust": {
+        "status": "pass",
+        "checks": {
+          "OK": 1
+        }
+      }
+    },
+    "test/main/default-test": {
+      "c": {
+        "status": "pass",
+        "checks": {
+          "OK": 6
+        }
+      },
+      "rust": {
+        "status": "pass",
+        "checks": {
+          "OK": 6
+        }
+      }
+    },
+    "test/status/worktree-test": {
+      "c": {
+        "status": "pass",
+        "checks": {
+          "OK": 1
+        }
+      },
+      "rust": {
+        "status": "pass",
+        "checks": {
+          "OK": 1
+        }
+      }
+    }
+  },
+  "rust_terminal_smoke": {
+    "checks_passed": 150,
+    "checks_total": 150,
+    "binary_sha256": "c8d42c25dcd08151ebe2c4364249d82540c1883233da2ec20dfba2d049d653d2"
+  },
+  "verification": [
+    "cargo fmt --check",
+    "cargo test",
+    "cargo clippy --all-targets -- -D warnings"
+  ],
+  "verdict": "PASS",
+  "tested_tree": "c9033213930d0390a2b004653d2e64b88befd1f8"
+}

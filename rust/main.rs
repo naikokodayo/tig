@@ -3361,12 +3361,7 @@ impl Terminal {
                     cursor::MoveTo(x as u16, row as u16),
                     SetAttribute(Attribute::Reverse)
                 )?;
-                write!(
-                    self.out,
-                    "{}{}",
-                    text,
-                    " ".repeat(width.saturating_sub(cell_width(&text)))
-                )?;
+                write!(self.out, "{text}")?;
                 queue!(self.out, SetAttribute(Attribute::Reset))?;
             }
         }
