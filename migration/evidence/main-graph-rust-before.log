@@ -1,0 +1,183 @@
+            | Failed 9 out of 9 test(s)
+            | [stderr] tig: Unsupported history option --merge: only revision, filtering, ordering and path options are allowed
+            | [FAIL] unexpected status code: 1 (should be 0)
+            | [FAIL] commit-1.screen not found
+            | [FAIL] commit-1-back.screen not found
+            | [FAIL] commit-2.screen not found
+            | [FAIL] commit-2-again.screen not found
+            | [FAIL] commit-5.screen not found
+            | [FAIL] commit-5-still.screen not found
+            | [FAIL] unstaged-changes.screen not found
+            | [FAIL] commit-3.screen not found
+            | Failed 4 out of 5 test(s)
+            | [stderr] [follow] tig: Unsupported history option --follow: only revision, filtering, ordering and path options are allowed
+            | [FAIL] unexpected status code: 1 (should be 0)
+            | [FAIL] follow.screen not found
+            | [FAIL] follow.stderr != expected/follow.stderr
+            | diff --git a/expected/follow.stderr b/follow.stderr
+            | index e69de29..411a8c7 100644
+            | --- a/expected/follow.stderr
+            | +++ b/follow.stderr
+            | @@ -0,0 +1 @@
+            | +tig: Unsupported history option --follow: only revision, filtering, ordering and path options are allowed
+            | [FAIL] first-parent.screen != expected/first-parent.screen
+            | diff --git a/expected/first-parent.screen b/first-parent.screen
+            | index 0b96a12..d185288 100644
+            | --- a/expected/first-parent.screen
+            | +++ b/first-parent.screen
+            | @@ -3,13 +3,13 @@
+            |  2014-01-16 22:51 -0500 JFonseca ∙ Move classes under org.scalajs.benchmark packa
+            |  2014-01-16 17:43 -0500 JFonseca ∙ Bump Scala.js version to 0.3-SNAPSHOT
+            |  2014-01-16 17:39 -0500 JFonseca ∙ Integrate app code into the benchmark infrastr
+            | -2014-01-16 07:47 -0800 JFonseca ∙ Merge pull request #4 from phaller/patch-1
+            | -2013-12-17 00:02 +0100 JFonseca ∙ Update links to reflect project name change
+            | -2013-12-03 23:35 -0500 JFonseca ∙ Use Scala.js 0.2-SNAPSHOT
+            | -2013-11-26 23:39 -0500 JFonseca ∙ Extract the benchmark list variable name; fix
+            | -2013-11-26 23:31 -0500 JFonseca ∙ Solve the easiest sudoku grid
+            | -2013-11-26 23:22 -0500 JFonseca ∙ Disable phantomjs by default
+            | -2013-11-26 22:55 -0500 JFonseca ∙ Exclude Sudoku when running all benchmarks
+            | -2013-11-26 22:52 -0500 JFonseca ∙ Fix reference setup to work for node
+            | -2013-11-26 22:03 -0500 JFonseca ∙ Move benchmark registration to Scala
+            | +2014-01-16 07:47 -0800 JFonseca ●─╮ Merge pull request #4 from phaller/patch-1
+            | +2013-12-17 00:02 +0100 JFonseca ∙ │ Update links to reflect project name change
+            | +2013-12-03 23:35 -0500 JFonseca ∙ │ Use Scala.js 0.2-SNAPSHOT
+            | +2013-11-26 23:39 -0500 JFonseca ∙ │ Extract the benchmark list variable name; fi
+            | +2013-11-26 23:31 -0500 JFonseca ∙ │ Solve the easiest sudoku grid
+            | +2013-11-26 23:22 -0500 JFonseca ∙ │ Disable phantomjs by default
+            | +2013-11-26 22:55 -0500 JFonseca ∙ │ Exclude Sudoku when running all benchmarks
+            | +2013-11-26 22:52 -0500 JFonseca ∙ │ Fix reference setup to work for node
+            | +2013-11-26 22:03 -0500 JFonseca ∙ │ Move benchmark registration to Scala
+            |  [main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 44             31%
+            |   [OK] first-parent.stderr assertion
+            | Failed 3 out of 3 test(s)
+            | [FAIL] main-verticals-ascii.screen != expected/main-verticals-ascii.screen
+            | diff --git a/expected/main-verticals-ascii.screen b/main-verticals-ascii.screen
+            | index 3a9d90d..bcdfd4d 100644
+            | --- a/expected/main-verticals-ascii.screen
+            | +++ b/main-verticals-ascii.screen
+            | @@ -1,17 +1,17 @@
+            | -  1| 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac
+            | -   | 2010-03-29 17:15 +0000 Jørgen Thy~ |   | Refs: [master], {origin/master}, {
+            | -   | 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex
+            | -   | 2010-03-12 16:31 +0000 René Léves~ |   | AuthorDate: Wed Apr 7 05:37:40 201
+            | -  5| 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@
+            | -   | 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201
+            | -   | 2010-02-15 03:24 +0000 Jørgen Thy~ |   |
+            | -   | 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E
+            | -   | 2010-01-29 02:40 +0000 René Léves~ |
+            | - 10| 2010-01-20 14:18 +0000 A. U. Thor  |
+            | -   | 2010-01-12 01:56 +0000 Max Power   |
+            | -   | 2010-01-03 13:33 +0000 Jørgen Thy~ |
+            | -   | 2009-12-26 01:11 +0000 作者        |
+            | -   | 2009-12-17 12:49 +0000 René Léves~ |
+            | - 15| 2009-12-09 00:27 +0000 A. U. Thor  |
+            | -   | 2009-11-30 12:05 +0000 Max Power   |
+            | +  1│ 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac
+            | +   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   | Refs: [master], {origin/master}, {
+            | +   │ 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex
+            | +   │ 2010-03-12 16:31 +0000 René Lévesqu|   | AuthorDate: Wed Apr 7 05:37:40 201
+            | +  5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@
+            | +   │ 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201
+            | +   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   | 
+            | +   │ 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E
+            | +   │ 2010-01-29 02:40 +0000 René Lévesqu|
+            | + 10│ 2010-01-20 14:18 +0000 A. U. Thor  |
+            | +   │ 2010-01-12 01:56 +0000 Max Power   |
+            | +   │ 2010-01-03 13:33 +0000 Jørgen Thyge|
+            | +   │ 2009-12-26 01:11 +0000 作者        |
+            | +   │ 2009-12-17 12:49 +0000 René Lévesqu|
+            | + 15│ 2009-12-09 00:27 +0000 A. U. Thor  |
+            | +   │ 2009-11-30 12:05 +0000 Max Power   |
+            |  [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%
+            | [FAIL] main-verticals-default.screen != expected/main-verticals-default.screen
+            | diff --git a/expected/main-verticals-default.screen b/main-verticals-default.screen
+            | index 8a13299..bcdfd4d 100644
+            | --- a/expected/main-verticals-default.screen
+            | +++ b/main-verticals-default.screen
+            | @@ -1,17 +1,17 @@
+            | -  1x 2010-04-07 05:37 +0000 Max Power   |  1x commit 5cb3412a5e06e506840495b91ac
+            | -   x 2010-03-29 17:15 +0000 Jørgen Thy~ |   x Refs: [master], {origin/master}, {
+            | -   x 2010-03-21 04:53 +0000 作者        |   x Author:     Max Power <power123@ex
+            | -   x 2010-03-12 16:31 +0000 René Léves~ |   x AuthorDate: Wed Apr 7 05:37:40 201
+            | -  5x 2010-03-04 04:09 +0000 A. U. Thor  |  5x Commit:     Committer <c.ommitter@
+            | -   x 2010-02-23 15:46 +0000 Max Power   |   x CommitDate: Wed Apr 7 05:37:40 201
+            | -   x 2010-02-15 03:24 +0000 Jørgen Thy~ |   x
+            | -   x 2010-02-06 15:02 +0000 作者        |   x     Commit 10 E
+            | -   x 2010-01-29 02:40 +0000 René Léves~ |
+            | - 10x 2010-01-20 14:18 +0000 A. U. Thor  |
+            | -   x 2010-01-12 01:56 +0000 Max Power   |
+            | -   x 2010-01-03 13:33 +0000 Jørgen Thy~ |
+            | -   x 2009-12-26 01:11 +0000 作者        |
+            | -   x 2009-12-17 12:49 +0000 René Léves~ |
+            | - 15x 2009-12-09 00:27 +0000 A. U. Thor  |
+            | -   x 2009-11-30 12:05 +0000 Max Power   |
+            | +  1│ 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac
+            | +   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   | Refs: [master], {origin/master}, {
+            | +   │ 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex
+            | +   │ 2010-03-12 16:31 +0000 René Lévesqu|   | AuthorDate: Wed Apr 7 05:37:40 201
+            | +  5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@
+            | +   │ 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201
+            | +   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   | 
+            | +   │ 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E
+            | +   │ 2010-01-29 02:40 +0000 René Lévesqu|
+            | + 10│ 2010-01-20 14:18 +0000 A. U. Thor  |
+            | +   │ 2010-01-12 01:56 +0000 Max Power   |
+            | +   │ 2010-01-03 13:33 +0000 Jørgen Thyge|
+            | +   │ 2009-12-26 01:11 +0000 作者        |
+            | +   │ 2009-12-17 12:49 +0000 René Lévesqu|
+            | + 15│ 2009-12-09 00:27 +0000 A. U. Thor  |
+            | +   │ 2009-11-30 12:05 +0000 Max Power   |
+            |  [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%
+            | [FAIL] main-verticals-utf8.screen != expected/main-verticals-utf8.screen
+            | diff --git a/expected/main-verticals-utf8.screen b/main-verticals-utf8.screen
+            | index 6a3007c..3ae17ee 100644
+            | --- a/expected/main-verticals-utf8.screen
+            | +++ b/main-verticals-utf8.screen
+            | @@ -1,17 +1,17 @@
+            |    1│ 2010-04-07 05:37 +0000 Max Power   |  1│ commit 5cb3412a5e06e506840495b91ac
+            | -   │ 2010-03-29 17:15 +0000 Jørgen Thy~ |   │ Refs: [master], {origin/master}, {
+            | +   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   │ Refs: [master], {origin/master}, {
+            |     │ 2010-03-21 04:53 +0000 作者        |   │ Author:     Max Power <power123@ex
+            | -   │ 2010-03-12 16:31 +0000 René Léves~ |   │ AuthorDate: Wed Apr 7 05:37:40 201
+            | +   │ 2010-03-12 16:31 +0000 René Lévesqu|   │ AuthorDate: Wed Apr 7 05:37:40 201
+            |    5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5│ Commit:     Committer <c.ommitter@
+            |     │ 2010-02-23 15:46 +0000 Max Power   |   │ CommitDate: Wed Apr 7 05:37:40 201
+            | -   │ 2010-02-15 03:24 +0000 Jørgen Thy~ |   │
+            | +   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   │ 
+            |     │ 2010-02-06 15:02 +0000 作者        |   │     Commit 10 E
+            | -   │ 2010-01-29 02:40 +0000 René Léves~ |
+            | +   │ 2010-01-29 02:40 +0000 René Lévesqu|
+            |   10│ 2010-01-20 14:18 +0000 A. U. Thor  |
+            |     │ 2010-01-12 01:56 +0000 Max Power   |
+            | -   │ 2010-01-03 13:33 +0000 Jørgen Thy~ |
+            | +   │ 2010-01-03 13:33 +0000 Jørgen Thyge|
+            |     │ 2009-12-26 01:11 +0000 作者        |
+            | -   │ 2009-12-17 12:49 +0000 René Léves~ |
+            | +   │ 2009-12-17 12:49 +0000 René Lévesqu|
+            |   15│ 2009-12-09 00:27 +0000 A. U. Thor  |
+            |     │ 2009-11-30 12:05 +0000 Max Power   |
+            |  [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%
+            | Failed 1 out of 8 test(s)
+            |   [OK] main-with-unstaged.screen assertion
+            |   [OK] main-after-add-a.screen assertion
+            |   [OK] main-after-add-all.screen assertion
+            |   [OK] main-after-commit.screen assertion
+            |   [OK] main-after-reset-soft.screen assertion
+            |   [OK] main-after-reset-a-and-bc.screen assertion
+            |   [OK] main-after-reset-hard.screen assertion
+            | [FAIL] main-after-tag.screen not found
+            | Failed 1 out of 2 test(s)
+            |   [OK] ensure-topo-order-with-graph.screen assertion
+            | [FAIL] graph-supports-date-order.screen != expected/graph-supports-date-order.screen
+            | diff --git a/expected/graph-supports-date-order.screen b/graph-supports-date-order.screen
+            | index a051568..4ab93fd 100644
+            | --- a/expected/graph-supports-date-order.screen
+            | +++ b/graph-supports-date-order.screen
+            | @@ -1,6 +1,6 @@
+            |  2014-02-01 22:36 -0600 Benjamin Bergman ●─╮ Merge branch 'feature_branch'
+            | -2014-02-01 22:36 -0600 Benjamin Bergman ∙ │ More master
+            |  2014-02-01 22:35 -0600 Benjamin Bergman │ ∙ More featuresA
+            | +2014-02-01 22:36 -0600 Benjamin Bergman ∙ │ More master
+            |  2014-02-01 22:21 -0600 Benjamin Bergman ●─│─╮ Merge branch 'feature_branch'
+            |  2014-02-01 23:00 -0600 Benjamin Bergman │ ∙─╯ Add feature
+            |  2014-02-01 22:21 -0600 Benjamin Bergman ∙ │ Add to master
