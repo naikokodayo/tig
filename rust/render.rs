@@ -131,90 +131,13 @@ pub(crate) fn author(
 }
 
 pub(crate) fn date(iso: &str, column: &Column<'_>) -> Result<String, String> {
-    let normalized;
-    let iso = if let Some(prefix) = iso.strip_suffix('Z') {
-        normalized = format!("{prefix}+00:00");
-        normalized.as_str()
-    } else {
-        iso
-    };
-    if column.flag("local", false)? {
-        return Err("Local date conversion is not supported".into());
-    }
-    // The history loader supplies strict ISO 8601 (%aI or %cI), including offset.
-    let b = iso.as_bytes();
-    if b.len() != 25
-        || !iso.is_ascii()
-        || b[4] != b'-'
-        || b[7] != b'-'
-        || b[10] != b'T'
-        || b[13] != b':'
-        || b[16] != b':'
-        || b[22] != b':'
-        || !matches!(b[19], b'+' | b'-')
-        || [0..4, 5..7, 8..10, 11..13, 14..16, 17..19, 20..22, 23..25]
-            .iter()
-            .any(|r| !b[r.clone()].iter().all(u8::is_ascii_digit))
-    {
-        return Err(format!("Expected strict ISO 8601 commit date: {iso:?}"));
-    }
-    let number = |start, end| iso[start..end].parse::<u32>().unwrap_or(u32::MAX);
-    let year = number(0, 4);
-    let month = number(5, 7);
-    let leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
-    let days = match month {
-        2 => {
-            if leap {
-                29
-            } else {
-                28
-            }
-        }
-        4 | 6 | 9 | 11 => 30,
-        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
-        _ => 0,
-    };
-    if number(8, 10) == 0
-        || number(8, 10) > days
-        || number(11, 13) > 23
-        || number(14, 16) > 59
-        || number(17, 19) > 60
-        || number(20, 22) > 23
-        || number(23, 25) > 59
-    {
-        return Err(format!("Invalid ISO 8601 commit date: {iso:?}"));
-    }
-    let zone = format!("{}{}", &iso[19..22], &iso[23..25]);
-    let format = match column.display {
-        "default" | "yes" | "true" => "%Y-%m-%d %H:%M %z",
-        "custom" => column.options.get("format").copied().unwrap_or("%Y-%m-%d"),
-        other => return Err(format!("Unsupported date mode: {other}")),
-    };
-    let mut out = String::new();
-    let mut chars = format.chars();
-    while let Some(c) = chars.next() {
-        if c != '%' {
-            out.push(c);
-            continue;
-        }
-        let part = match chars.next().ok_or("Trailing % in date format")? {
-            '%' => "%",
-            'Y' => &iso[..4],
-            'y' => &iso[2..4],
-            'm' => &iso[5..7],
-            'd' => &iso[8..10],
-            'H' => &iso[11..13],
-            'M' => &iso[14..16],
-            'S' => &iso[17..19],
-            'z' | 'Z' => &zone,
-            'F' => &iso[..10],
-            'R' => &iso[11..16],
-            'T' => &iso[11..19],
-            spec => return Err(format!("Unsupported date format directive: %{spec}")),
-        };
-        out.push_str(part);
-    }
-    Ok(sanitize(&out))
+    crate::date::format(
+        iso,
+        column.display,
+        column.flag("local", false)?,
+        column.options.get("format").copied(),
+    )
+    .map(|value| sanitize(&value))
 }
 
 pub fn refs(config: &Config, decorations: &str, separator: &str) -> String {
@@ -429,6 +352,10 @@ pub fn render_commits(
                 row.push_str(&" ".repeat(padding));
                 row.push_str(&value);
                 row.push_str(if ascii { "| " } else { "│ " });
+            } else if col.name == "date" && col.display == "relative" {
+                row.push_str(&" ".repeat(padding));
+                row.push_str(&value);
+                row.push(' ');
             } else {
                 row.push_str(&value);
                 row.push_str(&" ".repeat(padding));

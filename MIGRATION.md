@@ -22,8 +22,9 @@ License: GPL-2.0-or-later; original history, COPYING and copyright notices retai
   Canonical diff path prefixes are forced and regression-tested against user
   `diff.noprefix` settings to avoid modifying a similarly named wrong path.
 - `rust/render.rs`: configurable main columns, widths, author/committer metadata,
-  reference formats and common date formats. Local/relative dates remain
-  unsupported.
+  reference formats and common date formats. Local and relative dates share
+  `rust/date.rs`; Chrono validates/converts dates and GNU/BSD `date` supplies
+  system timezone/locale formatting. See the dated compatibility receipt below.
 - `rust/config.rs`: configuration/CLI parsing, include diagnostics, bindings,
   binding assignment order, validated scoped column/global toggles and
   argument-list updates.
@@ -103,6 +104,7 @@ cargo test --locked --all-targets
 cargo clippy --locked --all-targets -- -D warnings
 cargo build --locked --release
 python3 rust/tests/terminal-smoke.py
+python3 rust/tests/date-compatibility.py
 python3 rust/tests/graph-differential.py --c-binary /path/to/original/test/tools/test-graph --rust-binary target/release/test-graph
 ```
 
@@ -317,3 +319,40 @@ receipt. See `migration/evidence/rust-upstream-ninth.json` and its raw log for
 the exact binary hash and failures. The graph helper still routes through C
 under `SYSTEM_TIG=1`; early exits change assertion totals, so this is not a
 completion percentage. Full parity and the application benchmark remain gated.
+
+## Date compatibility slice (2026-09-27)
+
+Raw `--pretty=raw` stdin now enters main, retains author/committer timestamps,
+and redraws the owned input on date toggles. Previously it entered pager and
+stopped the original date script: **9 failures in 9 assertions**, including
+an unexpected exit. On this slice the unchanged date script passes **8/8**
+(the extra exit failure disappears). Six original focused scripts pass **27/27**
+on both the freshly built C reference and Rust. See
+[`date-focused.json`](migration/evidence/date-focused.json) and its C/Rust logs.
+
+Chrono **0.4.45**, with defaults disabled and only `std`, replaces handwritten
+calendar validation and timestamp conversion. The added lockfile closure is
+`num-traits 0.2.19` and build dependency `autocfg 1.5.1`; all support Rust 1.81
+and offer a GPL-compatible MIT license option. See the
+[dependency and semantic investigation](migration/chrono-date-compatibility.md).
+Tig's relative thresholds and wording remain explicit. Nonlocal `%Z` emits the
+commit's numeric offset; local/locale formatting uses GNU/BSD `date` with the
+system timezone, DST rules and locale. `TEST_TIME_NOW` is shared with synthetic
+change rows; invalid overrides return errors rather than falling back to now.
+
+Rust 1.81 fmt, **55 unit tests**, Clippy with warnings denied, release build,
+**108 PTY checks**, and **13 isolated date checks** pass on macOS arm64. Date
+checks include a DST boundary, POSIX TZ, French locale, future and negative
+timestamps, and error handling. The new script is also wired into Linux/macOS
+CI; this local receipt does not assert those remote results. See
+[`date-checks.log`](migration/evidence/date-checks.log) and
+[`date-terminal-smoke.json`](migration/evidence/date-terminal-smoke.json).
+
+Scope remains bounded: the full upstream suite was not rerun, and the historical
+207/590 failure count must not be reduced arithmetically. Native formatting costs
+one process per local/locale date and requires GNU/BSD `date`; UTF-8 output is
+required. Format modifiers (`%E`, `%O`, padding flags), arbitrary libc extensions,
+and C's pathological empty/escaped timezone-format behavior are not claimed:
+unrecognized formats return explicit errors. Raw input supports ordinary Git
+headers, not a complete reflog/boundary/decorations parser. First-party unsafe
+code remains forbidden; original C files and tests are unchanged.
