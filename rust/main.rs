@@ -2371,9 +2371,13 @@ impl App {
                 self.action(&format!("goto {n}"))?;
             } else {
                 let action = if line.starts_with(':') {
-                    line.to_string()
+                    Some(line.to_string())
                 } else {
                     self.binding(line)
+                };
+                let Some(action) = action else {
+                    self.message = "Unknown key, press h for help".into();
+                    continue;
                 };
                 self.prompt_answers.clear();
                 for _ in tig_rs::commands::prompt_labels(&action) {
@@ -2406,28 +2410,25 @@ impl App {
         }
         Ok(())
     }
-    fn binding(&self, key: &str) -> String {
-        self.config
-            .action(&self.view.name, key)
-            .map(|a| {
-                if a.first().is_some_and(|arg| {
-                    arg.starts_with(':') && !arg.starts_with(":!") && arg != ":echo"
-                }) {
-                    return a.join(" ");
-                }
-                a.iter()
-                    .enumerate()
-                    .map(|(index, arg)| {
-                        if index == 0 {
-                            arg.clone()
-                        } else {
-                            format!("\"{}\"", arg.replace('\\', "\\\\").replace('"', "\\\""))
-                        }
-                    })
-                    .collect::<Vec<_>>()
-                    .join(" ")
-            })
-            .unwrap_or_else(|| key.into())
+    fn binding(&self, key: &str) -> Option<String> {
+        self.config.action(&self.view.name, key).map(|a| {
+            if a.first()
+                .is_some_and(|arg| arg.starts_with(':') && !arg.starts_with(":!") && arg != ":echo")
+            {
+                return a.join(" ");
+            }
+            a.iter()
+                .enumerate()
+                .map(|(index, arg)| {
+                    if index == 0 {
+                        arg.clone()
+                    } else {
+                        format!("\"{}\"", arg.replace('\\', "\\\\").replace('"', "\\\""))
+                    }
+                })
+                .collect::<Vec<_>>()
+                .join(" ")
+        })
     }
 }
 
@@ -3577,8 +3578,8 @@ fn run() -> Result<()> {
                 continue;
             }
             Event::Mouse(m) => match m.kind {
-                MouseEventKind::ScrollUp => "move-up".into(),
-                MouseEventKind::ScrollDown => "move-down".into(),
+                MouseEventKind::ScrollUp => Some("move-up".into()),
+                MouseEventKind::ScrollDown => Some("move-down".into()),
                 _ => continue,
             },
             Event::Key(k) => {
@@ -3600,6 +3601,10 @@ fn run() -> Result<()> {
             _ => continue,
         };
         key_sequence.clear();
+        let Some(action) = action else {
+            app.message = "Unknown key, press h for help".into();
+            continue;
+        };
         app.message.clear();
         if action == "search" || action == "search-back" {
             if let Some(s) =
@@ -3893,7 +3898,7 @@ mod tests {
         assert_eq!(app.view.name, "main");
         assert!(app.split && app.other.is_some());
         app.action("parent").unwrap();
-        assert!(app.action(&app.binding("<")).unwrap());
+        assert!(app.action(&app.binding("<").unwrap()).unwrap());
         assert_eq!((app.view.selected, app.view.top, app.view.left), position);
         app.other = None;
         app.split = false;
@@ -4190,7 +4195,7 @@ mod tests {
             app.config
                 .parse(&format!("bind generic a :toggle {quote}author"));
             let before = app.config.settings.clone();
-            let command = app.binding("a");
+            let command = app.binding("a").unwrap();
             assert!(app.action(&command).is_err());
             assert_eq!(app.config.settings, before);
             assert_eq!(

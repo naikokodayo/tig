@@ -37,6 +37,10 @@ def run(binary):
                         '-c', 'user.email=test@example.invalid', '-c', 'commit.gpgsign=false',
                         'commit', '--allow-empty', '-qm', 'key binding fixture'], env=env, check=True)
         (repo / 'tigrc').write_text('set refresh-mode = manual\nbind main q none\n')
+        executable = repo / 'z'
+        executable.write_text('#!/bin/sh\ntouch command-prefix-executed\n')
+        executable.chmod(0o755)
+        env['PATH'] = str(repo) + os.pathsep + env['PATH']
         master, slave = pty.openpty()
         fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 24, 100, 0, 0))
 
@@ -116,6 +120,23 @@ def run(binary):
             command('exec @touch mismatch-reset')
             wait('mismatch resets prefix', lambda: (repo / 'mismatch-reset').exists())
             assert not (repo / 'wrong-fallback').exists()
+            # Unknown key text must never be interpreted as an exec request.
+            for prefix in ('@', '!', '?', '<Lt>', '+', '>'):
+                # Remove inherited single-key actions so each is a prefix.
+                if prefix in ('?', '<Lt>'):
+                    command(f'bind generic {prefix} none')
+                command(f'bind main {prefix}a view-help')
+                drain()
+                offset = len(transcript)
+                send(prefix.replace('<Lt>', '<').encode())
+                wait(f'{prefix} waits for second key', lambda: b'Keys:' in transcript[offset:])
+                offset = len(transcript)
+                send(b'z')
+                wait(f'{prefix}z rejected as unknown', lambda: b'Unknown key' in transcript[offset:]
+                     or (repo / 'command-prefix-executed').exists())
+                assert not (repo / 'command-prefix-executed').exists(), prefix
+                assert not (repo / 'wrong-fallback').exists(), prefix
+                checks.append(f'{prefix}z cannot launch executable on PATH')
             offset = len(transcript)
             command('view-help')
             wait('help opened', lambda: b'help]' in transcript[offset:])
