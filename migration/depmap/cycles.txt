@@ -1,0 +1,2 @@
+# strongly connected components > 1 file: 1
+include/tig/string.h	include/tig/tig.h
