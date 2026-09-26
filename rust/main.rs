@@ -1460,7 +1460,7 @@ impl App {
         match action {
             "quit" => return Ok(false),
             "view-close" | "view-close-no-quit" | "back" => {
-                if self.parent_focused && self.other.is_some() {
+                if action != "back" && self.parent_focused && self.other.is_some() {
                     if let Some(v) = self.previous.pop() {
                         self.revision = v.revision.clone();
                         self.path = v.path.clone();
@@ -3509,6 +3509,10 @@ mod tests {
         app.action("view-close-no-quit").unwrap();
         assert_eq!(app.view.rows, vec!["older"]);
         assert!(app.other.is_none() && !app.split);
+        app.other = Some(View::text("pager", "child"));
+        app.split = true;
+        app.parent_focused = true;
+        assert!(app.action("back").unwrap());
     }
     #[test]
     fn terminal_content_is_safe_and_cell_clipped() {
