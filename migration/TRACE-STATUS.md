@@ -1,8 +1,8 @@
 # Trace and status migration checkpoint
 
 Base: `2fb2a871` (latest main when this independent clone was created).
-Final code/verification source: `b21df5669259b90b6f785273c42117678f36b357`,
-after both review fixes and synchronization with main `c097ffb8`.
+Final code/verification source: `f087f86d`, after both review fixes and the `enter(split)` integration fix,
+synchronized with main `b056a7ac` (including the requested `b0eabd2c`).
 The following evidence-only commit does not alter that source tree.
 Initial checkpoint evidence at `d351cb65` is historical, not PR-head verification.
 No AGENTS.md was present in the clone or its ancestor directories.
@@ -66,14 +66,19 @@ Besides the two trace-dependent scripts, remaining failures are the existing
 `stage/split-chunk-test` hunk-count difference (`+8,2` versus C's `+8,1`). The latter
 matches the earlier `stage-parity/paired-rust-only.json` failure. Neither is hidden.
 
-Latest validation is in `evidence/trace-status/review/`:
+Latest validation is in `evidence/trace-status/main-sync/`:
 
-- `checks.json` records actual subprocess statuses and hashes: fmt, **74 unit
-  tests** (55 library + 19 application), Clippy with warnings denied, and filtered
+- `checks.json` records actual subprocess statuses and hashes: full-target compile, release build, fmt, **76 unit
+  tests** (56 library + 20 application), Clippy with warnings denied, and filtered
   index checks all pass.
 - `pty.json` records **131 passing controlling-PTY checks**, including the new
-  trace boundary regression: captured/silent command argv remain traceable;
+  trace boundary regression on a same-binary retry: captured/silent command argv remain traceable;
   normal foreground, successful quick, and failed quick argv are absent.
+- The first full PTY attempt failed the SIGHUP terminal-restoration assertion:
+  one terminal flag differed. `pty-first-attempt.json` / `.log` and the nonzero
+  status in `checks.json` preserve it. A retry with the identical binary passed
+  all 131 checks; no source, harness, or assertion changed between attempts.
+  This single observed intermittent failure is not presented as a clean first run.
 - `foreground-pair.json` independently checks real interactive C and Rust:
   the foreground command executes without tracing its synthetic private marker;
   the background command executes and is traced.
@@ -81,16 +86,24 @@ Latest validation is in `evidence/trace-status/review/`:
   staging, staging after refresh, unstaging after refresh, multiple filtered paths
   (including a space), and intentionally disabling the filter. Outside-filter
   index content and all worktree file bytes are checked, not just screen text.
-- `pty-red.json` / `pty-red.log` preserve the pre-fix foreground leak;
-  `status-filter-red.json` preserves C passing all five scenarios while Rust
+- The earlier `review/pty-red.json` / `review/pty-red.log` preserve the pre-fix foreground leak;
+  `review/status-filter-red.json` preserves C passing all five scenarios while Rust
   incorrectly changed the outside index in four. These are negative evidence,
   not passing receipts.
 
 The latest PTY, index, and foreground-pair binary hashes match the Rust application
-in the updated `trace-status-after.json` (source `b21df566`). Older `checks.json`
+in the updated `trace-status-after.json` (source `f087f86d`). The prior `review/`
+receipts (74 unit tests, source `b21df566`) are historical. Older `checks.json`
 (72 tests) and `pty.json` (130 checks) outside the `review/` directory retain their
 historical `d351cb65` evidence only. They are not used to certify the synchronized
 PR. Original C tests/assertions and the upstream adapter remain unchanged.
+
+The latest main changed `App::enter` to take a split-layout argument. The merged
+source first failed E0061; `main-sync/compile-red.log` retains that actual compiler
+failure. Passing a constant `true` compiled but failed the maximized auto-advance
+regression (`layout-red.log`). The fix passes `self.split`; the regression checks
+both split and maximized layouts, the next selected untracked file, and real index
+contents. `layout-green.log` and the full unit run confirm the fix.
 
 Reproduce the paired run:
 
@@ -103,7 +116,7 @@ python3 rust/tests/upstream-suite.py --output migration/evidence/trace-status-af
 Reproduce the index regression after building both binaries:
 
 ```sh
-python3 rust/tests/status-filter.py --output migration/evidence/trace-status/review/status-filter.json
+python3 rust/tests/status-filter.py --output migration/evidence/trace-status/main-sync/status-filter.json
 ```
 
 This is not a full-suite rerun or a claim that Rust parity is complete.
