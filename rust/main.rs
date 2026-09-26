@@ -1092,13 +1092,13 @@ impl App {
             .rows
             .get(selected)
             .ok_or("No selected diff line")?;
-        let old = row.starts_with('-') && !row.starts_with("--- ");
-        let hunk = self.view.rows[..=selected]
-            .iter()
-            .rfind(|row| row.starts_with("@@"));
+        let hunk = self.view.rows[..=selected].iter().rfind(|row| {
+            row.starts_with("@@") || row.starts_with("diff ") || row.starts_with("commit ")
+        });
         if row.starts_with("@@") || !hunk.is_some_and(|row| row.starts_with("@@ ")) {
             return Err("The line to trace must be inside an ordinary diff chunk".into());
         }
+        let old = row.starts_with('-');
         let (path, number) =
             diff_target(&self.view.rows, selected, old).ok_or("No file and line to blame")?;
         let revision = self.view.rows[..=selected]
@@ -2303,6 +2303,8 @@ fn diff_target(rows: &[String], selected: usize, old_side: bool) -> Option<(Path
         let file = patch
             .iter()
             .find_map(|line| line.strip_prefix(if old_side { "--- " } else { "+++ " }))?;
+        // A literal tab separates header fields; tabs in filenames are C-quoted.
+        let file = file.split('\t').next()?;
         if file == "/dev/null" {
             return None;
         }
@@ -2460,6 +2462,35 @@ mod editor_tests {
             diff_target(&rows, 4, true),
             Some((PathBuf::from("a/file"), 1))
         );
+    }
+
+    #[test]
+    fn patch_header_delimiters_preserve_spaces_and_quoted_tabs() {
+        for (header, before, after, path) in [
+            (
+                "diff --git a/space name b/space name",
+                "a/space name\t",
+                "b/space name\t",
+                "space name",
+            ),
+            (
+                r#"diff --git "a/tab\tname" "b/tab\tname""#,
+                r#""a/tab\tname""#,
+                r#""b/tab\tname""#,
+                "tab\tname",
+            ),
+        ] {
+            let rows = vec![
+                header.to_owned(),
+                format!("--- {before}"),
+                format!("+++ {after}"),
+                "@@ -1 +1 @@".into(),
+                "-old".into(),
+                "+new".into(),
+            ];
+            assert_eq!(diff_target(&rows, 4, true), Some((PathBuf::from(path), 1)));
+            assert_eq!(diff_edit_target(&rows, 5), Some((PathBuf::from(path), 1)));
+        }
     }
 
     #[test]
