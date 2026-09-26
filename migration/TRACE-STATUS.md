@@ -11,8 +11,8 @@ First-party Rust still forbids unsafe code; no dependencies or Actions changes w
 `TIG_TRACE` now appends the actual child program/argv and captured stderr.
 Repository queries, grep, user commands, patch application and native date formatting
 use this tracing. A missing/unwritable trace destination never prevents execution.
-Tracing does not synthesize C commands, expected files, or test receipts. Interactive
-commands retain their terminal stderr; only captured stderr is appended.
+Tracing does not synthesize C commands, expected files, or test receipts. Foreground interactive commands are excluded entirely, matching C’s `IO_FG`
+boundary; their argv and terminal stderr are not written to the trace.
 The repository runner expresses pager, literal-path and color policy through Git's
 environment equivalents and preserves inherited `GIT_CONFIG_COUNT` entries.
 

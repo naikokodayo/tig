@@ -81,8 +81,13 @@ impl PreparedCommand {
                 .stdout(Stdio::inherit())
                 .stderr(Stdio::inherit());
         }
-        let output = crate::trace::output(&mut command)
-            .map_err(|e| GitError(format!("Could not execute command: {e}")))?;
+        // Match C's IO_FG boundary: interactive argv must not enter TIG_TRACE.
+        let output = if capture {
+            crate::trace::output(&mut command)
+        } else {
+            command.output()
+        }
+        .map_err(|e| GitError(format!("Could not execute command: {e}")))?;
         Ok(output)
     }
 }

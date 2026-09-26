@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "<stdin>", line 6, in <module>
+  File "rust/tests/terminal-smoke.py", line 275, in main
+    assert marker not in traced, f'foreground argv leaked into TIG_TRACE: {marker!r}'
+AssertionError: foreground argv leaked into TIG_TRACE: b'foreground-private-marker'
