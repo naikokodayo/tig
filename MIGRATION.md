@@ -349,3 +349,20 @@ on `3e8f4b8e`, before the subsequently merged blame PR #4. The FAIL total
 includes process errors and timeouts, so it is not solely a count of
 behavioral assertion mismatches. The graph helper still routes through C;
 Rust full parity and the application benchmark remain gated.
+
+## Rust-only original-test adapter
+
+Use `python3 rust/tests/upstream-suite.py` for future original-suite evidence.
+It runs C first and then explicitly selects **both Rust executables**, records
+per-script exits and original assertions, and maps assertions not reached by
+Rust. `make RUST_ONLY=1 test` provides the same application/helper routing;
+`--self-test` on the Python runner verifies intentional failures cannot pass.
+This replaces the mixed-helper adapter as the evidence method. The historical
+ninth, tenth and eleventh mixed-helper receipts remain unchanged.
+
+See [the versioned harness report](migration/UPSTREAM-HARNESS.md). Its full
+Rust-only snapshot is based on `47f1a2b`; subsequent configuration and blame
+merges have separate focused receipts, not a relabeled full-suite count.
+The parity gate remains blocked, including missing `TIG_TRACE` semantics.
+The final documentation-only synchronization to `34684f79` changes none of
+the code validated after PR #4.
