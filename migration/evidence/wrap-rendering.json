@@ -1,0 +1,1309 @@
+{
+  "schema": 1,
+  "source_commit": "e6cf7246425b2277ed7ac185730aa815a483ff91",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "BLOCKED",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/blob/wrap-lines-test",
+          "script_sha256": "2c4414a548db2b1d6d92855a7262220feeb8c25d31b492275c02f8a92983cc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "wrapped.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/blob/wrap-lines-test/.test-result",
+          "receipt": "  [OK] wrapped.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/commit-title-wrap-test",
+          "script_sha256": "6437ec94ca5c3689ed6c0c1199a74957dfc57a744dc61543bf3df9b96167183d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "wrapped-commit-title.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/commit-title-wrap-test/.test-result",
+          "receipt": "  [OK] wrapped-commit-title.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/diff-context-test",
+          "script_sha256": "70d66cc7fbbace58b14cf4c12613de5bc00f084e3ed9d043e2b886daad275dd4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 10
+          },
+          "assertions": [
+            {
+              "id": "diff-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-default-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8-from-main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/diff-context-test/.test-result",
+          "receipt": "  [OK] diff-default.screen assertion\n  [OK] diff-u4.screen assertion\n  [OK] diff-u5.screen assertion\n  [OK] diff-u10.screen assertion\n  [OK] diff-u8.screen assertion\n  [OK] diff-default-from-main.screen assertion\n  [OK] diff-u10-from-main.screen assertion\n  [OK] diff-u4-from-main.screen assertion\n  [OK] diff-u5-from-main.screen assertion\n  [OK] diff-u8-from-main.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/diff-stat-test",
+          "script_sha256": "2e3504a253b87cb00c42babbf7014ca384fbe2951bba56232a10ef5a688e151d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "view.data#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/diff-stat-test/.test-result",
+          "receipt": "  [OK] view.data assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/diff-stdin-test",
+          "script_sha256": "254d04fcf06b75967b9d47904b78110ef7c8f0b211609a345093549b35a18568",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/diff-stdin-test/.test-result",
+          "receipt": "  [OK] diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/editor-test",
+          "script_sha256": "2eb49eea8dacad57a98b5cf1c8b304e8bad7521eca40ca80261348e19c6e2434",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 15
+          },
+          "assertions": [
+            {
+              "id": "default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/editor-test/.test-result",
+          "receipt": "  [OK] default.screen assertion\n  [OK] default.stderr assertion\n  [OK] sub-directory.screen assertion\n  [OK] sub-directory.stderr assertion\n  [OK] sub-directory-diffstat.screen assertion\n  [OK] sub-directory-diffstat.stderr assertion\n  [OK] mnemonic.screen assertion\n  [OK] mnemonic.stderr assertion\n  [OK] noprefix.screen assertion\n  [OK] noprefix.stderr assertion\n  [OK] default-conflict.screen assertion\n  [OK] default-conflict.stderr assertion\n  [OK] noprefix-conflict.screen assertion\n  [OK] noprefix-conflict.stderr assertion\n  [OK] editor.log assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/line-number-test",
+          "script_sha256": "4f169e7dbcd1ec8d8958c12e64fc4c030c0a3093100492a3c7af9c4e41036e72",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "added-line-number.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/line-number-test/.test-result",
+          "receipt": "  [OK] added-line-number.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/start-on-line-test",
+          "script_sha256": "ba5847daea6b42732a27ffba9e6c440b1192c00128ba5a062cb1b217d9269d31",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/start-on-line-test/.test-result",
+          "receipt": "  [OK] position.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/wrap-lines-test",
+          "script_sha256": "4a68cfaf5c4231853b50799b217f130d445b4b873fdec577f60290e8d5237072",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "wrapped.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/wrap-lines-test/.test-result",
+          "receipt": "  [OK] wrapped.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/src/tig",
+          "sha256": "e40f261ef1a50ebc5bc8c912fa827fb05a863d334739c38ee0691ec20ac1ed77"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 9
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig)\n    Finished `release` profile [optimized] target(s) in 48.49s\n",
+      "results": [
+        {
+          "script": "test/blob/wrap-lines-test",
+          "script_sha256": "2c4414a548db2b1d6d92855a7262220feeb8c25d31b492275c02f8a92983cc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "wrapped.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/blob/wrap-lines-test/.test-result",
+          "receipt": "  [OK] wrapped.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/commit-title-wrap-test",
+          "script_sha256": "6437ec94ca5c3689ed6c0c1199a74957dfc57a744dc61543bf3df9b96167183d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "wrapped-commit-title.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/commit-title-wrap-test/.test-result",
+          "receipt": "  [OK] wrapped-commit-title.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/diff-context-test",
+          "script_sha256": "70d66cc7fbbace58b14cf4c12613de5bc00f084e3ed9d043e2b886daad275dd4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 10
+          },
+          "assertions": [
+            {
+              "id": "diff-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-default-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8-from-main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/diff-context-test/.test-result",
+          "receipt": "  [OK] diff-default.screen assertion\n  [OK] diff-u4.screen assertion\n  [OK] diff-u5.screen assertion\n  [OK] diff-u10.screen assertion\n  [OK] diff-u8.screen assertion\n  [OK] diff-default-from-main.screen assertion\n  [OK] diff-u10-from-main.screen assertion\n  [OK] diff-u4-from-main.screen assertion\n  [OK] diff-u5-from-main.screen assertion\n  [OK] diff-u8-from-main.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/diff-stat-test",
+          "script_sha256": "2e3504a253b87cb00c42babbf7014ca384fbe2951bba56232a10ef5a688e151d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 2
+          },
+          "assertions": [
+            {
+              "id": "view.data#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/diff-stat-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] view.data not found\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Not implemented in Rust yet: save-view HOME/view.data\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] view.data not found\r\n"
+        },
+        {
+          "script": "test/diff/diff-stdin-test",
+          "script_sha256": "254d04fcf06b75967b9d47904b78110ef7c8f0b211609a345093549b35a18568",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/diff-stdin-test/.test-result",
+          "receipt": "  [OK] diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/editor-test",
+          "script_sha256": "2eb49eea8dacad57a98b5cf1c8b304e8bad7521eca40ca80261348e19c6e2434",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 15
+          },
+          "assertions": [
+            {
+              "id": "default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/editor-test/.test-result",
+          "receipt": "  [OK] default.screen assertion\n  [OK] default.stderr assertion\n  [OK] sub-directory.screen assertion\n  [OK] sub-directory.stderr assertion\n  [OK] sub-directory-diffstat.screen assertion\n  [OK] sub-directory-diffstat.stderr assertion\n  [OK] mnemonic.screen assertion\n  [OK] mnemonic.stderr assertion\n  [OK] noprefix.screen assertion\n  [OK] noprefix.stderr assertion\n  [OK] default-conflict.screen assertion\n  [OK] default-conflict.stderr assertion\n  [OK] noprefix-conflict.screen assertion\n  [OK] noprefix-conflict.stderr assertion\n  [OK] editor.log assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/line-number-test",
+          "script_sha256": "4f169e7dbcd1ec8d8958c12e64fc4c030c0a3093100492a3c7af9c4e41036e72",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "added-line-number.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/line-number-test/.test-result",
+          "receipt": "  [OK] added-line-number.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/start-on-line-test",
+          "script_sha256": "ba5847daea6b42732a27ffba9e6c440b1192c00128ba5a062cb1b217d9269d31",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/start-on-line-test/.test-result",
+          "receipt": "  [OK] position.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/wrap-lines-test",
+          "script_sha256": "4a68cfaf5c4231853b50799b217f130d445b4b873fdec577f60290e8d5237072",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "wrapped.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/wrap-lines-test/.test-result",
+          "receipt": "  [OK] wrapped.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target/release/tig",
+          "sha256": "0e8c586d4f361cce7ac3ba89a3d92bdc080502026cb68b98973c28a0ee5a1048"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target/release/test-graph",
+          "sha256": "b89127e7cf99b2479a721b62b895fb3f914df6928e737dc6249039acdb1efdd9"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 8,
+        "fail": 1
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/blob/wrap-lines-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "wrapped.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/commit-title-wrap-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "wrapped-commit-title.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/diff-context-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "diff-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u4.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u5.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u10.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u8.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-default-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u10-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u4-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u5-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u8-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/diff-stat-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "view.data#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/diff-stdin-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "diff.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/editor-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "default.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory-diffstat.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory-diffstat.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "mnemonic.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "mnemonic.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "default-conflict.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "default-conflict.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix-conflict.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix-conflict.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "editor.log#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/line-number-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "added-line-number.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/start-on-line-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "position.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/wrap-lines-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "wrapped.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ],
+  "slice_verdict": "PASS_ASSIGNED_WRAPPING_SCRIPTS",
+  "assigned_scripts": [
+    "test/blob/wrap-lines-test",
+    "test/diff/commit-title-wrap-test",
+    "test/diff/wrap-lines-test"
+  ],
+  "before": {
+    "schema": 1,
+    "source_commit": "ac78df21291964083a6cb13a08da5d127fdcc60e",
+    "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+    "harness_sha256": {
+      "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+      "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+      "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+    },
+    "rust_complete": false,
+    "parity_gate": "BLOCKED",
+    "script_timeout_seconds": 120,
+    "environment": {
+      "platform": "Darwin arm64",
+      "git": "git version 2.50.1 (Apple Git-155)",
+      "init.defaultBranch": "master",
+      "TEST_OPTS": "",
+      "pty_rows": 30,
+      "pty_columns": 80
+    },
+    "runs": {
+      "c": {
+        "build_command": [
+          "make",
+          "src/tig",
+          "test/tools/test-graph"
+        ],
+        "build_exit_code": 0,
+        "build_log": "        CC  src/tig.o\n        CC  src/types.o\n        CC  src/string.o\n        CC  src/util.o\n        CC  src/map.o\n        CC  src/argv.o\n        CC  src/io.o\n        CC  src/refdb.o\n       GEN  src/builtin-config.c\n        CC  src/builtin-config.o\n        CC  src/request.o\n        CC  src/line.o\n        CC  src/keys.o\n        CC  src/repo.o\n        CC  src/options.o\n        CC  src/draw.o\n        CC  src/prompt.o\n        CC  src/display.o\n        CC  src/view.o\n        CC  src/search.o\n        CC  src/parse.o\n        CC  src/watch.o\n        CC  src/pager.o\n        CC  src/log.o\n        CC  src/reflog.o\n        CC  src/diff.o\n        CC  src/help.o\n        CC  src/tree.o\n        CC  src/blob.o\n        CC  src/blame.o\n        CC  src/refs.o\n        CC  src/status.o\n        CC  src/stage.o\n        CC  src/main.o\n        CC  src/stash.o\n        CC  src/grep.o\n        CC  src/ui.o\n        CC  src/apps.o\n        CC  src/graph.o\n        CC  src/graph-v1.o\n        CC  src/graph-v2.o\n        CC  compat/hashtab.o\n        CC  compat/utf8proc.o\n      LINK  src/tig\n        CC  test/tools/test-graph.o\n      LINK  test/tools/test-graph\n",
+        "results": [
+          {
+            "script": "test/blob/wrap-lines-test",
+            "script_sha256": "2c4414a548db2b1d6d92855a7262220feeb8c25d31b492275c02f8a92983cc24",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 1
+            },
+            "assertions": [
+              {
+                "id": "wrapped.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/blob/wrap-lines-test/.test-result",
+            "receipt": "  [OK] wrapped.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/diff/commit-title-wrap-test",
+            "script_sha256": "6437ec94ca5c3689ed6c0c1199a74957dfc57a744dc61543bf3df9b96167183d",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 1
+            },
+            "assertions": [
+              {
+                "id": "wrapped-commit-title.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/diff/commit-title-wrap-test/.test-result",
+            "receipt": "  [OK] wrapped-commit-title.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/diff/wrap-lines-test",
+            "script_sha256": "4a68cfaf5c4231853b50799b217f130d445b4b873fdec577f60290e8d5237072",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 1
+            },
+            "assertions": [
+              {
+                "id": "wrapped.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/diff/wrap-lines-test/.test-result",
+            "receipt": "  [OK] wrapped.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          }
+        ],
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/src/tig",
+            "sha256": "e40f261ef1a50ebc5bc8c912fa827fb05a863d334739c38ee0691ec20ac1ed77"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/test/tools/test-graph",
+            "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+          }
+        },
+        "binaries_unchanged": true,
+        "summary": {
+          "pass": 3
+        }
+      },
+      "rust": {
+        "build_command": [
+          "make",
+          "rust-test-binaries"
+        ],
+        "build_exit_code": 0,
+        "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target/release/test-graph\"\n   Compiling libc v0.2.189\n   Compiling autocfg v1.5.1\n   Compiling parking_lot_core v0.9.12\n   Compiling signal-hook v0.3.18\n   Compiling scopeguard v1.2.0\n   Compiling log v0.4.34\n   Compiling smallvec v1.16.2\n   Compiling cfg-if v1.0.5\n   Compiling rustix v0.38.44\n   Compiling memchr v2.8.3\n   Compiling regex-syntax v0.8.11\n   Compiling lock_api v0.4.14\n   Compiling bitflags v2.13.2\n   Compiling unicode-width v0.2.0\n   Compiling num-traits v0.2.19\n   Compiling aho-corasick v1.1.5\n   Compiling regex-automata v0.4.18\n   Compiling chrono v0.4.45\n   Compiling errno v0.3.14\n   Compiling mio v1.2.3\n   Compiling signal-hook-registry v1.4.8\n   Compiling parking_lot v0.12.5\n   Compiling signal-hook-mio v0.2.5\n   Compiling crossterm v0.28.1\n   Compiling regex v1.13.1\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig)\n    Finished `release` profile [optimized] target(s) in 49.53s\n",
+        "results": [
+          {
+            "script": "test/blob/wrap-lines-test",
+            "script_sha256": "2c4414a548db2b1d6d92855a7262220feeb8c25d31b492275c02f8a92983cc24",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "fail",
+            "reasons": [
+              "failed_checks"
+            ],
+            "checks": {
+              "FAIL": 1
+            },
+            "assertions": [
+              {
+                "id": "wrapped.screen#1",
+                "status": "FAIL"
+              }
+            ],
+            "receipt_path": "test/tmp/blob/wrap-lines-test/.test-result",
+            "receipt": "[FAIL] wrapped.screen != expected/wrapped.screen\n\u001b[1mdiff --git a/expected/wrapped.screen b/wrapped.screen\u001b[m\n\u001b[1mindex e0321b9..83e283e 100644\u001b[m\n\u001b[1m--- a/expected/wrapped.screen\u001b[m\n\u001b[1m+++ b/wrapped.screen\u001b[m\n\u001b[36m@@ -1,8 +1,4 @@\u001b[m\n Как пуст, и вял, и ничтожен почти всякий\u001b[m\n\u001b[31m- прожитой день! Как мало следов оставляе\u001b[m\n\u001b[31m-т он за собою! Как бессмысленно глупо пр\u001b[m\n\u001b[31m-обежали эти часы за часами!       Иван С\u001b[m\n\u001b[31m-геевич Тургенев\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[36m@@ -26,4 +22,8 @@\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[31m-[blob] README.md - line 1 of 5      100%\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[blob] README.md - line 1 of 1      100%\u001b[m\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] wrapped.screen != expected/wrapped.screen\r\n| \u001b[1mdiff --git a/expected/wrapped.screen b/wrapped.screen\u001b[m\r\n| \u001b[1mindex e0321b9..83e283e 100644\u001b[m\r\n| \u001b[1m--- a/expected/wrapped.screen\u001b[m\r\n| \u001b[1m+++ b/wrapped.screen\u001b[m\r\n| \u001b[36m@@ -1,8 +1,4 @@\u001b[m\r\n|  Как пуст, и вял, и ничтожен почти всякий\u001b[m\r\n| \u001b[31m- прожитой день! Как мало следов оставляе\u001b[m\r\n| \u001b[31m-т он за собою! Как бессмысленно глупо пр\u001b[m\r\n| \u001b[31m-обежали эти часы за часами!       Иван С\u001b[m\r\n| \u001b[31m-геевич Тургенев\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[36m@@ -26,4 +22,8 @@\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-[blob] README.md - line 1 of 5      100%\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[blob] README.md - line 1 of 1      100%\u001b[m\r\n"
+          },
+          {
+            "script": "test/diff/commit-title-wrap-test",
+            "script_sha256": "6437ec94ca5c3689ed6c0c1199a74957dfc57a744dc61543bf3df9b96167183d",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "fail",
+            "reasons": [
+              "failed_checks"
+            ],
+            "checks": {
+              "FAIL": 1
+            },
+            "assertions": [
+              {
+                "id": "wrapped-commit-title.screen#1",
+                "status": "FAIL"
+              }
+            ],
+            "receipt_path": "test/tmp/diff/commit-title-wrap-test/.test-result",
+            "receipt": "[FAIL] wrapped-commit-title.screen != expected/wrapped-commit-title.screen\n\u001b[1mdiff --git a/expected/wrapped-commit-title.screen b/wrapped-commit-title.screen\u001b[m\n\u001b[1mindex bd2ceea..b11e042 100644\u001b[m\n\u001b[1m--- a/expected/wrapped-commit-title.screen\u001b[m\n\u001b[1m+++ b/wrapped-commit-title.screen\u001b[m\n\u001b[36m@@ -1,10 +1,10 @@\u001b[m\n commit 1b4c64b595aeb4de1d317d669faacd3c1\u001b[m\n\u001b[31m-d82f0b0\u001b[m\n Author: A. U. Thor <author@example.com>\u001b[m\n Date:   Sun Jul 2 15:01:24 2017 +0200\u001b[m\n \u001b[m\n     A deliberately long commit title tha\u001b[m\n\u001b[31m-+t wraps onto a second visual line\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] wrapped-commit-title.screen != expected/wrapped-commit-title.screen\r\n| \u001b[1mdiff --git a/expected/wrapped-commit-title.screen b/wrapped-commit-title.screen\u001b[m\r\n| \u001b[1mindex bd2ceea..b11e042 100644\u001b[m\r\n| \u001b[1m--- a/expected/wrapped-commit-title.screen\u001b[m\r\n| \u001b[1m+++ b/wrapped-commit-title.screen\u001b[m\r\n| \u001b[36m@@ -1,10 +1,10 @@\u001b[m\r\n|  commit 1b4c64b595aeb4de1d317d669faacd3c1\u001b[m\r\n| \u001b[31m-d82f0b0\u001b[m\r\n|  Author: A. U. Thor <author@example.com>\u001b[m\r\n|  Date:   Sun Jul 2 15:01:24 2017 +0200\u001b[m\r\n|  \u001b[m\r\n|      A deliberately long commit title tha\u001b[m\r\n| \u001b[31m-+t wraps onto a second visual line\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n"
+          },
+          {
+            "script": "test/diff/wrap-lines-test",
+            "script_sha256": "4a68cfaf5c4231853b50799b217f130d445b4b873fdec577f60290e8d5237072",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "fail",
+            "reasons": [
+              "failed_checks"
+            ],
+            "checks": {
+              "FAIL": 1
+            },
+            "assertions": [
+              {
+                "id": "wrapped.screen#1",
+                "status": "FAIL"
+              }
+            ],
+            "receipt_path": "test/tmp/diff/wrap-lines-test/.test-result",
+            "receipt": "[FAIL] wrapped.screen != expected/wrapped.screen\n\u001b[1mdiff --git a/expected/wrapped.screen b/wrapped.screen\u001b[m\n\u001b[1mindex 8bc2395..f05848e 100644\u001b[m\n\u001b[1m--- a/expected/wrapped.screen\u001b[m\n\u001b[1m+++ b/wrapped.screen\u001b[m\n\u001b[36m@@ -1,14 +1,9 @@\u001b[m\n commit ee912870202200a0b9cf4fd86ba572432\u001b[m\n\u001b[31m-12d341e\u001b[m\n Refs: [master]\u001b[m\n Author:     Jonas Fonseca <jonas.fonseca\u001b[m\n\u001b[31m-+@gmail.com>\u001b[m\n AuthorDate: Sat Mar 1 17:26:01 2014 -050\u001b[m\n\u001b[31m-+0\u001b[m\n Commit:     Jonas Fonseca <jonas.fonseca\u001b[m\n\u001b[31m-+@gmail.com>\u001b[m\n CommitDate: Sat Mar 1 17:26:01 2014 -050\u001b[m\n\u001b[31m-+0\u001b[m\n \u001b[m\n     WIP: Upgrade to 0.4-SNAPSHOT and DCE\u001b[m\n ---\u001b[m\n\u001b[36m@@ -26,4 +21,9 @@\u001b[m \u001b[mCommitDate: Sat Mar 1 17:26:01 2014 -050\u001b[m\n  sudoku/exports.js         | 13 -------\u001b[m\n  .../sudoku/Sudoku.scala   |  2 +\u001b[m\n  tracer/exports.js         | 13 -------\u001b[m\n\u001b[31m-[diff] ee912870202200a0b9cf4fd86ba572 5%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m tracer/index-dev.html     |  2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m tracer/index.html         |  2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m .../tracer/Tracer.scala   |  3 ++\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 17 files changed, 42 insertions(+), 76\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[diff] ee912870202200a0b9cf4fd86ba572 7%\u001b[m\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] wrapped.screen != expected/wrapped.screen\r\n| \u001b[1mdiff --git a/expected/wrapped.screen b/wrapped.screen\u001b[m\r\n| \u001b[1mindex 8bc2395..f05848e 100644\u001b[m\r\n| \u001b[1m--- a/expected/wrapped.screen\u001b[m\r\n| \u001b[1m+++ b/wrapped.screen\u001b[m\r\n| \u001b[36m@@ -1,14 +1,9 @@\u001b[m\r\n|  commit ee912870202200a0b9cf4fd86ba572432\u001b[m\r\n| \u001b[31m-12d341e\u001b[m\r\n|  Refs: [master]\u001b[m\r\n|  Author:     Jonas Fonseca <jonas.fonseca\u001b[m\r\n| \u001b[31m-+@gmail.com>\u001b[m\r\n|  AuthorDate: Sat Mar 1 17:26:01 2014 -050\u001b[m\r\n| \u001b[31m-+0\u001b[m\r\n|  Commit:     Jonas Fonseca <jonas.fonseca\u001b[m\r\n| \u001b[31m-+@gmail.com>\u001b[m\r\n|  CommitDate: Sat Mar 1 17:26:01 2014 -050\u001b[m\r\n| \u001b[31m-+0\u001b[m\r\n|  \u001b[m\r\n|      WIP: Upgrade to 0.4-SNAPSHOT and DCE\u001b[m\r\n|  ---\u001b[m\r\n| \u001b[36m@@ -26,4 +21,9 @@\u001b[m \u001b[mCommitDate: Sat Mar 1 17:26:01 2014 -050\u001b[m\r\n|   sudoku/exports.js         | 13 -------\u001b[m\r\n|   .../sudoku/Sudoku.scala   |  2 +\u001b[m\r\n|   tracer/exports.js         | 13 -------\u001b[m\r\n| \u001b[31m-[diff] ee912870202200a0b9cf4fd86ba572 5%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m tracer/index-dev.html     |  2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m tracer/index.html         |  2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m .../tracer/Tracer.scala   |  3 ++\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 17 files changed, 42 insertions(+), 76\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[diff] ee912870202200a0b9cf4fd86ba572 7%\u001b[m\r\n"
+          }
+        ],
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target/release/tig",
+            "sha256": "8ec24b5895d5ddff34170560d8ebcf2d7b9be2d8b4457c77d6306d1eab3dd038"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig/target/release/test-graph",
+            "sha256": "a6ef9931a15d6ad838b43c660d18484e24bfcd8c5a70c96f8dbc4ad896f5f852"
+          }
+        },
+        "binaries_unchanged": true,
+        "summary": {
+          "fail": 3
+        }
+      }
+    },
+    "mapping": [
+      {
+        "script": "test/blob/wrap-lines-test",
+        "c_status": "pass",
+        "rust_status": "fail",
+        "assertions": [
+          {
+            "id": "wrapped.screen#1",
+            "c": "OK",
+            "rust": "FAIL"
+          }
+        ]
+      },
+      {
+        "script": "test/diff/commit-title-wrap-test",
+        "c_status": "pass",
+        "rust_status": "fail",
+        "assertions": [
+          {
+            "id": "wrapped-commit-title.screen#1",
+            "c": "OK",
+            "rust": "FAIL"
+          }
+        ]
+      },
+      {
+        "script": "test/diff/wrap-lines-test",
+        "c_status": "pass",
+        "rust_status": "fail",
+        "assertions": [
+          {
+            "id": "wrapped.screen#1",
+            "c": "OK",
+            "rust": "FAIL"
+          }
+        ]
+      }
+    ]
+  },
+  "source_sha256": {
+    "Cargo.lock": "4dff74ef4ccdb94d739984c33d6b06c217c12144f4095dde5e16bf10902ebbb5",
+    "Cargo.toml": "9c0a27f7f353f722308d07664ba1645e9dc6dfe35a94201839f7b4cd93752c69",
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "compat/ansidecl.h": "ad38622cd19e079228ce345d383cdf12cce71a869f89bb6b4bc2173829bb8ddb",
+    "compat/compat.h": "d855ca98c45a040cf1cde0f32c4ea681c143c609be56c278b42a8ab5ab635c22",
+    "compat/hashtab.c": "cf8b2e72616a833a3775208f619cd9db039c245d6365d3f645bc350537b8613e",
+    "compat/hashtab.h": "0751898241f5609e9a3768dff6680f3e30b44a5d36506c9eb9ca6021623eb0b0",
+    "compat/mkstemps.c": "2f96dc28b0f33618c6da01e5fb6afde9d3a029c988dc716c7d3182e4bceaf419",
+    "compat/setenv.c": "b2c56d2c4a76b1f432dadbb37185779e50c75aa0b3afc8965b1616e92ba9effb",
+    "compat/strndup.c": "3b0a8f6d54eff4227207f1ec9b7df2b587241cb655eeed8e65b3a74eaed17d51",
+    "compat/utf8proc.c": "b0df763ea34c8cceac9730ec20e8795c336bf21a3b4f7d2e56b88b07601f5b3d",
+    "compat/utf8proc.h": "3ec0d5c70b1171b236815a437b319163e6ada1570f4f9115bbdc497075b1b014",
+    "compat/utf8proc.license.md": "3b510150d34f248a221bb88e1d811238d6c6c18b51231822c42974c39bb07256",
+    "compat/utf8proc_data.c": "950e549dbfc853c4304425f3af1875e72fa9fc9697c273c763400c2da4e380a7",
+    "compat/wordexp.c": "1bfd138933548f3e869774a8c183b5a8d1507556d32ba20d44cd464cbcb87929",
+    "include/tig/apps.h": "e0d6e87c700abd65d3eacdb76b2f36391b467aae9ebcd18ad68e8269d20fd377",
+    "include/tig/argv.h": "e3fc263832c89cb45a6990f81e18efde74008f4531c3dc332b03e6c02e8bcb86",
+    "include/tig/blame.h": "314fd50e62281b9ed0ad63cdf685a33f8ecf41b4fac37643e9ee486bcf87f6f3",
+    "include/tig/blob.h": "99ac1cc6ed697521a3ee00c059463fc7c9d5e7fff2fca2c850c099d3ce7d1162",
+    "include/tig/diff.h": "1f6b143c35a328f41d0e6d7ccfe991b3f761e3137c70b59461dda549af952dbb",
+    "include/tig/display.h": "ef9c9cffdf2affb38576ecfb51ae3e6ed5f9f8528577819982c6863aaf7f5931",
+    "include/tig/draw.h": "ff2cc0bdaa825f017a3cf496ccc161266613b49997b68f6bbe4a068e89a6b481",
+    "include/tig/git.h": "1767a1943902c2d8592c47ee33817e9439d9fc1bcc53d1a3f32993dafe872d7a",
+    "include/tig/graph.h": "8da8aa8407ee991857246f23fd1640341c148b7d04ec1d03283364c6bc838c99",
+    "include/tig/grep.h": "b70cdaf20cfa5134219bcdae7fc157d7667ffd67955feae0c4df12c3942cb464",
+    "include/tig/help.h": "c207541276bd32c3c68ed1decd07d8399bd3e4ce78c0945980af84d4523bdc83",
+    "include/tig/io.h": "7526c1aa5e9baab9eecb94c62736e6c672d6e3127a98e3414e6091dafcebcfa0",
+    "include/tig/keys.h": "350c09f59056d1deef5fa3f067531eaa6364218382f8683e47908074be054f48",
+    "include/tig/line.h": "a51a49d0d887040c2d04828f6994a8cdf4f695279c18c501009e8f96ba27b065",
+    "include/tig/log.h": "9c36935d2e2aa5f61be527ecbcd39d581a86771341e4b915d80ac60ec067e63f",
+    "include/tig/main.h": "636ab53bb8bd6c9d85395bacc3becfe24796faefa304ca5ddc27fac4200b0148",
+    "include/tig/map.h": "f82984977ac43229173def29eb0a63a9381120c9c2e33eb83a268fee4b002732",
+    "include/tig/options.h": "8004c7e68a1c0a0b795cc8bba3f14d91e135cdac8890c10fc51585a59084565e",
+    "include/tig/pager.h": "328a10d9c497d6885327a8abd66450ff9ae361b72be92c74121e5390118942d9",
+    "include/tig/parse.h": "003e5b93048fde1a775072b8fc4281ea4ace09ca76f6ff4a9c06a27f0e97700d",
+    "include/tig/prompt.h": "4c9a1409c12e6a896fdb657d7ef18fbbe2e300cde89c23db39ce85b26e795ca0",
+    "include/tig/refdb.h": "0fd97c7d6c3f378610bb4b0f4a312e00cc850d6f3ba0976535caa8a3e1eaa043",
+    "include/tig/reflog.h": "1cc4329d09111312224ca188f66f15719d72c1b36ff621d4fcc57f46a2b0eb68",
+    "include/tig/refs.h": "b0685945b686de381a568dc4d66382157a5068f2441b2cd4c2c6b429b15b9c52",
+    "include/tig/repo.h": "e5d2a44ec82fc06276f82e352e6d4d43c4d5db344a69deff4285e4fed938f1e5",
+    "include/tig/request.h": "65f5dfce8fca028ff87f86949de623e30d4bf66d2eca0708893355b42c006b93",
+    "include/tig/search.h": "59c6f342f00cb2f6790664100b8edc7417f7f277cb9cbc9489c0da8c252eda36",
+    "include/tig/stage.h": "5e3cedbfb1b812ce477fbac9c76d89e03dde3eef00a8af4dca74cafe0dbcabc1",
+    "include/tig/stash.h": "166b9d3cac24cdcacff019300872df45aea9e9eeb1d7770ef969e599f4e57809",
+    "include/tig/status.h": "6be20029eb8c53f3795b8324535dcb7239d7187b3649a64faff27dae496ca186",
+    "include/tig/string.h": "28ea2fdb3078fe641f465cba24ec4fdb91507ec83d78502f1341587f9d90d223",
+    "include/tig/tig.h": "b3bd68b0ec52236e15750d37b41e8ba7e304e22733b1a7d863ff5e7fba604620",
+    "include/tig/tree.h": "4cecaeff99be0ccb23134d25fb9b447a5c334bbe0d10f0883d0f54e2777be159",
+    "include/tig/types.h": "1103d4116a0454991462173f0a60e37030233a30a2f9a0539065dfbeb862321f",
+    "include/tig/ui.h": "cf647c2364c24d83fb0712946e0bba43145776946a2f64db865f6fe439c6a68a",
+    "include/tig/util.h": "9dc77bf677d1d03e5fa655202f2c690702c0894f6f61561434527dcd1250d1f8",
+    "include/tig/view.h": "fefa46c91dfba697688d8f56c4e8139a9a4582355c7a230ed32d825ce8f42f3b",
+    "include/tig/watch.h": "ee834d19effee9360a2480d3087172ff7eeb8084d28ce6fd6216e9a9ec341141",
+    "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
+    "rust/commands.rs": "5289316798c285a6055ff040aec0f7d355cfca6905bb8702d952a7b612104b19",
+    "rust/config.rs": "2818658ce690aa15596b13040bfbfba812fecf8ba83dcb93671650ee7585d623",
+    "rust/date.rs": "51d16041689246691bcfacc8a2f2654e39ae2a123c5aec770c449bfc6ced24f4",
+    "rust/git.rs": "ab12c51280142e4cea295673cefa8e8187068163225293c357ef6758920ceafb",
+    "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
+    "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+    "rust/help_view.rs": "029b06cf5c7c88523fe4fb4f3374f737f7fbffd7807169dcd8b8f207cf87b158",
+    "rust/lib.rs": "81e3bdf035141234a178271b092b084f6e105bf159f1e2af4b21e8483d20a088",
+    "rust/main.rs": "c591731e699ce880f364511a186a37c50a8b9bcd86849b29f96379bbdd1cd339",
+    "rust/model.rs": "f1131c9182b02c51a5e9307a194669cec4f835fbd0d5d26b24e1e977336e8dda",
+    "rust/patch.rs": "11b9b2d0dd871b36462ad9ac371203cc9a53ee0539797dcbe698429291d2685c",
+    "rust/refs_view.rs": "35e6d25a83bb9651b5b268b00c75a4c81468746a3158556e2d44bf1e12b11267",
+    "rust/render.rs": "625de9bd9a0c0c26f7710f9d3f287d707ad5f5d228568d303df7c84a33a9c91b",
+    "rust/tests/blame-navigation.py": "bc7b60c9821929dca18484ccc5e912f34e10bb817807fe760641e9360b365eb7",
+    "rust/tests/blame-review.py": "12d94d23c4a2466e4150fee7c30f38534c5c7dfdda680ff8b15492f8d734a973",
+    "rust/tests/config-recovery.py": "0bd908d544c7ea3cb94a9a4e109b9b81dfdaf626e25e795ceed0eb87c829851a",
+    "rust/tests/date-compatibility.py": "730fb29be21cd0eab61e97d7789116505227d4d58fe70640af4d9acff2c205fa",
+    "rust/tests/date-percent-s.py": "3a837e0703587ba8f9909d630d700bd17f14bfc34b1e1fe105201e7600df6c4c",
+    "rust/tests/diff-input.py": "a3b5c4ab386484e78f959b469c76a16e53ebbaa69983ad7f157104fa0f3474c3",
+    "rust/tests/diff-navigation.py": "ac38d3cb56fc1bad1b628465cc85d67446e0439e6317d25a3e723c621b99e639",
+    "rust/tests/graph-differential.py": "666efeca9ee6cd79cb8bd70cf5639f00438a6b6dff7135ad03f98e53de8d7c8e",
+    "rust/tests/graph-v1-differential.py": "9e144d33dd228875d5a90b8068871102139ce3989324d98e6ffc5ce7d8830ace",
+    "rust/tests/main-command-refresh.py": "8516d8d98e1a0b483cd66d8b648cce1c51003617a37d7fcda9ac8fa3c43ce7aa",
+    "rust/tests/status-filter.py": "99dfb28d0d4719c7abd940a6a22d08bc73a03a27eac30cb1924f42e165963789",
+    "rust/tests/terminal-smoke.py": "a09c21e70201587e58c116f2d9a9f7849c6472da6ebe3c0750dd56eb562173a4",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "rust/trace.rs": "4fb87248de03495a20b7d4f3863c971c30000a07c1f688d55b2625b22bcf8c23",
+    "rust/tree_view.rs": "c2292d0afab8e20f08579f536bedd00cb9926f099021f9c6d2c56bd56db9ac4a",
+    "src/apps.c": "43c3081ffad52b97e5673bad7c1188b18c1a8b871eabcf1a7cf7e6206354a6ff",
+    "src/argv.c": "d8de624659202094264d41b183035219965a315f917b67ebe23b5db5415cc514",
+    "src/blame.c": "55feb3aae006e3de2d567600c998d0b1f254bb3fab467f327d27079d93d72cc1",
+    "src/blob.c": "10c4f782f68ef140c38b853fd294f77534d9be05854689bb24fe711bfeec4c4b",
+    "src/diff.c": "af27dc07c813c77c1901b2f7dd91588497c7c173a58640c9f1c188387737c9e3",
+    "src/display.c": "004164acca5fcee1d0b05fe74a25f8a0089be333096ec9e41797bb82270d730d",
+    "src/draw.c": "a6f87bc1e2451194aecafd385bd088e9b24923b245ac36a0b538d4ee5cecb4c3",
+    "src/graph-v1.c": "5629db8249152f85bd7d7dcd07efa07548ac8a5831e9577a39103bbafb5a232e",
+    "src/graph-v2.c": "1adea5e85ba5149cc0ee9f19255498a2f84fa6e2bb158bda1af97374018f2a12",
+    "src/graph.c": "f4a7ba12f06e946da7b339fa07adff377ceb8f0aaf78947f4017735d278064b7",
+    "src/grep.c": "26797960107b316d6ffbcf5127399737dac391f07166d3da7332bd3be2a0fca5",
+    "src/help.c": "4d4dcaeafbaa6178c3449c29432454e753dd4aa395bb7a50cbbfde01a386cbb3",
+    "src/io.c": "a7415aa5a52399f9fb76645b214830e395fd974dd009f05ba02525356099fc6a",
+    "src/keys.c": "382b82cc6abe48124011de19f6aa3378339da218560ba2fe431f2312f8cd556c",
+    "src/line.c": "2ba4b35ddadb4fc772ee88146545bb151b3ca6dd6834f9e6d20dbb540535229e",
+    "src/log.c": "7f25d0ea4ad0c7c4373ed3a2146a415c3bbeb8afb0c8ef73ba4bab914015711b",
+    "src/main.c": "12f741ff7470fbd0b80dda514411a93bc6e60548edf8b6e17aa7a766e9bdad1e",
+    "src/map.c": "3e8de64e3adca21923f77e0fc52e69debef4b818d78db712f9d3f8038a5447ff",
+    "src/options.c": "f1c3816ea391f5c96489b34a521d4cf80f9be78da0fc6233857c7353ab00e448",
+    "src/pager.c": "aa7ae2909c8547e09f1cf319b1717212c9ef9c50b727887998aa765374ba8101",
+    "src/parse.c": "32fe063b2afc0b7e547204254f286b4c8bcbfb2b109272506180d008384ca93b",
+    "src/prompt.c": "6f358c75f49a784403462b09f67a25112545bb92d455e7b77e71dd293d9df203",
+    "src/refdb.c": "76bd9a8aad15799246b4ad81c3eee6454827e1491c80768e2e21c94d004f7fa5",
+    "src/reflog.c": "da6b3531e496c86c0764f5ac82fa8745726e4eab36090ce15a6a427f09eda3df",
+    "src/refs.c": "8ee8c3ca862fcbcc6750a8db4fd849631efcd6a64758cb3c8684589445ef0170",
+    "src/repo.c": "0ceb1ec9815ddfb96e6a2af5480f197026224ddd287a68516cb6c4d414ed7537",
+    "src/request.c": "3b85f8a4149264ee6f555adca8a7bbaf0083ee3288f8dcae03cb4229a886af90",
+    "src/search.c": "1b4f90f7ecb94d93ad631728237fab9a5955559b163eef29d541bcc468c74fa5",
+    "src/stage.c": "f5aebfe09715f0cae621e8647efe5d7c9b29d60e7b965da3bc7e67a5f07be5bf",
+    "src/stash.c": "5abf9761fcfc9f79675fd5966d95c9e7d6c7c5482fd981c0000b37d3b78ccbda",
+    "src/status.c": "783fe47be3ad6710cca5584ac8f66fb273813668f8803206ff0a14a8f2c7579a",
+    "src/string.c": "7cf5ae5399f82a12410cda95e7632ad21d20eec29ed44087918783532b0aac27",
+    "src/tig.c": "1c15c23b26b4aafcf0a9f27e6a605abb701ae75408d801b06d1addd7f87c55f0",
+    "src/tree.c": "92f70af66a7c8d4cc2bf5da5dd5e80f25227454f1553aa749b2fd3e6959db85e",
+    "src/types.c": "bf3ca3e087f249ae22dc4ce905f352341bee20baf522265d571d1fb0c38733d5",
+    "src/ui.c": "0bf2b96e6c20b783fbe14373895b9b3417244d54f911a52dda9f7240e758ea8f",
+    "src/util.c": "d046f1e185d540f2acd8b8926ee3aa9fd3d8d10b987fd7a9b1df4379ef11da0f",
+    "src/view.c": "61d005305e6074d89db95852f426da513e5f75052752b5546f8466964133471c",
+    "src/watch.c": "122588c5516075588c86fda5014c0cacef7d88026dea150df1b1b0bce1e224a7"
+  },
+  "source_manifest_sha256": "a47a49c218b7a037589fa9daaadb5f864025c6a7392b05431895cf5470f0b9c7",
+  "source_tree": "5a2c373d7fa11383ef44fdc286d0aa1a31cb4bab",
+  "verification": {
+    "cargo fmt --check": {
+      "exit_code": 0,
+      "log": ""
+    },
+    "cargo test --all-targets": {
+      "exit_code": 0,
+      "log": "   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.08s\n     Running unittests rust/lib.rs (target/debug/deps/tig_rs-5e4c9ca2cfbe52d4)\n\nrunning 59 tests\ntest commands::tests::expansion_preserves_arguments_and_requires_known_variables ... ok\ntest config::tests::cli_preserves_git_arguments_and_separator ... ok\ntest config::tests::config_diagnostics_recover_without_changing_prompt_errors ... ok\ntest config::tests::command_quotes_comments_continuations_and_sequences ... ok\ntest config::tests::diff_cli_switches_update_shared_config_without_eating_paths_or_filter_values ... ok\ntest config::tests::prefixed_legacy_colors_keep_the_callers_view ... ok\ntest config::tests::source_cycles_missing_and_recovery ... ok\ntest config::tests::source_summaries_belong_only_to_files_with_direct_errors ... ok\ntest config::tests::append_colors_and_numeric_boundaries ... ok\ntest config::tests::original_main_default_toggle_sequence ... ok\ntest config::tests::original_view_column_fixture_and_atomic_errors ... ok\ntest date::tests::tig_dates_and_relative_boundaries ... ok\ntest git::tests::blame_porcelain_keeps_dates_and_historical_path ... ok\ntest config::tests::original_compatibility_diagnostics_apply_supported_replacements ... ok\ntest git::tests::filtered_refs_feed_history_and_replacement_decorations ... ok\ntest config::tests::config_enum_error_order_and_date_column_boundary ... ok\ntest git::tests::history_option_values_and_paths_do_not_become_graph_flags ... ok\ntest config::tests::upstream_defaults_and_overrides ... ok\ntest git::tests::nul_parsers_preserve_paths_and_reject_truncation ... ok\ntest git::tests::raw_date_fixture_and_invalid_headers ... ok\ntest config::tests::typed_toggles_validate_and_preserve_state ... ok\ntest commands::tests::launched_nonzero_exit_is_distinct_from_spawn_failure ... ok\ntest config::tests::show_revision_respects_end_of_options_and_path_separator ... ok\ntest graph::golden_tests::upstream_graph_fixtures ... ok\ntest graph::tests::linear_merge_and_boundary ... ok\ntest graph::tests::raw_parents_and_colors ... ok\ntest graph_v1::tests::boundary_root_and_octopus ... ok\ntest graph_v1::tests::merge_and_shared_ancestor ... ok\ntest graph_v1::tests::merge_in_right_column_retains_v1_metadata ... ok\ntest help_view::tests::default_and_collapsed_help_follow_active_bindings ... ok\ntest help_view::tests::user_commands_and_key_names_are_searchable ... ok\ntest git::tests::applying_mailbox_without_head_name_uses_current_branch ... ok\ntest patch::tests::malformed_and_unsupported_patches_fail ... ok\ntest git::tests::path_filtered_history_connects_visible_commits ... ok\ntest git::tests::branch_status_tracks_upstream_and_detached_tags ... ok\ntest git::tests::worktree_diff_preserves_conflict_and_configured_prefixes_without_changing_index ... ok\ntest git::tests::filtered_status_preserves_paths_renames_and_conflicts ... ok\ntest patch::tests::configured_diff_prefix_cannot_stage_a_different_path ... ok\ntest refs_view::tests::tig_reference_numeric_order ... ok\ntest render::tests::auto_graphics_respects_locale_precedence ... ok\ntest render::tests::blame_uses_configured_dates_columns_and_rename_paths ... ok\ntest git::tests::show_applies_context_and_word_diff_without_changing_history ... ok\ntest render::tests::dates_email_and_overrides ... ok\ntest render::tests::reference_formats_and_graph_switches ... ok\ntest render::tests::unicode_padding_clipping_and_controls ... ok\ntest render::tests::upstream_width_fixture ... ok\ntest render::tests::zero_wall_time_is_blank_without_rejecting_unix_zero ... ok\ntest config::tests::saved_options_round_trip_and_never_overwrite ... ok\ntest patch::tests::unprefixed_patch_cannot_stage_same_named_root_file ... ok\ntest trace::tests::trace_records_actual_commands_appends_and_never_changes_exit_status ... ok\ntest tree_view::tests::modes_units_and_history_paths ... ok\ntest patch::tests::replacement_selection_and_no_newline_markers ... ok\ntest render::tests::configured_truncation_delimiters_and_fallbacks ... ok\ntest patch::tests::single_line_hunk_reverse_and_failure_are_index_only ... ok\ntest git::tests::real_repository_roundtrip_and_literal_staging ... ok\ntest refs_view::tests::refs_metadata_filter_and_columns ... ok\ntest patch::tests::partial_blocks_and_split_hunks_keep_context_markers_and_index_safety ... ok\ntest tree_view::tests::upstream_tree_screen_rows ... ok\ntest commands::tests::selected_branch_never_uses_an_unrelated_checked_out_branch ... ok\n\ntest result: ok. 59 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.31s\n\n     Running unittests rust/bin/test-graph.rs (target/debug/deps/test_graph-b5e0d8f8108b1d6b)\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n     Running unittests rust/main.rs (target/debug/deps/tig-33ccf7946334abad)\n\nrunning 25 tests\ntest tests::changes_follow_index_order_and_do_not_stage_unmerged_entries ... ok\ntest tests::diff_stat_jump_ignores_commit_message_bars ... ok\ntest editor_tests::maps_stat_and_patch_rows_to_file_and_new_line ... ok\ntest editor_tests::deleted_diff_line_uses_old_path_and_old_hunk_count ... ok\ntest tests::diff_reload_tracks_source_line_within_the_same_file ... ok\ntest editor_tests::patch_header_delimiters_preserve_spaces_and_quoted_tabs ... ok\ntest editor_tests::preserves_literal_prefixes_and_ignores_commit_body ... ok\ntest tests::diff_line_column_and_title_leave_patch_rows_intact ... ok\ntest tests::grep_options_never_turn_pattern_or_option_values_into_revisions ... ok\ntest tests::grep_nul_fields_preserve_colons_newlines_and_revision_paths ... ok\ntest editor_tests::aggregate_stage_stats_jump_to_matching_patch_and_file ... ok\ntest tests::log_message_cannot_replace_selected_commit ... ok\ntest tests::terminal_content_is_safe_and_cell_clipped ... ok\ntest tests::explicit_diff_detaches_parent_and_vertical_split_reserves_separator ... ok\ntest tests::titles_split_focus_close_and_refresh_keep_context ... ok\ntest editor_tests::blame_history_path_is_not_a_worktree_edit_target ... ok\ntest tests::wrapped_pager_rows_preserve_source_and_navigation ... ok\ntest tests::grep_filename_uses_cells_and_the_configured_delimiter ... ok\ntest tests::unclosed_binding_argument_cannot_become_a_valid_toggle ... ok\ntest tests::nested_grep_tree_cannot_open_root_relative_tree_view ... ok\ntest tests::failed_grep_query_keeps_previous_arguments ... ok\ntest tests::grep_tree_expression_reads_blob_from_its_own_tree ... ok\ntest tests::first_tree_open_uses_invocation_directory_once ... ok\ntest tests::staging_last_untracked_file_refreshes_synthetic_main_parent ... ok\ntest tests::main_graph_uses_history_traversal_options ... ok\n\ntest result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.64s\n\n"
+    },
+    "cargo clippy --all-targets -- -D warnings": {
+      "exit_code": 0,
+      "log": "    Checking libc v0.2.189\n    Checking log v0.4.34\n    Checking cfg-if v1.0.5\n    Checking memchr v2.8.3\n    Checking scopeguard v1.2.0\n    Checking smallvec v1.16.2\n    Checking regex-syntax v0.8.11\n    Checking bitflags v2.13.2\n    Checking num-traits v0.2.19\n    Checking unicode-width v0.2.0\n    Checking lock_api v0.4.14\n    Checking aho-corasick v1.1.5\n    Checking chrono v0.4.45\n    Checking errno v0.3.14\n    Checking parking_lot_core v0.9.12\n    Checking mio v1.2.3\n    Checking signal-hook-registry v1.4.8\n    Checking rustix v0.38.44\n    Checking parking_lot v0.12.5\n    Checking signal-hook v0.3.18\n    Checking signal-hook-mio v0.2.5\n    Checking crossterm v0.28.1\n    Checking regex-automata v0.4.18\n    Checking regex v1.13.1\n    Checking tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-wrap-rendering/work/tig)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 11.71s\n"
+    }
+  },
+  "known_failure": {
+    "script": "test/diff/diff-stat-test",
+    "reason": "Existing unsupported save-view command; separate from wrapping. Retained as failure, not excluded from the paired verdict.",
+    "baseline_source_commit": "ac78df21291964083a6cb13a08da5d127fdcc60e",
+    "baseline_result": {
+      "script": "test/diff/diff-stat-test",
+      "script_sha256": "2e3504a253b87cb00c42babbf7014ca384fbe2951bba56232a10ef5a688e151d",
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "fail",
+      "reasons": [
+        "failed_checks"
+      ],
+      "checks": {
+        "FAIL": 2
+      },
+      "assertions": [
+        {
+          "id": "view.data#1",
+          "status": "FAIL"
+        }
+      ],
+      "receipt_path": "test/tmp/diff/diff-stat-test/.test-result",
+      "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] view.data not found\n",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": "| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Not implemented in Rust yet: save-view HOME/view.data\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] view.data not found\r\n"
+    },
+    "stderr": "tig: Not implemented in Rust yet: save-view HOME/view.data\n"
+  },
+  "notes": [
+    "No full 154-script suite run for this slice.",
+    "C source, upstream assertions, and MIGRATION.md are unchanged by this branch.",
+    "Scope: blob and diff wrapping; log/pager/stage wrapping is not included.",
+    "Verification preceded the rebase onto documentation/evidence-only main 72133541; all source files are unchanged by that rebase."
+  ]
+}
