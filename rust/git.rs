@@ -70,6 +70,94 @@ where
     }
     Ok(output.stdout)
 }
+// Both history decorations and the refs view use the same filtered ref records.
+fn parse_remote_refs(bytes: &[u8], head: &str) -> Result<Vec<Reference>> {
+    let input = std::str::from_utf8(bytes)
+        .map_err(|_| GitError("TIG_LS_REMOTE returned non-UTF-8 refs".into()))?;
+    let mut refs: Vec<Reference> = Vec::new();
+    for line in input.lines().filter(|s| !s.trim().is_empty()) {
+        let fields: Vec<_> = line.split_whitespace().collect();
+        if fields.len() != 2
+            || !matches!(fields[0].len(), 40 | 64)
+            || !fields[0].bytes().all(|b| b.is_ascii_hexdigit())
+            || !(fields[1] == "HEAD" || fields[1].starts_with("refs/"))
+        {
+            return Err(GitError("Malformed TIG_LS_REMOTE ref record".into()));
+        }
+        let (oid, name) = (fields[0], fields[1]);
+        if name == "HEAD" && !head.is_empty() {
+            continue;
+        }
+        if let Some(name) = name.strip_suffix("^{}") {
+            let reference = refs
+                .iter_mut()
+                .find(|r| r.name == name)
+                .ok_or_else(|| GitError("Peeled ref has no preceding tag".into()))?;
+            reference.target = oid.into();
+        } else {
+            refs.push(Reference {
+                name: name.into(),
+                oid: oid.into(),
+                target: String::new(),
+                current: name == head || name == "HEAD",
+            });
+        }
+    }
+    Ok(refs)
+}
+
+fn decorate_history(commits: &mut [Commit], references: &[Reference], upstream: &str) {
+    use crate::refs_view::{kind, numeric};
+    let mut ordered: Vec<_> = references.iter().collect();
+    ordered.sort_by(|a, b| {
+        kind(a, upstream)
+            .cmp(&kind(b, upstream))
+            .then_with(|| numeric(&a.name, &b.name))
+    });
+    let mut decorations: std::collections::HashMap<&str, Vec<String>> =
+        std::collections::HashMap::new();
+    for reference in ordered
+        .iter()
+        .filter(|r| !r.name.starts_with("refs/replace/"))
+    {
+        let oid = if reference.target.is_empty() {
+            &reference.oid
+        } else {
+            &reference.target
+        };
+        let label = if reference.current {
+            format!("HEAD -> {}", reference.name)
+        } else if reference.name.starts_with("refs/tags/") {
+            format!("tag: {}", reference.name)
+        } else {
+            reference.name.clone()
+        };
+        decorations.entry(oid).or_default().push(label);
+    }
+    for reference in ordered
+        .iter()
+        .filter(|r| r.name.starts_with("refs/replace/"))
+    {
+        let original = &reference.name["refs/replace/".len()..];
+        let label = decorations
+            .remove(original)
+            .and_then(|v| v.into_iter().next())
+            .map(|s| {
+                s.trim_start_matches("HEAD -> ")
+                    .trim_start_matches("refs/heads/")
+                    .to_owned()
+            })
+            .unwrap_or_else(|| "replaced".into());
+        decorations.insert(original, vec![format!("replace: {label}")]);
+    }
+    for commit in commits {
+        commit.decorations = decorations
+            .get(commit.oid.as_str())
+            .map(|v| v.join(", "))
+            .unwrap_or_default();
+    }
+}
+
 fn valid_path(path: &Path) -> Result<()> {
     if path.as_os_str().is_empty()
         || path
@@ -214,6 +302,12 @@ impl Repository {
             &self.invocation
         };
         let mut result = parse_history(&run(directory, args)?)?;
+        let references = self.refs()?;
+        let upstream = self
+            .command(["rev-parse", "--symbolic-full-name", "@{upstream}"])
+            .map(|b| text(trim_lf(&b)))
+            .unwrap_or_default();
+        decorate_history(&mut result, &references, &upstream);
         if options.first_parent {
             for commit in &mut result {
                 commit.parents.truncate(1);
@@ -235,11 +329,38 @@ impl Repository {
         }
     }
     pub fn refs(&self) -> Result<Vec<Reference>> {
+        if let Some(command) = std::env::var_os("TIG_LS_REMOTE").filter(|s| !s.is_empty()) {
+            let command = command
+                .to_str()
+                .ok_or_else(|| GitError("TIG_LS_REMOTE must be UTF-8".into()))?;
+            let args = crate::config::words(command).map_err(GitError)?;
+            let (program, args) = args
+                .split_first()
+                .ok_or_else(|| GitError("Empty TIG_LS_REMOTE command".into()))?;
+            let output = Command::new(program)
+                .args(args)
+                .current_dir(&self.root)
+                .stdin(Stdio::null())
+                .output()
+                .map_err(|e| GitError(format!("Could not run TIG_LS_REMOTE: {e}")))?;
+            if !output.status.success() {
+                return Err(GitError(format!(
+                    "TIG_LS_REMOTE exited with {}: {}",
+                    output.status,
+                    text(&output.stderr).trim()
+                )));
+            }
+            let head = self
+                .command(["symbolic-ref", "--quiet", "HEAD"])
+                .map(|b| text(trim_lf(&b)))
+                .unwrap_or_default();
+            return parse_remote_refs(&output.stdout, &head);
+        }
         let bytes = self.command([
             "for-each-ref",
             "--format=%(refname)%00%(objectname)%00%(*objectname)%00%(HEAD)",
         ])?;
-        bytes
+        let mut references: Vec<Reference> = bytes
             .split(|b| *b == b'\n')
             .filter(|r| !r.is_empty())
             .map(|row| {
@@ -254,7 +375,18 @@ impl Repository {
                     current: f[3] == b"*",
                 })
             })
-            .collect()
+            .collect::<Result<_>>()?;
+        if self.command(["symbolic-ref", "--quiet", "HEAD"]).is_err() {
+            if let Ok(oid) = self.revision("HEAD") {
+                references.push(Reference {
+                    name: "HEAD".into(),
+                    oid,
+                    target: String::new(),
+                    current: true,
+                });
+            }
+        }
+        Ok(references)
     }
     pub fn show(
         &self,
@@ -812,6 +944,52 @@ mod tests {
     use std::fs;
     use std::sync::atomic::{AtomicU64, Ordering};
     static NEXT: AtomicU64 = AtomicU64::new(0);
+    #[test]
+    fn filtered_refs_feed_history_and_replacement_decorations() {
+        let oid = "1".repeat(40);
+        let tag = "2".repeat(40);
+        let replaced = "3".repeat(40);
+        let input = format!("{oid} HEAD\n{oid} refs/heads/main\n{oid} refs/heads/topic\n{tag} refs/tags/v1\n{oid} refs/tags/v1^{{}}\n{tag} refs/replace/{replaced}\n");
+        let refs = parse_remote_refs(input.as_bytes(), "refs/heads/main").unwrap();
+        assert_eq!(refs.len(), 4);
+        assert!(refs[0].current);
+        assert_eq!(refs[2].target, oid);
+        let commit = |id: &str| {
+            parse_history(format!("{id}\0\0Author\02020-01-01T00:00:00+00:00\0Title\0stale\0a@b\0Author\0a@b\02020-01-01T00:00:00+00:00\0").as_bytes()).unwrap().remove(0)
+        };
+        let mut commits = vec![commit(&oid), commit(&replaced)];
+        decorate_history(&mut commits, &refs, "");
+        assert_eq!(
+            commits[0].decorations,
+            "HEAD -> refs/heads/main, refs/heads/topic, tag: refs/tags/v1"
+        );
+        assert_eq!(commits[1].decorations, "replace: replaced");
+        let remotes = parse_remote_refs(
+            format!("{oid} refs/remotes/origin/HEAD\n{oid} refs/remotes/origin/main\n").as_bytes(),
+            "",
+        )
+        .unwrap();
+        decorate_history(&mut commits, &remotes, "refs/remotes/origin/main");
+        assert_eq!(
+            commits[0].decorations,
+            "refs/remotes/origin/main, refs/remotes/origin/HEAD"
+        );
+        let mut filtered = parse_remote_refs(
+            format!("{oid} refs/heads/topic\n{tag} refs/replace/{oid}\n").as_bytes(),
+            "refs/heads/main",
+        )
+        .unwrap();
+        decorate_history(&mut commits, &filtered, "");
+        assert_eq!(commits[0].decorations, "replace: topic");
+        filtered.clear();
+        decorate_history(&mut commits, &filtered, "");
+        assert!(commits.iter().all(|c| c.decorations.is_empty()));
+        assert!(parse_remote_refs(b"invalid refs/heads/main", "").is_err());
+        assert!(parse_remote_refs(format!("{oid} refs/tags/v1^{{}}").as_bytes(), "").is_err());
+        assert!(parse_remote_refs(&[0xff], "").is_err());
+        assert!(parse_remote_refs(format!("{oid} HEAD").as_bytes(), "").unwrap()[0].current);
+    }
+
     #[test]
     fn history_option_values_and_paths_do_not_become_graph_flags() {
         for args in [

@@ -294,12 +294,16 @@ pub fn refs(config: &Config, decorations: &str, separator: &str) -> String {
     let formats = config.settings.get("reference-format");
     let mut result = Vec::new();
     for item in decorations.split(", ").filter(|s| !s.is_empty()) {
-        let (kind, name) = if let Some(name) = item.strip_prefix("tag: ") {
+        let (kind, name) = if let Some(name) = item.strip_prefix("replace: ") {
+            ("replace", name)
+        } else if let Some(name) = item.strip_prefix("tag: ") {
             ("tag", name.trim_start_matches("refs/tags/"))
         } else if let Some(name) = item.strip_prefix("HEAD -> ") {
             ("head", name.trim_start_matches("refs/heads/"))
         } else if item.starts_with("refs/remotes/") {
             ("remote", item.trim_start_matches("refs/remotes/"))
+        } else if item.starts_with("refs/") && !item.starts_with("refs/heads/") {
+            ("other", item)
         } else if item.contains('/') && !item.starts_with("refs/heads/") {
             ("remote", item)
         } else {
@@ -320,6 +324,7 @@ pub fn refs(config: &Config, decorations: &str, separator: &str) -> String {
             format.replacen(key, name, 1)
         } else {
             match kind {
+                "replace" => format!("~{name}~"),
                 "tag" => format!("<{name}>"),
                 "remote" => format!("{{{name}}}"),
                 _ => format!("[{name}]"),

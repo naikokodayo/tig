@@ -35,8 +35,9 @@ License: GPL-2.0-or-later; original history, COPYING and copyright notices retai
   Unknown or unavailable selection variables fail explicitly. No implicit shell.
 - `rust/refs_view.rs`, `rust/tree_view.rs`: reference and directory rows,
   metadata, columns, filters, sorting, annotated tags and recursive trees.
-  Custom `TIG_LS_REMOTE` loading, exact reference sort ties and all mailmap/date
-  configuration effects still need compatibility work.
+  Custom `TIG_LS_REMOTE` loading now feeds both refs rows and main decorations.
+  Exact reference sort ties and all mailmap/date configuration effects still
+  need compatibility work.
 - `rust/help_view.rs`: live help rows from active bindings and upstream request
   descriptions, including section collapse and help search.
 - `rust/main.rs`: initial terminal application using Crossterm, with owned view
@@ -606,6 +607,39 @@ Runtime requirements, evaluated Rust alternatives, differential/upstream
 receipts and the still-open performance/full-migration boundaries are in the
 [updated date compatibility record](migration/chrono-date-compatibility.md#非本地-s系统-posix-桥接).
 
+
+### Refs filtering and replacement follow-up
+
+The unchanged `test/refs/filter-test` and `test/refs/replace-test` first reproduced
+four failed Rust assertions while C passed all four, matching the historical
+`2fb2a871` strict snapshot. `Repository::refs` now executes `TIG_LS_REMOTE` as
+explicit argv using the existing config tokenizer; a shell runs only when the
+configured program itself is a shell. Nonzero commands and malformed output fail
+explicitly. Main history uses the same reference source and existing numeric/type
+ordering as refs, including tracking-remote priority. Replacement-only records
+remain main decorations, named replaced branches keep their name, and the refs
+list omits anonymous replacement rows. Filtered-out HEAD is not synthesized back
+into the refs view; ordinary detached HEAD still has a shared reference record.
+
+At source `9cb10a19`, formatting, **72 Rust tests**, Clippy with warnings denied,
+and **130 real PTY checks** pass. All nine original refs scripts plus main default,
+main search and column width pass **90/90 actual assertions on each of C and Rust**,
+with no missing assertions or runtime failures. Before/after paired transcripts,
+binary hashes, exact source hashes and check logs are in
+[`refs-filter-replace/checks.json`](migration/evidence/refs-filter-replace/checks.json)
+and the linked receipts. The runner's commit field is the clean starting base;
+its tested dirty sources are explicitly bound to `9cb10a19` by that manifest.
+C sources, original tests, dependencies, and `rust/main.rs` are unchanged.
+
+This is a focused slice, not a full-suite rerun or byte-for-byte terminal parity
+claim. Raw-stdin history decorations, all reference-format subclasses, duplicate
+custom command records, annotated-tag/branch name collisions in main, and complex
+replacement alias/chain behavior have not been established by this receipt.
+Loading remains synchronous and uncached; this is not a performance claim.
+The full migration gate remains open. PR #12/#13 main-view changes are outside
+this diff; the custom command spawn will need the same trace integration as other
+external commands when the separate trace slice is integrated.
+
 ### Diff review fix and main synchronization
 
 The review found that Enter → maximize → next retained fullscreen presentation
@@ -640,3 +674,16 @@ and [original-script receipt](migration/evidence/diff-render-review-upstream.jso
 Reproduce the new paired check with `python3 rust/tests/diff-navigation.py`
 after building both C and Rust binaries. Original C/tests and dependencies are
 unchanged relative to the integrated main; first-party Rust still forbids unsafe.
+
+
+### Refs follow-up sync after PR #12
+
+Merged main `297e1787`; the only conflict was appended migration documentation,
+resolved by retaining both records. No refs change was needed in `rust/main.rs`.
+At merge source `e8fdc0f2`, fmt, **73 Rust tests**, Clippy, **130 PTY checks**,
+**6 diff-input checks**, and **8 paired diff-navigation checks** pass. The earlier
+12-script refs/main/width scope plus two diff-stat/navigation originals now passes
+**96/96 assertions on both C and Rust across 14 scripts**. No missing assertions
+or runtime failures occurred. The exact source/binary manifest and new receipts
+are in [`refs-filter-replace-sync/checks.json`](migration/evidence/refs-filter-replace-sync/checks.json).
+Earlier receipts remain unchanged; this does not close the full migration gate.
