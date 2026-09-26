@@ -567,3 +567,28 @@ and binary identity. Reproduce the added boundary checks with
 
 First-party Rust remains unsafe-free. No dependency, original C source or
 original test was changed. Full parity and application benchmarks remain gated.
+
+### Full strict paired snapshot after stage, save-options, and refs
+
+At source `2fb2a87105b77b0c2de37d6be766365acaa5ac1d`, the same fail-closed
+runner again attempted all 154 unchanged scripts with separately hashed C and
+Rust-only application/graph binaries. C passed 152 and skipped two. Rust passed
+91, failed 60, and skipped three; 452 actual assertions passed, 105 failed, and
+15 C-side assertions were not reached. Another 25 failure records concern
+setup/runtime behavior. Compared with the earlier date snapshot, nine scripts
+became passing: two refs, four stage, and three tigrc. The full [paired
+receipt](migration/evidence/upstream-rust-only-after-stage-save-refs.json)
+records every transcript and reason. This predates the merged main-graph PR #8
+and subsequent work, so it is not a current-main or final benchmark result.
+
+
+### Non-local `%s` follow-up
+
+The PR #3 blanket refusal is replaced by a host POSIX bridge on 64-bit macOS
+and GNU/Linux with 64-bit system Perl and its core POSIX module. First-party
+unsafe remains forbidden; no Cargo dependency is added. Missing tools, other
+platforms and invalid output fail explicitly. The implementation retains the
+commit wall time and libc's `tm_isdst=0` behavior, including summer dates.
+Runtime requirements, evaluated Rust alternatives, differential/upstream
+receipts and the still-open performance/full-migration boundaries are in the
+[updated date compatibility record](migration/chrono-date-compatibility.md#非本地-s系统-posix-桥接).

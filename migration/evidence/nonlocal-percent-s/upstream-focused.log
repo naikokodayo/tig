@@ -1,0 +1,15 @@
+c: pass    test/help/default-test
+c: pass    test/main/date-test
+c: pass    test/main/default-test
+c: pass    test/main/pretty-raw-test
+c: pass    test/main/show-changes-after-rename-test
+c: pass    test/main/show-changes-test
+c: pass    test/main/update-unstaged-changes-test
+rust: pass    test/help/default-test
+rust: pass    test/main/date-test
+rust: pass    test/main/default-test
+rust: pass    test/main/pretty-raw-test
+rust: pass    test/main/show-changes-after-rename-test
+rust: pass    test/main/show-changes-test
+rust: pass    test/main/update-unstaged-changes-test
+PASS_SELECTED_SCRIPTS: migration/evidence/nonlocal-percent-s/upstream-focused.json
