@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "89bc0cb1306af06fe031d91b5cffbaac5f0ce85f",
+  "source_commit": "e7b0779fb729dbc8e0bf63c09c24f9166c226995",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -202,7 +202,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.04s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.13s\n",
       "results": [
         {
           "script": "test/main/all-arg-test",
@@ -360,11 +360,11 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target/release/tig",
-          "sha256": "ae717c2da64fab1da1a423bae37c608acadbc2372ebfadb6318b56dec34640c4"
+          "sha256": "947f08707100d847d4f3a347a032683c0bdc2f888acb9952c88a61d2b215bb7b"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target/release/test-graph",
-          "sha256": "5e00a98675168f6a947ea3001e468f51841521774f9f703573dd06214222a972"
+          "sha256": "c8bc30b1fd26ac308694a516f91a733104db3728daa26d4889d65e4ef97217d7"
         }
       },
       "binaries_unchanged": true,
@@ -504,9 +504,9 @@
     }
   ],
   "source_sha256": {
-    "rust/commands.rs": "9210a46779e5c87bc39ba2384ab607a8e75aec3a141fdb4b00ff2e6cebcff3e2",
-    "rust/main.rs": "5c1e1222007865410fc1d3cd8c777152195f09a2b7f74208c9ebfa71f65dcd2c",
-    "rust/tests/command-variable.py": "072b9aaef897dd2596578cb229afa8894640be88c99c1e67a6f11ce6d2aa157b"
+    "rust/commands.rs": "0d2f28223a17483b8fd506694e48ef83d00108eb9c4e8b4138a7870b981e352b",
+    "rust/main.rs": "d0e2fb8422a13a0c4cad87840586a52e51c306443b84e17274ffbd518809e32c",
+    "rust/tests/command-variable.py": "af96d1c3ad5f02a9402ce76d5cec3f2443858aa247b19b3fe25225854a0ba3b5"
   },
   "baseline": {
     "source_commit": "ac78df21291964083a6cb13a08da5d127fdcc60e",
@@ -565,14 +565,23 @@
     "rust_exit_code": 1,
     "c_exit_code": 0
   },
+  "second_review_failures": {
+    "source_commit": "89bc0cb1306af06fe031d91b5cffbaac5f0ce85f",
+    "rust_binary_sha256": "ae717c2da64fab1da1a423bae37c608acadbc2372ebfadb6318b56dec34640c4",
+    "empty_lists": {
+      "expected_c": "first|last|",
+      "observed_rust": "first|||last|"
+    },
+    "literal_double_dash": "second -- after separator omitted from Rust fileargs"
+  },
   "validation": {
     "cargo_fmt_check": "pass",
-    "cargo_test_all_targets": "60 library + 24 application passed",
+    "cargo_test_all_targets": "60 library + 25 application passed",
     "cargo_clippy_all_targets_deny_warnings": "pass",
     "cargo_build_release": "pass",
     "terminal_smoke_pty_checks": 150,
     "main_command_refresh_pty_cases": 2,
-    "command_variable_c_rust_pty_cases": 2,
-    "command_variable_pty_regression_sha256": "072b9aaef897dd2596578cb229afa8894640be88c99c1e67a6f11ce6d2aa157b"
+    "command_variable_c_rust_pty_scenarios": 3,
+    "command_variable_pty_regression_sha256": "af96d1c3ad5f02a9402ce76d5cec3f2443858aa247b19b3fe25225854a0ba3b5"
   }
 }
