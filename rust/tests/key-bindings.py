@@ -114,6 +114,18 @@ def run(binary):
                  or b'\x1b[2J' in transcript[offset:])
             command('exec @touch escape-cancelled')
             wait('escape cancels prefix', lambda: (repo / 'escape-cancelled').exists())
+            # Even an unhandled mouse click terminates a pending sequence.
+            command('bind main qa :exec @touch mouse-persisted')
+            drain()
+            offset = len(transcript)
+            send(b'q')
+            wait('mouse test prefix waits', lambda: b'Keys:' in transcript[offset:])
+            send(b'\x1b[<0;10;5M')
+            send(b'a')
+            command('exec @touch mouse-completed')
+            wait('mouse input completed', lambda: (repo / 'mouse-completed').exists())
+            assert not (repo / 'mouse-persisted').exists(), 'mouse click retained pending q'
+            checks.append('mouse click cancels pending sequence')
             # A failed sequence consumes the mismatched key, then resets.
             command('bind main z :exec @touch wrong-fallback')
             send(b'qz')

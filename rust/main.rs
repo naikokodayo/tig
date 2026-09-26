@@ -3577,11 +3577,15 @@ fn run() -> Result<()> {
                 app.height = h as usize;
                 continue;
             }
-            Event::Mouse(m) => match m.kind {
-                MouseEventKind::ScrollUp => Some("move-up".into()),
-                MouseEventKind::ScrollDown => Some("move-down".into()),
-                _ => continue,
-            },
+            Event::Mouse(m) => {
+                key_sequence.clear();
+                app.message.clear();
+                match m.kind {
+                    MouseEventKind::ScrollUp => Some("move-up".into()),
+                    MouseEventKind::ScrollDown => Some("move-down".into()),
+                    _ => continue,
+                }
+            }
             Event::Key(k) => {
                 if !key_sequence.is_empty() && k.code == KeyCode::Esc {
                     key_sequence.clear();
