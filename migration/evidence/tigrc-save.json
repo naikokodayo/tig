@@ -139,5 +139,50 @@
     "scripts": 17,
     "ok": 97,
     "fail": 15
+  },
+  "review_revalidation": {
+    "source_commit": "08cf8515b79225c59ee6fba6184faaa2fd5da8cd",
+    "merged_main": "e1cf5eeb",
+    "binary_sha256": "9a36199841d3c55d69c09a9cb8bd7d63e34a895c1fa3b99c82cd345b83b3192a",
+    "unit_tests": 68,
+    "fmt": "pass",
+    "clippy_all_targets_deny_warnings": "pass",
+    "release_build": "pass",
+    "pty_checks_passed": 112,
+    "date_compatibility_checks_passed": 29,
+    "upstream_harness_self_test": "pass",
+    "wrong_path_regression": {
+      "before": "assertion failed: save-options wrote the truncated path",
+      "after": "C and Rust both create the full unquoted hash filename; truncated path absent",
+      "pty_check": "save options keeps unquoted hash in path"
+    },
+    "paired_original_tigrc": {
+      "c": {
+        "scripts": {
+          "pass": 17
+        },
+        "checks": {
+          "OK": 110
+        },
+        "actual_assertions": {
+          "OK": 110
+        }
+      },
+      "rust": {
+        "scripts": {
+          "pass": 11,
+          "fail": 6
+        },
+        "checks": {
+          "OK": 97,
+          "FAIL": 15
+        },
+        "actual_assertions": {
+          "OK": 97,
+          "FAIL": 13
+        }
+      }
+    },
+    "paired_receipt": "tigrc-save-review-upstream.json"
   }
 }
