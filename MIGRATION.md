@@ -506,3 +506,16 @@ The [paired receipt](migration/evidence/upstream-rust-only-after-date.json)
 includes binary hashes, raw transcripts, and per-script outcomes. The parity
 gate remains **OPEN**. This source snapshot predates the later stage,
 save-options, and refs merges; these numbers are not a result for current main.
+
+### Full strict paired snapshot after stage, save-options, and refs
+
+At source `2fb2a87105b77b0c2de37d6be766365acaa5ac1d`, the same fail-closed
+runner again attempted all 154 unchanged scripts with separately hashed C and
+Rust-only application/graph binaries. C passed 152 and skipped two. Rust passed
+91, failed 60, and skipped three; 452 actual assertions passed, 105 failed, and
+15 C-side assertions were not reached. Another 25 failure records concern
+setup/runtime behavior. Compared with the earlier date snapshot, nine scripts
+became passing: two refs, four stage, and three tigrc. The full [paired
+receipt](migration/evidence/upstream-rust-only-after-stage-save-refs.json)
+records every transcript and reason. This predates the merged main-graph PR #8
+and subsequent work, so it is not a current-main or final benchmark result.
