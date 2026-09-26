@@ -249,16 +249,14 @@ fn grep_columns(config: &Config) -> (bool, Option<usize>, Option<usize>, bool, u
     (show_file, file_width, file_maxwidth, show_line, interval)
 }
 
-fn grep_filename(label: &str, width: usize) -> String {
-    let count = label.chars().count();
-    if count > width {
-        let mut text: String = label.chars().take(width.saturating_sub(1)).collect();
-        text.push('~');
-        text
-    } else {
-        format!("{label}{}", " ".repeat(width.saturating_sub(count)))
-    }
+fn grep_filename(label: &str, width: usize, config: &Config) -> String {
+    let text = tig_rs::render::trim_field(&tig_rs::render::sanitize(label), width, config);
+    format!(
+        "{text}{}",
+        " ".repeat(width.saturating_sub(cell_width(&text)))
+    )
 }
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum ChangeKind {
     Untracked,
@@ -805,7 +803,7 @@ impl App {
                 let width = width
                     .unwrap_or_else(|| {
                         hits.iter()
-                            .map(|hit| hit.label.chars().count())
+                            .map(|hit| cell_width(&tig_rs::render::sanitize(&hit.label)))
                             .max()
                             .unwrap_or(0)
                     })
@@ -826,7 +824,7 @@ impl App {
                     }
                     let mut row = String::new();
                     if show_file {
-                        row.push_str(&grep_filename(&hit.label, width));
+                        row.push_str(&grep_filename(&hit.label, width, &self.config));
                         row.push(' ');
                     }
                     if show_line {
@@ -1994,7 +1992,7 @@ impl App {
 }
 
 fn cell_width(text: &str) -> usize {
-    text.chars().map(|c| c.width().unwrap_or(0)).sum()
+    tig_rs::render::cell_width(text)
 }
 fn log_header_offset(line: &str) -> Option<usize> {
     line.find("commit ").filter(|&i| {
@@ -3266,6 +3264,19 @@ mod tests {
             .history(&["Build.scala".into()], 0)
             .is_err());
         fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn grep_filename_uses_cells_and_the_configured_delimiter() {
+        let mut config = Config::defaults();
+        config
+            .apply_command("set truncation-delimiter = _")
+            .unwrap();
+        assert_eq!(grep_filename("LICENSE", 5, &config), "LICE_");
+        assert_eq!(grep_filename("作者名", 5, &config), "作者_");
+        assert_eq!(grep_filename("作者名", 4, &config), "作_ ");
+        assert_eq!(grep_filename("e\u{301}界", 4, &config), "e\u{301}界 ");
+        assert_eq!(grep_filename("filename", 0, &config), "");
     }
 
     #[test]

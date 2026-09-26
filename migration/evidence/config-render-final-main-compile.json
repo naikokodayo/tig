@@ -1,0 +1,108 @@
+{
+  "source_commit": "c365d1fde797984f9fdd188c1a8f11c502ba4306",
+  "base_main": "9c54885e",
+  "scope": "Clean merge and compile/unit verification only; earlier release/PTY receipts remain historical",
+  "checks": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "--bins"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--all-targets"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "source_manifest": {
+    "Cargo.lock": "4dff74ef4ccdb94d739984c33d6b06c217c12144f4095dde5e16bf10902ebbb5",
+    "Cargo.toml": "9c0a27f7f353f722308d07664ba1645e9dc6dfe35a94201839f7b4cd93752c69",
+    "include/tig/apps.h": "e0d6e87c700abd65d3eacdb76b2f36391b467aae9ebcd18ad68e8269d20fd377",
+    "include/tig/argv.h": "e3fc263832c89cb45a6990f81e18efde74008f4531c3dc332b03e6c02e8bcb86",
+    "include/tig/blame.h": "314fd50e62281b9ed0ad63cdf685a33f8ecf41b4fac37643e9ee486bcf87f6f3",
+    "include/tig/blob.h": "99ac1cc6ed697521a3ee00c059463fc7c9d5e7fff2fca2c850c099d3ce7d1162",
+    "include/tig/diff.h": "1f6b143c35a328f41d0e6d7ccfe991b3f761e3137c70b59461dda549af952dbb",
+    "include/tig/display.h": "ef9c9cffdf2affb38576ecfb51ae3e6ed5f9f8528577819982c6863aaf7f5931",
+    "include/tig/draw.h": "ff2cc0bdaa825f017a3cf496ccc161266613b49997b68f6bbe4a068e89a6b481",
+    "include/tig/git.h": "1767a1943902c2d8592c47ee33817e9439d9fc1bcc53d1a3f32993dafe872d7a",
+    "include/tig/graph.h": "8da8aa8407ee991857246f23fd1640341c148b7d04ec1d03283364c6bc838c99",
+    "include/tig/grep.h": "b70cdaf20cfa5134219bcdae7fc157d7667ffd67955feae0c4df12c3942cb464",
+    "include/tig/help.h": "c207541276bd32c3c68ed1decd07d8399bd3e4ce78c0945980af84d4523bdc83",
+    "include/tig/io.h": "7526c1aa5e9baab9eecb94c62736e6c672d6e3127a98e3414e6091dafcebcfa0",
+    "include/tig/keys.h": "350c09f59056d1deef5fa3f067531eaa6364218382f8683e47908074be054f48",
+    "include/tig/line.h": "a51a49d0d887040c2d04828f6994a8cdf4f695279c18c501009e8f96ba27b065",
+    "include/tig/log.h": "9c36935d2e2aa5f61be527ecbcd39d581a86771341e4b915d80ac60ec067e63f",
+    "include/tig/main.h": "636ab53bb8bd6c9d85395bacc3becfe24796faefa304ca5ddc27fac4200b0148",
+    "include/tig/map.h": "f82984977ac43229173def29eb0a63a9381120c9c2e33eb83a268fee4b002732",
+    "include/tig/options.h": "8004c7e68a1c0a0b795cc8bba3f14d91e135cdac8890c10fc51585a59084565e",
+    "include/tig/pager.h": "328a10d9c497d6885327a8abd66450ff9ae361b72be92c74121e5390118942d9",
+    "include/tig/parse.h": "003e5b93048fde1a775072b8fc4281ea4ace09ca76f6ff4a9c06a27f0e97700d",
+    "include/tig/prompt.h": "4c9a1409c12e6a896fdb657d7ef18fbbe2e300cde89c23db39ce85b26e795ca0",
+    "include/tig/refdb.h": "0fd97c7d6c3f378610bb4b0f4a312e00cc850d6f3ba0976535caa8a3e1eaa043",
+    "include/tig/reflog.h": "1cc4329d09111312224ca188f66f15719d72c1b36ff621d4fcc57f46a2b0eb68",
+    "include/tig/refs.h": "b0685945b686de381a568dc4d66382157a5068f2441b2cd4c2c6b429b15b9c52",
+    "include/tig/repo.h": "e5d2a44ec82fc06276f82e352e6d4d43c4d5db344a69deff4285e4fed938f1e5",
+    "include/tig/request.h": "65f5dfce8fca028ff87f86949de623e30d4bf66d2eca0708893355b42c006b93",
+    "include/tig/search.h": "59c6f342f00cb2f6790664100b8edc7417f7f277cb9cbc9489c0da8c252eda36",
+    "include/tig/stage.h": "5e3cedbfb1b812ce477fbac9c76d89e03dde3eef00a8af4dca74cafe0dbcabc1",
+    "include/tig/stash.h": "166b9d3cac24cdcacff019300872df45aea9e9eeb1d7770ef969e599f4e57809",
+    "include/tig/status.h": "6be20029eb8c53f3795b8324535dcb7239d7187b3649a64faff27dae496ca186",
+    "include/tig/string.h": "28ea2fdb3078fe641f465cba24ec4fdb91507ec83d78502f1341587f9d90d223",
+    "include/tig/tig.h": "b3bd68b0ec52236e15750d37b41e8ba7e304e22733b1a7d863ff5e7fba604620",
+    "include/tig/tree.h": "4cecaeff99be0ccb23134d25fb9b447a5c334bbe0d10f0883d0f54e2777be159",
+    "include/tig/types.h": "1103d4116a0454991462173f0a60e37030233a30a2f9a0539065dfbeb862321f",
+    "include/tig/ui.h": "cf647c2364c24d83fb0712946e0bba43145776946a2f64db865f6fe439c6a68a",
+    "include/tig/util.h": "9dc77bf677d1d03e5fa655202f2c690702c0894f6f61561434527dcd1250d1f8",
+    "include/tig/view.h": "fefa46c91dfba697688d8f56c4e8139a9a4582355c7a230ed32d825ce8f42f3b",
+    "include/tig/watch.h": "ee834d19effee9360a2480d3087172ff7eeb8084d28ce6fd6216e9a9ec341141",
+    "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
+    "rust/commands.rs": "5289316798c285a6055ff040aec0f7d355cfca6905bb8702d952a7b612104b19",
+    "rust/config.rs": "2818658ce690aa15596b13040bfbfba812fecf8ba83dcb93671650ee7585d623",
+    "rust/date.rs": "51d16041689246691bcfacc8a2f2654e39ae2a123c5aec770c449bfc6ced24f4",
+    "rust/git.rs": "fa68e29ebccd5cd3b3d3cf5624f61f8fe9cf024b024c3be504ee37bf7b39f2b8",
+    "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
+    "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+    "rust/help_view.rs": "029b06cf5c7c88523fe4fb4f3374f737f7fbffd7807169dcd8b8f207cf87b158",
+    "rust/lib.rs": "81e3bdf035141234a178271b092b084f6e105bf159f1e2af4b21e8483d20a088",
+    "rust/main.rs": "3c0dc8423fbbee3b4f79fefa79988402169155f6f377e4df29c4aebce1afaeb6",
+    "rust/model.rs": "5771eceed341a5ace3db7772b70db092d3f1e2038aaaed85afa8c91ec9a844b7",
+    "rust/patch.rs": "11b9b2d0dd871b36462ad9ac371203cc9a53ee0539797dcbe698429291d2685c",
+    "rust/refs_view.rs": "38c310d91de37f22d0e29f6a3ce1c9a8f90a21a28f267895cd95c2a9259ad8bb",
+    "rust/render.rs": "1bc60f2b64b936df92fed75625baa212bba033fd6514f8fa997ef63b98426fa9",
+    "rust/tests/config-recovery.py": "0bd908d544c7ea3cb94a9a4e109b9b81dfdaf626e25e795ceed0eb87c829851a",
+    "rust/tests/date-compatibility.py": "730fb29be21cd0eab61e97d7789116505227d4d58fe70640af4d9acff2c205fa",
+    "rust/tests/date-percent-s.py": "3a837e0703587ba8f9909d630d700bd17f14bfc34b1e1fe105201e7600df6c4c",
+    "rust/tests/diff-input.py": "a3b5c4ab386484e78f959b469c76a16e53ebbaa69983ad7f157104fa0f3474c3",
+    "rust/tests/diff-navigation.py": "ac38d3cb56fc1bad1b628465cc85d67446e0439e6317d25a3e723c621b99e639",
+    "rust/tests/graph-differential.py": "666efeca9ee6cd79cb8bd70cf5639f00438a6b6dff7135ad03f98e53de8d7c8e",
+    "rust/tests/graph-v1-differential.py": "9e144d33dd228875d5a90b8068871102139ce3989324d98e6ffc5ce7d8830ace",
+    "rust/tests/status-filter.py": "99dfb28d0d4719c7abd940a6a22d08bc73a03a27eac30cb1924f42e165963789",
+    "rust/tests/terminal-smoke.py": "d395e9471e3bf03a3ae6671f39eb85b8ec5124392755154a1b3f5b0c25671b5d",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "rust/trace.rs": "4fb87248de03495a20b7d4f3863c971c30000a07c1f688d55b2625b22bcf8c23",
+    "rust/tree_view.rs": "d4df2b1328e521c3e6b61257bdced40ba047bc10080018822c3fb0562793e48e",
+    "tigrc": "aa897801785995fec07f43cedb3dee06cf2124e5bd1475d6e22ba7badfcded5b"
+  },
+  "binaries": {
+    "target/debug/tig": "0d794bc67cf616b4b0791d6a4c5ce5502f0ede5ddc688aed1e3b2839e5789343",
+    "target/debug/test-graph": "c7304627553022a9d96b6956d3f84b392eb2e4c5b231529b977b801e6544c43e"
+  }
+}
