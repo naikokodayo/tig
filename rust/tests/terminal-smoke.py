@@ -129,6 +129,15 @@ def main():
 
             expect('working changes precede history', ['Unstaged changes', 'newest fixture commit',
                                                        'oldest fixture commit', '[main] Unstaged changes'])
+            saved_options = home / 'saved options.tigrc'
+            save_command = f':save-options "{saved_options}"\r'.encode()
+            expect('save options to quoted path', ['Saved options to '], save_command)
+            saved_bytes = saved_options.read_bytes()
+            assert b'set log-options = --cc --stat' in saved_bytes
+            expect('save options refuses overwrite', ['Failed to save options:'], save_command)
+            assert saved_options.read_bytes() == saved_bytes
+            expect('save options reports missing directory', ['Failed to save options:'],
+                   f':save-options "{home / "missing" / "options"}"\r'.encode())
             expect('hide working changes for history navigation',
                    ['newest fixture commit', 'oldest fixture commit', f'[main] {newest} - commit 1 of 2'],
                    b':set show-changes = no\r')

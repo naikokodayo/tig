@@ -1286,6 +1286,15 @@ impl App {
             )?);
             return Ok(true);
         }
+        if action.split_whitespace().next() == Some("save-options") {
+            let args = tig_rs::config::words(action)?;
+            let path = args.get(1).map_or("tig-options.txt", String::as_str);
+            self.message = match self.config.save(std::path::Path::new(path)) {
+                Ok(()) => format!("Saved options to {path}"),
+                Err(error) => format!("Failed to save options: {error}"),
+            };
+            return Ok(true);
+        }
         if matches!(action, "toggle sort-field" | "toggle sort-order") {
             if !matches!(self.view.name.as_str(), "refs" | "tree") {
                 return Err("This view does not support sorting".into());

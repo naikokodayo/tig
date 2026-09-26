@@ -6,6 +6,7 @@
 use std::{
     collections::BTreeMap,
     env, fs,
+    io::{self, Write},
     path::{Path, PathBuf},
 };
 
@@ -156,7 +157,120 @@ pub fn normalize_key(key: &str) -> Result<String, String> {
     Ok(out)
 }
 
+// The file parser strips comments before tokenizing and cannot represent literal
+// hashes or line breaks in an argument. Refuse those instead of saving changed data.
+fn config_arguments(args: &[String]) -> io::Result<String> {
+    args.iter()
+        .map(|arg| {
+            if arg.contains(['#', '\n', '\r']) {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidInput,
+                    "Cannot save a configuration argument containing # or a line break",
+                ));
+            }
+            Ok(
+                if arg.is_empty()
+                    || arg
+                        .chars()
+                        .any(|c| c.is_whitespace() || matches!(c, '\'' | '"' | '\\'))
+                {
+                    format!("\"{}\"", arg.replace('\\', "\\\\").replace('"', "\\\""))
+                } else {
+                    arg.clone()
+                },
+            )
+        })
+        .collect::<io::Result<Vec<_>>>()
+        .map(|args| args.join(" "))
+}
+
+fn config_key(mut key: &str) -> String {
+    let mut result = String::new();
+    while !key.is_empty() {
+        if key.starts_with('<') {
+            if let Some(end) = key.find('>') {
+                let token = &key[..=end];
+                if normalize_key(token).is_ok_and(|normalized| normalized == token) {
+                    result.push_str(token);
+                    key = &key[end + 1..];
+                    continue;
+                }
+            }
+        }
+        let c = key.chars().next().unwrap();
+        match c {
+            '#' => result.push_str("<Hash>"),
+            '<' => result.push_str("<LessThan>"),
+            _ => result.push(c),
+        }
+        key = &key[c.len_utf8()..];
+    }
+    result
+}
+
 impl Config {
+    /// Save the stored configuration without replacing an existing file (C O_EXCL).
+    pub fn save(&self, path: &Path) -> io::Result<()> {
+        let mut text = String::from("# Saved by Tig\n\n## Settings\n");
+        for (name, values) in &self.settings {
+            if !name.ends_with("-args") {
+                text.push_str(&format!("set {name} = {}\n", config_arguments(values)?));
+            }
+        }
+        text.push_str("\n## Keybindings\n");
+        let mut bindings: Vec<_> = self.bindings.iter().collect();
+        bindings.sort_by_key(|(binding, action)| {
+            let mut updates = self.binding_updates.iter();
+            let request = action.first().is_some_and(|a| known_request(a));
+            let order = if request {
+                updates.position(|b| b == *binding)
+            } else {
+                updates.rposition(|b| b == *binding)
+            };
+            (!request, order)
+        });
+        for ((view, key), action) in bindings {
+            text.push_str(&format!(
+                "bind {view} {} {}\n",
+                config_arguments(&[config_key(key)])?,
+                config_arguments(action)?
+            ));
+        }
+        text.push_str("\n## Colors\n");
+        for (area, colors) in &self.colors {
+            let (prefix, name) = area
+                .split_once('.')
+                .filter(|(prefix, _)| is_view(prefix) || *prefix == "generic")
+                .map_or((String::new(), area.as_str()), |(prefix, name)| {
+                    (format!("{prefix}."), name)
+                });
+            let named = include_str!("../include/tig/line.h").lines().any(|line| {
+                line.trim()
+                    .strip_prefix("_(")
+                    .and_then(|s| s.split(',').next())
+                    .is_some_and(|s| {
+                        s.to_ascii_lowercase().replace('_', "-")
+                            == name.to_ascii_lowercase().replace('_', "-")
+                    })
+            });
+            let mut name = config_arguments(&[name.into()])?;
+            // C distinguishes named areas from literal/regex prefixes by quotes.
+            if !named && !name.starts_with('"') {
+                name = format!("\"{name}\"");
+            }
+            text.push_str(&format!(
+                "color {prefix}{name} {}\n",
+                config_arguments(colors)?
+            ));
+        }
+        // Finish validation before creating a file; unsupported text must not be lost.
+        let mut file = fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(path)?;
+        file.write_all(text.as_bytes())?;
+        file.sync_all()
+    }
     pub fn defaults() -> Self {
         let mut config = Self::default();
         config.parse_text(
@@ -1311,6 +1425,63 @@ mod tests {
         c.apply_command("set main_view_author_width = 8").unwrap();
         assert!(c.settings["main-view"].contains(&"author:abbreviated,width=8".into()));
     }
+    #[test]
+    fn saved_options_round_trip_and_never_overwrite() {
+        let path = env::temp_dir().join(format!("tig-save-options-{}", std::process::id()));
+        let mut config = Config::defaults();
+        config.parse(
+            r#"
+set log-options += --minimal
+set diff-options = "" "two words" 'a"b' "a\\b" "$(touch never-executed)"
+set main-view-author-width = 8
+bind generic <Hash> !echo "two words" 'a"b' "a\\b"
+bind generic <Esc><LessThan> :toggle author
+bind generic <Space> view-main
+bind generic <SingleQuote> view-main
+bind generic <DoubleQuote> view-main
+color "quoted area" red default bold
+color grep."@@" red default
+"#,
+        );
+        assert!(config.diagnostics.is_empty(), "{:?}", config.diagnostics);
+        config.save(&path).unwrap();
+        let saved = fs::read_to_string(&path).unwrap();
+        assert!(saved.contains("color \"+\" green default\n"));
+        assert!(saved.contains("color grep.\"@@\" red default\n"));
+        assert!(saved.contains("color cursor white green bold\n"));
+        let mut restored = Config::default();
+        restored.parse(&saved);
+        assert!(
+            restored.diagnostics.is_empty(),
+            "{:?}",
+            restored.diagnostics
+        );
+        assert_eq!(restored.settings, config.settings);
+        assert_eq!(restored.bindings, config.bindings);
+        assert_eq!(restored.colors, config.colors);
+        assert_eq!(
+            config.save(&path).unwrap_err().kind(),
+            std::io::ErrorKind::AlreadyExists
+        );
+        assert_eq!(fs::read_to_string(&path).unwrap(), saved);
+        fs::remove_file(&path).unwrap();
+        restored.save(&path).unwrap();
+        assert_eq!(fs::read_to_string(&path).unwrap(), saved);
+        fs::remove_file(&path).unwrap();
+        let mut overlay = Config::defaults();
+        overlay.parse(&saved);
+        overlay.save(&path).unwrap();
+        assert_eq!(fs::read_to_string(&path).unwrap(), saved);
+        fs::remove_file(&path).unwrap();
+        for value in ["hash#comment", "new\nline", "carriage\rreturn"] {
+            config
+                .settings
+                .insert("diff-options".into(), vec![value.into()]);
+            assert!(config.save(&path).is_err());
+            assert!(!path.exists());
+        }
+    }
+
     #[test]
     fn append_colors_and_numeric_boundaries() {
         let mut c = Config::defaults();

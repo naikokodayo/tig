@@ -1,0 +1,143 @@
+{
+  "scope": "Rust save-options slice; full Rust migration remains incomplete",
+  "base_commit": "34684f799a5b44e7074aa4967c53c10608119f10",
+  "toolchain": "Rust 1.81.0",
+  "binary_sha256": "5451390924fdb11c7c4d3ade7520289b42615e3a92eb24618f037f130be1503a",
+  "unit_tests": 65,
+  "fmt": "pass",
+  "clippy_all_targets_deny_warnings": "pass",
+  "release_build": "pass",
+  "pty_checks_passed": 111,
+  "pty_save_checks": [
+    {
+      "name": "save options to quoted path",
+      "passed": true
+    },
+    {
+      "name": "save options refuses overwrite",
+      "passed": true
+    },
+    {
+      "name": "save options reports missing directory",
+      "passed": true
+    }
+  ],
+  "c_loads_rust_saved_defaults": {
+    "exit_code": 0,
+    "stderr": ""
+  },
+  "original_tigrc_scripts": {
+    "append-option-test": {
+      "ok": 2,
+      "fail": 0,
+      "failures": []
+    },
+    "builtin-error-test": {
+      "ok": 1,
+      "fail": 0,
+      "failures": []
+    },
+    "builtin-save-test": {
+      "ok": 1,
+      "fail": 0,
+      "failures": []
+    },
+    "command-value-long-test": {
+      "ok": 1,
+      "fail": 1,
+      "failures": [
+        "[FAIL] pager.screen != expected/pager.screen"
+      ]
+    },
+    "compat-error-test": {
+      "ok": 0,
+      "fail": 1,
+      "failures": [
+        "[FAIL] stderr != expected/stderr"
+      ]
+    },
+    "contrib-tigrc-test": {
+      "ok": 1,
+      "fail": 0,
+      "failures": []
+    },
+    "env-vars-test": {
+      "ok": 2,
+      "fail": 0,
+      "failures": []
+    },
+    "escape-var-test": {
+      "ok": 0,
+      "fail": 2,
+      "failures": [
+        "[FAIL] unexpected status code: 1 (should be 0)",
+        "[FAIL] shell-command.txt not found"
+      ]
+    },
+    "parse-test": {
+      "ok": 2,
+      "fail": 0,
+      "failures": []
+    },
+    "quote-test": {
+      "ok": 1,
+      "fail": 6,
+      "failures": [
+        "[FAIL] unexpected status code: 1 (should be 0)",
+        "[FAIL] stderr != expected/stderr",
+        "[FAIL] quoted-prompt-with-spaces.screen not found",
+        "[FAIL] mid-quoted-prompt-with-spaces.screen not found",
+        "[FAIL] single-quoted-arg-with-escaped-chars.screen not found",
+        "[FAIL] double-quoted-arg-with-escaped-chars.screen not found"
+      ]
+    },
+    "save-option-test": {
+      "ok": 2,
+      "fail": 0,
+      "failures": []
+    },
+    "source-test": {
+      "ok": 10,
+      "fail": 0,
+      "failures": []
+    },
+    "tigrc-manpage-examples-test": {
+      "ok": 1,
+      "fail": 0,
+      "failures": []
+    },
+    "truncation-test": {
+      "ok": 10,
+      "fail": 4,
+      "failures": [
+        "[FAIL] delimiter-literal.screen != expected/delimiter-literal.screen",
+        "[FAIL] delimiter-quoted-literal.screen != expected/delimiter-quoted-literal.screen",
+        "[FAIL] delimiter-special-value.screen != expected/delimiter-special-value.screen",
+        "[FAIL] delimiter-utf8-literal.screen != expected/delimiter-utf8-literal.screen"
+      ]
+    },
+    "view-column-test": {
+      "ok": 1,
+      "fail": 1,
+      "failures": [
+        "[FAIL] stderr != expected/stderr"
+      ]
+    },
+    "width-test": {
+      "ok": 54,
+      "fail": 0,
+      "failures": []
+    },
+    "xdg-config-home-test": {
+      "ok": 8,
+      "fail": 0,
+      "failures": []
+    }
+  },
+  "original_scripts_changed": false,
+  "summary": {
+    "scripts": 17,
+    "ok": 97,
+    "fail": 15
+  }
+}
