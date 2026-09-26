@@ -121,6 +121,7 @@ fn timestamp(iso: &str) -> i64 {
 fn empty_commit() -> Commit {
     Commit {
         oid: String::new(),
+        boundary: false,
         parents: vec![],
         author: String::new(),
         date: "1970-01-01T00:00:00+00:00".into(),

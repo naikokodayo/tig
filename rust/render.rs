@@ -380,9 +380,9 @@ pub fn render_commits(
     let mut canvases_v1 = Vec::new();
     for commit in commits {
         let parents: Vec<_> = commit.parents.iter().map(String::as_str).collect();
-        canvases.push(graph.render_commit(&commit.oid, &parents, false));
+        canvases.push(graph.render_commit(&commit.oid, &parents, commit.boundary));
         if needs_v1 {
-            canvases_v1.push(graph_v1.render_commit(&commit.oid, &parents, false));
+            canvases_v1.push(graph_v1.render_commit(&commit.oid, &parents, commit.boundary));
         }
     }
     let mut fields = Vec::new();
@@ -613,6 +613,7 @@ mod tests {
     fn commit() -> Commit {
         Commit {
             oid: "ee912870202200a0b9cf4fd86ba57243212d341e".into(),
+            boundary: false,
             parents: vec!["parent".into()],
             author: "Jonas Fonseca".into(),
             author_email: "jonas@example.com".into(),

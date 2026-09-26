@@ -312,6 +312,7 @@ fn changes_date() -> Result<String> {
 fn changes_commit(kind: ChangeKind, parent: String, date: &str, oid: &str) -> Commit {
     Commit {
         oid: oid.into(),
+        boundary: false,
         parents: vec![parent],
         author: "Not Committed Yet".into(),
         date: date.into(),
@@ -341,6 +342,8 @@ struct View {
     sort_field: Option<String>,
     sort_reverse: bool,
     args: Vec<String>,
+    history: Vec<(usize, usize, usize)>,
+    command_title: String,
 }
 impl View {
     fn new(name: &str) -> Self {
@@ -361,6 +364,8 @@ impl View {
             sort_field: None,
             sort_reverse: false,
             args: Vec::new(),
+            history: Vec::new(),
+            command_title: String::new(),
         }
     }
     fn push(&mut self, text: String, item: Item) {
@@ -641,7 +646,22 @@ impl App {
                 );
                 view.revision = oid.clone();
                 if let Some(commit) = repo.history(&[oid, "--".into()], 1)?.first() {
-                    let refs = tig_rs::render::refs(&self.config, &commit.decorations, ", ");
+                    let mut refs = tig_rs::render::refs(&self.config, &commit.decorations, ", ");
+                    if !commit
+                        .decorations
+                        .split(", ")
+                        .any(|r| r.starts_with("tag: "))
+                    {
+                        if let Ok(description) = repo.command(["describe", "--tags", &commit.oid]) {
+                            let description = String::from_utf8_lossy(&description);
+                            if !description.trim().is_empty() {
+                                if !refs.is_empty() {
+                                    refs.push_str(", ");
+                                }
+                                refs.push_str(description.trim());
+                            }
+                        }
+                    }
                     if !refs.is_empty() && !view.rows.is_empty() {
                         view.rows.insert(1, format!("Refs: {refs}"));
                         view.items.insert(1, Item::Text);
@@ -931,6 +951,8 @@ impl App {
             0
         });
         next.top = top;
+        next.left = old.left;
+        next.history = old.history.clone();
         if target.is_none() {
             next.restore_status_selection();
         }
@@ -938,6 +960,19 @@ impl App {
             self.other = Some(next);
         } else if let Some(previous) = self.previous.last_mut() {
             *previous = next;
+        }
+        Ok(())
+    }
+    fn refresh_after_command(&mut self) -> Result<()> {
+        if self.other.is_none() {
+            self.refresh_parent()?;
+        }
+        self.action("refresh")?;
+        if self.other.is_some() {
+            self.swap_panes();
+            let result = self.action("refresh");
+            self.swap_panes();
+            result?;
         }
         Ok(())
     }
@@ -1321,6 +1356,35 @@ impl App {
         Ok(())
     }
     fn action(&mut self, action: &str) -> Result<bool> {
+        if let Some(command) = action.strip_prefix(":!") {
+            self.action(&format!("exec !{command}"))?;
+            if let Some(command) = self.pending_command.take() {
+                let mut output = command.run_allow_nonzero(self.repo()?, false, true)?;
+                // ponytail: stdout then stderr; preserve interleaving with future streaming loaders.
+                output.stdout.extend(output.stderr);
+                if self.other.is_some() {
+                    if !self.parent_focused {
+                        self.swap_panes();
+                    }
+                    self.other = None;
+                    self.split = false;
+                    self.parent_focused = false;
+                }
+                self.refresh_after_command()?;
+                let mut view = View::text("pager", &String::from_utf8_lossy(&output.stdout));
+                view.command_title = command
+                    .argv
+                    .iter()
+                    .map(|arg| arg.to_string_lossy())
+                    .collect::<Vec<_>>()
+                    .join(" ");
+                view.args = self.args.clone();
+                view.revision = self.revision.clone();
+                view.path = self.path.clone();
+                self.previous.push(std::mem::replace(&mut self.view, view));
+            }
+            return Ok(true);
+        }
         let action = action.strip_prefix(':').unwrap_or(action);
         if action == "exec" {
             self.message = "Failed to execute command: No arguments".into();
@@ -1449,10 +1513,16 @@ impl App {
             return self.action(&format!("goto {action}"));
         }
         if let Some(target) = action.strip_prefix("goto ") {
-            if let Ok(line) = target.parse::<usize>() {
-                self.view.selected = line
-                    .saturating_sub(1)
-                    .min(self.view.rows.len().saturating_sub(1));
+            if !target.is_empty() && target.bytes().all(|byte| byte.is_ascii_digit()) {
+                match target.parse::<usize>() {
+                    Ok(line) if line <= self.view.rows.len() => {
+                        self.view.selected = line.saturating_sub(1);
+                    }
+                    _ => {
+                        self.message = format!("Unable to parse '{target}' as a line number");
+                        return Ok(true);
+                    }
+                }
             } else {
                 self.goto_commit(target)?;
             }
@@ -1480,6 +1550,32 @@ impl App {
         .max(1) as isize;
         match action {
             "quit" => return Ok(false),
+            "parent" if self.view.name == "main" => {
+                if self.view.history.last().map(|pos| pos.0) != Some(self.view.selected) {
+                    self.view
+                        .history
+                        .push((self.view.selected, self.view.top, self.view.left));
+                }
+                match self.selected() {
+                    Item::Changes(_) => self.view.move_by(1),
+                    Item::Commit(commit) => {
+                        if let Err(error) = self.goto_commit(&format!("{}^", commit.oid)) {
+                            self.message = error.to_string();
+                        }
+                    }
+                    _ => (),
+                }
+                self.center_selection();
+            }
+            "back" if self.view.name == "main" => {
+                if let Some((selected, top, left)) = self.view.history.pop() {
+                    self.view.selected = selected.min(self.view.rows.len().saturating_sub(1));
+                    self.view.top = top;
+                    self.view.left = left;
+                } else {
+                    self.message = "Already at start of history".into();
+                }
+            }
             "view-close" | "view-close-no-quit" | "back" => {
                 if action != "back" && self.parent_focused && self.other.is_some() {
                     if let Some(v) = self.previous.pop() {
@@ -1588,6 +1684,7 @@ impl App {
                 self.view.selected = old.selected.min(self.view.rows.len().saturating_sub(1));
                 self.view.top = old.top;
                 self.view.left = old.left;
+                self.view.history = old.history.clone();
                 self.view.restore_status_selection();
                 if old.name == "diff" {
                     if let Some(selected) = diff_reloaded_line(&old, &self.view.rows) {
@@ -1898,8 +1995,8 @@ impl App {
             } else if let Some(n) = line.strip_prefix(":goto ") {
                 self.action(&format!("goto {n}"))?;
             } else {
-                let action = if let Some(a) = line.strip_prefix(':') {
-                    a.to_string()
+                let action = if line.starts_with(':') {
+                    line.to_string()
                 } else {
                     self.binding(line)
                 };
@@ -1915,7 +2012,7 @@ impl App {
                     if command.exit {
                         break;
                     }
-                    self.action("refresh")?;
+                    self.refresh_after_command()?;
                 }
             }
         }
@@ -2451,6 +2548,7 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
                 format!("{}:{}", line.oid, line.filename.display())
             }
         }
+        _ if view.name == "pager" => view.command_title.clone(),
         _ if view.name == "refs" => "All references".into(),
         Some(Item::Status(e, staged)) => format!(
             "Press u to {} '{}'{}",
@@ -2924,7 +3022,7 @@ fn run() -> Result<()> {
                         .map_or(Ok(()), |query| app.grep_query(&query))
                         .map(|()| true)
                 } else {
-                    app.action(&s)
+                    app.action(&format!(":{s}"))
                 };
                 match result {
                     Ok(false) => break,
@@ -2986,7 +3084,7 @@ fn run() -> Result<()> {
                     if command.exit {
                         break;
                     }
-                    if let Err(error) = app.action("refresh") {
+                    if let Err(error) = app.refresh_after_command() {
                         app.message = error.to_string();
                     } else if command.echo {
                         app.message = String::from_utf8_lossy(&output.stdout)
@@ -3156,7 +3254,136 @@ mod tests {
         assert_eq!(app.load("main").unwrap().rows[0], implicit_path.rows[0]);
         app.args.clear();
         assert!(app.load("main").unwrap().rows[5].starts_with("●"));
+        app.view = app.load("main").unwrap();
+        app.height = 5;
+        app.action("goto 6").unwrap();
+        app.action("scroll-right").unwrap();
+        let position = (app.view.selected, app.view.top, app.view.left);
+        for line in ["49", "50", "999999999999999999999999999999999999"] {
+            assert!(app.action(line).unwrap());
+            assert_eq!((app.view.selected, app.view.top, app.view.left), position);
+        }
+        let Item::Commit(commit) = app.selected() else {
+            panic!("expected commit")
+        };
+        let parent = app
+            .repo()
+            .unwrap()
+            .revision(&format!("{}^", commit.oid))
+            .unwrap();
+        app.action("parent").unwrap();
+        assert!(matches!(app.selected(), Item::Commit(c) if c.oid == parent));
+        app.action("refresh").unwrap();
+        assert!(app.action("back").unwrap());
+        assert_eq!((app.view.selected, app.view.top, app.view.left), position);
+        app.other = Some(View::text("diff", "still open"));
+        app.split = true;
+        app.parent_focused = true;
+        assert!(app.action("back").unwrap());
+        assert_eq!(app.view.name, "main");
+        assert!(app.split && app.other.is_some());
+        app.action("parent").unwrap();
+        assert!(app.action(&app.binding("<")).unwrap());
+        assert_eq!((app.view.selected, app.view.top, app.view.left), position);
+        app.other = None;
+        app.split = false;
+        app.parent_focused = false;
+        app.action("goto 48").unwrap();
+        let root_position = (app.view.selected, app.view.top, app.view.left);
+        app.action("parent").unwrap();
+        app.action("parent").unwrap();
+        assert_eq!(
+            (app.view.selected, app.view.top, app.view.left),
+            root_position
+        );
+        assert!(app.action("back").unwrap());
+        assert!(app.action("back").unwrap());
+        assert_eq!(app.message, "Already at start of history");
+        app.view
+            .items
+            .insert(0, Item::Changes(ChangeKind::Unstaged));
+        app.view.rows.insert(0, "Unstaged changes".into());
+        app.view.selected = 0;
+        app.action("parent").unwrap();
+        assert_eq!(app.view.selected, 1);
+        app.action("back").unwrap();
+        assert_eq!(app.view.selected, 0);
+        app.action("refresh").unwrap();
+        app.repo()
+            .unwrap()
+            .command(["tag", "navigation-ancestor", "HEAD^"])
+            .unwrap();
         app.revision = app.repo().unwrap().revision("HEAD").unwrap();
+        let described = app
+            .repo()
+            .unwrap()
+            .command(["describe", "--tags", &app.revision])
+            .unwrap();
+        let diff = app.load("diff").unwrap();
+        assert!(diff.rows[1].ends_with(String::from_utf8_lossy(&described).trim()));
+        let before_command = (app.view.selected, app.view.top, app.view.left);
+        app.action(":!git tag main-navigation").unwrap();
+        assert_eq!(app.view.name, "pager");
+        assert!(app.view.rows.is_empty());
+        assert!(app.action("view-close").unwrap());
+        assert_eq!(
+            (app.view.selected, app.view.top, app.view.left),
+            before_command
+        );
+        assert!(
+            matches!(&app.view.items[0], Item::Commit(c) if c.decorations.contains("main-navigation"))
+        );
+        app.action(":!echo 'two words; literal'").unwrap();
+        assert_eq!(app.view.rows, ["two words; literal"]);
+        app.action("view-close").unwrap();
+        app.action(":!sh -c 'echo command-error >&2; exit 2'")
+            .unwrap();
+        assert_eq!(app.view.rows, ["command-error"]);
+        app.action("view-close").unwrap();
+        app.revision = app.repo().unwrap().revision("HEAD").unwrap();
+        let diff = app.load("diff").unwrap();
+        assert!(diff.rows[1].contains("<main-navigation>"));
+        assert!(!diff.rows[1].contains("navigation-ancestor"));
+        for focus_parent in [false, true] {
+            app.enter(true).unwrap();
+            if focus_parent {
+                app.action("view-next").unwrap();
+            }
+            let tag = if focus_parent {
+                "command-parent"
+            } else {
+                "command-child"
+            };
+            app.action(&format!("exec @git tag {tag} %(commit)"))
+                .unwrap();
+            app.pending_command
+                .take()
+                .unwrap()
+                .run(app.repo().unwrap(), true, true)
+                .unwrap();
+            app.refresh_after_command().unwrap();
+            let diff = if focus_parent {
+                app.other.as_ref().unwrap()
+            } else {
+                &app.view
+            };
+            assert!(diff.rows[1].contains(tag));
+            app.action(":!echo split-pager").unwrap();
+            assert!(!app.split && app.other.is_none());
+            assert_eq!(app.view.rows, ["split-pager"]);
+            app.action("view-close").unwrap();
+            assert_eq!(app.view.name, "main");
+            assert!(app.previous.is_empty());
+            assert!(!app.action("view-close").unwrap());
+        }
+        app.action("view-diff").unwrap();
+        app.action(":!git tag navigation-fullscreen").unwrap();
+        app.action("view-close").unwrap();
+        app.action("view-close").unwrap();
+        assert_eq!(app.view.name, "main");
+        assert!(
+            matches!(&app.view.items[0], Item::Commit(c) if c.decorations.contains("navigation-fullscreen"))
+        );
         fs::write(root.join(&app.revision), "revision-shaped filename").unwrap();
         assert!(app.load("diff").is_ok());
         fs::write(
@@ -3409,12 +3636,19 @@ mod tests {
             app.selected(),
             Item::Changes(ChangeKind::Untracked)
         ));
+        app.action("parent").unwrap();
+        app.action("0").unwrap();
+        app.view.left = 8;
         app.enter(true).unwrap();
         assert_eq!(app.view.name, "status");
         app.view.selected = 2;
         app.action("status-update").unwrap();
         assert_eq!(app.view.name, "main");
         assert!(matches!(app.selected(), Item::Changes(ChangeKind::Staged)));
+        assert_eq!(app.view.history.len(), 1);
+        assert_eq!(app.view.left, 8);
+        app.action("back").unwrap();
+        assert!(app.view.history.is_empty());
         fs::write(root.join("tracked"), "working\n").unwrap();
         app.action("refresh").unwrap();
         app.view.selected = app

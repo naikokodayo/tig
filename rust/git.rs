@@ -87,6 +87,7 @@ fn valid_path(path: &Path) -> Result<()> {
 pub struct HistoryOptions {
     pub with_graph: bool,
     first_parent: bool,
+    merge: bool,
     has_revision: bool,
 }
 impl HistoryOptions {
@@ -99,6 +100,7 @@ impl HistoryOptions {
         let mut options = Self {
             with_graph: true,
             first_parent: false,
+            merge: false,
             has_revision: false,
         };
         let mut expects_value = false;
@@ -122,6 +124,9 @@ impl HistoryOptions {
             if matches!(name, "--follow" | "--no-merges" | "--author" | "--grep") {
                 options.with_graph = false;
             }
+            if name == "--merge" {
+                options.merge = true;
+            }
             if name == "--first-parent" {
                 options.first_parent = true;
             }
@@ -134,7 +139,7 @@ impl HistoryOptions {
                     if matches!(name, "--glob" | "--exclude") && !inline_value { expects_value = true; }
                     options.has_revision = true;
                 }
-                "--follow" | "--first-parent" | "--no-merges" | "--merges" | "--reverse" | "--topo-order" |
+                "--follow" | "--first-parent" | "--no-merges" | "--merges" | "--merge" | "--boundary" | "--reverse" | "--topo-order" |
                 "--date-order" | "--author-date-order" | "--ancestry-path" | "--full-history" |
                 "--simplify-merges" | "--simplify-by-decoration" | "--dense" | "--sparse" |
                 "--remove-empty" | "--all-match" | "--invert-grep" | "--regexp-ignore-case" |
@@ -194,9 +199,12 @@ impl Repository {
             "--topo-order".into(),
             "--no-show-signature".into(),
             "--decorate=full".into(),
-            "--format=%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI".into(),
+            "--format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI".into(),
             "-z".into(),
         ];
+        if options.merge {
+            args.push("--boundary".into());
+        }
         if limit > 0 {
             args.push(format!("--max-count={limit}"));
         }
@@ -578,7 +586,8 @@ pub fn parse_history(bytes: &[u8]) -> Result<Vec<Commit>> {
     }
     Ok(f.chunks_exact(10)
         .map(|f| Commit {
-            oid: text(f[0]),
+            oid: text(f[0]).trim_start_matches(['-', '>', '<']).into(),
+            boundary: f[0].starts_with(b"-"),
             parents: text(f[1]).split_whitespace().map(str::to_owned).collect(),
             author: text(f[2]),
             date: text(f[3]),
@@ -604,6 +613,8 @@ pub fn parse_raw_history(input: &str) -> Result<Vec<Commit>> {
             let oid = ids
                 .next()
                 .ok_or_else(|| GitError("Missing raw commit ID".into()))?;
+            let boundary = oid.starts_with('-');
+            let oid = oid.strip_prefix('-').unwrap_or(oid);
             if !valid_oid(oid) {
                 return Err(GitError("Invalid raw commit ID".into()));
             }
@@ -613,6 +624,7 @@ pub fn parse_raw_history(input: &str) -> Result<Vec<Commit>> {
             }
             commits.push(Commit {
                 oid: oid.into(),
+                boundary,
                 parents,
                 author: String::new(),
                 date: String::new(),
@@ -828,6 +840,12 @@ mod tests {
         let options = HistoryOptions::parse(&["--grep".into(), "--first-parent".into()]).unwrap();
         assert!(!options.with_graph);
         assert!(!options.first_parent);
+        assert!(
+            HistoryOptions::parse(&["--merge".into()])
+                .unwrap()
+                .with_graph
+        );
+        assert!(HistoryOptions::parse(&["--merge=oops".into()]).is_err());
         assert!(HistoryOptions::parse(&["--follow=yes".into()]).is_err());
         assert!(HistoryOptions::parse(&["--format=oops".into()]).is_err());
     }

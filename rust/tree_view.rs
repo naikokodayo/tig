@@ -101,6 +101,7 @@ fn annotate(
             let text = |n| String::from_utf8_lossy(fields[cursor + n]).into_owned();
             commit = Some(Commit {
                 oid: String::from_utf8_lossy(token).into_owned(),
+                boundary: false,
                 parents: Vec::new(),
                 author: text(0),
                 author_email: text(1),
