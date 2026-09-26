@@ -125,3 +125,6 @@ python3 rust/tests/terminal-smoke.py
 
 
 相关原版脚本的独立收据 [`upstream-focused.json`](evidence/nonlocal-percent-s/upstream-focused.json) 为 C/Rust 各 7/7 脚本、30/30 断言通过（日期六脚本 27 条 + help 3 条）。Linux x86_64 runner 使用系统 Perl 5.38.2，已完成 156/156 差分；对应 [Rust CI run 36267140776](https://github.com/naikokodayo/tig/actions/runs/36267140776) 的整体失败原因是上述额外纳入的 `--stdin` 脚本，原始 [Linux 日志](evidence/nonlocal-percent-s/linux-observed.log) 保留。之后只修正新增日期 CI 的脚本选择，未修改 Rust 实现或原版测试；不要求等待所有其它 Actions 才能评审本切片。
+
+
+最后同步文档 main `2fb2a871`，保留其全套历史快照与本切片记录。相对已验证 `cada44f7` 的 Rust/Cargo/C 源码、测试和 `%s` probe 均无变化，摘要核对通过；因此未把文档合并伪称成新的全套测试结果。
