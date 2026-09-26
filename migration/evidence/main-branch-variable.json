@@ -1,0 +1,1281 @@
+{
+  "schema": 1,
+  "source_commit": "d6ce989eaa8fa260581f683a99669ac1f7f5b04c",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "PASS_SELECTED_SCRIPTS",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/graph/00-simple-test",
+          "script_sha256": "3749ecf4d4cdeb5b99ef9a2df4e88e1990e7bd350e0fd4cd9b1fb9dac287313e",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "stdout#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/graph/00-simple-test/.test-result",
+          "receipt": "  [OK] stdout assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/branch-var-test",
+          "script_sha256": "2ed95c116b403b74c4389b9940dd5b928572db92a1de25ca1c3f6e4c3e969aa4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/branch-var-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] main.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/default-test",
+          "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-ref-format.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-remotes-hidden.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/default-test/.test-result",
+          "receipt": "  [OK] main-default.screen assertion\n  [OK] main-ref-format.screen assertion\n  [OK] main-remotes-hidden.screen assertion\n  [OK] main-no-refs.screen assertion\n  [OK] main-no-graph.screen assertion\n  [OK] main-with-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/escape-control-characters-test",
+          "script_sha256": "f0afbbd19bf33724e569022ba500c4e159857aab1a4680bf293c443e25c431e3",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/escape-control-characters-test/.test-result",
+          "receipt": "  [OK] screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/pretty-raw-test",
+          "script_sha256": "03a00e6802091e2f011df0e405fa3f586dcd37e868a42145734e6b75932d3c94",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-pretty-raw.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/pretty-raw-test/.test-result",
+          "receipt": "  [OK] main-pretty-raw.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/refs/branch-checkout-test",
+          "script_sha256": "90cdd097756de3865295522f27b5919fd5e84f9dd9b1a7f0991edbbb7057d3d1",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 7
+          },
+          "assertions": [
+            {
+              "id": "19455fa3642af6a6a7d527dd043caf5a70eaad2d.refinfo#1",
+              "status": "OK"
+            },
+            {
+              "id": "this_is_really_a_long_long_long_long_long_long_long_branch.head#1",
+              "status": "OK"
+            },
+            {
+              "id": "a3f25ca556c1cef1ef3a0704f5deaec8687c84b9.refinfo#1",
+              "status": "OK"
+            },
+            {
+              "id": "this_is_really_a_long_long_long_long_long_long_long_tag.head#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-init.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-checked-out-branch.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-checked-out-tag.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/refs/branch-checkout-test/.test-result",
+          "receipt": "  [OK] 19455fa3642af6a6a7d527dd043caf5a70eaad2d.refinfo assertion\n  [OK] this_is_really_a_long_long_long_long_long_long_long_branch.head assertion\n  [OK] a3f25ca556c1cef1ef3a0704f5deaec8687c84b9.refinfo assertion\n  [OK] this_is_really_a_long_long_long_long_long_long_long_tag.head assertion\n  [OK] refs-init.screen assertion\n  [OK] refs-checked-out-branch.screen assertion\n  [OK] refs-checked-out-tag.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/refs/branch-tag-test",
+          "script_sha256": "4759456f345044d023f8d542128bdcbea9fb5d22f3c8ebcfaefe605a218502bc",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "refs-initial.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/refs/branch-tag-test/.test-result",
+          "receipt": "  [OK] refs-initial.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/refs/branch-var-test",
+          "script_sha256": "bc039b2d994df5e32261605e8fc9320cd5b22dedf2cc83b1a4d325884eac1066",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/refs/branch-var-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] refs.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/refs/filter-test",
+          "script_sha256": "a1f75f010b847def15a56cb1ef134be855bee05825aa1b898492103f8d06ae75",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/refs/filter-test/.test-result",
+          "receipt": "  [OK] main.screen assertion\n  [OK] refs.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/refs/replace-test",
+          "script_sha256": "a18e6d147af235955df8f41888e07c27211a3c8bd711bc61c7cd20b1aaa6697c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/refs/replace-test/.test-result",
+          "receipt": "  [OK] refs.screen assertion\n  [OK] main.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/env-vars-test",
+          "script_sha256": "eae01cc481f3c078ebd82403b39eeeb2a5cd7f0db6317e3d4751b890609c89c2",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "help.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/env-vars-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n  [OK] help.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/escape-var-test",
+          "script_sha256": "8ac261a47c2b3fdc0b1647df9cebc8f11ede82e7a442ed828c31b675adb19900",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "shell-command.txt#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/escape-var-test/.test-result",
+          "receipt": "  [OK] shell-command.txt assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/src/tig",
+          "sha256": "9c72db7deffcaeb503bef55a8be6c96323669ea02fd88591054e2cceea2e7efb"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 12
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig)\n    Finished `release` profile [optimized] target(s) in 31.42s\n",
+      "results": [
+        {
+          "script": "test/graph/00-simple-test",
+          "script_sha256": "3749ecf4d4cdeb5b99ef9a2df4e88e1990e7bd350e0fd4cd9b1fb9dac287313e",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "stdout#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/graph/00-simple-test/.test-result",
+          "receipt": "  [OK] stdout assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/branch-var-test",
+          "script_sha256": "2ed95c116b403b74c4389b9940dd5b928572db92a1de25ca1c3f6e4c3e969aa4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/branch-var-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] main.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/default-test",
+          "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-ref-format.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-remotes-hidden.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/default-test/.test-result",
+          "receipt": "  [OK] main-default.screen assertion\n  [OK] main-ref-format.screen assertion\n  [OK] main-remotes-hidden.screen assertion\n  [OK] main-no-refs.screen assertion\n  [OK] main-no-graph.screen assertion\n  [OK] main-with-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/escape-control-characters-test",
+          "script_sha256": "f0afbbd19bf33724e569022ba500c4e159857aab1a4680bf293c443e25c431e3",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/escape-control-characters-test/.test-result",
+          "receipt": "  [OK] screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/pretty-raw-test",
+          "script_sha256": "03a00e6802091e2f011df0e405fa3f586dcd37e868a42145734e6b75932d3c94",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-pretty-raw.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/pretty-raw-test/.test-result",
+          "receipt": "  [OK] main-pretty-raw.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/refs/branch-checkout-test",
+          "script_sha256": "90cdd097756de3865295522f27b5919fd5e84f9dd9b1a7f0991edbbb7057d3d1",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 7
+          },
+          "assertions": [
+            {
+              "id": "19455fa3642af6a6a7d527dd043caf5a70eaad2d.refinfo#1",
+              "status": "OK"
+            },
+            {
+              "id": "this_is_really_a_long_long_long_long_long_long_long_branch.head#1",
+              "status": "OK"
+            },
+            {
+              "id": "a3f25ca556c1cef1ef3a0704f5deaec8687c84b9.refinfo#1",
+              "status": "OK"
+            },
+            {
+              "id": "this_is_really_a_long_long_long_long_long_long_long_tag.head#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-init.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-checked-out-branch.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-checked-out-tag.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/refs/branch-checkout-test/.test-result",
+          "receipt": "  [OK] 19455fa3642af6a6a7d527dd043caf5a70eaad2d.refinfo assertion\n  [OK] this_is_really_a_long_long_long_long_long_long_long_branch.head assertion\n  [OK] a3f25ca556c1cef1ef3a0704f5deaec8687c84b9.refinfo assertion\n  [OK] this_is_really_a_long_long_long_long_long_long_long_tag.head assertion\n  [OK] refs-init.screen assertion\n  [OK] refs-checked-out-branch.screen assertion\n  [OK] refs-checked-out-tag.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/refs/branch-tag-test",
+          "script_sha256": "4759456f345044d023f8d542128bdcbea9fb5d22f3c8ebcfaefe605a218502bc",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "refs-initial.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/refs/branch-tag-test/.test-result",
+          "receipt": "  [OK] refs-initial.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/refs/branch-var-test",
+          "script_sha256": "bc039b2d994df5e32261605e8fc9320cd5b22dedf2cc83b1a4d325884eac1066",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/refs/branch-var-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] refs.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/refs/filter-test",
+          "script_sha256": "a1f75f010b847def15a56cb1ef134be855bee05825aa1b898492103f8d06ae75",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/refs/filter-test/.test-result",
+          "receipt": "  [OK] main.screen assertion\n  [OK] refs.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/refs/replace-test",
+          "script_sha256": "a18e6d147af235955df8f41888e07c27211a3c8bd711bc61c7cd20b1aaa6697c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/refs/replace-test/.test-result",
+          "receipt": "  [OK] refs.screen assertion\n  [OK] main.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/env-vars-test",
+          "script_sha256": "eae01cc481f3c078ebd82403b39eeeb2a5cd7f0db6317e3d4751b890609c89c2",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "help.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/env-vars-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n  [OK] help.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/escape-var-test",
+          "script_sha256": "8ac261a47c2b3fdc0b1647df9cebc8f11ede82e7a442ed828c31b675adb19900",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "shell-command.txt#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/escape-var-test/.test-result",
+          "receipt": "  [OK] shell-command.txt assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/target/release/tig",
+          "sha256": "98734a212a2efbfbf17b99f75bc7197efa996b7dc8f08e5589e77ad8d4a93cac"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/target/release/test-graph",
+          "sha256": "40ff2e5d16c151648a5f99aedd1544bb57c0d991041a2082a6b619a241d5312a"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 12
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/graph/00-simple-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "stdout#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/branch-var-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/default-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-ref-format.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-remotes-hidden.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-no-refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-no-graph.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-diff.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/escape-control-characters-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/pretty-raw-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-pretty-raw.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/refs/branch-checkout-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "19455fa3642af6a6a7d527dd043caf5a70eaad2d.refinfo#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "this_is_really_a_long_long_long_long_long_long_long_branch.head#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "a3f25ca556c1cef1ef3a0704f5deaec8687c84b9.refinfo#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "this_is_really_a_long_long_long_long_long_long_long_tag.head#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "refs-init.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "refs-checked-out-branch.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "refs-checked-out-tag.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/refs/branch-tag-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "refs-initial.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/refs/branch-var-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/refs/filter-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/refs/replace-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tigrc/env-vars-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "help.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tigrc/escape-var-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "shell-command.txt#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ],
+  "source_provenance": {
+    "commit": "d6ce989eaa8fa260581f683a99669ac1f7f5b04c",
+    "base": "2de8eb34158726d0f07bc4ba4bdb63c7bc14804b",
+    "sha256": "de85485b2be2cae3377b4934c52b0efeaa51c7592fbfc789d6c82c176890c512",
+    "algorithm": "SHA-256 over git ls-tree sorted paths under rust, src, include, test plus Makefile/Cargo.toml/Cargo.lock; concatenate path UTF-8 + NUL + git blob bytes + NUL for each file.",
+    "clean_before_receipt": true,
+    "changed_source_sha256": {
+      "rust/commands.rs": "4ccff24976180c3cab67a33b5834911360b7fc60b4ed8d8ed34ebb04b5d45ed2",
+      "rust/git.rs": "06658031bfd2d0ead89c7342f7dc87e04cc6bd08ea18b3be8316380a9cc9bd0b",
+      "rust/main.rs": "ff0abbaa531d93336312a02fd36c11acfed83c92fc1fa38d4a7b46d5bf4b5625",
+      "rust/tests/selected-branch.py": "4b9f76077670b19194666dcce1de4c30a4ba55b98cf4434b29b3eceb015ae359"
+    }
+  },
+  "before": {
+    "schema": 1,
+    "source_commit": "04acb5793839bfa959438ad074b372b5c98db232",
+    "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+    "harness_sha256": {
+      "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+      "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+      "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+    },
+    "rust_complete": false,
+    "parity_gate": "BLOCKED",
+    "script_timeout_seconds": 120,
+    "environment": {
+      "platform": "Darwin arm64",
+      "git": "git version 2.50.1 (Apple Git-155)",
+      "init.defaultBranch": "master",
+      "TEST_OPTS": "",
+      "pty_rows": 30,
+      "pty_columns": 80
+    },
+    "runs": {
+      "c": {
+        "build_command": [
+          "make",
+          "src/tig",
+          "test/tools/test-graph"
+        ],
+        "build_exit_code": 0,
+        "build_log": "        CC  src/tig.o\n        CC  src/types.o\n        CC  src/string.o\n        CC  src/util.o\n        CC  src/map.o\n        CC  src/argv.o\n        CC  src/io.o\n        CC  src/refdb.o\n       GEN  src/builtin-config.c\n        CC  src/builtin-config.o\n        CC  src/request.o\n        CC  src/line.o\n        CC  src/keys.o\n        CC  src/repo.o\n        CC  src/options.o\n        CC  src/draw.o\n        CC  src/prompt.o\n        CC  src/display.o\n        CC  src/view.o\n        CC  src/search.o\n        CC  src/parse.o\n        CC  src/watch.o\n        CC  src/pager.o\n        CC  src/log.o\n        CC  src/reflog.o\n        CC  src/diff.o\n        CC  src/help.o\n        CC  src/tree.o\n        CC  src/blob.o\n        CC  src/blame.o\n        CC  src/refs.o\n        CC  src/status.o\n        CC  src/stage.o\n        CC  src/main.o\n        CC  src/stash.o\n        CC  src/grep.o\n        CC  src/ui.o\n        CC  src/apps.o\n        CC  src/graph.o\n        CC  src/graph-v1.o\n        CC  src/graph-v2.o\n        CC  compat/hashtab.o\n        CC  compat/utf8proc.o\n      LINK  src/tig\n        CC  test/tools/test-graph.o\n      LINK  test/tools/test-graph\n",
+        "results": [
+          {
+            "script": "test/main/branch-var-test",
+            "script_sha256": "2ed95c116b403b74c4389b9940dd5b928572db92a1de25ca1c3f6e4c3e969aa4",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 3
+            },
+            "assertions": [
+              {
+                "id": "vars_assert_count#1",
+                "status": "OK"
+              },
+              {
+                "id": "vars#1",
+                "status": "OK"
+              },
+              {
+                "id": "main.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/main/branch-var-test/.test-result",
+            "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] main.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          }
+        ],
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/src/tig",
+            "sha256": "9c72db7deffcaeb503bef55a8be6c96323669ea02fd88591054e2cceea2e7efb"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/test/tools/test-graph",
+            "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+          }
+        },
+        "binaries_unchanged": true,
+        "summary": {
+          "pass": 1
+        }
+      },
+      "rust": {
+        "build_command": [
+          "make",
+          "rust-test-binaries"
+        ],
+        "build_exit_code": 0,
+        "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/target/release/test-graph\"\n   Compiling libc v0.2.189\n   Compiling autocfg v1.5.1\n   Compiling parking_lot_core v0.9.12\n   Compiling signal-hook v0.3.18\n   Compiling cfg-if v1.0.5\n   Compiling log v0.4.34\n   Compiling smallvec v1.16.2\n   Compiling memchr v2.8.3\n   Compiling rustix v0.38.44\n   Compiling scopeguard v1.2.0\n   Compiling lock_api v0.4.14\n   Compiling bitflags v2.13.2\n   Compiling regex-syntax v0.8.11\n   Compiling unicode-width v0.2.0\n   Compiling num-traits v0.2.19\n   Compiling aho-corasick v1.1.5\n   Compiling regex-automata v0.4.18\n   Compiling chrono v0.4.45\n   Compiling errno v0.3.14\n   Compiling mio v1.2.3\n   Compiling signal-hook-registry v1.4.8\n   Compiling parking_lot v0.12.5\n   Compiling signal-hook-mio v0.2.5\n   Compiling crossterm v0.28.1\n   Compiling regex v1.13.1\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig)\n    Finished `release` profile [optimized] target(s) in 43.32s\n",
+        "results": [
+          {
+            "script": "test/main/branch-var-test",
+            "script_sha256": "2ed95c116b403b74c4389b9940dd5b928572db92a1de25ca1c3f6e4c3e969aa4",
+            "exit_code": 1,
+            "timed_out": false,
+            "status": "fail",
+            "reasons": [
+              "script_exit_nonzero",
+              "failed_checks"
+            ],
+            "checks": {
+              "FAIL": 2
+            },
+            "assertions": [
+              {
+                "id": "vars_assert_count#1",
+                "status": "FAIL"
+              }
+            ],
+            "receipt_path": "test/tmp/main/branch-var-test/.test-result",
+            "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] vars_assert_count != expected/vars_assert_count\n\u001b[1mdiff --git a/expected/vars_assert_count b/vars_assert_count\u001b[m\n\u001b[1mindex e69de29..b8626c4 100644\u001b[m\n\u001b[1m--- a/expected/vars_assert_count\u001b[m\n\u001b[1m+++ b/vars_assert_count\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m4\u001b[m\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/test/tools/libtest.sh: line 403: vars: No such file or directory\r\n| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Unsupported command variable: branch\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] vars_assert_count != expected/vars_assert_count\r\n| \u001b[1mdiff --git a/expected/vars_assert_count b/vars_assert_count\u001b[m\r\n| \u001b[1mindex e69de29..b8626c4 100644\u001b[m\r\n| \u001b[1m--- a/expected/vars_assert_count\u001b[m\r\n| \u001b[1m+++ b/vars_assert_count\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m4\u001b[m\r\n"
+          }
+        ],
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/target/release/tig",
+            "sha256": "47421ee95adf44c8aa151da988178360fa66fbd7babbb60127b04558c5093a5a"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig/target/release/test-graph",
+            "sha256": "9a6ead464307c8374c1d010f72a59c381252f28c48ec67bfe517d4621c34c43d"
+          }
+        },
+        "binaries_unchanged": true,
+        "summary": {
+          "fail": 1
+        }
+      }
+    },
+    "mapping": [
+      {
+        "script": "test/main/branch-var-test",
+        "c_status": "pass",
+        "rust_status": "fail",
+        "assertions": [
+          {
+            "id": "vars_assert_count#1",
+            "c": "OK",
+            "rust": "FAIL"
+          },
+          {
+            "id": "vars#1",
+            "c": "OK",
+            "rust": "NOT_REACHED"
+          },
+          {
+            "id": "main.screen#1",
+            "c": "OK",
+            "rust": "NOT_REACHED"
+          }
+        ]
+      }
+    ],
+    "source_content_sha256": "9033eaed0e410fdc297fc33e3d9876c6efdea3c83dd9d423d290d01069189675"
+  },
+  "checks": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--check"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--quiet"
+      ],
+      "exit_code": 0,
+      "output": "\nrunning 62 tests\n..............................................................\ntest result: ok. 62 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.53s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 25 tests\n.........................\ntest result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.02s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n"
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "output": "    Checking tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/tig)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.76s\n"
+    },
+    {
+      "command": [
+        "python3",
+        "rust/tests/upstream-suite.py",
+        "test/main/branch-var-test",
+        "test/main/default-test",
+        "test/main/escape-control-characters-test",
+        "test/main/pretty-raw-test",
+        "test/refs/branch-var-test",
+        "test/refs/branch-tag-test",
+        "test/refs/branch-checkout-test",
+        "test/refs/replace-test",
+        "test/refs/filter-test",
+        "test/tigrc/escape-var-test",
+        "test/tigrc/env-vars-test",
+        "test/graph/00-simple-test",
+        "--output",
+        "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/work/final-paired.json"
+      ],
+      "exit_code": 0,
+      "output": "c: pass    test/graph/00-simple-test\nc: pass    test/main/branch-var-test\nc: pass    test/main/default-test\nc: pass    test/main/escape-control-characters-test\nc: pass    test/main/pretty-raw-test\nc: pass    test/refs/branch-checkout-test\nc: pass    test/refs/branch-tag-test\nc: pass    test/refs/branch-var-test\nc: pass    test/refs/filter-test\nc: pass    test/refs/replace-test\nc: pass    test/tigrc/env-vars-test\nc: pass    test/tigrc/escape-var-test\nrust: pass    test/graph/00-simple-test\nrust: pass    test/main/branch-var-test\nrust: pass    test/main/default-test\nrust: pass    test/main/escape-control-characters-test\nrust: pass    test/main/pretty-raw-test\nrust: pass    test/refs/branch-checkout-test\nrust: pass    test/refs/branch-tag-test\nrust: pass    test/refs/branch-var-test\nrust: pass    test/refs/filter-test\nrust: pass    test/refs/replace-test\nrust: pass    test/tigrc/env-vars-test\nrust: pass    test/tigrc/escape-var-test\nPASS_SELECTED_SCRIPTS: /Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/work/final-paired.json\n"
+    },
+    {
+      "command": [
+        "python3",
+        "rust/tests/selected-branch.py"
+      ],
+      "exit_code": 0,
+      "output": "PASS: src/tig local-priority\nPASS: release/tig local-priority\nPASS: src/tig remote-priority\nPASS: release/tig remote-priority\nPASS: src/tig unconfigured-remote\nPASS: release/tig unconfigured-remote\nPASS: src/tig tag-only\nPASS: release/tig tag-only\nPASS: src/tig ambiguous-tag\nPASS: release/tig ambiguous-tag\nPASS: src/tig replacement-only\nPASS: release/tig replacement-only\nPASS: src/tig replacement-with-refs\nPASS: release/tig replacement-with-refs\nPASS: src/tig no-refs\nPASS: release/tig no-refs\nPASS: src/tig detached-head\nPASS: release/tig detached-head\nPASS: src/tig replacement-detached\nPASS: release/tig replacement-detached\nPASS: src/tig literal-branch\nPASS: release/tig literal-branch\n"
+    },
+    {
+      "command": [
+        "python3",
+        "rust/tests/command-variable.py"
+      ],
+      "exit_code": 0,
+      "output": "PASS: src/tig literal filenames, empty lists, and two prompts\nPASS: release/tig literal filenames, empty lists, and two prompts\n"
+    },
+    {
+      "command": [
+        "python3",
+        "rust/tests/main-command-refresh.py"
+      ],
+      "exit_code": 0,
+      "output": "PASS: :exec @echo fine preserves fullscreen grep and cached main\nPASS: :!echo fine preserves fullscreen grep and cached main\n"
+    }
+  ],
+  "virtual_merge": {
+    "other_pr": "https://github.com/naikokodayo/tig/pull/27",
+    "other_head": "1f2f49dbc15eccd32013f8d40246902da7f29a38",
+    "tree": "f0ce6f773ff6f78d69db47e5b11996181e3c491b",
+    "conflicts": false,
+    "checks": [
+      {
+        "command": [
+          "cargo",
+          "fmt",
+          "--check"
+        ],
+        "exit_code": 0,
+        "output": ""
+      },
+      {
+        "command": [
+          "cargo",
+          "test",
+          "--quiet",
+          "--target-dir",
+          "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/work/virtual-target"
+        ],
+        "exit_code": 0,
+        "output": "\nrunning 63 tests\n...............................................................\ntest result: ok. 63 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.34s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 25 tests\n.........................\ntest result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.08s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n"
+      },
+      {
+        "command": [
+          "cargo",
+          "clippy",
+          "--all-targets",
+          "--target-dir",
+          "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/work/virtual-target",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "output": "    Checking memchr v2.8.3\n    Checking scopeguard v1.2.0\n    Checking log v0.4.34\n    Checking smallvec v1.16.2\n    Checking cfg-if v1.0.5\n    Checking libc v0.2.189\n    Checking bitflags v2.13.2\n    Checking regex-syntax v0.8.11\n    Checking unicode-width v0.2.0\n    Checking num-traits v0.2.19\n    Checking lock_api v0.4.14\n    Checking aho-corasick v1.1.5\n    Checking chrono v0.4.45\n    Checking errno v0.3.14\n    Checking mio v1.2.3\n    Checking parking_lot_core v0.9.12\n    Checking signal-hook-registry v1.4.8\n    Checking rustix v0.38.44\n    Checking parking_lot v0.12.5\n    Checking signal-hook v0.3.18\n    Checking signal-hook-mio v0.2.5\n    Checking crossterm v0.28.1\n    Checking regex-automata v0.4.18\n    Checking regex v1.13.1\n    Checking tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-branch-var/work/virtual-merge)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.84s\n"
+      }
+    ]
+  },
+  "review": {
+    "independent_read_only_reviewers": 2,
+    "remaining_confirmed_findings": 0,
+    "resolved": [
+      "detached HEAD branch",
+      "unconfigured remote ref",
+      "ambiguous tag refname",
+      "replacement input order with later tags",
+      "detached HEAD before replacement"
+    ]
+  },
+  "limits": [
+    "Focused parity only; no full 154-script suite rerun or claim.",
+    "Uses existing history decoration sort and known command-view boundaries; other views without reference context remain fail-closed.",
+    "Existing safety-qualified tag names and longest configured remote-prefix matching are preserved."
+  ]
+}
