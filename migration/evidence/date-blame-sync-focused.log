@@ -1,0 +1,289 @@
+test/main/date-test
+  [OK] default-date.screen assertion
+  [OK] local-date.screen assertion
+  [OK] relative-date.screen assertion
+  [OK] relative-compact-date.screen assertion
+  [OK] custom-short-date.screen assertion
+  [OK] custom-tz-date.screen assertion
+  [OK] no-date.screen assertion
+  [OK] custom-date.screen assertion
+
+test/main/pretty-raw-test
+  [OK] main-pretty-raw.screen assertion
+
+test/main/default-test
+  [OK] main-default.screen assertion
+  [OK] main-ref-format.screen assertion
+  [OK] main-remotes-hidden.screen assertion
+  [OK] main-no-refs.screen assertion
+  [OK] main-no-graph.screen assertion
+  [OK] main-with-diff.screen assertion
+
+test/main/show-changes-test
+  [OK] main-with-unstaged.screen assertion
+  [OK] main-with-unstaged-split.screen assertion
+  [OK] main-with-unstaged-and-staged-split.screen assertion
+  [OK] main-with-staged.screen assertion
+  [OK] main-with-staged-split.screen assertion
+  [OK] main-with-staged-and-unstaged.screen assertion
+  [OK] main-with-renamed.screen assertion
+  [OK] main-with-conflict.screen assertion
+  [OK] main-all-refs.screen assertion
+
+test/main/show-changes-after-rename-test
+  [OK] default.screen assertion
+
+test/main/update-unstaged-changes-test
+  [OK] start.screen assertion
+  [OK] result.screen assertion
+
+test/diff/diff-context-test
+  [OK] diff-default.screen assertion
+  [OK] diff-u4.screen assertion
+  [OK] diff-u5.screen assertion
+  [OK] diff-u10.screen assertion
+  [OK] diff-u8.screen assertion
+  [OK] diff-default-from-main.screen assertion
+  [OK] diff-u10-from-main.screen assertion
+  [OK] diff-u4-from-main.screen assertion
+  [OK] diff-u5-from-main.screen assertion
+  [OK] diff-u8-from-main.screen assertion
+
+test/diff/diff-wdiff-context-test
+  [OK] diff-default.screen assertion
+  [OK] diff-u4.screen assertion
+  [OK] diff-u5.screen assertion
+  [OK] diff-u10.screen assertion
+  [OK] diff-u8.screen assertion
+  [OK] diff-default-from-main.screen assertion
+  [OK] diff-u10-from-main.screen assertion
+  [OK] diff-u4-from-main.screen assertion
+  [OK] diff-u5-from-main.screen assertion
+  [OK] diff-u8-from-main.screen assertion
+
+test/tigrc/source-test
+  [OK] source-file-plain.screen assertion
+  [OK] source-file-plain.stderr assertion
+  [OK] source-file-quietly.screen assertion
+  [OK] source-file-quietly.stderr assertion
+  [OK] source-nonexistent-file.screen assertion
+  [OK] source-nonexistent-file.stderr assertion
+  [OK] source-nonexistent-file-quietly.screen assertion
+  [OK] source-nonexistent-file-quietly.stderr assertion
+  [OK] source-tilde-path.screen assertion
+  [OK] source-tilde-path.stderr assertion
+
+test/tigrc/parse-test
+  [OK] stderr assertion
+  [OK] help.screen assertion
+
+test/tigrc/env-vars-test
+  [OK] stderr assertion
+  [OK] help.screen assertion
+
+test/tigrc/xdg-config-home-test
+  [OK] case-.tigrc.out assertion
+  [OK] case-.tigrc.stderr assertion
+  [OK] case-.config-tig-config.out assertion
+  [OK] case-.config-tig-config.stderr assertion
+  [OK] case-.config-tig-config.out assertion
+  [OK] case-.config-tig-config.stderr assertion
+  [OK] case-etc-tig-config.out assertion
+  [OK] case-etc-tig-config.stderr assertion
+
+test/blame/blob-blame-test
+[FAIL] recursive-blame.screen != expected/recursive-blame.screen
+diff --git a/expected/recursive-blame.screen b/recursive-blame.screen
+index 8e68943..c4ed1db 100644
+--- a/expected/recursive-blame.screen
++++ b/recursive-blame.screen
+@@ -1,3 +1,24 @@
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   1| import sbt._
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   2| import Keys._
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   3| 
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   4| import ch.epfl.lamp.sbtscalajs._
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   5| import ScalaJSPlugin._
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   6| import ScalaJSKeys._
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   7| 
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   8| object ScalaJSBuild extends Build {
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   9| 
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  10|   val scalajsScalaVersion = "2.10.2"
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  11| 
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  12|   val projectSettings = Defaults.defaultSettings ++ Seq(
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  13|       organization := "scalajs-benchmarks",
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  14|       version := "0.1-SNAPSHOT"
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  15|   )
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  16| 
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  17|   val defaultSettings = projectSettings ++ scalaJSSettings ++ Seq(
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  18|       scalaVersion := scalajsScalaVersion,
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  19|       scalacOptions ++= Seq(
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  20|           "-deprecation",
++90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  21|           "-unchecked",
+ 90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  22|           "-feature",
+ 90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  23|           "-encoding", "utf8"
+ 90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  24|       )
+@@ -5,25 +26,4 @@
+ 90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  26| 
+ 90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  27|   lazy val benchmarkSettings = defaultSettings ++ Seq(
+ 90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  28|       unmanagedSources in (Compile, packageJS) +=
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  29|           baseDirectory.value / "exports.js"
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  30|   )
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  31|
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  32|   lazy val parent: Project = Project(
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  33|       id = "parent",
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  34|       base = file("."),
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  35|       settings = projectSettings ++ Seq(
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  36|           name := "Scala.js Benchmarks",
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  37|           publishArtifact in Compile := false,
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  38|
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  39|           clean := clean.dependsOn(
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  40|              clean in common,
+-b103989 Jonas Fonseca 2013-10-20 00:23 -0700  41|              clean in deltablue,
+-4edd069 Jonas Fonseca 2013-10-17 20:34 -0400  42|              clean in richards,
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  43|              clean in tracer
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  44|           ).value
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  45|       )
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  46|   ).aggregate(
+-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  47|       common,
+-b103989 Jonas Fonseca 2013-10-20 00:23 -0700  48|       deltablue,
+-4edd069 Jonas Fonseca 2013-10-17 20:34 -0400  49|       richards,
+-[blame] b103989d59edab3adc312ff5408fa3d344ea0201:project/Build.scala - line 41 of 66                                                                                                                 74%
++[blame] 90286e0752016a6bca30dfa7ca236d1f99345eb8:project/Build.scala - line 1 of 66                                                                                                                  42%
+
+test/blame/default-test
+[FAIL] unexpected status code: 1 (should be 0)
+  [OK] blame-default.screen assertion
+[FAIL] blame-with-diff.screen != expected/blame-with-diff.screen
+diff --git a/expected/blame-with-diff.screen b/blame-with-diff.screen
+index 1bc19cb..65f4ebb 100644
+--- a/expected/blame-with-diff.screen
++++ b/blame-with-diff.screen
+@@ -8,22 +8,22 @@
+ 4779f9b Jonas Fonseca      2013-11-26 20:13 -0500   8| object ScalaJSBenchmarks 
+ 90286e0 Jonas Fonseca      2013-10-14 13:15 -0400   9| 
+ [blame] 74537d9b257954056d3caa19eb3837500aded883:project/Build.scala - line  14%
++commit 74537d9b257954056d3caa19eb3837500aded883
++Author:     Sébastien Doeraene <sjrdoeraene@gmail.com>
++AuthorDate: Tue Oct 29 18:46:52 2013 +0100
++Commit:     Sébastien Doeraene <sjrdoeraene@gmail.com>
++CommitDate: Tue Oct 29 18:46:52 2013 +0100
++
++    Update for new groupId and package structure of Scala.js.
++---
++ project/Build.scala  | 2 +-
++ project/build.sbt    | 2 +-
++ tracer/App.scala     | 4 ++--
++ tracer/Engine.scala  | 2 +-
++ tracer/JSTypes.scala | 2 +-
++ 5 files changed, 6 insertions(+), 6 deletions(-)
+ 
+ diff --git a/project/Build.scala b/project/Build.scala
+ index 560bca1..1713681 100644
+ --- a/project/Build.scala
+-+++ b/project/Build.scala
+-@@ -1,7 +1,7 @@
+- import sbt._
+- import Keys._
+-
+--import ch.epfl.lamp.sbtscalajs._
+-+import scala.scalajs.sbtplugin._
+- import ScalaJSPlugin._
+- import ScalaJSKeys._
+-
+-
+-
+-
+-
+-[diff] Changes to 'project/Build.scala' - line 20 of 24                     100%
++[diff] 74537d9b257954056d3caa19eb3837500aded883 - line 1 of 76               23%
+[FAIL] blame-with-diff-no-file-filter.screen != expected/blame-with-diff-no-file-filter.screen
+diff --git a/expected/blame-with-diff-no-file-filter.screen b/blame-with-diff-no-file-filter.screen
+index 6cfb5a0..65f4ebb 100644
+--- a/expected/blame-with-diff-no-file-filter.screen
++++ b/blame-with-diff-no-file-filter.screen
+@@ -8,22 +8,22 @@
+ 4779f9b Jonas Fonseca      2013-11-26 20:13 -0500   8| object ScalaJSBenchmarks 
+ 90286e0 Jonas Fonseca      2013-10-14 13:15 -0400   9| 
+ [blame] 74537d9b257954056d3caa19eb3837500aded883:project/Build.scala - line  14%
++commit 74537d9b257954056d3caa19eb3837500aded883
++Author:     Sébastien Doeraene <sjrdoeraene@gmail.com>
++AuthorDate: Tue Oct 29 18:46:52 2013 +0100
++Commit:     Sébastien Doeraene <sjrdoeraene@gmail.com>
++CommitDate: Tue Oct 29 18:46:52 2013 +0100
++
++    Update for new groupId and package structure of Scala.js.
++---
++ project/Build.scala  | 2 +-
++ project/build.sbt    | 2 +-
++ tracer/App.scala     | 4 ++--
++ tracer/Engine.scala  | 2 +-
++ tracer/JSTypes.scala | 2 +-
++ 5 files changed, 6 insertions(+), 6 deletions(-)
+ 
+ diff --git a/project/Build.scala b/project/Build.scala
+ index 560bca1..1713681 100644
+ --- a/project/Build.scala
+-+++ b/project/Build.scala
+-@@ -1,7 +1,7 @@
+- import sbt._
+- import Keys._
+-
+--import ch.epfl.lamp.sbtscalajs._
+-+import scala.scalajs.sbtplugin._
+- import ScalaJSPlugin._
+- import ScalaJSKeys._
+-
+-diff --git a/project/build.sbt b/project/build.sbt
+-index 63f84d4..f5971c3 100644
+---- a/project/build.sbt
+-+++ b/project/build.sbt
+-[diff] Changes to 'project/Build.scala' - line 24 of 76                      42%
++[diff] 74537d9b257954056d3caa19eb3837500aded883 - line 1 of 76               23%
+[FAIL] blame-parent-of-74537d9.screen not found
+
+test/blame/initial-diff-test
+[FAIL] unexpected status code: 1 (should be 0)
+  [OK] initial-diff.screen assertion
+[FAIL] blame-deleted-line.screen not found
+
+test/blame/navigation-parent-test
+[FAIL] unexpected status code: 1 (should be 0)
+[FAIL] recursive-blame.screen not found
+
+test/blame/revargs-test
+[FAIL] unexpected status code: 1 (should be 0)
+[FAIL] limit.screen not found
+[FAIL] parent-of-4779f9b.screen not found
+
+test/blame/start-on-line-test
+  [OK] position.screen assertion
+
+test/blame/stash-test
+[FAIL] unexpected status code: 1 (should be 0)
+[FAIL] diff.screen != expected/diff.screen
+diff --git a/expected/diff.screen b/diff.screen
+index d95bdfd..9a62727 100644
+--- a/expected/diff.screen
++++ b/diff.screen
+@@ -1,2 +1,2 @@
+--original line
+-[diff] Changes to 'file' - line 9 of 10  90%
++@@ -0,0 +1 @@
++[diff] Changes to 'file' - line 18 of 19                                     94%
+[FAIL] blame1.screen not found
+[FAIL] blame2.screen not found
+
+test/tigrc/quote-test
+[FAIL] unexpected status code: 1 (should be 0)
+[FAIL] stderr != expected/stderr
+diff --git a/expected/stderr b/stderr
+index e69de29..32bcdac 100644
+--- a/expected/stderr
++++ b/stderr
+@@ -0,0 +1 @@
++tig: Unclosed command variable
+  [OK] shell-command.txt assertion
+[FAIL] quoted-prompt-with-spaces.screen not found
+[FAIL] mid-quoted-prompt-with-spaces.screen not found
+[FAIL] single-quoted-arg-with-escaped-chars.screen not found
+[FAIL] double-quoted-arg-with-escaped-chars.screen not found

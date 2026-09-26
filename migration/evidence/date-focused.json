@@ -1,0 +1,105 @@
+{
+  "c": {
+    "binary_sha256": "5a16f43d31755e16c77f22c85ed5f4e717558dbd96c0d82ccea440daff05dd11",
+    "tests": [
+      {
+        "script": "test/main/date-test",
+        "passed": 8,
+        "failed": 0,
+        "exit_code": 0
+      },
+      {
+        "script": "test/main/pretty-raw-test",
+        "passed": 1,
+        "failed": 0,
+        "exit_code": 0
+      },
+      {
+        "script": "test/main/default-test",
+        "passed": 6,
+        "failed": 0,
+        "exit_code": 0
+      },
+      {
+        "script": "test/main/show-changes-test",
+        "passed": 9,
+        "failed": 0,
+        "exit_code": 0
+      },
+      {
+        "script": "test/main/show-changes-after-rename-test",
+        "passed": 1,
+        "failed": 0,
+        "exit_code": 0
+      },
+      {
+        "script": "test/main/update-unstaged-changes-test",
+        "passed": 2,
+        "failed": 0,
+        "exit_code": 0
+      }
+    ]
+  },
+  "rust": {
+    "binary_sha256": "e34f5fdfb63ecf1bd6a3b81030e1b232c3d5852dc0f9f9cbd9b09f0ec468d68c",
+    "tests": [
+      {
+        "script": "test/main/date-test",
+        "passed": 8,
+        "failed": 0,
+        "exit_code": 0
+      },
+      {
+        "script": "test/main/pretty-raw-test",
+        "passed": 1,
+        "failed": 0,
+        "exit_code": 0
+      },
+      {
+        "script": "test/main/default-test",
+        "passed": 6,
+        "failed": 0,
+        "exit_code": 0
+      },
+      {
+        "script": "test/main/show-changes-test",
+        "passed": 9,
+        "failed": 0,
+        "exit_code": 0
+      },
+      {
+        "script": "test/main/show-changes-after-rename-test",
+        "passed": 1,
+        "failed": 0,
+        "exit_code": 0
+      },
+      {
+        "script": "test/main/update-unstaged-changes-test",
+        "passed": 2,
+        "failed": 0,
+        "exit_code": 0
+      }
+    ]
+  },
+  "scope": "Date compatibility slice; not full upstream parity",
+  "base_commit": "4b2262a7b0dd7c3b0a62316a5ecb4e6582caaade",
+  "environment": "macOS arm64; Rust/Cargo 1.81.0; defaultBranch=master command override",
+  "command": "PATH=\"$PWD/target/release:$PWD/test/tools:$PATH\" GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=init.defaultBranch GIT_CONFIG_VALUE_0=master bash test/main/date-test (and each listed script; src replaces target/release for C)",
+  "baseline_date_test": {
+    "passed": 0,
+    "failed": 9,
+    "first_error": "The pager view does not have a date column configured",
+    "note": "Baseline receipt observed before edits; no baseline binary hash captured"
+  },
+  "verification": {
+    "fmt": true,
+    "unit_tests_passed": 55,
+    "unit_tests_failed": 0,
+    "clippy_warnings_denied": true,
+    "release_build": true,
+    "date_subprocess_checks_passed": 13,
+    "date_subprocess_checks_skipped": 0,
+    "terminal_checks_passed": 108
+  },
+  "full_suite_rerun": false
+}

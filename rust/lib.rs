@@ -2,6 +2,7 @@
 #![forbid(unsafe_code)]
 
 pub mod config;
+pub mod date;
 pub mod git;
 pub mod graph;
 pub mod help_view;

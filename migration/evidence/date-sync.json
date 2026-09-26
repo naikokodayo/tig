@@ -1,0 +1,69 @@
+{
+  "merged_main": "47f1a2b2d5d939518eb6372a5499677dc6def133",
+  "merge_commit": "0a9ba4709101f2d9dabe1f8260d14847fb8b6456",
+  "binary_sha256": "14bb37ccff9b1aacd44f4ed8724c0f7f59a97709e39ac30e26e2539924507cc4",
+  "tests": [
+    {
+      "script": "test/main/date-test",
+      "passed": 8,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/pretty-raw-test",
+      "passed": 1,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/default-test",
+      "passed": 6,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/show-changes-test",
+      "passed": 9,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/show-changes-after-rename-test",
+      "passed": 1,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/update-unstaged-changes-test",
+      "passed": 2,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/diff/diff-context-test",
+      "passed": 10,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/diff/diff-wdiff-context-test",
+      "passed": 10,
+      "failed": 0,
+      "exit_code": 0
+    }
+  ],
+  "environment": "macOS arm64; Rust 1.81.0",
+  "verification": {
+    "fmt": true,
+    "unit_tests_passed": 59,
+    "unit_tests_failed": 0,
+    "clippy_warnings_denied": true,
+    "release_build": true,
+    "date_subprocess_checks_passed": 15,
+    "date_subprocess_checks_skipped": 0,
+    "terminal_checks_passed": 108
+  },
+  "integration_fix": "Raw stdin flag detection now stops at --end-of-options as well as --; regression failed before fix.",
+  "original_tests_unchanged": true,
+  "full_suite_rerun": false
+}

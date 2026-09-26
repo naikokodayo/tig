@@ -1,0 +1,24 @@
+{
+  "scope": "Focused nonlocal %s explicit rejection; exact compatibility remains OPEN. No full suite rerun.",
+  "source_commit": "f22e363f83939faee7da65e49de64b1fc9a0334a",
+  "main_included": "03f6a29f",
+  "platform": "macOS arm64",
+  "rustc": "rustc 1.81.0 (eeb90cda1 2024-09-04) (Homebrew)",
+  "binary_sha256": "6fb395cababb3c53271cf8aedb5bb42fab9c4bc560066bb539d767499f697ba6",
+  "fmt": "pass",
+  "unit_tests": 67,
+  "clippy_warnings_denied": "pass",
+  "release_build": "pass",
+  "isolated_date_checks": 29,
+  "pty_checks": 108,
+  "upstream": {
+    "scripts_each": 6,
+    "assertions_each": 27,
+    "failed": 0,
+    "missing": 0,
+    "evidence": "date-percent-s-upstream.json"
+  },
+  "nonlocal_percent_s_gate": "OPEN; explicit error replaces silently incorrect output",
+  "red_regression": "Traceback (most recent call last):\n  File \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/date-task-clone/rust/tests/date-compatibility.py\", line 80, in <module>\n    check(temporary, timestamp, setting, None if expected is None else expected + ' subject', **overrides)\n  File \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/date-task-clone/rust/tests/date-compatibility.py\", line 28, in check\n    assert result.returncode != 0 and 'tig: ' in result.stderr, result\nAssertionError: CompletedProcess(args=['/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/date-task-clone/target/release/tig', '--pretty=raw'], returncode=0, stdout='', stderr='')\n",
+  "green_regression": "29 date compatibility checks passed\n"
+}

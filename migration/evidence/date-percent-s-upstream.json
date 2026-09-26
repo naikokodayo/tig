@@ -1,0 +1,683 @@
+{
+  "schema": 1,
+  "source_commit": "f22e363f83939faee7da65e49de64b1fc9a0334a",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "PASS_SELECTED_SCRIPTS",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/main/date-test",
+          "script_sha256": "b050de02b7fcb48d19e400aa43e9ac5256450674b2555717ecfff6497873f955",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "default-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "local-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "relative-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "relative-compact-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-short-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-tz-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "no-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-date.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/date-test/.test-result",
+          "receipt": "  [OK] default-date.screen assertion\n  [OK] local-date.screen assertion\n  [OK] relative-date.screen assertion\n  [OK] relative-compact-date.screen assertion\n  [OK] custom-short-date.screen assertion\n  [OK] custom-tz-date.screen assertion\n  [OK] no-date.screen assertion\n  [OK] custom-date.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/default-test",
+          "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-ref-format.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-remotes-hidden.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/default-test/.test-result",
+          "receipt": "  [OK] main-default.screen assertion\n  [OK] main-ref-format.screen assertion\n  [OK] main-remotes-hidden.screen assertion\n  [OK] main-no-refs.screen assertion\n  [OK] main-no-graph.screen assertion\n  [OK] main-with-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/pretty-raw-test",
+          "script_sha256": "03a00e6802091e2f011df0e405fa3f586dcd37e868a42145734e6b75932d3c94",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-pretty-raw.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/pretty-raw-test/.test-result",
+          "receipt": "  [OK] main-pretty-raw.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/show-changes-after-rename-test",
+          "script_sha256": "667f4b735c4588dff1445d4901d899c1bbfdfc278713d54c1b38182d725ef2b4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "default.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/show-changes-after-rename-test/.test-result",
+          "receipt": "  [OK] default.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/show-changes-test",
+          "script_sha256": "243aabd40fe83a59940f0289d19596d94d1cd7fccc088e3f1116f79b0e13b709",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 9
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-and-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-and-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-renamed.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-all-refs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/show-changes-test/.test-result",
+          "receipt": "  [OK] main-with-unstaged.screen assertion\n  [OK] main-with-unstaged-split.screen assertion\n  [OK] main-with-unstaged-and-staged-split.screen assertion\n  [OK] main-with-staged.screen assertion\n  [OK] main-with-staged-split.screen assertion\n  [OK] main-with-staged-and-unstaged.screen assertion\n  [OK] main-with-renamed.screen assertion\n  [OK] main-with-conflict.screen assertion\n  [OK] main-all-refs.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/update-unstaged-changes-test",
+          "script_sha256": "241f169bbd0c507256bb23b2a56963cd1dafd3325a642693d7f21c5ef871ce8c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/update-unstaged-changes-test/.test-result",
+          "receipt": "  [OK] start.screen assertion\n  [OK] result.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/date-task-clone/src/tig",
+          "sha256": "5a16f43d31755e16c77f22c85ed5f4e717558dbd96c0d82ccea440daff05dd11"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/date-task-clone/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 6
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/date-task-clone/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/date-task-clone/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/date-task-clone/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.04s\n",
+      "results": [
+        {
+          "script": "test/main/date-test",
+          "script_sha256": "b050de02b7fcb48d19e400aa43e9ac5256450674b2555717ecfff6497873f955",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "default-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "local-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "relative-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "relative-compact-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-short-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-tz-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "no-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-date.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/date-test/.test-result",
+          "receipt": "  [OK] default-date.screen assertion\n  [OK] local-date.screen assertion\n  [OK] relative-date.screen assertion\n  [OK] relative-compact-date.screen assertion\n  [OK] custom-short-date.screen assertion\n  [OK] custom-tz-date.screen assertion\n  [OK] no-date.screen assertion\n  [OK] custom-date.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/default-test",
+          "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-ref-format.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-remotes-hidden.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/default-test/.test-result",
+          "receipt": "  [OK] main-default.screen assertion\n  [OK] main-ref-format.screen assertion\n  [OK] main-remotes-hidden.screen assertion\n  [OK] main-no-refs.screen assertion\n  [OK] main-no-graph.screen assertion\n  [OK] main-with-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/pretty-raw-test",
+          "script_sha256": "03a00e6802091e2f011df0e405fa3f586dcd37e868a42145734e6b75932d3c94",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-pretty-raw.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/pretty-raw-test/.test-result",
+          "receipt": "  [OK] main-pretty-raw.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/show-changes-after-rename-test",
+          "script_sha256": "667f4b735c4588dff1445d4901d899c1bbfdfc278713d54c1b38182d725ef2b4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "default.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/show-changes-after-rename-test/.test-result",
+          "receipt": "  [OK] default.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/show-changes-test",
+          "script_sha256": "243aabd40fe83a59940f0289d19596d94d1cd7fccc088e3f1116f79b0e13b709",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 9
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-and-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-and-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-renamed.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-all-refs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/show-changes-test/.test-result",
+          "receipt": "  [OK] main-with-unstaged.screen assertion\n  [OK] main-with-unstaged-split.screen assertion\n  [OK] main-with-unstaged-and-staged-split.screen assertion\n  [OK] main-with-staged.screen assertion\n  [OK] main-with-staged-split.screen assertion\n  [OK] main-with-staged-and-unstaged.screen assertion\n  [OK] main-with-renamed.screen assertion\n  [OK] main-with-conflict.screen assertion\n  [OK] main-all-refs.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/update-unstaged-changes-test",
+          "script_sha256": "241f169bbd0c507256bb23b2a56963cd1dafd3325a642693d7f21c5ef871ce8c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/update-unstaged-changes-test/.test-result",
+          "receipt": "  [OK] start.screen assertion\n  [OK] result.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/date-task-clone/target/release/tig",
+          "sha256": "6fb395cababb3c53271cf8aedb5bb42fab9c4bc560066bb539d767499f697ba6"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/date-task-clone/target/release/test-graph",
+          "sha256": "58df294d7c495b1d7e68b5f7a4f2af31553f67ca732cfbca6829b0f77c36e5dc"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 6
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/main/date-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "default-date.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "local-date.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "relative-date.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "relative-compact-date.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "custom-short-date.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "custom-tz-date.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "no-date.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "custom-date.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/default-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-ref-format.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-remotes-hidden.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-no-refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-no-graph.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-diff.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/pretty-raw-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-pretty-raw.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/show-changes-after-rename-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/show-changes-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-with-unstaged.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-unstaged-split.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-unstaged-and-staged-split.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-staged.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-staged-split.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-staged-and-unstaged.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-renamed.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-conflict.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-all-refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/update-unstaged-changes-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "start.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "result.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ]
+}
