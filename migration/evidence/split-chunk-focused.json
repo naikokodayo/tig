@@ -1,0 +1,54 @@
+{
+  "scope": "Original split-chunk before/after and 8 public-PTY index/worktree checks only; not full-suite parity",
+  "source_commit": "38a658a6834bfd39bf98171164debb898c8fd77d",
+  "source_tree": "5a83e87d615c37ca860faeee788f3745e07e436c",
+  "source_sha256": "6d659d80d32b50c99e59746a6a696055e4241f1b314df4b48d4d15575acbc879",
+  "source_sha256_recipe": "SHA256 of UTF-8 compact sorted JSON mapping git ls-files Cargo.toml Cargo.lock Makefile tigrc rust src include compat test to SHA256 of file bytes at source_commit",
+  "changed_source_sha256": {
+    "rust/main.rs": "9f6510c415b6accc47b2f03d95a3b899fc10a9244a357b707ef7ab5b0ab8fd8f",
+    "rust/patch.rs": "b3ab20038fded35277cb5f8055d17b116bf17677078bb33cd56ddfa32cbd320e",
+    "rust/tests/split-chunk.py": "4b130fbc40462b06d609ce9c01bfc19525e92542ddae76da5c3da149211b0611"
+  },
+  "baseline_source_commit": "d59e2d52f719ef5b43ff501cadd8852119f2a61e",
+  "binary_routes": {
+    "c": "src/tig",
+    "rust": "target/release/tig"
+  },
+  "binary_sha256": {
+    "before_c": "687fbb3569b2f629730ed57fa65a044b5ec8f806b485cd27844649f343ae43fd",
+    "before_rust": "966929474b11c4425a389132962ac30d3b88eb46af7338a347df2abad4c42449",
+    "after_c": "687fbb3569b2f629730ed57fa65a044b5ec8f806b485cd27844649f343ae43fd",
+    "after_rust": "e094c522d368466c701a4c6f0a5ae6e834ab2300355236445c69262a37336551"
+  },
+  "script": "test/stage/split-chunk-test",
+  "script_sha256": "0aa8614f911de18145b25164645805cc89b7eba159349bdb8181a7284c8c6969",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "reproduce": [
+    "python3 rust/tests/upstream-suite.py test/stage/split-chunk-test --output receipt.json",
+    "python3 rust/tests/split-chunk.py --output safety.json"
+  ],
+  "original_results": [
+    {"phase": "before", "implementation": "c", "exit_code": 0, "timed_out": false, "status": "pass", "assertions": {"default-diff.screen#1": "OK", "split-diff.screen#1": "OK"}},
+    {"phase": "before", "implementation": "rust", "exit_code": 0, "timed_out": false, "status": "fail", "assertions": {"default-diff.screen#1": "OK", "split-diff.screen#1": "FAIL"}},
+    {"phase": "after", "implementation": "c", "exit_code": 0, "timed_out": false, "status": "pass", "assertions": {"default-diff.screen#1": "OK", "split-diff.screen#1": "OK"}},
+    {"phase": "after", "implementation": "rust", "exit_code": 0, "timed_out": false, "status": "pass", "assertions": {"default-diff.screen#1": "OK", "split-diff.screen#1": "OK"}}
+  ],
+  "baseline_failure_receipt": "  [OK] default-diff.screen assertion\n[FAIL] split-diff.screen != expected/split-diff.screen\ndiff --git a/expected/split-diff.screen b/split-diff.screen\nindex 775edde..7736b0f 100644\n--- a/expected/split-diff.screen\n+++ b/split-diff.screen\n@@ -23,7 +23,7 @@ index 12d1d9e..931fee6 100644\n -6\n +edited-too\n  7\n-@@ -8,4 +8,1 @@\n+@@ -8,4 +8,2 @@\n  7\n -8\n -9\n",
+  "safety_binary_hashes": "after_c and after_rust above; all 8 recorded binary hashes verified equal",
+  "safety_results": [
+    {"implementation": "c", "newline": false, "staged": false, "headers_match": true, "index_preserved": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false},
+    {"implementation": "c", "newline": false, "staged": true, "headers_match": true, "index_preserved": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false},
+    {"implementation": "c", "newline": true, "staged": false, "headers_match": true, "index_preserved": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false},
+    {"implementation": "c", "newline": true, "staged": true, "headers_match": true, "index_preserved": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false},
+    {"implementation": "rust", "newline": false, "staged": false, "headers_match": true, "index_preserved": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false},
+    {"implementation": "rust", "newline": false, "staged": true, "headers_match": true, "index_preserved": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false},
+    {"implementation": "rust", "newline": true, "staged": false, "headers_match": true, "index_preserved": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false},
+    {"implementation": "rust", "newline": true, "staged": true, "headers_match": true, "index_preserved": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false}
+  ],
+  "verdict": "PASS_SPLIT_CHUNK_SLICE",
+  "provenance_note": "The final runner started while HEAD was the base commit with the reviewed implementation in the worktree. That unchanged implementation was committed as source_commit during the run; the top-level source tree/content hashes bind the final source. All safety binary hashes match the final built binaries."
+}
