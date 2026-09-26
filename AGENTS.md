@@ -35,3 +35,7 @@ make a Rust result pass.
   Independent reviewers are read-only; merge a clean PR promptly.
 
 The end-to-end C/Rust application benchmark belongs after the parity gate.
+
+## Migration kit
+
+Use the full [Codex Migration Kit skill](https://github.com/naikokodayo/code-migration-kit-with-codex/tree/main/.agents/skills/code-migration) when planning migration batches. Follow its **redesign** path: the work unit is a behavior or subsystem, not a one-to-one C file translation. The current phase is public C/Rust behavior matching; the strict original-script adapter is the judge. The reviewed C dependency map and Rust boundary decisions are in `migration/depmap/` and `migration/ARCHITECTURE.md`. Keep the kit's rulebook/design decisions read-only while implementers are working. Do not install the kit's restrictive local execution rules on someone else's behalf.

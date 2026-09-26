@@ -1,0 +1,18 @@
+# Rust migration design
+
+This is the [Codex Migration Kit](https://github.com/naikokodayo/code-migration-kit-with-codex/tree/main/.agents/skills/code-migration) **redesign** path. The user's safety and idiomatic Rust requirement rules out mechanical C-to-Rust file translation and bug-for-bug reproduction of C data loss. The C executable and its 154 original scripts remain the public behavior reference. Intentional safety differences require explicit evidence; they are not converted into passing assertions. The kit's file-output queue and no-build translation loop do not fit this already-running behavior-matching phase. The final application benchmark remains gated on parity.
+
+The kit's [Tig feasibility verdict](https://github.com/naikokodayo/code-migration-kit-with-codex/blob/main/RUN-NOTES.md#codex-feasibility--tig-c--rust-2026-09-26-stopped-at-stage-00) was conditional on a validated public judge and accepted support scope; its structure-preserving estimate does not estimate this safer redesign. The user subsequently authorized the full Tig migration, chose safe idiomatic Rust over a mechanical port, and asked to continue after the feasibility gate. The strict runner was validated against C and deliberately broken outputs before use. This paragraph records that continuation decision; parity is still open.
+
+The [reviewed C core map](depmap/README.md) records 77 tracked `src/` and `include/tig/` files, 367 dependency edges, and one header cycle. It excludes `compat/` and generated files. It is input to subsystem design, not a Rust file manifest.
+
+At `015ab701`, `rust/main.rs` has 4,744 lines and owns terminal input, view loading, layout, navigation, and command dispatch. That shared state is the main source of overlapping edits and review loops. Keep boundaries concrete:
+
+- `rust/git.rs` is the target owner of Git process arguments, repository data, and parsing; it must not infer terminal selection or draw rows. The current grep-view command in `rust/main.rs` is an exception to move only when that view is changed.
+- `rust/render.rs` and graph modules own formatting and display-cell measurement; they must not spawn Git or mutate the index.
+- `rust/commands.rs` owns variable expansion and argument boundaries; unknown variables fail closed there. Unrecognized terminal key sequences must be rejected before command dispatch.
+- `rust/config.rs` owns validated settings and binding lookup. `rust/main.rs` coordinates live views, terminal state, and refresh.
+
+For each remaining parity slice, trace the caller chain and move only stable, reusable logic to its owner. Delete the replaced branch in the same PR. After key-binding parity stabilizes, input-sequence state is a good first extraction from `rust/main.rs`; after view-specific behavior stabilizes, move pure row construction before moving shared `App` state. Avoid a wholesale `main.rs` split while view semantics still change.
+
+The active queue is the source-bound strict [C/Rust paired receipt](evidence/upstream-rust-only-after-integration.json): 121 Rust script passes, 30 fails, three skips at source `ac78df21`. New PR receipts are scoped evidence; refresh the full 154-script result on integrated main before updating this count. Keep one final hashed receipt per slice, two independent read-only reviewers for safety-critical changes when practical, and merge passing slices promptly.
