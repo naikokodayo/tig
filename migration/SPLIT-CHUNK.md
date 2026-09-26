@@ -21,8 +21,10 @@ raw split patch, and stages its four hunks to reproduce the working file.
 in a controlling PTY, with staged/unstaged and newline/no-newline fixtures,
 checking all headers and unchanged actual index entries/worktree bytes.
 
-The single final receipt is `evidence/split-chunk-focused.json`. It contains
-before/after original-script results, source and binary hashes, focused
-regressions, neighboring safety checks, and the known `file-filter-test`
-`rev-parse.trace` failure. That unrelated failure remains a failure; the
-receipt is not a claim that the full 154-script parity gate has closed.
+The concise final receipt is `evidence/split-chunk-focused.json`: the unchanged
+original split-chunk script before/after, the eight public-PTY safety cases,
+and source/binary hashes. It retains the baseline split-header failure only;
+passing raw transcripts and unrelated neighboring runs are omitted. C passes
+both original assertions before and after; Rust improves from one passing
+assertion to both. All eight safety cases pass. This scoped receipt does not
+claim that the full 154-script parity gate has closed.
