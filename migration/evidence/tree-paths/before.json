@@ -1,0 +1,420 @@
+{
+  "schema": 1,
+  "source_commit": "15ee97625f4ad1f1ab5dde86690e4a5d5ac081c3",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "BLOCKED",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "        CC  src/tig.o\n        CC  src/types.o\n        CC  src/string.o\n        CC  src/util.o\n        CC  src/map.o\n        CC  src/argv.o\n        CC  src/io.o\n        CC  src/refdb.o\n       GEN  src/builtin-config.c\n        CC  src/builtin-config.o\n        CC  src/request.o\n        CC  src/line.o\n        CC  src/keys.o\n        CC  src/repo.o\n        CC  src/options.o\n        CC  src/draw.o\n        CC  src/prompt.o\n        CC  src/display.o\n        CC  src/view.o\n        CC  src/search.o\n        CC  src/parse.o\n        CC  src/watch.o\n        CC  src/pager.o\n        CC  src/log.o\n        CC  src/reflog.o\n        CC  src/diff.o\n        CC  src/help.o\n        CC  src/tree.o\n        CC  src/blob.o\n        CC  src/blame.o\n        CC  src/refs.o\n        CC  src/status.o\n        CC  src/stage.o\n        CC  src/main.o\n        CC  src/stash.o\n        CC  src/grep.o\n        CC  src/ui.o\n        CC  src/apps.o\n        CC  src/graph.o\n        CC  src/graph-v1.o\n        CC  src/graph-v2.o\n        CC  compat/hashtab.o\n        CC  compat/utf8proc.o\n      LINK  src/tig\n        CC  test/tools/test-graph.o\n      LINK  test/tools/test-graph\n",
+      "results": [
+        {
+          "script": "test/tree/file-name-test",
+          "script_sha256": "92f13ad7be65e397e220fd1ceb9aa8effbcb873d7697b42a552d411506a18e35",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "root-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-child-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "second-child-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "second-child-dir-first-file.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/file-name-test/.test-result",
+          "receipt": "  [OK] root-dir.screen assertion\n  [OK] first-child-dir.screen assertion\n  [OK] second-child-dir.screen assertion\n  [OK] second-child-dir-first-file.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/submodule-editor-test",
+          "script_sha256": "f7062c9c27baa6dbb67cde15e0779c5961664f66a01185d90dbc42bc1909c3e7",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench-common-src.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/submodule-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] bench-common-src.screen assertion\n  [OK] bench.screen assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/worktree-editor-test",
+          "script_sha256": "28bb4386d315ee6b2940ab8660152d21e66de48a909a986a4eb4f2ebc2951393",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench-common-src.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/worktree-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] bench-common-src.screen assertion\n  [OK] bench.screen assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths/src/tig",
+          "sha256": "9b76f2e712590a2a824f2b88a0ad1275a23062f6f9d408b1aa3da4fb85ed3e50"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 3
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths/target/release/test-graph\"\n   Compiling libc v0.2.189\n   Compiling parking_lot_core v0.9.12\n   Compiling autocfg v1.5.1\n   Compiling signal-hook v0.3.18\n   Compiling memchr v2.8.3\n   Compiling smallvec v1.16.2\n   Compiling scopeguard v1.2.0\n   Compiling log v0.4.34\n   Compiling cfg-if v1.0.5\n   Compiling rustix v0.38.44\n   Compiling lock_api v0.4.14\n   Compiling bitflags v2.13.2\n   Compiling regex-syntax v0.8.11\n   Compiling unicode-width v0.2.0\n   Compiling num-traits v0.2.19\n   Compiling aho-corasick v1.1.5\n   Compiling regex-automata v0.4.18\n   Compiling errno v0.3.14\n   Compiling mio v1.2.3\n   Compiling signal-hook-registry v1.4.8\n   Compiling parking_lot v0.12.5\n   Compiling signal-hook-mio v0.2.5\n   Compiling crossterm v0.28.1\n   Compiling chrono v0.4.45\n   Compiling regex v1.13.1\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths)\n    Finished `release` profile [optimized] target(s) in 41.71s\n",
+      "results": [
+        {
+          "script": "test/tree/file-name-test",
+          "script_sha256": "92f13ad7be65e397e220fd1ceb9aa8effbcb873d7697b42a552d411506a18e35",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 3,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "root-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-child-dir.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "second-child-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "second-child-dir-first-file.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/file-name-test/.test-result",
+          "receipt": "  [OK] root-dir.screen assertion\n[FAIL] first-child-dir.screen != expected/first-child-dir.screen\n\u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\n\u001b[1mindex 0a482af..53d6b42 100644\u001b[m\n\u001b[1m--- a/expected/first-child-dir.screen\u001b[m\n\u001b[1m+++ b/first-child-dir.screen\u001b[m\n\u001b[36m@@ -1,7 +1,7 @@\u001b[m\n Directory path /-- foo bar/\u001b[m\n drwxr-xr-x                                    ..\u001b[m\n -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\n\u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n  [OK] second-child-dir.screen assertion\n  [OK] second-child-dir-first-file.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 4 test(s)\r\n|   [OK] root-dir.screen assertion\r\n| [FAIL] first-child-dir.screen != expected/first-child-dir.screen\r\n| \u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\r\n| \u001b[1mindex 0a482af..53d6b42 100644\u001b[m\r\n| \u001b[1m--- a/expected/first-child-dir.screen\u001b[m\r\n| \u001b[1m+++ b/first-child-dir.screen\u001b[m\r\n| \u001b[36m@@ -1,7 +1,7 @@\u001b[m\r\n|  Directory path /-- foo bar/\u001b[m\r\n|  drwxr-xr-x                                    ..\u001b[m\r\n|  -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\r\n| \u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|   [OK] second-child-dir.screen assertion\r\n|   [OK] second-child-dir-first-file.screen assertion\r\n"
+        },
+        {
+          "script": "test/tree/submodule-editor-test",
+          "script_sha256": "f7062c9c27baa6dbb67cde15e0779c5961664f66a01185d90dbc42bc1909c3e7",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 5,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench-common-src.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "bench.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/submodule-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n[FAIL] bench-common-src.screen != expected/bench-common-src.screen\n\u001b[1mdiff --git a/expected/bench-common-src.screen b/bench-common-src.screen\u001b[m\n\u001b[1mindex 530334d..eb75310 100644\u001b[m\n\u001b[1m--- a/expected/bench-common-src.screen\u001b[m\n\u001b[1m+++ b/bench-common-src.screen\u001b[m\n\u001b[36m@@ -1,13 +1,13 @@\u001b[m\n\u001b[31m-Directory path /common/src/\u001b[m\n\u001b[31m-drwxr-xr-x                                      ..\u001b[m\n\u001b[31m-drwxr-xr-x Jonas Fonseca 2014-03-01 17:26 -0500 main\u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m-[tree] Open parent directory                                                100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32mDirectory path /\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 common\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 deltablue\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 project\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 richards\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 sudoku\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 tracer\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Jonas Fonseca    53 2013-10-14 16:19 -0400 .gitignore\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Jonas Fonseca  1499 2013-10-26 12:54 -0400 LICENSE\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Philipp Haller 2609 2014-01-16 15:32 +0100 README.md\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rwxr-xr-x Jonas Fonseca   493 2014-03-01 17:26 -0500 run.sh\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[tree] 1a4ced7066ada2b26dcb0044f763a8438cd375df - file 1 of 10              100%\u001b[m\n  [OK] bench.screen assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 6 test(s)\r\n|   [OK] vars_assert_count assertion\r\n|   [OK] vars assertion\r\n| [FAIL] bench-common-src.screen != expected/bench-common-src.screen\r\n| \u001b[1mdiff --git a/expected/bench-common-src.screen b/bench-common-src.screen\u001b[m\r\n| \u001b[1mindex 530334d..eb75310 100644\u001b[m\r\n| \u001b[1m--- a/expected/bench-common-src.screen\u001b[m\r\n| \u001b[1m+++ b/bench-common-src.screen\u001b[m\r\n| \u001b[36m@@ -1,13 +1,13 @@\u001b[m\r\n| \u001b[31m-Directory path /common/src/\u001b[m\r\n| \u001b[31m-drwxr-xr-x                                      ..\u001b[m\r\n| \u001b[31m-drwxr-xr-x Jonas Fonseca 2014-03-01 17:26 -0500 main\u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m-[tree] Open parent directory                                                100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mDirectory path /\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 common\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 deltablue\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 project\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 richards\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 sudoku\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 tracer\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Jonas Fonseca    53 2013-10-14 16:19 -0400 .gitignore\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Jonas Fonseca  1499 2013-10-26 12:54 -0400 LICENSE\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Philipp Haller 2609 2014-01-16 15:32 +0100 README.md\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rwxr-xr-x Jonas Fonseca   493 2014-03-01 17:26 -0500 run.sh\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[tree] 1a4ced7066ada2b26dcb0044f763a8438cd375df - file 1 of 10              100%\u001b[m\r\n|   [OK] bench.screen assertion\r\n|   [OK] editor.log assertion\r\n|   [OK] exec-env assertion\r\n"
+        },
+        {
+          "script": "test/tree/worktree-editor-test",
+          "script_sha256": "28bb4386d315ee6b2940ab8660152d21e66de48a909a986a4eb4f2ebc2951393",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 5,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench-common-src.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "bench.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/worktree-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n[FAIL] bench-common-src.screen != expected/bench-common-src.screen\n\u001b[1mdiff --git a/expected/bench-common-src.screen b/bench-common-src.screen\u001b[m\n\u001b[1mindex 530334d..eb75310 100644\u001b[m\n\u001b[1m--- a/expected/bench-common-src.screen\u001b[m\n\u001b[1m+++ b/bench-common-src.screen\u001b[m\n\u001b[36m@@ -1,13 +1,13 @@\u001b[m\n\u001b[31m-Directory path /common/src/\u001b[m\n\u001b[31m-drwxr-xr-x                                      ..\u001b[m\n\u001b[31m-drwxr-xr-x Jonas Fonseca 2014-03-01 17:26 -0500 main\u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m-[tree] Open parent directory                                                100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32mDirectory path /\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 common\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 deltablue\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 project\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 richards\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 sudoku\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 tracer\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Jonas Fonseca    53 2013-10-14 16:19 -0400 .gitignore\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Jonas Fonseca  1499 2013-10-26 12:54 -0400 LICENSE\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Philipp Haller 2609 2014-01-16 15:32 +0100 README.md\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rwxr-xr-x Jonas Fonseca   493 2014-03-01 17:26 -0500 run.sh\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[tree] 1a4ced7066ada2b26dcb0044f763a8438cd375df - file 1 of 10              100%\u001b[m\n  [OK] bench.screen assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 6 test(s)\r\n|   [OK] vars_assert_count assertion\r\n|   [OK] vars assertion\r\n| [FAIL] bench-common-src.screen != expected/bench-common-src.screen\r\n| \u001b[1mdiff --git a/expected/bench-common-src.screen b/bench-common-src.screen\u001b[m\r\n| \u001b[1mindex 530334d..eb75310 100644\u001b[m\r\n| \u001b[1m--- a/expected/bench-common-src.screen\u001b[m\r\n| \u001b[1m+++ b/bench-common-src.screen\u001b[m\r\n| \u001b[36m@@ -1,13 +1,13 @@\u001b[m\r\n| \u001b[31m-Directory path /common/src/\u001b[m\r\n| \u001b[31m-drwxr-xr-x                                      ..\u001b[m\r\n| \u001b[31m-drwxr-xr-x Jonas Fonseca 2014-03-01 17:26 -0500 main\u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m-[tree] Open parent directory                                                100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mDirectory path /\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 common\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 deltablue\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 project\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 richards\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 sudoku\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdrwxr-xr-x Jonas Fonseca       2014-03-01 17:26 -0500 tracer\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Jonas Fonseca    53 2013-10-14 16:19 -0400 .gitignore\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Jonas Fonseca  1499 2013-10-26 12:54 -0400 LICENSE\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Philipp Haller 2609 2014-01-16 15:32 +0100 README.md\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rwxr-xr-x Jonas Fonseca   493 2014-03-01 17:26 -0500 run.sh\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[tree] 1a4ced7066ada2b26dcb0044f763a8438cd375df - file 1 of 10              100%\u001b[m\r\n|   [OK] bench.screen assertion\r\n|   [OK] editor.log assertion\r\n|   [OK] exec-env assertion\r\n"
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths/target/release/tig",
+          "sha256": "d51c8c30889592e6529a0e9f3e0ea4c1da8d8773a1e9d01ca13beeb66838cccc"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths/target/release/test-graph",
+          "sha256": "fc9d546c0d0c991a9d9a9ae87547939d27687f8675e6e66f30bb3e50d8c70b1d"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "fail": 3
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/tree/file-name-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "root-dir.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "first-child-dir.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "second-child-dir.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "second-child-dir-first-file.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/submodule-editor-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bench-common-src.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "bench.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "editor.log#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "exec-env#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/worktree-editor-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bench-common-src.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "bench.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "editor.log#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "exec-env#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ]
+}

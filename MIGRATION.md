@@ -531,3 +531,37 @@ commit wall time and libc's `tm_isdst=0` behavior, including summer dates.
 Runtime requirements, evaluated Rust alternatives, differential/upstream
 receipts and the still-open performance/full-migration boundaries are in the
 [updated date compatibility record](migration/chrono-date-compatibility.md#非本地-s系统-posix-桥接).
+
+### Tree startup directories and editor paths
+
+At source `bf5d0d85ce159bdb38f7bb4dd416e0d021bd162b`, first opening the tree
+uses the canonical invocation directory relative to Git's worktree root. It
+applies that prefix only once, including after closing and reopening the view;
+a failed load does not consume initialization. Bare repositories use an empty
+prefix. Repository discovery continues to distinguish a submodule's or linked
+worktree's root from its separate Git directory. Editor arguments retain the
+repository-relative filename and execute at that worktree root, not in the
+superproject or Git metadata directory.
+
+The strict paired runner passes **32/32 C assertions** and **31/32 Rust
+assertions** across all six original tree scripts. Both submodule-editor and
+worktree-editor now pass all six assertions, including screens, editor content,
+working directory, Git directory and superproject context. Before this change,
+the three targeted scripts passed 13/16 Rust assertions at main `15ee9762`;
+this reproduction is separate from the older `2fb2a87` full-suite snapshot.
+
+**Remaining difference:** `test/tree/file-name-test` still fails
+`first-child-dir.screen`. C `tree_read` strips the directory's byte length from
+Git's quoted filename before decoding it, displaying a truncated octal-escaped
+name without history metadata. Rust's NUL-delimited parser retains `as测试asd`
+and its metadata. This patch does not imitate that corrupted display/path or
+change the original assertion. A regression verifies the real Unicode blob and
+editor argument, including the leading-dash directory's `./` editor protection.
+The full parity gate remains **OPEN**.
+
+Rust 1.81 formatting, **72 Rust tests**, Clippy with warnings denied and **135
+PTY checks** pass, including a new interactive startup-directory/parent case.
+Original C sources, headers and tests are unchanged; first-party unsafe remains
+forbidden. The [receipt](migration/evidence/tree-paths/receipt.json) binds source
+and binary hashes to the before/after paired runs, failing-then-passing regression,
+and PTY evidence. No full upstream suite or end-to-end benchmark was rerun.
