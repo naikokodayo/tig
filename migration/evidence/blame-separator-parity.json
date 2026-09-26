@@ -1,7 +1,7 @@
 {
   "scope": "Blame separator and selected-row rendering parity",
   "base_commit": "26674406c6e3977f5b6c78dd8d1f750cd0749f2a",
-  "tested_commit": "26674406c6e3977f5b6c78dd8d1f750cd0749f2a",
+  "tested_commit": "0738b0709a2ecfc3e4c095652ca0b9528fac1d10",
   "source_sha256": {
     "rust/main.rs": "cfd1ca5896ca2d8ed0a516766485debc83152d517d401b2e7d03865652a7a217",
     "rust/render.rs": "f5412a37afde0c4d328fd58dd3642f51e32a8c48f967125aa7554b2bb1086dfa"
@@ -187,5 +187,6 @@
     "cargo test",
     "cargo clippy --all-targets -- -D warnings"
   ],
-  "verdict": "PASS"
+  "verdict": "PASS",
+  "tested_tree": "c9033213930d0390a2b004653d2e64b88befd1f8"
 }
