@@ -1,0 +1,185 @@
+{
+  "schema": 1,
+  "source_commit": "f0e496fdac8c643eb5eff3aa05b29d357688938b",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "PASS_SELECTED_SCRIPTS",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/main/commit-order-edge-case-test",
+          "script_sha256": "305a58baac2652a97ffd98afa2d10638c65e13be778867a23d0897c0a6acac24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "ensure-topo-order-with-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "graph-supports-date-order.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/commit-order-edge-case-test/.test-result",
+          "receipt": "  [OK] ensure-topo-order-with-graph.screen assertion\n  [OK] graph-supports-date-order.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/src/tig",
+          "sha256": "c534378c07a51d6d2502d93e4b8e2a445f6cf00b282094e876334d91c72571dd"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 1
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.03s\n",
+      "results": [
+        {
+          "script": "test/main/commit-order-edge-case-test",
+          "script_sha256": "305a58baac2652a97ffd98afa2d10638c65e13be778867a23d0897c0a6acac24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "ensure-topo-order-with-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "graph-supports-date-order.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/commit-order-edge-case-test/.test-result",
+          "receipt": "  [OK] ensure-topo-order-with-graph.screen assertion\n  [OK] graph-supports-date-order.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/target/release/tig",
+          "sha256": "c2bac02fa13a64b12192a7a3fb7495959ffd2e354cd29b338c3af5fb9df04d46"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/target/release/test-graph",
+          "sha256": "4ccd7a88c7816202274b63e3478cba6ad2211628bb2f464baa610a431b20ad56"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 1
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/main/commit-order-edge-case-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "ensure-topo-order-with-graph.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "graph-supports-date-order.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ],
+  "source_files_sha256": {
+    "rust/git.rs": "94b40d911cdfd719ac34ad393320ce66acbb32dfcf1c1bd9ef4e00a875611c07",
+    "rust/main.rs": "a27b8e5cd6a9f8ebeba84e1513cf655f1014e8952b052949042e01e23ca9eadb",
+    "rust/render.rs": "9c3632ad0815c603c606876ce5111b0e8ada47a65f291e66203e0faba8fabd94"
+  },
+  "before": {
+    "source_commit": "5f7ac639f23ee2d825d73c93619f7d7b01b4f556",
+    "script_sha256": "305a58baac2652a97ffd98afa2d10638c65e13be778867a23d0897c0a6acac24",
+    "c": {
+      "status": "pass",
+      "assertions": [
+        {
+          "id": "ensure-topo-order-with-graph.screen#1",
+          "status": "OK"
+        },
+        {
+          "id": "graph-supports-date-order.screen#1",
+          "status": "OK"
+        }
+      ]
+    },
+    "rust": {
+      "status": "fail",
+      "assertions": [
+        {
+          "id": "ensure-topo-order-with-graph.screen#1",
+          "status": "OK"
+        },
+        {
+          "id": "graph-supports-date-order.screen#1",
+          "status": "FAIL"
+        }
+      ],
+      "binary_sha256": "a203c9f9e01ff3c8b5d7c832b2d13965a3652e98b78f31abc4fde095bb98d987",
+      "receipt": "  [OK] ensure-topo-order-with-graph.screen assertion\n[FAIL] graph-supports-date-order.screen != expected/graph-supports-date-order.screen\n\u001b[1mdiff --git a/expected/graph-supports-date-order.screen b/graph-supports-date-order.screen\u001b[m\n\u001b[1mindex a051568..4ab93fd 100644\u001b[m\n\u001b[1m--- a/expected/graph-supports-date-order.screen\u001b[m\n\u001b[1m+++ b/graph-supports-date-order.screen\u001b[m\n\u001b[36m@@ -1,6 +1,6 @@\u001b[m\n 2014-02-01 22:36 -0600 Benjamin Bergman ●─╮ Merge branch 'feature_branch'\u001b[m\n\u001b[31m-2014-02-01 22:36 -0600 Benjamin Bergman ∙ │ More master\u001b[m\n 2014-02-01 22:35 -0600 Benjamin Bergman │ ∙ More featuresA\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2014-02-01 22:36 -0600 Benjamin Bergman ∙ │ More master\u001b[m\n 2014-02-01 22:21 -0600 Benjamin Bergman ●─│─╮ Merge branch 'feature_branch'\u001b[m\n 2014-02-01 23:00 -0600 Benjamin Bergman │ ∙─╯ Add feature\u001b[m\n 2014-02-01 22:21 -0600 Benjamin Bergman ∙ │ Add to master\u001b[m\n"
+    }
+  },
+  "validation": {
+    "cargo_fmt_check": "pass",
+    "cargo_test_all_targets": "84 passed",
+    "cargo_clippy_all_targets_deny_warnings": "pass"
+  }
+}
