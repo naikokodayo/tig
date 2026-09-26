@@ -197,6 +197,9 @@ pub struct HistoryOptions {
 }
 impl HistoryOptions {
     pub fn parse(revisions: &[String]) -> Result<Self> {
+        Self::parse_for_view(revisions, false)
+    }
+    fn parse_for_view(revisions: &[String], reflog: bool) -> Result<Self> {
         let split = revisions
             .iter()
             .position(|a| a == "--")
@@ -236,6 +239,8 @@ impl HistoryOptions {
                 options.first_parent = true;
             }
             match name {
+                "--grep-reflog" if reflog => { expects_value = !inline_value; }
+                "-g" | "--walk-reflogs" if reflog && !inline_value => {}
                 "--since" | "--after" | "--until" | "--before" | "--author" | "--committer" |
                 "--grep" | "--max-count" | "--skip" | "--min-parents" | "--max-parents" | "-n" => {
                     expects_value = !inline_value;
@@ -370,6 +375,53 @@ impl Repository {
             }
         }
         Ok(if unborn { Vec::new() } else { result })
+    }
+    /// Reflog subjects and selectors accompany the same commit metadata as history.
+    pub fn reflog(&self, stash: bool, revisions: &[String]) -> Result<(Vec<Commit>, Vec<String>)> {
+        HistoryOptions::parse_for_view(revisions, true)?;
+        let mut args: Vec<String> = if stash {
+            vec!["stash".into(), "list".into()]
+        } else {
+            vec!["reflog".into(), "show".into()]
+        };
+        args.extend(
+            revisions
+                .iter()
+                .filter(|arg| {
+                    !stash
+                        || (arg.starts_with('-')
+                            && !matches!(arg.as_str(), "--all" | "--branches" | "--remotes"))
+                })
+                .cloned(),
+        );
+        args.extend([
+            "--no-color".into(),
+            "--no-show-signature".into(),
+            "--format=%H%x00%P%x00%aN%x00%aI%x00%gs%x00%D%x00%aE%x00%cN%x00%cE%x00%cI%x00%gd"
+                .into(),
+            "-z".into(),
+        ]);
+        let output = self.command(args)?;
+        let fields: Vec<_> = records(&output)?.collect();
+        if fields.len() % 11 != 0 {
+            return Err(GitError("Malformed reflog fields".into()));
+        }
+        let mut metadata = Vec::new();
+        let mut selectors = Vec::new();
+        for row in fields.chunks_exact(11) {
+            for field in &row[..10] {
+                metadata.extend_from_slice(field);
+                metadata.push(0);
+            }
+            selectors.push(text(row[10]));
+        }
+        let mut commits = parse_history(&metadata)?;
+        let upstream = self
+            .command(["rev-parse", "--symbolic-full-name", "@{upstream}"])
+            .map(|b| text(trim_lf(&b)))
+            .unwrap_or_default();
+        decorate_history(&mut commits, &self.refs()?, &upstream);
+        Ok((commits, selectors))
     }
     fn is_unborn(&self) -> Result<bool> {
         match self.revision("HEAD") {
@@ -1229,6 +1281,15 @@ mod tests {
         assert!(HistoryOptions::parse(&["--merge=oops".into()]).is_err());
         assert!(HistoryOptions::parse(&["--follow=yes".into()]).is_err());
         assert!(HistoryOptions::parse(&["--format=oops".into()]).is_err());
+        assert!(HistoryOptions::parse_for_view(&["--grep-reflog=checkout".into()], true).is_ok());
+        assert!(HistoryOptions::parse_for_view(
+            &["--grep-reflog".into(), "moving from main to topic".into()],
+            true
+        )
+        .is_ok());
+        assert!(HistoryOptions::parse_for_view(&["--grep-reflog".into()], true).is_err());
+        assert!(HistoryOptions::parse_for_view(&["--format=oops".into()], true).is_err());
+        assert!(HistoryOptions::parse(&["--grep-reflog=checkout".into()]).is_err());
     }
     #[test]
     fn configured_commit_order_changes_real_history() {

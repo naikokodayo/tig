@@ -989,22 +989,19 @@ impl App {
                     v.push(row, Item::Grep(hit));
                 }
             }
-            "stash" => {
-                let output = repo.command(["stash", "list", "--format=%H %gd: %gs"])?;
-                for row in String::from_utf8_lossy(&output).lines() {
-                    if let Some((oid, label)) = row.split_once(' ') {
-                        v.push(label.into(), Item::Ref(oid.into(), None));
-                    }
+            "stash" | "reflog" => {
+                let (commits, selectors) = repo.reflog(name == "stash", &self.args)?;
+                let mut config = self.config.clone();
+                if let Some(columns) = config.settings.get(&format!("{name}-view")).cloned() {
+                    config.settings.insert("main-view".into(), columns);
                 }
-            }
-            "reflog" => {
-                let mut args = vec![name.to_string()];
-                args.push("--no-color".into());
-                args.extend(self.args.clone());
-                return Ok(View::text(
-                    name,
-                    &String::from_utf8_lossy(&repo.command(&args)?),
-                ));
+                config
+                    .settings
+                    .insert("main-view-commit-title-graph".into(), vec!["no".into()]);
+                let rows = tig_rs::render::render_commits(&config, &commits, width)?;
+                for ((row, commit), selector) in rows.into_iter().zip(commits).zip(selectors) {
+                    v.push(row, Item::Ref(commit.oid, Some(selector)));
+                }
             }
             _ => return Err(format!("Unsupported view: {name}").into()),
         }
@@ -1350,7 +1347,7 @@ impl App {
             Item::Changes(kind) => self.open_changes(kind)?,
             Item::Ref(id, _) => {
                 self.revision = id.clone();
-                if self.view.name == "refs" {
+                if matches!(self.view.name.as_str(), "refs" | "reflog") {
                     self.args = vec![id];
                     self.open("main", child_width)?;
                 } else {
@@ -1718,7 +1715,7 @@ impl App {
                 return Ok(true);
             }
             let selected_ref = match self.selected() {
-                Item::Ref(_, name) => name,
+                Item::Ref(_, name) if self.view.name == "refs" => name,
                 Item::Text if self.view.name == "refs" => Some(String::new()),
                 _ => None,
             };
@@ -3064,6 +3061,9 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
                 e.oid.clone()
             }
         }
+        Some(Item::Ref(_, Some(selector))) if matches!(view.name.as_str(), "stash" | "reflog") => {
+            selector.clone()
+        }
         Some(Item::Ref(id, _)) if matches!(view.name.as_str(), "log" | "refs") => id.clone(),
         Some(Item::Grep(hit)) => hit.label.clone(),
         Some(Item::Blame(line)) if view.name == "blame" => {
@@ -3132,7 +3132,8 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
             " - {} {} of {}",
             match view.name.as_str() {
                 "main" => "commit",
-                "refs" => "reference",
+                "refs" | "reflog" => "reference",
+                "stash" => "stash",
                 "tree" => "file",
                 _ => "line",
             },

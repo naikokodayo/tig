@@ -1,0 +1,247 @@
+{
+  "schema": 1,
+  "source_commit": "082151e1e264aaaf77ca7c683384cecbce16e911",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "PASS_SELECTED_SCRIPTS",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/reflog/default-test",
+          "script_sha256": "700459540642c895a717fa943a46a0df031eb4b135dec7b63562009e26d4a89e",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "reflog-default.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/reflog/default-test/.test-result",
+          "receipt": "  [OK] reflog-default.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/stash/start-on-line-test",
+          "script_sha256": "e457e5a5e298db8d6d337ada5f5b6bfbe2a4e7026ba2ee51b249c87b3f95847d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/stash/start-on-line-test/.test-result",
+          "receipt": "  [OK] position.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/src/tig",
+          "sha256": "36d6ed75f93a566c03395b3a36819bab773041cbc36360605827b3ee03b25885"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 2
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig)\n    Finished `release` profile [optimized] target(s) in 47.26s\n",
+      "results": [
+        {
+          "script": "test/reflog/default-test",
+          "script_sha256": "700459540642c895a717fa943a46a0df031eb4b135dec7b63562009e26d4a89e",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "reflog-default.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/reflog/default-test/.test-result",
+          "receipt": "  [OK] reflog-default.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/stash/start-on-line-test",
+          "script_sha256": "e457e5a5e298db8d6d337ada5f5b6bfbe2a4e7026ba2ee51b249c87b3f95847d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/stash/start-on-line-test/.test-result",
+          "receipt": "  [OK] position.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/tig",
+          "sha256": "3201a0e44edb45f1bd2d15085460892a961d2c593d83d9d60c71200a83bba92d"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/test-graph",
+          "sha256": "4c6d1d240e728de3e07342dcaff9458195528c8700c0944a21ffe01aee591fb3"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 2
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/reflog/default-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "reflog-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/stash/start-on-line-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "position.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ],
+  "source_sha256": {
+    "Cargo.lock": "4dff74ef4ccdb94d739984c33d6b06c217c12144f4095dde5e16bf10902ebbb5",
+    "Cargo.toml": "9c0a27f7f353f722308d07664ba1645e9dc6dfe35a94201839f7b4cd93752c69",
+    "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
+    "rust/commands.rs": "5289316798c285a6055ff040aec0f7d355cfca6905bb8702d952a7b612104b19",
+    "rust/config.rs": "2818658ce690aa15596b13040bfbfba812fecf8ba83dcb93671650ee7585d623",
+    "rust/date.rs": "51d16041689246691bcfacc8a2f2654e39ae2a123c5aec770c449bfc6ced24f4",
+    "rust/git.rs": "55ed067f77a6c8334df5621fae8a277461d045e001902c599cf5a100a867264e",
+    "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
+    "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+    "rust/help_view.rs": "029b06cf5c7c88523fe4fb4f3374f737f7fbffd7807169dcd8b8f207cf87b158",
+    "rust/lib.rs": "81e3bdf035141234a178271b092b084f6e105bf159f1e2af4b21e8483d20a088",
+    "rust/main.rs": "20a2eb0ca988cb1c8d34865c85699e7e4b05d638a4512af94bff2a3542ad23d4",
+    "rust/model.rs": "f1131c9182b02c51a5e9307a194669cec4f835fbd0d5d26b24e1e977336e8dda",
+    "rust/patch.rs": "11b9b2d0dd871b36462ad9ac371203cc9a53ee0539797dcbe698429291d2685c",
+    "rust/refs_view.rs": "35e6d25a83bb9651b5b268b00c75a4c81468746a3158556e2d44bf1e12b11267",
+    "rust/render.rs": "625de9bd9a0c0c26f7710f9d3f287d707ad5f5d228568d303df7c84a33a9c91b",
+    "rust/tests/blame-navigation.py": "bc7b60c9821929dca18484ccc5e912f34e10bb817807fe760641e9360b365eb7",
+    "rust/tests/blame-review.py": "12d94d23c4a2466e4150fee7c30f38534c5c7dfdda680ff8b15492f8d734a973",
+    "rust/tests/config-recovery.py": "0bd908d544c7ea3cb94a9a4e109b9b81dfdaf626e25e795ceed0eb87c829851a",
+    "rust/tests/date-compatibility.py": "730fb29be21cd0eab61e97d7789116505227d4d58fe70640af4d9acff2c205fa",
+    "rust/tests/date-percent-s.py": "3a837e0703587ba8f9909d630d700bd17f14bfc34b1e1fe105201e7600df6c4c",
+    "rust/tests/diff-input.py": "a3b5c4ab386484e78f959b469c76a16e53ebbaa69983ad7f157104fa0f3474c3",
+    "rust/tests/diff-navigation.py": "ac38d3cb56fc1bad1b628465cc85d67446e0439e6317d25a3e723c621b99e639",
+    "rust/tests/graph-differential.py": "666efeca9ee6cd79cb8bd70cf5639f00438a6b6dff7135ad03f98e53de8d7c8e",
+    "rust/tests/graph-v1-differential.py": "9e144d33dd228875d5a90b8068871102139ce3989324d98e6ffc5ce7d8830ace",
+    "rust/tests/main-command-refresh.py": "8516d8d98e1a0b483cd66d8b648cce1c51003617a37d7fcda9ac8fa3c43ce7aa",
+    "rust/tests/reflog-stash-navigation.py": "abe6f6cd6e132afae752fc5612b6fbfb5ed97476fb53b0c1dbd996db50591c9a",
+    "rust/tests/status-filter.py": "f59fae82a50882417f79c2d82f37275c23d1fabd1ca78a16dcd3d7d12ddf75c6",
+    "rust/tests/terminal-smoke.py": "a09c21e70201587e58c116f2d9a9f7849c6472da6ebe3c0750dd56eb562173a4",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "rust/tests/wrap-rendering.py": "551b8200fea5d62e92a676b1b28c428ef57854449c83fb5bd5459497daaaec5e",
+    "rust/trace.rs": "4fb87248de03495a20b7d4f3863c971c30000a07c1f688d55b2625b22bcf8c23",
+    "rust/tree_view.rs": "c2292d0afab8e20f08579f536bedd00cb9926f099021f9c6d2c56bd56db9ac4a",
+    "tigrc": "aa897801785995fec07f43cedb3dee06cf2124e5bd1475d6e22ba7badfcded5b"
+  },
+  "baseline": {
+    "receipt": "migration/evidence/upstream-rust-only-after-integration.json",
+    "source_commit": "ac78df21291964083a6cb13a08da5d127fdcc60e",
+    "c": "Both selected scripts pass",
+    "rust": "Both selected scripts fail"
+  },
+  "validation": {
+    "cargo fmt --check": "pass",
+    "cargo test --quiet": "pass: 59 library + 25 application tests",
+    "cargo clippy --all-targets -- -D warnings": "pass",
+    "python3 rust/tests/reflog-stash-navigation.py": "PASS: reflog selects older entry, opens main, returns and refreshes\nPASS: stash selects older entry, opens diff, returns and refreshes\nPASS: paired C/Rust reflog filter ['--grep-reflog=checkout']\nPASS: paired C/Rust reflog filter ['--grep-reflog=moving from master to topic']\nPASS: paired C/Rust reflog filter ['-g']\nPASS: paired C/Rust reflog filter ['--walk-reflogs']\n",
+    "git diff --check": "pass",
+    "latest_main": "37e3a4ee602ca75fa4eb6b08b9c5301809f9f3d0",
+    "source_hashes_match_source_commit": true
+  },
+  "review_regression": {
+    "before_source": "2b016ddf4ec793e5fe889b8daca3cf53f93adfd8",
+    "before_transcript": "PASS: reflog selects older entry, opens main, returns and refreshes\nPASS: stash selects older entry, opens diff, returns and refreshes\nTraceback (most recent call last):\n  File \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/rust/tests/reflog-stash-navigation.py\", line 63, in <module>\n    assert code == 0 and not timed_out, (mode, arguments, code, transcript)\nAssertionError: ('rust', ['--grep-reflog=checkout'], 1, 'tig: Unsupported history option --grep-reflog=checkout: only revision, filtering, ordering and path options are allowed\\r\\n')\n",
+    "after_exit_code": 0,
+    "screen_comparison": "C/Rust rows and footer equal after stripping trailing whitespace (as upstream harness does)",
+    "binary_sha256": {
+      "src/tig": "36d6ed75f93a566c03395b3a36819bab773041cbc36360605827b3ee03b25885",
+      "target/release/tig": "3201a0e44edb45f1bd2d15085460892a961d2c593d83d9d60c71200a83bba92d"
+    }
+  }
+}
