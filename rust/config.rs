@@ -948,6 +948,16 @@ pub struct Cli {
     pub version: bool,
 }
 impl Cli {
+    pub fn diff_revision(&self) -> &str {
+        let args = match self.git_args.split_first() {
+            Some((first, rest)) if first == "--end-of-options" => rest,
+            _ => &self.git_args,
+        };
+        args.first()
+            .filter(|arg| arg.as_str() != "--")
+            .map_or("HEAD", String::as_str)
+    }
+
     pub fn parse(args: &[String], pager_mode: bool) -> Result<Self, String> {
         let mut cli = Self {
             view: if pager_mode { "pager" } else { "main" }.into(),
@@ -981,7 +991,7 @@ impl Cli {
         for arg in &args[i..] {
             if !paths {
                 match arg.as_str() {
-                    "--" => paths = true,
+                    "--" | "--end-of-options" => paths = true,
                     "-h" | "--help" => {
                         cli.help = true;
                         continue;
@@ -1273,6 +1283,33 @@ bind generic <Lt> back
         c.apply_command("toggle log-options").unwrap();
         assert!(c.settings["log-options"].is_empty());
     }
+    #[test]
+    fn show_revision_respects_end_of_options_and_path_separator() {
+        for (args, expected) in [
+            (vec![], "HEAD"),
+            (vec!["HEAD~1"], "HEAD~1"),
+            (vec!["--end-of-options", "HEAD~1", "--", "file"], "HEAD~1"),
+            (vec!["--end-of-options"], "HEAD"),
+            (vec!["--end-of-options", "--", "file"], "HEAD"),
+            (vec!["--", "--end-of-options", "HEAD~1"], "HEAD"),
+            (vec!["--end-of-options", "--help"], "--help"),
+            (vec!["--end-of-options", "--word-diff"], "--word-diff"),
+            (
+                vec!["--end-of-options", "--end-of-options"],
+                "--end-of-options",
+            ),
+        ] {
+            let args: Vec<String> = std::iter::once("show")
+                .chain(args)
+                .map(str::to_owned)
+                .collect();
+            let mut cli = Cli::parse(&args, false).unwrap();
+            Config::defaults().take_diff_options(&mut cli.git_args);
+            assert!(!cli.help, "{args:?}");
+            assert_eq!(cli.diff_revision(), expected, "{args:?}");
+        }
+    }
+
     #[test]
     fn cli_preserves_git_arguments_and_separator() {
         let args = ["-C", "repo", "show", "+12", "HEAD~2", "--", "--help", "a b"].map(String::from);

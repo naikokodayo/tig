@@ -2623,9 +2623,7 @@ fn run() -> Result<()> {
             }
         }
         if cli.view == "diff" {
-            if let Some(rev) = app.args.first().filter(|arg| arg.as_str() != "--") {
-                app.revision = rev.clone();
-            }
+            app.revision = cli.diff_revision().to_owned();
         }
         app.view = app.load(&cli.view)?;
         if cli.view == "grep" && app.view.rows.is_empty() {

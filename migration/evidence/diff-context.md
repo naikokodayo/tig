@@ -38,7 +38,7 @@ PATH="$PWD/target/release:$PWD/test/tools:$PATH" sh test/diff/diff-context-test
 PATH="$PWD/target/release:$PWD/test/tools:$PATH" sh test/diff/diff-wdiff-context-test
 ```
 
-- Format, all-target tests (40 library + 16 application), Clippy with warnings
+- Format, all-target tests (41 library + 16 application), Clippy with warnings
   denied, and release build: PASS.
 - Original diff-context: 10/10 assertions PASS; baseline was 1/10.
 - Original diff-wdiff-context: 10/10 assertions PASS; baseline was 0/10, plus
@@ -50,6 +50,24 @@ PATH="$PWD/target/release:$PWD/test/tools:$PATH" sh test/diff/diff-wdiff-context
 - New Rust regressions cover CLI option/path/value boundaries, context 0/3/4/5/8
   in both word modes, deletion-line restoration, missing targets, file boundaries,
   and conservative fallback for combined diffs.
+
+## Review follow-up: end-of-options
+
+At `3e66d38`, `TIG_SCRIPT=<quit-script> target/release/tig show
+--end-of-options HEAD` exited 1 with `fatal: Needed a single revision`.
+The new regression first failed because the selected revision was the separator
+instead of `HEAD~1`. Diff startup now skips one leading `--end-of-options`,
+retaining it in history arguments, and CLI parsing stops interpreting options
+after either delimiter. The regression covers default HEAD, explicit revisions,
+path boundaries, literal option-like revisions, and repeated delimiters.
+
+After the fix, the checks listed above passed again (57 Rust tests and 20/20
+original focused assertions). Actual release-binary probes also passed for
+`show --end-of-options HEAD`, `show --end-of-options HEAD~1`,
+`show --word-diff --end-of-options HEAD~1`, and a bare `show --end-of-options`.
+Each probe verified the initial commit ID and the commit ID after returning
+through main to diff. `show --end-of-options --help` correctly attempted to
+resolve a literal revision and failed instead of printing usage.
 
 ## Independent differences and limits
 
