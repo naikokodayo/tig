@@ -298,6 +298,14 @@ impl Repository {
         Ok(text(&self.diff_bytes(staged, file)?))
     }
     pub fn diff_bytes(&self, staged: bool, file: Option<&Path>) -> Result<Vec<u8>> {
+        self.diff_bytes_filtered(staged, file, &[])
+    }
+    pub fn diff_bytes_filtered(
+        &self,
+        staged: bool,
+        file: Option<&Path>,
+        filters: &[String],
+    ) -> Result<Vec<u8>> {
         let mut args: Vec<OsString> = [
             "diff",
             "--no-relative",
@@ -319,11 +327,21 @@ impl Repository {
         if let Some(file) = file {
             valid_path(file)?;
             args.push(file.into());
+        } else {
+            // Literal query pathspecs stay after --; mutation paths are validated separately.
+            args.extend(filters.iter().map(OsString::from));
         }
         self.command(args)
     }
     /// Read the worktree/index diff without overriding Git's configured prefixes.
     pub fn worktree_diff_bytes(&self, file: Option<&Path>) -> Result<Vec<u8>> {
+        self.worktree_diff_bytes_filtered(file, &[])
+    }
+    pub fn worktree_diff_bytes_filtered(
+        &self,
+        file: Option<&Path>,
+        filters: &[String],
+    ) -> Result<Vec<u8>> {
         if let Some(file) = file {
             valid_path(file)?;
         }
@@ -348,6 +366,8 @@ impl Repository {
         args.push("--".into());
         if let Some(file) = file {
             args.push(file.into());
+        } else {
+            args.extend(filters.iter().map(OsString::from));
         }
         self.command(args)
     }

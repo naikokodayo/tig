@@ -452,19 +452,29 @@ impl App {
         view.untracked = self.view.untracked && matches!(name, "stage" | "status");
         Ok(view)
     }
-    fn status_view(&self, untracked_only: bool) -> Result<View> {
-        let repo = self.repo()?;
-        let paths = if self.config.bool_value("file-filter", true) {
+    fn file_filter(&self) -> &[String] {
+        if self.config.bool_value("file-filter", true) {
             self.args
                 .iter()
                 .position(|arg| arg == "--")
                 .map_or(&[][..], |i| &self.args[i + 1..])
         } else {
             &[]
-        };
+        }
+    }
+    fn stage_diff(&self, staged: bool, file: Option<&std::path::Path>) -> Result<Vec<u8>> {
+        let repo = self.repo()?;
+        Ok(if !staged && file.is_none() {
+            repo.worktree_diff_bytes_filtered(None, self.file_filter())?
+        } else {
+            repo.diff_bytes_filtered(staged, file, self.file_filter())?
+        })
+    }
+    fn status_view(&self, untracked_only: bool) -> Result<View> {
+        let repo = self.repo()?;
         let show_untracked = self.config.bool_value("status-show-untracked-files", true);
         let header = repo.status_header()?;
-        let entries = repo.status_filtered(paths, show_untracked)?;
+        let entries = repo.status_filtered(self.file_filter(), show_untracked)?;
         let mut v = View::new("status");
         v.untracked = untracked_only;
         v.args = self.args.clone();
@@ -656,18 +666,12 @@ impl App {
                         &String::from_utf8_lossy(&fs::read(repo.root.join(&self.path))?),
                     ));
                 }
-                let raw = if !self.view.staged && self.path.as_os_str().is_empty() {
-                    repo.worktree_diff_bytes(None)?
+                let file = if self.path.as_os_str().is_empty() {
+                    None
                 } else {
-                    repo.diff_bytes(
-                        self.view.staged,
-                        if self.path.as_os_str().is_empty() {
-                            None
-                        } else {
-                            Some(&self.path)
-                        },
-                    )?
+                    Some(self.path.as_path())
                 };
+                let raw = self.stage_diff(self.view.staged, file)?;
                 let mut view = View::text(name, &String::from_utf8_lossy(&raw));
                 view.raw_patch = raw;
                 return Ok(view);
@@ -851,11 +855,7 @@ impl App {
             self.status_view(true)?
         } else {
             let staged = kind == ChangeKind::Staged;
-            let raw = if staged {
-                self.repo()?.diff_bytes(true, None)?
-            } else {
-                self.repo()?.worktree_diff_bytes(None)?
-            };
+            let raw = self.stage_diff(staged, None)?;
             let mut view = View::text("stage", &String::from_utf8_lossy(&raw));
             view.staged = staged;
             view.raw_patch = raw;
@@ -1078,7 +1078,7 @@ impl App {
                 let raw = if e.index == '?' {
                     fs::read(self.repo()?.root.join(&e.path))?
                 } else {
-                    self.repo()?.diff_bytes(staged, Some(&e.path))?
+                    self.stage_diff(staged, Some(&e.path))?
                 };
                 let text = String::from_utf8_lossy(&raw);
                 self.path = e.path;
