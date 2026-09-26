@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "ac78df21291964083a6cb13a08da5d127fdcc60e",
+  "source_commit": "578217033cde4719581617d5e46da1e04f2f6052",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -5105,7 +5105,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 27.60s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 30.62s\n",
       "results": [
         {
           "script": "test/blame/blob-blame-test",
@@ -5297,48 +5297,44 @@
           "script_sha256": "2c4414a548db2b1d6d92855a7262220feeb8c25d31b492275c02f8a92983cc24",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 1
+            "OK": 1
           },
           "assertions": [
             {
               "id": "wrapped.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/blob/wrap-lines-test/.test-result",
-          "receipt": "[FAIL] wrapped.screen != expected/wrapped.screen\n\u001b[1mdiff --git a/expected/wrapped.screen b/wrapped.screen\u001b[m\n\u001b[1mindex e0321b9..83e283e 100644\u001b[m\n\u001b[1m--- a/expected/wrapped.screen\u001b[m\n\u001b[1m+++ b/wrapped.screen\u001b[m\n\u001b[36m@@ -1,8 +1,4 @@\u001b[m\n Как пуст, и вял, и ничтожен почти всякий\u001b[m\n\u001b[31m- прожитой день! Как мало следов оставляе\u001b[m\n\u001b[31m-т он за собою! Как бессмысленно глупо пр\u001b[m\n\u001b[31m-обежали эти часы за часами!       Иван С\u001b[m\n\u001b[31m-геевич Тургенев\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[36m@@ -26,4 +22,8 @@\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[31m-[blob] README.md - line 1 of 5      100%\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[blob] README.md - line 1 of 1      100%\u001b[m\n",
+          "receipt": "  [OK] wrapped.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] wrapped.screen != expected/wrapped.screen\r\n| \u001b[1mdiff --git a/expected/wrapped.screen b/wrapped.screen\u001b[m\r\n| \u001b[1mindex e0321b9..83e283e 100644\u001b[m\r\n| \u001b[1m--- a/expected/wrapped.screen\u001b[m\r\n| \u001b[1m+++ b/wrapped.screen\u001b[m\r\n| \u001b[36m@@ -1,8 +1,4 @@\u001b[m\r\n|  Как пуст, и вял, и ничтожен почти всякий\u001b[m\r\n| \u001b[31m- прожитой день! Как мало следов оставляе\u001b[m\r\n| \u001b[31m-т он за собою! Как бессмысленно глупо пр\u001b[m\r\n| \u001b[31m-обежали эти часы за часами!       Иван С\u001b[m\r\n| \u001b[31m-геевич Тургенев\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[36m@@ -26,4 +22,8 @@\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-[blob] README.md - line 1 of 5      100%\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[blob] README.md - line 1 of 1      100%\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/diff/commit-title-wrap-test",
           "script_sha256": "6437ec94ca5c3689ed6c0c1199a74957dfc57a744dc61543bf3df9b96167183d",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 1
+            "OK": 1
           },
           "assertions": [
             {
               "id": "wrapped-commit-title.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/diff/commit-title-wrap-test/.test-result",
-          "receipt": "[FAIL] wrapped-commit-title.screen != expected/wrapped-commit-title.screen\n\u001b[1mdiff --git a/expected/wrapped-commit-title.screen b/wrapped-commit-title.screen\u001b[m\n\u001b[1mindex bd2ceea..b11e042 100644\u001b[m\n\u001b[1m--- a/expected/wrapped-commit-title.screen\u001b[m\n\u001b[1m+++ b/wrapped-commit-title.screen\u001b[m\n\u001b[36m@@ -1,10 +1,10 @@\u001b[m\n commit 1b4c64b595aeb4de1d317d669faacd3c1\u001b[m\n\u001b[31m-d82f0b0\u001b[m\n Author: A. U. Thor <author@example.com>\u001b[m\n Date:   Sun Jul 2 15:01:24 2017 +0200\u001b[m\n \u001b[m\n     A deliberately long commit title tha\u001b[m\n\u001b[31m-+t wraps onto a second visual line\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n",
+          "receipt": "  [OK] wrapped-commit-title.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] wrapped-commit-title.screen != expected/wrapped-commit-title.screen\r\n| \u001b[1mdiff --git a/expected/wrapped-commit-title.screen b/wrapped-commit-title.screen\u001b[m\r\n| \u001b[1mindex bd2ceea..b11e042 100644\u001b[m\r\n| \u001b[1m--- a/expected/wrapped-commit-title.screen\u001b[m\r\n| \u001b[1m+++ b/wrapped-commit-title.screen\u001b[m\r\n| \u001b[36m@@ -1,10 +1,10 @@\u001b[m\r\n|  commit 1b4c64b595aeb4de1d317d669faacd3c1\u001b[m\r\n| \u001b[31m-d82f0b0\u001b[m\r\n|  Author: A. U. Thor <author@example.com>\u001b[m\r\n|  Date:   Sun Jul 2 15:01:24 2017 +0200\u001b[m\r\n|  \u001b[m\r\n|      A deliberately long commit title tha\u001b[m\r\n| \u001b[31m-+t wraps onto a second visual line\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/diff/diff-context-test",
@@ -5977,24 +5973,22 @@
           "script_sha256": "4a68cfaf5c4231853b50799b217f130d445b4b873fdec577f60290e8d5237072",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 1
+            "OK": 1
           },
           "assertions": [
             {
               "id": "wrapped.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/diff/wrap-lines-test/.test-result",
-          "receipt": "[FAIL] wrapped.screen != expected/wrapped.screen\n\u001b[1mdiff --git a/expected/wrapped.screen b/wrapped.screen\u001b[m\n\u001b[1mindex 8bc2395..f05848e 100644\u001b[m\n\u001b[1m--- a/expected/wrapped.screen\u001b[m\n\u001b[1m+++ b/wrapped.screen\u001b[m\n\u001b[36m@@ -1,14 +1,9 @@\u001b[m\n commit ee912870202200a0b9cf4fd86ba572432\u001b[m\n\u001b[31m-12d341e\u001b[m\n Refs: [master]\u001b[m\n Author:     Jonas Fonseca <jonas.fonseca\u001b[m\n\u001b[31m-+@gmail.com>\u001b[m\n AuthorDate: Sat Mar 1 17:26:01 2014 -050\u001b[m\n\u001b[31m-+0\u001b[m\n Commit:     Jonas Fonseca <jonas.fonseca\u001b[m\n\u001b[31m-+@gmail.com>\u001b[m\n CommitDate: Sat Mar 1 17:26:01 2014 -050\u001b[m\n\u001b[31m-+0\u001b[m\n \u001b[m\n     WIP: Upgrade to 0.4-SNAPSHOT and DCE\u001b[m\n ---\u001b[m\n\u001b[36m@@ -26,4 +21,9 @@\u001b[m \u001b[mCommitDate: Sat Mar 1 17:26:01 2014 -050\u001b[m\n  sudoku/exports.js         | 13 -------\u001b[m\n  .../sudoku/Sudoku.scala   |  2 +\u001b[m\n  tracer/exports.js         | 13 -------\u001b[m\n\u001b[31m-[diff] ee912870202200a0b9cf4fd86ba572 5%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m tracer/index-dev.html     |  2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m tracer/index.html         |  2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m .../tracer/Tracer.scala   |  3 ++\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 17 files changed, 42 insertions(+), 76\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[diff] ee912870202200a0b9cf4fd86ba572 7%\u001b[m\n",
+          "receipt": "  [OK] wrapped.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] wrapped.screen != expected/wrapped.screen\r\n| \u001b[1mdiff --git a/expected/wrapped.screen b/wrapped.screen\u001b[m\r\n| \u001b[1mindex 8bc2395..f05848e 100644\u001b[m\r\n| \u001b[1m--- a/expected/wrapped.screen\u001b[m\r\n| \u001b[1m+++ b/wrapped.screen\u001b[m\r\n| \u001b[36m@@ -1,14 +1,9 @@\u001b[m\r\n|  commit ee912870202200a0b9cf4fd86ba572432\u001b[m\r\n| \u001b[31m-12d341e\u001b[m\r\n|  Refs: [master]\u001b[m\r\n|  Author:     Jonas Fonseca <jonas.fonseca\u001b[m\r\n| \u001b[31m-+@gmail.com>\u001b[m\r\n|  AuthorDate: Sat Mar 1 17:26:01 2014 -050\u001b[m\r\n| \u001b[31m-+0\u001b[m\r\n|  Commit:     Jonas Fonseca <jonas.fonseca\u001b[m\r\n| \u001b[31m-+@gmail.com>\u001b[m\r\n|  CommitDate: Sat Mar 1 17:26:01 2014 -050\u001b[m\r\n| \u001b[31m-+0\u001b[m\r\n|  \u001b[m\r\n|      WIP: Upgrade to 0.4-SNAPSHOT and DCE\u001b[m\r\n|  ---\u001b[m\r\n| \u001b[36m@@ -26,4 +21,9 @@\u001b[m \u001b[mCommitDate: Sat Mar 1 17:26:01 2014 -050\u001b[m\r\n|   sudoku/exports.js         | 13 -------\u001b[m\r\n|   .../sudoku/Sudoku.scala   |  2 +\u001b[m\r\n|   tracer/exports.js         | 13 -------\u001b[m\r\n| \u001b[31m-[diff] ee912870202200a0b9cf4fd86ba572 5%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m tracer/index-dev.html     |  2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m tracer/index.html         |  2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m .../tracer/Tracer.scala   |  3 ++\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 17 files changed, 42 insertions(+), 76\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[diff] ee912870202200a0b9cf4fd86ba572 7%\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/graph/00-simple-test",
@@ -6855,27 +6849,40 @@
         {
           "script": "test/main/all-arg-test",
           "script_sha256": "75f118364ab7237a1719bce081b672599097d9820d5bf959ec7238731492a60c",
-          "exit_code": 1,
+          "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "script_exit_nonzero",
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 2
+            "OK": 5
           },
           "assertions": [
             {
               "id": "vars_assert_count#1",
-              "status": "FAIL"
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "final.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "detached.screen#1",
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/main/all-arg-test/.test-result",
-          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] vars_assert_count != expected/vars_assert_count\n\u001b[1mdiff --git a/expected/vars_assert_count b/vars_assert_count\u001b[m\n\u001b[1mindex e69de29..d00491f 100644\u001b[m\n\u001b[1m--- a/expected/vars_assert_count\u001b[m\n\u001b[1m+++ b/vars_assert_count\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m1\u001b[m\n",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] stderr assertion\n  [OK] final.screen assertion\n  [OK] detached.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/test/tools/libtest.sh: line 403: vars: No such file or directory\r\n| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Unsupported command variable: revargs\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] vars_assert_count != expected/vars_assert_count\r\n| \u001b[1mdiff --git a/expected/vars_assert_count b/vars_assert_count\u001b[m\r\n| \u001b[1mindex e69de29..d00491f 100644\u001b[m\r\n| \u001b[1m--- a/expected/vars_assert_count\u001b[m\r\n| \u001b[1m+++ b/vars_assert_count\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m1\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/main/author-name-change-test",
@@ -6951,13 +6958,10 @@
           "script_sha256": "305a58baac2652a97ffd98afa2d10638c65e13be778867a23d0897c0a6acac24",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "OK": 1,
-            "FAIL": 1
+            "OK": 2
           },
           "assertions": [
             {
@@ -6966,14 +6970,14 @@
             },
             {
               "id": "graph-supports-date-order.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/main/commit-order-edge-case-test/.test-result",
-          "receipt": "  [OK] ensure-topo-order-with-graph.screen assertion\n[FAIL] graph-supports-date-order.screen != expected/graph-supports-date-order.screen\n\u001b[1mdiff --git a/expected/graph-supports-date-order.screen b/graph-supports-date-order.screen\u001b[m\n\u001b[1mindex a051568..4ab93fd 100644\u001b[m\n\u001b[1m--- a/expected/graph-supports-date-order.screen\u001b[m\n\u001b[1m+++ b/graph-supports-date-order.screen\u001b[m\n\u001b[36m@@ -1,6 +1,6 @@\u001b[m\n 2014-02-01 22:36 -0600 Benjamin Bergman ●─╮ Merge branch 'feature_branch'\u001b[m\n\u001b[31m-2014-02-01 22:36 -0600 Benjamin Bergman ∙ │ More master\u001b[m\n 2014-02-01 22:35 -0600 Benjamin Bergman │ ∙ More featuresA\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2014-02-01 22:36 -0600 Benjamin Bergman ∙ │ More master\u001b[m\n 2014-02-01 22:21 -0600 Benjamin Bergman ●─│─╮ Merge branch 'feature_branch'\u001b[m\n 2014-02-01 23:00 -0600 Benjamin Bergman │ ∙─╯ Add feature\u001b[m\n 2014-02-01 22:21 -0600 Benjamin Bergman ∙ │ Add to master\u001b[m\n",
+          "receipt": "  [OK] ensure-topo-order-with-graph.screen assertion\n  [OK] graph-supports-date-order.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 2 test(s)\r\n|   [OK] ensure-topo-order-with-graph.screen assertion\r\n| [FAIL] graph-supports-date-order.screen != expected/graph-supports-date-order.screen\r\n| \u001b[1mdiff --git a/expected/graph-supports-date-order.screen b/graph-supports-date-order.screen\u001b[m\r\n| \u001b[1mindex a051568..4ab93fd 100644\u001b[m\r\n| \u001b[1m--- a/expected/graph-supports-date-order.screen\u001b[m\r\n| \u001b[1m+++ b/graph-supports-date-order.screen\u001b[m\r\n| \u001b[36m@@ -1,6 +1,6 @@\u001b[m\r\n|  2014-02-01 22:36 -0600 Benjamin Bergman ●─╮ Merge branch 'feature_branch'\u001b[m\r\n| \u001b[31m-2014-02-01 22:36 -0600 Benjamin Bergman ∙ │ More master\u001b[m\r\n|  2014-02-01 22:35 -0600 Benjamin Bergman │ ∙ More featuresA\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2014-02-01 22:36 -0600 Benjamin Bergman ∙ │ More master\u001b[m\r\n|  2014-02-01 22:21 -0600 Benjamin Bergman ●─│─╮ Merge branch 'feature_branch'\u001b[m\r\n|  2014-02-01 23:00 -0600 Benjamin Bergman │ ∙─╯ Add feature\u001b[m\r\n|  2014-02-01 22:21 -0600 Benjamin Bergman ∙ │ Add to master\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/main/commit-title-overflow-test",
@@ -7183,10 +7187,10 @@
             }
           ],
           "receipt_path": "test/tmp/main/filter-args-test/.test-result",
-          "receipt": "[FAIL] rev-parse.trace != expected/rev-parse.trace\n\u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\n\u001b[1mindex c6d0c82..aba1ee8 100644\u001b[m\n\u001b[1m--- a/expected/rev-parse.trace\u001b[m\n\u001b[1m+++ b/rev-parse.trace\u001b[m\n\u001b[36m@@ -1,4 +1,5 @@\u001b[m\n\u001b[31m-git rev-parse --no-revs --no-flags -- common tracer\u001b[m\n\u001b[31m-git rev-parse --flags --no-revs -- common tracer\u001b[m\n\u001b[31m-git rev-parse --symbolic --revs-only -- common tracer\u001b[m\n\u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --symbolic-full-name @{upstream}\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\n[FAIL] log.trace != expected/log.trace\n\u001b[1mdiff --git a/expected/log.trace b/log.trace\u001b[m\n\u001b[1mindex a9795ce..c0f4712 100644\u001b[m\n\u001b[1m--- a/expected/log.trace\u001b[m\n\u001b[1m+++ b/log.trace\u001b[m\n\u001b[36m@@ -1 +1 @@\u001b[m\n\u001b[31m-git log --encoding=UTF-8 --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all --date=raw --parents --no-color --show-notes --pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s%x00%N%x03 -- common tracer\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit log --topo-order --parents --no-show-signature --decorate=full --format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI -z --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all -- common tracer\u001b[m\u001b[41m \u001b[m\n  [OK] filtered.screen assertion\n",
+          "receipt": "[FAIL] rev-parse.trace != expected/rev-parse.trace\n\u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\n\u001b[1mindex c6d0c82..aba1ee8 100644\u001b[m\n\u001b[1m--- a/expected/rev-parse.trace\u001b[m\n\u001b[1m+++ b/rev-parse.trace\u001b[m\n\u001b[36m@@ -1,4 +1,5 @@\u001b[m\n\u001b[31m-git rev-parse --no-revs --no-flags -- common tracer\u001b[m\n\u001b[31m-git rev-parse --flags --no-revs -- common tracer\u001b[m\n\u001b[31m-git rev-parse --symbolic --revs-only -- common tracer\u001b[m\n\u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --symbolic-full-name @{upstream}\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\n[FAIL] log.trace != expected/log.trace\n\u001b[1mdiff --git a/expected/log.trace b/log.trace\u001b[m\n\u001b[1mindex a9795ce..aba12a6 100644\u001b[m\n\u001b[1m--- a/expected/log.trace\u001b[m\n\u001b[1m+++ b/log.trace\u001b[m\n\u001b[36m@@ -1 +1 @@\u001b[m\n\u001b[31m-git log --encoding=UTF-8 --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all --date=raw --parents --no-color --show-notes --pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s%x00%N%x03 -- common tracer\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit log --parents --no-show-signature --decorate=full --format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI -z --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all -- common tracer\u001b[m\u001b[41m \u001b[m\n  [OK] filtered.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 2 out of 3 test(s)\r\n| [FAIL] rev-parse.trace != expected/rev-parse.trace\r\n| \u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\r\n| \u001b[1mindex c6d0c82..aba1ee8 100644\u001b[m\r\n| \u001b[1m--- a/expected/rev-parse.trace\u001b[m\r\n| \u001b[1m+++ b/rev-parse.trace\u001b[m\r\n| \u001b[36m@@ -1,4 +1,5 @@\u001b[m\r\n| \u001b[31m-git rev-parse --no-revs --no-flags -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --flags --no-revs -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --symbolic --revs-only -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --symbolic-full-name @{upstream}\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\r\n| [FAIL] log.trace != expected/log.trace\r\n| \u001b[1mdiff --git a/expected/log.trace b/log.trace\u001b[m\r\n| \u001b[1mindex a9795ce..c0f4712 100644\u001b[m\r\n| \u001b[1m--- a/expected/log.trace\u001b[m\r\n| \u001b[1m+++ b/log.trace\u001b[m\r\n| \u001b[36m@@ -1 +1 @@\u001b[m\r\n| \u001b[31m-git log --encoding=UTF-8 --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all --date=raw --parents --no-color --show-notes --pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s%x00%N%x03 -- common tracer\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit log --topo-order --parents --no-show-signature --decorate=full --format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI -z --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all -- common tracer\u001b[m\u001b[41m \u001b[m\r\n|   [OK] filtered.screen assertion\r\n"
+          "transcript": "| Failed 2 out of 3 test(s)\r\n| [FAIL] rev-parse.trace != expected/rev-parse.trace\r\n| \u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\r\n| \u001b[1mindex c6d0c82..aba1ee8 100644\u001b[m\r\n| \u001b[1m--- a/expected/rev-parse.trace\u001b[m\r\n| \u001b[1m+++ b/rev-parse.trace\u001b[m\r\n| \u001b[36m@@ -1,4 +1,5 @@\u001b[m\r\n| \u001b[31m-git rev-parse --no-revs --no-flags -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --flags --no-revs -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --symbolic --revs-only -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --symbolic-full-name @{upstream}\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\r\n| [FAIL] log.trace != expected/log.trace\r\n| \u001b[1mdiff --git a/expected/log.trace b/log.trace\u001b[m\r\n| \u001b[1mindex a9795ce..aba12a6 100644\u001b[m\r\n| \u001b[1m--- a/expected/log.trace\u001b[m\r\n| \u001b[1m+++ b/log.trace\u001b[m\r\n| \u001b[36m@@ -1 +1 @@\u001b[m\r\n| \u001b[31m-git log --encoding=UTF-8 --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all --date=raw --parents --no-color --show-notes --pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s%x00%N%x03 -- common tracer\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit log --parents --no-show-signature --decorate=full --format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI -z --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all -- common tracer\u001b[m\u001b[41m \u001b[m\r\n|   [OK] filtered.screen assertion\r\n"
         },
         {
           "script": "test/main/git-alias-test",
@@ -7428,18 +7432,15 @@
           "script_sha256": "e1bf5d04ecaf3a855b65548e2a6ebe1697bc787597cfa5b97927acec79ed7bfe",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 1,
-            "OK": 1
+            "OK": 2
           },
           "assertions": [
             {
               "id": "stderr#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "tig-did-not-exit-as-expected#1",
@@ -7447,10 +7448,10 @@
             }
           ],
           "receipt_path": "test/tmp/main/no-matching-commmits-test/.test-result",
-          "receipt": "[FAIL] stderr != expected/stderr\n\u001b[1mdiff --git a/expected/stderr b/stderr\u001b[m\n\u001b[1mindex f0fa825..6d1affd 100644\u001b[m\n\u001b[1m--- a/expected/stderr\u001b[m\n\u001b[1m+++ b/stderr\u001b[m\n\u001b[36m@@ -1 +1,3 @@\u001b[m\n\u001b[31m-tig: No revisions match the given arguments.\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig: git exited with exit status: 128: fatal: ambiguous argument 'some-ref-that-does-not-exist': unknown revision or path not in the working tree.\u001b[m\n\u001b[32m+\u001b[m\u001b[32mUse '--' to separate paths from revisions, like this:\u001b[m\n\u001b[32m+\u001b[m\u001b[32m'git <command> [<revision>...] -- [<file>...]'\u001b[m\n  [OK] tig-did-not-exit-as-expected does not exist\n",
+          "receipt": "  [OK] stderr assertion\n  [OK] tig-did-not-exit-as-expected does not exist\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 2 test(s)\r\n| [FAIL] stderr != expected/stderr\r\n| \u001b[1mdiff --git a/expected/stderr b/stderr\u001b[m\r\n| \u001b[1mindex f0fa825..6d1affd 100644\u001b[m\r\n| \u001b[1m--- a/expected/stderr\u001b[m\r\n| \u001b[1m+++ b/stderr\u001b[m\r\n| \u001b[36m@@ -1 +1,3 @@\u001b[m\r\n| \u001b[31m-tig: No revisions match the given arguments.\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig: git exited with exit status: 128: fatal: ambiguous argument 'some-ref-that-does-not-exist': unknown revision or path not in the working tree.\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mUse '--' to separate paths from revisions, like this:\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m'git <command> [<revision>...] -- [<file>...]'\u001b[m\r\n|   [OK] tig-did-not-exit-as-expected does not exist\r\n"
+          "transcript": ""
         },
         {
           "script": "test/main/no-merges-test",
@@ -7805,18 +7806,15 @@
           "script_sha256": "7853b856078605aebae6dd66f193eefb32320c2439ab3077020deac54bf4baf3",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 2,
-            "OK": 2
+            "OK": 3
           },
           "assertions": [
             {
               "id": "work-dir/gh-483-main-q-noquit#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "work-dir/gh-483-generic-qb-executed#1",
@@ -7828,10 +7826,10 @@
             }
           ],
           "receipt_path": "test/tmp/main/unbind-default-quit-key-test/.test-result",
-          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] work-dir/gh-483-main-q-noquit should not exist\n  [OK] work-dir/gh-483-generic-qb-executed does not exist\n  [OK] work-dir/gh-483-main-qa-executed does not exist\n",
+          "receipt": "  [OK] work-dir/gh-483-main-q-noquit does not exist\n  [OK] work-dir/gh-483-generic-qb-executed does not exist\n  [OK] work-dir/gh-483-main-qa-executed does not exist\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 2 out of 4 test(s)\r\n| [stderr] tig: Not implemented in Rust yet: none\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] work-dir/gh-483-main-q-noquit should not exist\r\n|   [OK] work-dir/gh-483-generic-qb-executed does not exist\r\n|   [OK] work-dir/gh-483-main-qa-executed does not exist\r\n"
+          "transcript": ""
         },
         {
           "script": "test/main/untracked-test",
@@ -7993,24 +7991,22 @@
           "script_sha256": "700459540642c895a717fa943a46a0df031eb4b135dec7b63562009e26d4a89e",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 1
+            "OK": 1
           },
           "assertions": [
             {
               "id": "reflog-default.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/reflog/default-test/.test-result",
-          "receipt": "[FAIL] reflog-default.screen != expected/reflog-default.screen\n\u001b[1mdiff --git a/expected/reflog-default.screen b/reflog-default.screen\u001b[m\n\u001b[1mindex 2ef5a21..c7092b6 100644\u001b[m\n\u001b[1m--- a/expected/reflog-default.screen\u001b[m\n\u001b[1m+++ b/reflog-default.screen\u001b[m\n\u001b[36m@@ -1,29 +1,29 @@\u001b[m\n\u001b[31m-b45b570 [r1.1.2] [r1.1.x] <v1.1> checkout: moving from r1.0 to r1.1.2\u001b[m\n\u001b[31m-957f2b3 [r1.0] <v1.0> checkout: moving from master to r1.0\u001b[m\n\u001b[31m-5cb3412 [master] {max-power/master} {origin/HEAD} {origin/master} reset: moving\u001b[m\n\u001b[31m-5cb3412 [master] {max-power/master} {origin/HEAD} {origin/master} clone: from /o\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-[reflog] HEAD@{0} - reference 1 of 4                                        100%\u001b[m\n\u001b[31m-2009-12-26 01:11 +0000 作者                  * [r1.1.2] [r1.1.x] <v1.1> Commit 8\u001b[m\n\u001b[31m-2009-12-17 12:49 +0000 René Lévesque         * [r1.0] <v1.0> Commit 8 B\u001b[m\n\u001b[31m-2009-12-09 00:27 +0000 A. U. Thor            * Commit 8 A\u001b[m\n\u001b[31m-2009-11-30 12:05 +0000 Max Power             * {max-power/mp/gh-123} Commit 7 E\u001b[m\n\u001b[31m-2009-11-21 23:43 +0000 Jørgen Thygesen Brahe * Commit 7 D\u001b[m\n\u001b[31m-2009-11-13 11:20 +0000 作者                  * Commit 7 C\u001b[m\n\u001b[31m-2009-11-04 22:58 +0000 René Lévesque         * Commit 7 B\u001b[m\n\u001b[31m-2009-10-27 10:36 +0000 A. U. Thor            * Commit 7 A\u001b[m\n\u001b[31m-2009-10-18 22:14 +0000 Max Power             * Commit 6 E\u001b[m\n\u001b[31m-2009-10-10 09:52 +0000 Jørgen Thygesen Brahe * Commit 6 D\u001b[m\n\u001b[31m-2009-10-01 21:30 +0000 作者                  * Commit 6 C\u001b[m\n\u001b[31m-2009-09-23 09:07 +0000 René Lévesque         * Commit 6 B\u001b[m\n\u001b[31m-2009-09-14 20:45 +0000 A. U. Thor            * Commit 6 A\u001b[m\n\u001b[31m-2009-09-06 08:23 +0000 Max Power             * Commit 5 E\u001b[m\n\u001b[31m-2009-08-28 20:01 +0000 Jørgen Thygesen Brahe * Commit 5 D\u001b[m\n\u001b[31m-2009-08-20 07:39 +0000 作者                  * Commit 5 C\u001b[m\n\u001b[31m-2009-08-11 19:17 +0000 René Lévesque         * Commit 5 B\u001b[m\n\u001b[31m-2009-08-03 06:54 +0000 A. U. Thor            * Commit 5 A\u001b[m\n\u001b[31m-[main] b45b5704c34dbd4c5fd89d58d45238ad136ae166 - commit 1 of 38             47%\u001b[m\n\u001b[32m+\u001b[m\u001b[32mb45b570 HEAD@{0}: checkout: moving from r1.0 to r1.1.2\u001b[m\n\u001b[32m+\u001b[m\u001b[32m957f2b3 HEAD@{1}: checkout: moving from master to r1.0\u001b[m\n\u001b[32m+\u001b[m\u001b[32m5cb3412 HEAD@{2}: reset: moving to HEAD\u001b[m\n\u001b[32m+\u001b[m\u001b[32m5cb3412 HEAD@{3}: clone: from /opt/tig/test/tmp/git-repos/repo-one\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[reflog] - line 1 of 4                                                      100%\u001b[m\n",
+          "receipt": "  [OK] reflog-default.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] reflog-default.screen != expected/reflog-default.screen\r\n| \u001b[1mdiff --git a/expected/reflog-default.screen b/reflog-default.screen\u001b[m\r\n| \u001b[1mindex 2ef5a21..c7092b6 100644\u001b[m\r\n| \u001b[1m--- a/expected/reflog-default.screen\u001b[m\r\n| \u001b[1m+++ b/reflog-default.screen\u001b[m\r\n| \u001b[36m@@ -1,29 +1,29 @@\u001b[m\r\n| \u001b[31m-b45b570 [r1.1.2] [r1.1.x] <v1.1> checkout: moving from r1.0 to r1.1.2\u001b[m\r\n| \u001b[31m-957f2b3 [r1.0] <v1.0> checkout: moving from master to r1.0\u001b[m\r\n| \u001b[31m-5cb3412 [master] {max-power/master} {origin/HEAD} {origin/master} reset: moving\u001b[m\r\n| \u001b[31m-5cb3412 [master] {max-power/master} {origin/HEAD} {origin/master} clone: from /o\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-[reflog] HEAD@{0} - reference 1 of 4                                        100%\u001b[m\r\n| \u001b[31m-2009-12-26 01:11 +0000 作者                  * [r1.1.2] [r1.1.x] <v1.1> Commit 8\u001b[m\r\n| \u001b[31m-2009-12-17 12:49 +0000 René Lévesque         * [r1.0] <v1.0> Commit 8 B\u001b[m\r\n| \u001b[31m-2009-12-09 00:27 +0000 A. U. Thor            * Commit 8 A\u001b[m\r\n| \u001b[31m-2009-11-30 12:05 +0000 Max Power             * {max-power/mp/gh-123} Commit 7 E\u001b[m\r\n| \u001b[31m-2009-11-21 23:43 +0000 Jørgen Thygesen Brahe * Commit 7 D\u001b[m\r\n| \u001b[31m-2009-11-13 11:20 +0000 作者                  * Commit 7 C\u001b[m\r\n| \u001b[31m-2009-11-04 22:58 +0000 René Lévesque         * Commit 7 B\u001b[m\r\n| \u001b[31m-2009-10-27 10:36 +0000 A. U. Thor            * Commit 7 A\u001b[m\r\n| \u001b[31m-2009-10-18 22:14 +0000 Max Power             * Commit 6 E\u001b[m\r\n| \u001b[31m-2009-10-10 09:52 +0000 Jørgen Thygesen Brahe * Commit 6 D\u001b[m\r\n| \u001b[31m-2009-10-01 21:30 +0000 作者                  * Commit 6 C\u001b[m\r\n| \u001b[31m-2009-09-23 09:07 +0000 René Lévesque         * Commit 6 B\u001b[m\r\n| \u001b[31m-2009-09-14 20:45 +0000 A. U. Thor            * Commit 6 A\u001b[m\r\n| \u001b[31m-2009-09-06 08:23 +0000 Max Power             * Commit 5 E\u001b[m\r\n| \u001b[31m-2009-08-28 20:01 +0000 Jørgen Thygesen Brahe * Commit 5 D\u001b[m\r\n| \u001b[31m-2009-08-20 07:39 +0000 作者                  * Commit 5 C\u001b[m\r\n| \u001b[31m-2009-08-11 19:17 +0000 René Lévesque         * Commit 5 B\u001b[m\r\n| \u001b[31m-2009-08-03 06:54 +0000 A. U. Thor            * Commit 5 A\u001b[m\r\n| \u001b[31m-[main] b45b5704c34dbd4c5fd89d58d45238ad136ae166 - commit 1 of 38             47%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mb45b570 HEAD@{0}: checkout: moving from r1.0 to r1.1.2\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m957f2b3 HEAD@{1}: checkout: moving from master to r1.0\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m5cb3412 HEAD@{2}: reset: moving to HEAD\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m5cb3412 HEAD@{3}: clone: from /opt/tig/test/tmp/git-repos/repo-one\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[reflog] - line 1 of 4                                                      100%\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/refs/branch-checkout-test",
@@ -8267,52 +8263,50 @@
           "script_sha256": "b575998f86183937ea1307dedd899204f83e43a634a9872a2fe9c9b2f583f7f0",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 12
+            "OK": 8
           },
           "assertions": [
             {
               "id": "bang-cmdlineargs-doesnt-crash.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "bang-cmdlineargs-doesnt-crash.stderr#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "echo-cmdlineargs-doesnt-crash.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "echo-cmdlineargs-doesnt-crash.stderr#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "bang-fileargs-doesnt-crash.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "bang-fileargs-doesnt-crash.stderr#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "echo-fileargs-doesnt-crash.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "echo-fileargs-doesnt-crash.stderr#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/regressions/github-1136-test/.test-result",
-          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] bang-cmdlineargs-doesnt-crash.screen not found\n[FAIL] bang-cmdlineargs-doesnt-crash.stderr != expected/bang-cmdlineargs-doesnt-crash.stderr\n\u001b[1mdiff --git a/expected/bang-cmdlineargs-doesnt-crash.stderr b/bang-cmdlineargs-doesnt-crash.stderr\u001b[m\n\u001b[1mindex e69de29..016efb0 100644\u001b[m\n\u001b[1m--- a/expected/bang-cmdlineargs-doesnt-crash.stderr\u001b[m\n\u001b[1m+++ b/bang-cmdlineargs-doesnt-crash.stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig: Unsupported command variable: cmdlineargs\u001b[m\n[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] echo-cmdlineargs-doesnt-crash.screen not found\n[FAIL] echo-cmdlineargs-doesnt-crash.stderr != expected/echo-cmdlineargs-doesnt-crash.stderr\n\u001b[1mdiff --git a/expected/echo-cmdlineargs-doesnt-crash.stderr b/echo-cmdlineargs-doesnt-crash.stderr\u001b[m\n\u001b[1mindex e69de29..470a923 100644\u001b[m\n\u001b[1m--- a/expected/echo-cmdlineargs-doesnt-crash.stderr\u001b[m\n\u001b[1m+++ b/echo-cmdlineargs-doesnt-crash.stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig: Not implemented in Rust yet: echo %(cmdlineargs)\u001b[m\n[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] bang-fileargs-doesnt-crash.screen not found\n[FAIL] bang-fileargs-doesnt-crash.stderr != expected/bang-fileargs-doesnt-crash.stderr\n\u001b[1mdiff --git a/expected/bang-fileargs-doesnt-crash.stderr b/bang-fileargs-doesnt-crash.stderr\u001b[m\n\u001b[1mindex e69de29..dc87749 100644\u001b[m\n\u001b[1m--- a/expected/bang-fileargs-doesnt-crash.stderr\u001b[m\n\u001b[1m+++ b/bang-fileargs-doesnt-crash.stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig: Unsupported command variable: fileargs\u001b[m\n[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] echo-fileargs-doesnt-crash.screen not found\n[FAIL] echo-fileargs-doesnt-crash.stderr != expected/echo-fileargs-doesnt-crash.stderr\n\u001b[1mdiff --git a/expected/echo-fileargs-doesnt-crash.stderr b/echo-fileargs-doesnt-crash.stderr\u001b[m\n\u001b[1mindex e69de29..de201be 100644\u001b[m\n\u001b[1m--- a/expected/echo-fileargs-doesnt-crash.stderr\u001b[m\n\u001b[1m+++ b/echo-fileargs-doesnt-crash.stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig: Not implemented in Rust yet: echo %(fileargs)\u001b[m\n",
+          "receipt": "  [OK] bang-cmdlineargs-doesnt-crash.screen assertion\n  [OK] bang-cmdlineargs-doesnt-crash.stderr assertion\n  [OK] echo-cmdlineargs-doesnt-crash.screen assertion\n  [OK] echo-cmdlineargs-doesnt-crash.stderr assertion\n  [OK] bang-fileargs-doesnt-crash.screen assertion\n  [OK] bang-fileargs-doesnt-crash.stderr assertion\n  [OK] echo-fileargs-doesnt-crash.screen assertion\n  [OK] echo-fileargs-doesnt-crash.stderr assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 12 out of 12 test(s)\r\n| [stderr] [bang-cmdlineargs-doesnt-crash] tig: Unsupported command variable: cmdlineargs\r\n| [stderr] [echo-cmdlineargs-doesnt-crash] tig: Not implemented in Rust yet: echo %(cmdlineargs)\r\n| [stderr] [bang-fileargs-doesnt-crash] tig: Unsupported command variable: fileargs\r\n| [stderr] [echo-fileargs-doesnt-crash] tig: Not implemented in Rust yet: echo %(fileargs)\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] bang-cmdlineargs-doesnt-crash.screen not found\r\n| [FAIL] bang-cmdlineargs-doesnt-crash.stderr != expected/bang-cmdlineargs-doesnt-crash.stderr\r\n| \u001b[1mdiff --git a/expected/bang-cmdlineargs-doesnt-crash.stderr b/bang-cmdlineargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1mindex e69de29..016efb0 100644\u001b[m\r\n| \u001b[1m--- a/expected/bang-cmdlineargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1m+++ b/bang-cmdlineargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig: Unsupported command variable: cmdlineargs\u001b[m\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] echo-cmdlineargs-doesnt-crash.screen not found\r\n| [FAIL] echo-cmdlineargs-doesnt-crash.stderr != expected/echo-cmdlineargs-doesnt-crash.stderr\r\n| \u001b[1mdiff --git a/expected/echo-cmdlineargs-doesnt-crash.stderr b/echo-cmdlineargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1mindex e69de29..470a923 100644\u001b[m\r\n| \u001b[1m--- a/expected/echo-cmdlineargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1m+++ b/echo-cmdlineargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig: Not implemented in Rust yet: echo %(cmdlineargs)\u001b[m\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] bang-fileargs-doesnt-crash.screen not found\r\n| [FAIL] bang-fileargs-doesnt-crash.stderr != expected/bang-fileargs-doesnt-crash.stderr\r\n| \u001b[1mdiff --git a/expected/bang-fileargs-doesnt-crash.stderr b/bang-fileargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1mindex e69de29..dc87749 100644\u001b[m\r\n| \u001b[1m--- a/expected/bang-fileargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1m+++ b/bang-fileargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig: Unsupported command variable: fileargs\u001b[m\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] echo-fileargs-doesnt-crash.screen not found\r\n| [FAIL] echo-fileargs-doesnt-crash.stderr != expected/echo-fileargs-doesnt-crash.stderr\r\n| \u001b[1mdiff --git a/expected/echo-fileargs-doesnt-crash.stderr b/echo-fileargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1mindex e69de29..de201be 100644\u001b[m\r\n| \u001b[1m--- a/expected/echo-fileargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1m+++ b/echo-fileargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig: Not implemented in Rust yet: echo %(fileargs)\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/regressions/github-370-test",
@@ -8657,24 +8651,22 @@
           "script_sha256": "e457e5a5e298db8d6d337ada5f5b6bfbe2a4e7026ba2ee51b249c87b3f95847d",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 1
+            "OK": 1
           },
           "assertions": [
             {
               "id": "position.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/stash/start-on-line-test/.test-result",
-          "receipt": "[FAIL] position.screen != expected/position.screen\n\u001b[1mdiff --git a/expected/position.screen b/position.screen\u001b[m\n\u001b[1mindex 785d088..ba9eb36 100644\u001b[m\n\u001b[1m--- a/expected/position.screen\u001b[m\n\u001b[1m+++ b/position.screen\u001b[m\n\u001b[36m@@ -1,13 +1,13 @@\u001b[m\n\u001b[31m-Committer On master: Stash #10\u001b[m\n\u001b[31m-Committer On master: Stash #9\u001b[m\n\u001b[31m-Committer On master: Stash #8\u001b[m\n\u001b[31m-Committer On master: Stash #7\u001b[m\n\u001b[31m-Committer On master: Stash #6\u001b[m\n\u001b[31m-Committer On master: Stash #5\u001b[m\n\u001b[31m-Committer On master: Stash #4\u001b[m\n\u001b[31m-Committer On master: Stash #3\u001b[m\n\u001b[31m-Committer On master: Stash #2\u001b[m\n\u001b[31m-Committer On master: Stash #1\u001b[m\n\u001b[32m+\u001b[m\u001b[32mstash@{0}: On master: Stash #10\u001b[m\n\u001b[32m+\u001b[m\u001b[32mstash@{1}: On master: Stash #9\u001b[m\n\u001b[32m+\u001b[m\u001b[32mstash@{2}: On master: Stash #8\u001b[m\n\u001b[32m+\u001b[m\u001b[32mstash@{3}: On master: Stash #7\u001b[m\n\u001b[32m+\u001b[m\u001b[32mstash@{4}: On master: Stash #6\u001b[m\n\u001b[32m+\u001b[m\u001b[32mstash@{5}: On master: Stash #5\u001b[m\n\u001b[32m+\u001b[m\u001b[32mstash@{6}: On master: Stash #4\u001b[m\n\u001b[32m+\u001b[m\u001b[32mstash@{7}: On master: Stash #3\u001b[m\n\u001b[32m+\u001b[m\u001b[32mstash@{8}: On master: Stash #2\u001b[m\n\u001b[32m+\u001b[m\u001b[32mstash@{9}: On master: Stash #1\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[36m@@ -26,4 +26,4 @@\u001b[m \u001b[mCommitter On master: Stash #1\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[31m-[stash] stash@{9} - stash 10 of 10                                          100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[stash] - line 10 of 10                                                     100%\u001b[m\n",
+          "receipt": "  [OK] position.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] position.screen != expected/position.screen\r\n| \u001b[1mdiff --git a/expected/position.screen b/position.screen\u001b[m\r\n| \u001b[1mindex 785d088..ba9eb36 100644\u001b[m\r\n| \u001b[1m--- a/expected/position.screen\u001b[m\r\n| \u001b[1m+++ b/position.screen\u001b[m\r\n| \u001b[36m@@ -1,13 +1,13 @@\u001b[m\r\n| \u001b[31m-Committer On master: Stash #10\u001b[m\r\n| \u001b[31m-Committer On master: Stash #9\u001b[m\r\n| \u001b[31m-Committer On master: Stash #8\u001b[m\r\n| \u001b[31m-Committer On master: Stash #7\u001b[m\r\n| \u001b[31m-Committer On master: Stash #6\u001b[m\r\n| \u001b[31m-Committer On master: Stash #5\u001b[m\r\n| \u001b[31m-Committer On master: Stash #4\u001b[m\r\n| \u001b[31m-Committer On master: Stash #3\u001b[m\r\n| \u001b[31m-Committer On master: Stash #2\u001b[m\r\n| \u001b[31m-Committer On master: Stash #1\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mstash@{0}: On master: Stash #10\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mstash@{1}: On master: Stash #9\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mstash@{2}: On master: Stash #8\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mstash@{3}: On master: Stash #7\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mstash@{4}: On master: Stash #6\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mstash@{5}: On master: Stash #5\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mstash@{6}: On master: Stash #4\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mstash@{7}: On master: Stash #3\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mstash@{8}: On master: Stash #2\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mstash@{9}: On master: Stash #1\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[36m@@ -26,4 +26,4 @@\u001b[m \u001b[mCommitter On master: Stash #1\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-[stash] stash@{9} - stash 10 of 10                                          100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[stash] - line 10 of 10                                                     100%\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/status/file-filter-test",
@@ -9286,13 +9278,10 @@
           "script_sha256": "00a3630170cc80a4b7f2a709688e8fb0456fd19d849d5e03ba6f2205ac43e522",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "OK": 1,
-            "FAIL": 1
+            "OK": 2
           },
           "assertions": [
             {
@@ -9301,14 +9290,14 @@
             },
             {
               "id": "pager.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/tigrc/command-value-long-test/.test-result",
-          "receipt": "  [OK] stderr assertion\n[FAIL] pager.screen != expected/pager.screen\n\u001b[1mdiff --git a/expected/pager.screen b/pager.screen\u001b[m\n\u001b[1mindex bdb60e9..b1888cb 100644\u001b[m\n\u001b[1m--- a/expected/pager.screen\u001b[m\n\u001b[1m+++ b/pager.screen\u001b[m\n\u001b[36m@@ -1,19 +1,19 @@\u001b[m\n\u001b[31m-00000000000000000000000000000000000000000000000000000000000000000000000000000000\u001b[m\n\u001b[31m-11111111111111111111111111111111111111111111111111111111111111111111111111111111\u001b[m\n\u001b[31m-22222222222222222222222222222222222222222222222222222222222222222222222222222222\u001b[m\n\u001b[31m-33333333333333333333333333333333333333333333333333333333333333333333333333333333\u001b[m\n\u001b[31m-44444444444444444444444444444444444444444444444444444444444444444444444444444444\u001b[m\n\u001b[31m-55555555555555555555555555555555555555555555555555555555555555555555555555555555\u001b[m\n\u001b[31m-66666666666666666666666666666666666666666666666666666666666666666666666666666666\u001b[m\n\u001b[31m-77777777777777777777777777777777777777777777777777777777777777777777777777777777\u001b[m\n\u001b[31m-88888888888888888888888888888888888888888888888888888888888888888888888888888888\u001b[m\n\u001b[31m-99999999999999999999999999999999999999999999999999999999999999999999999999999999\u001b[m\n\u001b[31m-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u001b[m\n\u001b[31m-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\u001b[m\n\u001b[31m-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC\u001b[m\n\u001b[31m-DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\u001b[m\n\u001b[31m-EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\u001b[m\n\u001b[31m-FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n \u001b[m\n \u001b[m\n [pager] sh -c echo 00000000000000000000000000000000000000000000000000000000 100%\u001b[m\n",
+          "receipt": "  [OK] stderr assertion\n  [OK] pager.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 2 test(s)\r\n|   [OK] stderr assertion\r\n| [FAIL] pager.screen != expected/pager.screen\r\n| \u001b[1mdiff --git a/expected/pager.screen b/pager.screen\u001b[m\r\n| \u001b[1mindex bdb60e9..b1888cb 100644\u001b[m\r\n| \u001b[1m--- a/expected/pager.screen\u001b[m\r\n| \u001b[1m+++ b/pager.screen\u001b[m\r\n| \u001b[36m@@ -1,19 +1,19 @@\u001b[m\r\n| \u001b[31m-00000000000000000000000000000000000000000000000000000000000000000000000000000000\u001b[m\r\n| \u001b[31m-11111111111111111111111111111111111111111111111111111111111111111111111111111111\u001b[m\r\n| \u001b[31m-22222222222222222222222222222222222222222222222222222222222222222222222222222222\u001b[m\r\n| \u001b[31m-33333333333333333333333333333333333333333333333333333333333333333333333333333333\u001b[m\r\n| \u001b[31m-44444444444444444444444444444444444444444444444444444444444444444444444444444444\u001b[m\r\n| \u001b[31m-55555555555555555555555555555555555555555555555555555555555555555555555555555555\u001b[m\r\n| \u001b[31m-66666666666666666666666666666666666666666666666666666666666666666666666666666666\u001b[m\r\n| \u001b[31m-77777777777777777777777777777777777777777777777777777777777777777777777777777777\u001b[m\r\n| \u001b[31m-88888888888888888888888888888888888888888888888888888888888888888888888888888888\u001b[m\r\n| \u001b[31m-99999999999999999999999999999999999999999999999999999999999999999999999999999999\u001b[m\r\n| \u001b[31m-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u001b[m\r\n| \u001b[31m-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\u001b[m\r\n| \u001b[31m-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC\u001b[m\r\n| \u001b[31m-DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\u001b[m\r\n| \u001b[31m-EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\u001b[m\r\n| \u001b[31m-FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  [pager] sh -c echo 00000000000000000000000000000000000000000000000000000000 100%\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/tigrc/compat-error-test",
@@ -9385,24 +9374,22 @@
           "script_sha256": "8ac261a47c2b3fdc0b1647df9cebc8f11ede82e7a442ed828c31b675adb19900",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 2
+            "OK": 1
           },
           "assertions": [
             {
               "id": "shell-command.txt#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/tigrc/escape-var-test/.test-result",
-          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] shell-command.txt not found\n",
+          "receipt": "  [OK] shell-command.txt assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Unsupported command variable: refname\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] shell-command.txt not found\r\n"
+          "transcript": ""
         },
         {
           "script": "test/tigrc/parse-test",
@@ -9435,18 +9422,15 @@
           "script_sha256": "9039c2c6365ae453ddae606b7135555f111f0d8ef02cd03a8420badd3e978f9d",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 6,
-            "OK": 1
+            "OK": 6
           },
           "assertions": [
             {
               "id": "stderr#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "shell-command.txt#1",
@@ -9454,26 +9438,26 @@
             },
             {
               "id": "quoted-prompt-with-spaces.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "mid-quoted-prompt-with-spaces.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "single-quoted-arg-with-escaped-chars.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "double-quoted-arg-with-escaped-chars.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/tigrc/quote-test/.test-result",
-          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] stderr != expected/stderr\n\u001b[1mdiff --git a/expected/stderr b/stderr\u001b[m\n\u001b[1mindex e69de29..32bcdac 100644\u001b[m\n\u001b[1m--- a/expected/stderr\u001b[m\n\u001b[1m+++ b/stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig: Unclosed command variable\u001b[m\n  [OK] shell-command.txt assertion\n[FAIL] quoted-prompt-with-spaces.screen not found\n[FAIL] mid-quoted-prompt-with-spaces.screen not found\n[FAIL] single-quoted-arg-with-escaped-chars.screen not found\n[FAIL] double-quoted-arg-with-escaped-chars.screen not found\n",
+          "receipt": "  [OK] stderr assertion\n  [OK] shell-command.txt assertion\n  [OK] quoted-prompt-with-spaces.screen assertion\n  [OK] mid-quoted-prompt-with-spaces.screen assertion\n  [OK] single-quoted-arg-with-escaped-chars.screen assertion\n  [OK] double-quoted-arg-with-escaped-chars.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 6 out of 7 test(s)\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] stderr != expected/stderr\r\n| \u001b[1mdiff --git a/expected/stderr b/stderr\u001b[m\r\n| \u001b[1mindex e69de29..32bcdac 100644\u001b[m\r\n| \u001b[1m--- a/expected/stderr\u001b[m\r\n| \u001b[1m+++ b/stderr\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig: Unclosed command variable\u001b[m\r\n|   [OK] shell-command.txt assertion\r\n| [FAIL] quoted-prompt-with-spaces.screen not found\r\n| [FAIL] mid-quoted-prompt-with-spaces.screen not found\r\n| [FAIL] single-quoted-arg-with-escaped-chars.screen not found\r\n| [FAIL] double-quoted-arg-with-escaped-chars.screen not found\r\n"
+          "transcript": ""
         },
         {
           "script": "test/tigrc/save-option-test",
@@ -10208,17 +10192,17 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig",
-          "sha256": "8ec24b5895d5ddff34170560d8ebcf2d7b9be2d8b4457c77d6306d1eab3dd038"
+          "sha256": "5c0cc8ec6b1be018183c63fa0cd1c96d32cad729e2b80af74bf36836b83c76ea"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph",
-          "sha256": "a6ef9931a15d6ad838b43c660d18484e24bfcd8c5a70c96f8dbc4ad896f5f852"
+          "sha256": "7814f98a9cc9667e1750699533f1b89e3f5c2fa310f1b506d378d3d2c57b8a8f"
         }
       },
       "binaries_unchanged": true,
       "summary": {
-        "pass": 121,
-        "fail": 30,
+        "pass": 134,
+        "fail": 17,
         "skip": 3
       }
     }
@@ -10346,24 +10330,24 @@
     {
       "script": "test/blob/wrap-lines-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "wrapped.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
     {
       "script": "test/diff/commit-title-wrap-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "wrapped-commit-title.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -10924,12 +10908,12 @@
     {
       "script": "test/diff/wrap-lines-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "wrapped.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -11447,32 +11431,32 @@
     {
       "script": "test/main/all-arg-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "vars_assert_count#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "vars#1",
           "c": "OK",
-          "rust": "NOT_REACHED"
+          "rust": "OK"
         },
         {
           "id": "stderr#1",
           "c": "OK",
-          "rust": "NOT_REACHED"
+          "rust": "OK"
         },
         {
           "id": "final.screen#1",
           "c": "OK",
-          "rust": "NOT_REACHED"
+          "rust": "OK"
         },
         {
           "id": "detached.screen#1",
           "c": "OK",
-          "rust": "NOT_REACHED"
+          "rust": "OK"
         }
       ]
     },
@@ -11525,7 +11509,7 @@
     {
       "script": "test/main/commit-order-edge-case-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "ensure-topo-order-with-graph.screen#1",
@@ -11535,7 +11519,7 @@
         {
           "id": "graph-supports-date-order.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -11888,12 +11872,12 @@
     {
       "script": "test/main/no-matching-commmits-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "stderr#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "tig-did-not-exit-as-expected#1",
@@ -12177,12 +12161,12 @@
     {
       "script": "test/main/unbind-default-quit-key-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "work-dir/gh-483-main-q-noquit#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "work-dir/gh-483-generic-qb-executed#1",
@@ -12309,12 +12293,12 @@
     {
       "script": "test/reflog/default-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "reflog-default.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -12494,47 +12478,47 @@
     {
       "script": "test/regressions/github-1136-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "bang-cmdlineargs-doesnt-crash.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "bang-cmdlineargs-doesnt-crash.stderr#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "echo-cmdlineargs-doesnt-crash.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "echo-cmdlineargs-doesnt-crash.stderr#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "bang-fileargs-doesnt-crash.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "bang-fileargs-doesnt-crash.stderr#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "echo-fileargs-doesnt-crash.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "echo-fileargs-doesnt-crash.stderr#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -12801,12 +12785,12 @@
     {
       "script": "test/stash/start-on-line-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "position.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -13333,7 +13317,7 @@
     {
       "script": "test/tigrc/command-value-long-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "stderr#1",
@@ -13343,7 +13327,7 @@
         {
           "id": "pager.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -13391,12 +13375,12 @@
     {
       "script": "test/tigrc/escape-var-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "shell-command.txt#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -13420,12 +13404,12 @@
     {
       "script": "test/tigrc/quote-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "stderr#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "shell-command.txt#1",
@@ -13435,22 +13419,22 @@
         {
           "id": "quoted-prompt-with-spaces.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "mid-quoted-prompt-with-spaces.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "single-quoted-arg-with-escaped-chars.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "double-quoted-arg-with-escaped-chars.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },

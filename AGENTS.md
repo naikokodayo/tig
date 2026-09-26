@@ -26,6 +26,8 @@ make a Rust result pass.
   changes to staging, commands, paths, or screen layout.
 - Keep the 154-script strict runner fail-closed. Run the complete paired suite
   on integrated main checkpoints; avoid repeating it for every branch edit.
+  Write its current result to `migration/evidence/upstream-rust-only-current.json`
+  and replace that file at the next checkpoint; Git preserves older results.
   Distinguish a passing assertion from a skipped or unreached one.
 - Keep one final, source-and-binary-hashed receipt per slice and the raw
   failure data needed to explain exceptions. Do not multiply near-identical

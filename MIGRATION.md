@@ -503,7 +503,7 @@ C passed 152 scripts, failed none, and skipped two. Rust passed 82, failed 69,
 and skipped three. Rust reached 416 passing and 139 failing real assertions;
 17 assertions reached by C were not reached by Rust. Another 34 failure
 records concern setup or runtime behavior and are not assertion failures.
-The [paired receipt](migration/evidence/upstream-rust-only-after-date.json)
+The [paired receipt](https://github.com/naikokodayo/tig/blob/2fb2a87105b77b0c2de37d6be766365acaa5ac1d/migration/evidence/upstream-rust-only-after-date.json)
 includes binary hashes, raw transcripts, and per-script outcomes. The parity
 gate remains **OPEN**. This source snapshot predates the later stage,
 save-options, and refs merges; these numbers are not a result for current main.
@@ -578,7 +578,7 @@ Rust-only application/graph binaries. C passed 152 and skipped two. Rust passed
 15 C-side assertions were not reached. Another 25 failure records concern
 setup/runtime behavior. Compared with the earlier date snapshot, nine scripts
 became passing: two refs, four stage, and three tigrc. The full [paired
-receipt](migration/evidence/upstream-rust-only-after-stage-save-refs.json)
+receipt](https://github.com/naikokodayo/tig/blob/9a691ee1e0a940a9fee90158f93d81ec361b7ac3/migration/evidence/upstream-rust-only-after-stage-save-refs.json)
 records every transcript and reason. This predates the merged main-graph PR #8
 and subsequent work, so it is not a current-main or final benchmark result.
 
@@ -628,7 +628,7 @@ hashed C and Rust-only application/graph binaries. C passed 152 and skipped
 two. Rust passed 95, failed 56, and skipped three; 462 actual assertions
 passed, 95 failed, and 15 C-side assertions were not reached. Another 21
 failure checks concern setup or runtime behavior rather than assertions.
-The [paired receipt](migration/evidence/upstream-rust-only-after-main-date-prompt.json)
+The [paired receipt](https://github.com/naikokodayo/tig/blob/b0eabd2cf503ec5f220dd1d160ebe47866563a89/migration/evidence/upstream-rust-only-after-main-date-prompt.json)
 records every transcript and reason. This source predates merged PR #12, so
 these numbers are not current-main or final benchmark results. The parity gate
 remains **OPEN**.
@@ -642,7 +642,7 @@ passed 104, failed 47, and skipped three; 475 actual assertions passed, 82
 failed, and 15 C-side assertions were not reached. Another 19 failure checks
 concern setup or runtime behavior rather than assertions. This is nine more
 passing Rust scripts than the preceding `c097ffb8` snapshot. The [paired
-receipt](migration/evidence/upstream-rust-only-after-refs-tree-diff.json)
+receipt](https://github.com/naikokodayo/tig/blob/ac78df21291964083a6cb13a08da5d127fdcc60e/migration/evidence/upstream-rust-only-after-refs-tree-diff.json)
 records every transcript and reason. This source predates merged status/trace
 and config PRs #13 and #16; it is not a current-main or final benchmark result.
 The parity gate remains **OPEN**.
@@ -655,10 +655,23 @@ and Rust-only application/graph binaries. C passed 152 and skipped two. Rust
 passed 121, failed 30, and skipped three; 517 actual assertions passed, 47
 failed, and eight C-side assertions were not reached. Another 11 failure checks
 concern setup or runtime behavior rather than assertions. The [paired
-receipt](migration/evidence/upstream-rust-only-after-integration.json) contains
+receipt](https://github.com/naikokodayo/tig/blob/72133541191c0b3d3e458fcb6075637a9ffe36ef/migration/evidence/upstream-rust-only-after-integration.json) contains
 the executable hashes and individual transcripts. This is 17 more passing
 Rust scripts than the preceding `86ce7680` snapshot. The parity gate remains
 **OPEN**; completed follow-up slices must be retested against their merged source.
+
+### Current strict paired snapshot after key bindings and view integration
+
+At merged source `578217033cde4719581617d5e46da1e04f2f6052`, the runner
+attempted all 154 unchanged scripts with separately hashed C and Rust-only
+application/graph binaries. C passed 152, failed none, and skipped two. Rust
+passed 134, failed 17, and skipped three: 545 actual assertions passed, 23
+failed, and four C assertions were not reached. Three further failed checks
+were runtime/setup checks rather than assertions. The [current paired
+receipt](migration/evidence/upstream-rust-only-current.json) contains each
+script's original output, route and hashes. This is 13 more passing Rust
+scripts than the preceding snapshot. The parity gate remains **BLOCKED**;
+the end-to-end C/Rust benchmark has not begun.
 
 ### Non-local `%s` follow-up
 
