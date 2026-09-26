@@ -507,6 +507,67 @@ includes binary hashes, raw transcripts, and per-script outcomes. The parity
 gate remains **OPEN**. This source snapshot predates the later stage,
 save-options, and refs merges; these numbers are not a result for current main.
 
+## Diff input, pane width and navigation slice (2026-09-27)
+
+This slice starts from fork main `2fb2a871` in an independent clone. No
+`AGENTS.md` is present in that checkout. The old after-date full-suite snapshot
+remains historical; a fresh strict paired run reproduces all ten requested
+scripts failing on Rust, while C passes all 23 assertions. See
+[`diff-render-before.json`](migration/evidence/diff-render-before.json).
+
+Three bounded mechanisms are corrected:
+
+- `tig show` consumes supplied diff text, retains its commit ID and redraws it
+  without resolving HEAD or re-reading Git. Empty input and terminal control
+  characters are handled safely. Forwarding revision lists with `show --stdin`
+  remains explicitly unsupported, rather than displaying revision names as a patch.
+- Vertical splits reserve the separator in the child pane, matching C's 91/89
+  content widths at 181 columns. Initial diff loads and diff/log refreshes pass
+  the actual pane width to Git's native stat formatter. Script dimensions are
+  applied before loading content. Log width does not enable stats when disabled.
+- Explicitly opening the current diff detaches its parent navigation, including
+  after maximize. `next` then moves within that diff instead of opening the
+  parent's next commit. The parent remains available through view-close.
+
+At source `3b028e0cdedf34e9edd242fd28937f5d5d18464c`, the ten requested scripts
+now have **4 passing / 6 failing scripts**, with **15 OK / 8 FAIL assertion
+records and 1 additional runtime failure**. C passes all ten and all 23
+assertions. The newly passing scripts are diff-stat-split, diff-stdin,
+maximized-navigation and open-after-split. The log diff-stat refresh assertion
+also passes; its initial split assertion still fails.
+
+The final paired run adds twelve related, unchanged diff/editor/log/main/width
+scripts: **C 22/22 scripts and 160/160 assertions; Rust 16 passing / 6 failing
+scripts, 152 OK / 8 FAIL assertion records and 1 additional runtime failure**.
+No scripts are skipped and the adapter reports no unmatched assertion IDs.
+The missing `view.data` output is counted as a failed assertion, not a pass.
+This is focused evidence, not a full-suite result or a completion percentage.
+See [`diff-render-after.json`](migration/evidence/diff-render-after.json) for
+source, executable routing/hashes, original script hashes and raw transcripts.
+
+Remaining requested failures:
+
+- `diff/commit-title-wrap-test` and `diff/wrap-lines-test`: visual wrapping and
+  continuation markers are still missing. Supplied title text now loads.
+- `diff/diff-highlight-test`: configured external highlighter output is not used.
+- `diff/diff-stat-test`: `save-view` and its typed cell dump are unimplemented;
+  the script exits and its expected output is absent.
+- `diff/line-number-test`: the command output is not opened as a pager view.
+- `log/diff-stat-test`: the initially loaded, wide parent stat rows need cell-aware
+  truncation after splitting; refreshing the parent regenerates matching rows.
+
+Rust 1.81 formatting, **70 unit tests**, Clippy with warnings denied, release
+build, **130 real PTY checks**, **6 supplied-diff input checks**, and **29 existing
+date/argument checks** pass. [`diff-render-checks.json`](migration/evidence/diff-render-checks.json)
+binds the source manifest and release binary SHA-256 to the
+[check log](migration/evidence/diff-render-checks.log); the separate
+[PTY receipt](migration/evidence/diff-render-pty.json) carries the same source
+and binary identity. Reproduce the added boundary checks with
+`python3 rust/tests/diff-input.py` after the release build.
+
+First-party Rust remains unsafe-free. No dependency, original C source or
+original test was changed. Full parity and application benchmarks remain gated.
+
 ### Full strict paired snapshot after stage, save-options, and refs
 
 At source `2fb2a87105b77b0c2de37d6be766365acaa5ac1d`, the same fail-closed
@@ -565,3 +626,38 @@ Original C sources, headers and tests are unchanged; first-party unsafe remains
 forbidden. The [receipt](migration/evidence/tree-paths/receipt.json) binds source
 and binary hashes to the before/after paired runs, failing-then-passing regression,
 and PTY evidence. No full upstream suite or end-to-end benchmark was rerun.
+
+### Diff review fix and main synchronization
+
+The review found that Enter → maximize → next retained fullscreen presentation
+but loaded the next diff with the child pane's stat width. The new paired
+`rust/tests/diff-navigation.py` regression failed before the fix: Rust truncated
+a long stat filename while C retained it. Child opening now receives the intended
+split/fullscreen state before loading Git output; next/previous preserve that
+state instead of restoring it only after loading. Initial split behavior remains
+covered. At 180 and 181 columns, all eight comparisons (split, maximized next,
+maximized previous, and refresh) now match C.
+
+Merged main through `c097ffb8` (including PR #11) without rewriting published
+history. The MIGRATION.md append conflict retains both prior records; automatic
+code merges retain the history-graph/date changes and prompt/view-close fixes.
+All earlier diff receipts remain historical and unchanged.
+
+Final source `000e985da7814b55e652e19d50d0ee8a10c1146c` passes Rust 1.81 fmt,
+**72 unit tests**, Clippy, release build, **130 PTY checks**, **6 stdin checks**,
+**38 date/argument checks**, and the **8 new paired navigation comparisons**.
+The final original-test scope is the previous 22 scripts plus the two PR #11
+prompt/script regressions: **C 24/24 scripts and 169 OK assertions; Rust 18
+passing / 6 failing scripts, 161 OK / 8 failed assertion records and one extra
+runtime failure**. The same six previously documented failures remain; the new
+navigation regression and both PR #11 scripts pass. No full-suite claim is made.
+
+Final source manifests, binary hashes and logs are retained in
+[`diff-render-review-checks.json`](migration/evidence/diff-render-review-checks.json),
+[check log](migration/evidence/diff-render-review-checks.log),
+[PTY receipt](migration/evidence/diff-render-review-pty.json),
+[paired navigation receipt](migration/evidence/diff-render-review-navigation.json),
+and [original-script receipt](migration/evidence/diff-render-review-upstream.json).
+Reproduce the new paired check with `python3 rust/tests/diff-navigation.py`
+after building both C and Rust binaries. Original C/tests and dependencies are
+unchanged relative to the integrated main; first-party Rust still forbids unsafe.
