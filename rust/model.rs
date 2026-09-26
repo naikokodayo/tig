@@ -57,6 +57,15 @@ pub struct BlameLine {
     pub original_line: usize,
     pub line: usize,
     pub author: String,
+    pub author_email: String,
+    pub author_time: i64,
+    pub author_tz: String,
+    pub committer: String,
+    pub committer_email: String,
+    pub committer_time: i64,
+    pub committer_tz: String,
+    /// Path at the blamed commit; never an implicit worktree edit target.
+    pub filename: PathBuf,
     pub summary: String,
     pub text: String,
 }
