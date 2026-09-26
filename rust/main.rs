@@ -1475,7 +1475,9 @@ impl App {
                     self.split = false;
                     self.parent_focused = false;
                 } else if self.other.is_some() {
-                    self.swap_panes();
+                    if !self.parent_focused {
+                        self.swap_panes();
+                    }
                     self.other = None;
                     self.split = false;
                     self.parent_focused = false;
@@ -3513,6 +3515,7 @@ mod tests {
         app.split = true;
         app.parent_focused = true;
         assert!(app.action("back").unwrap());
+        assert_eq!(app.view.rows, vec!["older"]);
     }
     #[test]
     fn terminal_content_is_safe_and_cell_clipped() {
