@@ -531,3 +531,55 @@ commit wall time and libc's `tm_isdst=0` behavior, including summer dates.
 Runtime requirements, evaluated Rust alternatives, differential/upstream
 receipts and the still-open performance/full-migration boundaries are in the
 [updated date compatibility record](migration/chrono-date-compatibility.md#非本地-s系统-posix-桥接).
+
+### Configuration compatibility diagnostics and shared column truncation
+
+This slice starts at fork main `15ee9762`, in an independent clone. The full
+strict `upstream-rust-only-after-stage-save-refs.json` remains historical at
+`2fb2a871`; it is not relabelled as current-main evidence. PR #12's diff-input,
+stat-width and navigation changes are not included or duplicated here.
+
+The config parser now diagnoses removed options, legacy key notation, renamed
+bindings/colors and old date modes with upstream wording. Supported replacements
+are retained before issuing their warnings; obsolete options remain rejected.
+Unknown view-column diagnostics use the original value. Field trimming is shared
+by grep, main, tree and blame: `utf8`/`utf-8` renders `⋯`, one-cell literal values
+are honored, and empty/wide/multi-cell delimiters fall back to `~`. Grep filename
+clipping/padding now measures terminal cells, including wide/combining characters.
+This covers displayed fields, not save-options normalization of delimiter spelling
+or implementation of terminal color attributes.
+
+Validation at source `5e9f51a37dd7e376681914bfd231767a1c0c3f4b` on macOS arm64,
+Rust 1.81 (the next commit adds only documentation/evidence):
+
+- Formatting, all **74 unit tests**, Clippy with warnings denied, release build,
+  and **130 real PTY checks** pass. New checks first reproduced the diagnostic
+  and delimiter failures and now pass; original C sources/tests are unchanged.
+  First-party unsafe remains forbidden, with no new dependency.
+- Fresh paired baseline for the six requested original scripts: C passes all
+  **26 assertions**; Rust fails all six scripts with **13 passing / 13 failing
+  assertions**, plus **2 runtime failure checks**.
+- Final requested scope: C still passes **26/26**; Rust passes three scripts,
+  with **19 passing / 7 failing assertions**, plus the same **2 runtime checks**.
+  Newly passing scripts are `compat-error-test`, `truncation-test`, and
+  `view-column-test` (all **17/17 assertions** in this fixed slice).
+- Expanded scope is all 17 tigrc scripts, all four grep scripts, and main/default,
+  tree/default, tree/recurse, blame/default: C passes **25/25 scripts, 142/142
+  assertions**; Rust passes **21 scripts**, with **132 passing / 10 failing
+  assertions**, plus **3 runtime failure checks**. There are no skips.
+
+The three requested failures still concern command-output paging
+(`command-value-long-test`), unsupported selected `refname` expansion
+(`escape-var-test`), and prompt-variable/quoted command handling (`quote-test`).
+The expanded blame/default test also fails its diff/navigation cases. These are
+failures, including missing output, not skipped assertions. The full suite was
+not rerun and the migration parity gate remains **OPEN**.
+
+`migration/evidence/config-render-before.json` and `config-render-after.json`
+retain strict C/Rust routes, raw transcripts, per-script verdicts and hashes.
+`config-render-checks.json`/`.log` and `config-render-pty.json` bind the scoped
+checks to the same tested source and Rust binary. The paired runner exits 1
+with `BLOCKED`, as required by the remaining failures. Reproduce the expanded
+pair with `python3 rust/tests/upstream-suite.py test/tigrc/*-test test/grep/*-test
+test/main/default-test test/tree/default-test test/tree/recurse-test
+test/blame/default-test` (one shell command).
