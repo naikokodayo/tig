@@ -190,6 +190,52 @@ impl Config {
         }
         config
     }
+    /// Consume shared diff switches before passing revision filters to history.
+    pub fn take_diff_options(&mut self, args: &mut Vec<String>) {
+        let mut paths = false;
+        let mut value_next = false;
+        args.retain(|arg| {
+            if paths || std::mem::take(&mut value_next) {
+                return true;
+            }
+            if matches!(arg.as_str(), "--" | "--end-of-options") {
+                paths = true;
+                return true;
+            }
+            value_next = matches!(
+                arg.as_str(),
+                "--since"
+                    | "--after"
+                    | "--until"
+                    | "--before"
+                    | "--author"
+                    | "--committer"
+                    | "--grep"
+                    | "--max-count"
+                    | "--skip"
+                    | "--min-parents"
+                    | "--max-parents"
+                    | "-n"
+                    | "--glob"
+                    | "--exclude"
+            );
+            let setting = match arg.as_str() {
+                "--word-diff" | "--word-diff=plain" => Some(("word-diff", "yes".into())),
+                "--word-diff=none" => Some(("word-diff", "no".into())),
+                _ => arg
+                    .strip_prefix("-U")
+                    .and_then(|n| n.parse::<usize>().ok())
+                    .filter(|&n| n <= 999_999)
+                    .map(|n| ("diff-context", n.to_string())),
+            };
+            if let Some((name, value)) = setting {
+                self.settings.insert(name.into(), vec![value]);
+                false
+            } else {
+                true
+            }
+        });
+    }
     pub fn load_file(&mut self, path: &Path, quiet_missing: bool) {
         if let Err(e) = self.read_file(path, quiet_missing, &mut Vec::new()) {
             self.diagnostics.push(e);
@@ -967,6 +1013,55 @@ impl Cli {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn diff_cli_switches_update_shared_config_without_eating_paths_or_filter_values() {
+        let mut config = Config::defaults();
+        let mut args = [
+            "HEAD",
+            "--word-diff",
+            "-U8",
+            "--grep",
+            "--word-diff=none",
+            "--",
+            "--word-diff=none",
+            "-U0",
+        ]
+        .map(str::to_owned)
+        .to_vec();
+        config.take_diff_options(&mut args);
+        assert!(config.bool_value("word-diff", false));
+        assert_eq!(config.usize_value("diff-context", 3), 8);
+        assert_eq!(
+            args,
+            [
+                "HEAD",
+                "--grep",
+                "--word-diff=none",
+                "--",
+                "--word-diff=none",
+                "-U0"
+            ]
+        );
+        let mut args = [
+            "--word-diff=plain",
+            "--word-diff=none",
+            "-U0",
+            "--word-diff=color",
+            "-U1000000",
+            "--end-of-options",
+            "-U9",
+        ]
+        .map(str::to_owned)
+        .to_vec();
+        config.take_diff_options(&mut args);
+        assert!(!config.bool_value("word-diff", true));
+        assert_eq!(config.usize_value("diff-context", 3), 0);
+        assert_eq!(
+            args,
+            ["--word-diff=color", "-U1000000", "--end-of-options", "-U9"]
+        );
+    }
+
     #[test]
     fn upstream_defaults_and_overrides() {
         let mut c = Config::defaults();

@@ -447,7 +447,9 @@ impl App {
             view.sort_reverse = self.view.sort_reverse;
         }
         view.args = self.args.clone();
-        view.revision = self.revision.clone();
+        if name != "diff" {
+            view.revision = self.revision.clone();
+        }
         view.path = self.path.clone();
         view.staged = self.view.staged && name == "stage";
         view.untracked = self.view.untracked && matches!(name, "stage" | "status");
@@ -608,7 +610,15 @@ impl App {
             }
             "diff" => {
                 let oid = repo.revision(&self.revision)?;
-                let mut view = View::text(name, &repo.show(&oid)?);
+                let mut view = View::text(
+                    name,
+                    &repo.show(
+                        &oid,
+                        self.config.usize_value("diff-context", 3),
+                        self.config.bool_value("word-diff", false),
+                    )?,
+                );
+                view.revision = oid.clone();
                 if let Some(commit) = repo.history(&[oid], 1)?.first() {
                     let refs = tig_rs::render::refs(&self.config, &commit.decorations, ", ");
                     if !refs.is_empty() && !view.rows.is_empty() {
@@ -1452,6 +1462,13 @@ impl App {
                 self.view.top = old.top;
                 self.view.left = old.left;
                 self.view.restore_status_selection();
+                if old.name == "diff" {
+                    if let Some(selected) = diff_reloaded_line(&old, &self.view.rows) {
+                        self.view.selected = selected;
+                        self.view.top =
+                            selected.saturating_sub(old.selected.saturating_sub(old.top));
+                    }
+                }
             }
             "status-update" | "stage-update-line" if self.view.name == "stage" => {
                 if self.view.untracked {
@@ -1776,6 +1793,48 @@ fn diff_stat_header(rows: &[String], selected: usize) -> Option<usize> {
     stat_header_after(rows, selected, start)
 }
 
+fn diff_reloaded_line(old: &View, rows: &[String]) -> Option<usize> {
+    let (_, target) = diff_edit_target(&old.rows, old.selected)?;
+    if target == 0 {
+        return None;
+    }
+    let header = old.rows[..=old.selected]
+        .iter()
+        .rfind(|row| row.starts_with("diff "))?;
+    // ponytail: ordinary hunks only; extend alongside combined-diff navigation.
+    if !header.starts_with("diff --git ") {
+        return None;
+    }
+    let start = rows.iter().position(|row| row == header)?;
+    let mut line = None;
+    for (index, row) in rows.iter().enumerate().skip(start + 1) {
+        if row.starts_with("diff ") {
+            break;
+        }
+        if row.starts_with("@@ ") {
+            line = diff_hunk_start(row);
+        } else if let Some(number) = &mut line {
+            if *number == target {
+                return Some(index);
+            }
+            if !row.starts_with(['-', '\\']) {
+                *number += 1;
+            }
+        }
+    }
+    None
+}
+
+fn diff_hunk_start(row: &str) -> Option<usize> {
+    row.split_whitespace()
+        .find(|field| field.starts_with('+'))?
+        .trim_start_matches('+')
+        .split(',')
+        .next()?
+        .parse()
+        .ok()
+}
+
 fn diff_edit_target(rows: &[String], selected: usize) -> Option<(PathBuf, usize)> {
     rows.get(selected)?;
     let is_header = |line: &str| {
@@ -1873,14 +1932,7 @@ fn diff_edit_target(rows: &[String], selected: usize) -> Option<(PathBuf, usize)
     let Some(hunk) = hunk else {
         return Some((path, 0));
     };
-    let start = rows[hunk]
-        .split_whitespace()
-        .find(|field| field.starts_with('+'))?
-        .trim_start_matches('+')
-        .split(',')
-        .next()?
-        .parse::<usize>()
-        .ok()?;
+    let start = diff_hunk_start(&rows[hunk])?;
     let preceding = rows
         .get(hunk + 1..selected)
         .unwrap_or(&[])
@@ -2492,7 +2544,7 @@ fn key_name(code: KeyCode, modifiers: KeyModifiers) -> String {
 }
 fn run() -> Result<()> {
     let args: Vec<String> = env::args_os().skip(1).map(|arg| arg.into_string().map_err(|_| "Non-UTF-8 CLI arguments are not supported yet; browse the file through the tree/status view")).collect::<std::result::Result<_,_>>()?;
-    let cli = Cli::parse(&args, !io::stdin().is_terminal())?;
+    let mut cli = Cli::parse(&args, !io::stdin().is_terminal())?;
     if cli.help {
         println!("{HELP}");
         return Ok(());
@@ -2507,7 +2559,10 @@ fn run() -> Result<()> {
     for dir in &cli.directories {
         env::set_current_dir(dir)?;
     }
-    let config = Config::load();
+    let mut config = Config::load();
+    if matches!(cli.view.as_str(), "main" | "diff") {
+        config.take_diff_options(&mut cli.git_args);
+    }
     for message in &config.diagnostics {
         eprintln!("tig: {message}");
     }
@@ -2568,7 +2623,7 @@ fn run() -> Result<()> {
             }
         }
         if cli.view == "diff" {
-            if let Some(rev) = app.args.first() {
+            if let Some(rev) = app.args.first().filter(|arg| arg.as_str() != "--") {
                 app.revision = rev.clone();
             }
         }
@@ -3135,6 +3190,30 @@ mod tests {
         view.selected = 2;
         assert!(pane_screen(&mut view, &config, 90, 6)[6]
             .starts_with("[diff] Press '<Enter>' to jump to file diff"));
+    }
+
+    #[test]
+    fn diff_reload_tracks_source_line_within_the_same_file() {
+        let prefix = "diff --git a/file b/file\n--- a/file\n+++ b/file\n";
+        let mut old = View::text(
+            "diff",
+            &format!("{prefix}@@ -10,3 +10,3 @@\n same\n-old\n+new\n end\n"),
+        );
+        old.selected = 6;
+        let expanded = View::text("diff", &format!("{prefix}@@ -9,5 +9,5 @@\n more\n same\n-old\n+new\n end\n more\ndiff --git a/other b/other\n"));
+        // Like C, restoration picks the first row at the new-file line number.
+        assert_eq!(diff_reloaded_line(&old, &expanded.rows), Some(6));
+        old.selected = 7;
+        assert_eq!(diff_reloaded_line(&old, &expanded.rows), Some(8));
+        old.selected = 2;
+        assert_eq!(diff_reloaded_line(&old, &expanded.rows), None);
+        old.selected = 7;
+        assert_eq!(diff_reloaded_line(&old, &[]), None);
+        let missing = View::text("diff", &format!("{prefix}@@ -1 +1 @@\n elsewhere\ndiff --git a/other b/other\n@@ -12 +12 @@\n end\n"));
+        assert_eq!(diff_reloaded_line(&old, &missing.rows), None);
+        old = View::text("diff", &format!("{prefix}@@ -1 +1 @@\n first\ndiff --cc combined\n+++ b/combined\n@@@ -1,1 -1,1 +1,1 @@@\n  combined\n"));
+        old.selected = old.rows.len() - 1;
+        assert_eq!(diff_reloaded_line(&old, &expanded.rows), None);
     }
 
     #[test]
