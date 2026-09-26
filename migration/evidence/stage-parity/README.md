@@ -6,9 +6,13 @@ The branch began at `3e8f4b8` and merged `34684f7` before the final checks.
 Initial implementation verification: `cf6fda4089691d07a83aea4a136c1db8a95b6f57`.
 Then merged the harness-only main `03f6a29f`. The authoritative paired rerun is
 `paired-rust-only.json` at `053885c90452c878c91b2ccb0b4e8c1aba38ffc4`. Rust
-implementation/PTY source hashes and the release executable SHA-256 are unchanged
-across this second merge; earlier unit/lint/PTY receipts apply to those exact files
-and executable. The new harness negative self-check passes (`harness-negative.json`).
+implementation/PTY source hashes are unchanged across this second merge, so the
+earlier unit/lint receipts apply to the same source. The harness rebuilds the
+release executable with an explicit target directory; its binary hash differs
+from the earlier release receipt. `pty-final.json` reruns all 126 terminal checks
+against the exact executable recorded in `paired-rust-only.json`. Earlier PTY
+receipts are retained as historical checks of the prior executable. The new
+harness negative self-check passes (`harness-negative.json`).
 All work used the independent `stage-parity-task-clone`; the default dirty checkout
 was not edited. No upstream `test/` file was modified.
 
