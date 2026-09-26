@@ -1,0 +1,515 @@
+{
+  "schema": 1,
+  "source_commit": "2fb2a87105b77b0c2de37d6be766365acaa5ac1d",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "BLOCKED",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "        CC  src/tig.o\n        CC  src/types.o\n        CC  src/string.o\n        CC  src/util.o\n        CC  src/map.o\n        CC  src/argv.o\n        CC  src/io.o\n        CC  src/refdb.o\n       GEN  src/builtin-config.c\n        CC  src/builtin-config.o\n        CC  src/request.o\n        CC  src/line.o\n        CC  src/keys.o\n        CC  src/repo.o\n        CC  src/options.o\n        CC  src/draw.o\n        CC  src/prompt.o\n        CC  src/display.o\n        CC  src/view.o\n        CC  src/search.o\n        CC  src/parse.o\n        CC  src/watch.o\n        CC  src/pager.o\n        CC  src/log.o\n        CC  src/reflog.o\n        CC  src/diff.o\n        CC  src/help.o\n        CC  src/tree.o\n        CC  src/blob.o\n        CC  src/blame.o\n        CC  src/refs.o\n        CC  src/status.o\n        CC  src/stage.o\n        CC  src/main.o\n        CC  src/stash.o\n        CC  src/grep.o\n        CC  src/ui.o\n        CC  src/apps.o\n        CC  src/graph.o\n        CC  src/graph-v1.o\n        CC  src/graph-v2.o\n        CC  compat/hashtab.o\n        CC  compat/utf8proc.o\n      LINK  src/tig\n        CC  test/tools/test-graph.o\n      LINK  test/tools/test-graph\n",
+      "results": [
+        {
+          "script": "test/blame/blob-blame-test",
+          "script_sha256": "a932f97f6963a0962c69b2064371d897bba836ce4a3a93a454b7d994b62b55e6",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "recursive-blame.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/blame/blob-blame-test/.test-result",
+          "receipt": "  [OK] recursive-blame.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/blame/default-test",
+          "script_sha256": "79bb404e69aeaf2c1d7ebe1b248bcb94454284bdbd854490b747b8e34f0c4a5d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "blame-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "blame-with-diff.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "blame-with-diff-no-file-filter.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "blame-parent-of-74537d9.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/blame/default-test/.test-result",
+          "receipt": "  [OK] blame-default.screen assertion\n  [OK] blame-with-diff.screen assertion\n  [OK] blame-with-diff-no-file-filter.screen assertion\n  [OK] blame-parent-of-74537d9.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/blame/initial-diff-test",
+          "script_sha256": "13f0d337f1954eb9f30b30d9009862fb24f69753cf4cc6a62f4ab998b5cbd193",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "initial-diff.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "blame-deleted-line.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/blame/initial-diff-test/.test-result",
+          "receipt": "  [OK] initial-diff.screen assertion\n  [OK] blame-deleted-line.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/blame/navigation-parent-test",
+          "script_sha256": "3cb5b99c305ca3c2d44defdf7a8a74dfc47cdbdffa148a1c3019d812e38cbc10",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "recursive-blame.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/blame/navigation-parent-test/.test-result",
+          "receipt": "  [OK] recursive-blame.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/blame/revargs-test",
+          "script_sha256": "05be7f205f0ee2687b231892da52af3c1517712d8aab2de874e39e39d8cc2f3d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "limit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "parent-of-4779f9b.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/blame/revargs-test/.test-result",
+          "receipt": "  [OK] limit.screen assertion\n  [OK] parent-of-4779f9b.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/blame/stash-test",
+          "script_sha256": "b402fe7909895fd01ceb41d020889731e350c78d0cf58d45c89b55351e1079ac",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "diff.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "blame1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "blame2.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/blame/stash-test/.test-result",
+          "receipt": "  [OK] diff.screen assertion\n  [OK] blame1.screen assertion\n  [OK] blame2.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/blame-navigation-task-clone/src/tig",
+          "sha256": "885b62190fbd4ace86c499fca0a722a8fb2404e482a66871c2553de6c67a341e"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/blame-navigation-task-clone/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 6
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/blame-navigation-task-clone/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/blame-navigation-task-clone/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/blame-navigation-task-clone/target/release/test-graph\"\n   Compiling libc v0.2.189\n   Compiling autocfg v1.5.1\n   Compiling signal-hook v0.3.18\n   Compiling parking_lot_core v0.9.12\n   Compiling memchr v2.8.3\n   Compiling log v0.4.34\n   Compiling smallvec v1.16.2\n   Compiling rustix v0.38.44\n   Compiling cfg-if v1.0.5\n   Compiling scopeguard v1.2.0\n   Compiling regex-syntax v0.8.11\n   Compiling lock_api v0.4.14\n   Compiling bitflags v2.13.2\n   Compiling unicode-width v0.2.0\n   Compiling num-traits v0.2.19\n   Compiling aho-corasick v1.1.5\n   Compiling regex-automata v0.4.18\n   Compiling chrono v0.4.45\n   Compiling errno v0.3.14\n   Compiling mio v1.2.3\n   Compiling signal-hook-registry v1.4.8\n   Compiling parking_lot v0.12.5\n   Compiling signal-hook-mio v0.2.5\n   Compiling crossterm v0.28.1\n   Compiling regex v1.13.1\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/blame-navigation-task-clone)\n    Finished `release` profile [optimized] target(s) in 43.45s\n",
+      "results": [
+        {
+          "script": "test/blame/blob-blame-test",
+          "script_sha256": "a932f97f6963a0962c69b2064371d897bba836ce4a3a93a454b7d994b62b55e6",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "recursive-blame.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/blame/blob-blame-test/.test-result",
+          "receipt": "[FAIL] recursive-blame.screen != expected/recursive-blame.screen\n\u001b[1mdiff --git a/expected/recursive-blame.screen b/recursive-blame.screen\u001b[m\n\u001b[1mindex 8e68943..c4ed1db 100644\u001b[m\n\u001b[1m--- a/expected/recursive-blame.screen\u001b[m\n\u001b[1m+++ b/recursive-blame.screen\u001b[m\n\u001b[36m@@ -1,3 +1,24 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   1| import sbt._\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   2| import Keys._\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   3|\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   4| import ch.epfl.lamp.sbtscalajs._\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   5| import ScalaJSPlugin._\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   6| import ScalaJSKeys._\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   7|\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   8| object ScalaJSBuild extends Build {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   9|\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  10|   val scalajsScalaVersion = \"2.10.2\"\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  11|\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  12|   val projectSettings = Defaults.defaultSettings ++ Seq(\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  13|       organization := \"scalajs-benchmarks\",\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  14|       version := \"0.1-SNAPSHOT\"\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  15|   )\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  16|\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  17|   val defaultSettings = projectSettings ++ scalaJSSettings ++ Seq(\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  18|       scalaVersion := scalajsScalaVersion,\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  19|       scalacOptions ++= Seq(\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  20|           \"-deprecation\",\u001b[m\n\u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  21|           \"-unchecked\",\u001b[m\n 90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  22|           \"-feature\",\u001b[m\n 90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  23|           \"-encoding\", \"utf8\"\u001b[m\n 90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  24|       )\u001b[m\n\u001b[36m@@ -5,25 +26,4 @@\u001b[m\n 90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  26| \u001b[m\n 90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  27|   lazy val benchmarkSettings = defaultSettings ++ Seq(\u001b[m\n 90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  28|       unmanagedSources in (Compile, packageJS) +=\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  29|           baseDirectory.value / \"exports.js\"\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  30|   )\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  31|\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  32|   lazy val parent: Project = Project(\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  33|       id = \"parent\",\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  34|       base = file(\".\"),\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  35|       settings = projectSettings ++ Seq(\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  36|           name := \"Scala.js Benchmarks\",\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  37|           publishArtifact in Compile := false,\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  38|\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  39|           clean := clean.dependsOn(\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  40|              clean in common,\u001b[m\n\u001b[31m-b103989 Jonas Fonseca 2013-10-20 00:23 -0700  41|              clean in deltablue,\u001b[m\n\u001b[31m-4edd069 Jonas Fonseca 2013-10-17 20:34 -0400  42|              clean in richards,\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  43|              clean in tracer\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  44|           ).value\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  45|       )\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  46|   ).aggregate(\u001b[m\n\u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  47|       common,\u001b[m\n\u001b[31m-b103989 Jonas Fonseca 2013-10-20 00:23 -0700  48|       deltablue,\u001b[m\n\u001b[31m-4edd069 Jonas Fonseca 2013-10-17 20:34 -0400  49|       richards,\u001b[m\n\u001b[31m-[blame] b103989d59edab3adc312ff5408fa3d344ea0201:project/Build.scala - line 41 of 66                                                                                                                 74%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[blame] 90286e0752016a6bca30dfa7ca236d1f99345eb8:project/Build.scala - line 1 of 66                                                                                                                  42%\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] recursive-blame.screen != expected/recursive-blame.screen\r\n| \u001b[1mdiff --git a/expected/recursive-blame.screen b/recursive-blame.screen\u001b[m\r\n| \u001b[1mindex 8e68943..c4ed1db 100644\u001b[m\r\n| \u001b[1m--- a/expected/recursive-blame.screen\u001b[m\r\n| \u001b[1m+++ b/recursive-blame.screen\u001b[m\r\n| \u001b[36m@@ -1,3 +1,24 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   1| import sbt._\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   2| import Keys._\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   3|\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   4| import ch.epfl.lamp.sbtscalajs._\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   5| import ScalaJSPlugin._\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   6| import ScalaJSKeys._\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   7|\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   8| object ScalaJSBuild extends Build {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400   9|\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  10|   val scalajsScalaVersion = \"2.10.2\"\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  11|\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  12|   val projectSettings = Defaults.defaultSettings ++ Seq(\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  13|       organization := \"scalajs-benchmarks\",\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  14|       version := \"0.1-SNAPSHOT\"\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  15|   )\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  16|\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  17|   val defaultSettings = projectSettings ++ scalaJSSettings ++ Seq(\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  18|       scalaVersion := scalajsScalaVersion,\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  19|       scalacOptions ++= Seq(\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  20|           \"-deprecation\",\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  21|           \"-unchecked\",\u001b[m\r\n|  90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  22|           \"-feature\",\u001b[m\r\n|  90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  23|           \"-encoding\", \"utf8\"\u001b[m\r\n|  90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  24|       )\u001b[m\r\n| \u001b[36m@@ -5,25 +26,4 @@\u001b[m\r\n|  90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  26| \u001b[m\r\n|  90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  27|   lazy val benchmarkSettings = defaultSettings ++ Seq(\u001b[m\r\n|  90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  28|       unmanagedSources in (Compile, packageJS) +=\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  29|           baseDirectory.value / \"exports.js\"\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  30|   )\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  31|\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  32|   lazy val parent: Project = Project(\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  33|       id = \"parent\",\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  34|       base = file(\".\"),\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  35|       settings = projectSettings ++ Seq(\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  36|           name := \"Scala.js Benchmarks\",\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  37|           publishArtifact in Compile := false,\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  38|\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  39|           clean := clean.dependsOn(\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  40|              clean in common,\u001b[m\r\n| \u001b[31m-b103989 Jonas Fonseca 2013-10-20 00:23 -0700  41|              clean in deltablue,\u001b[m\r\n| \u001b[31m-4edd069 Jonas Fonseca 2013-10-17 20:34 -0400  42|              clean in richards,\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  43|              clean in tracer\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  44|           ).value\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  45|       )\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  46|   ).aggregate(\u001b[m\r\n| \u001b[31m-90286e0 Jonas Fonseca 2013-10-14 14:56 -0400  47|       common,\u001b[m\r\n| \u001b[31m-b103989 Jonas Fonseca 2013-10-20 00:23 -0700  48|       deltablue,\u001b[m\r\n| \u001b[31m-4edd069 Jonas Fonseca 2013-10-17 20:34 -0400  49|       richards,\u001b[m\r\n| \u001b[31m-[blame] b103989d59edab3adc312ff5408fa3d344ea0201:project/Build.scala - line 41 of 66                                                                                                                 74%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[blame] 90286e0752016a6bca30dfa7ca236d1f99345eb8:project/Build.scala - line 1 of 66                                                                                                                  42%\u001b[m\r\n"
+        },
+        {
+          "script": "test/blame/default-test",
+          "script_sha256": "79bb404e69aeaf2c1d7ebe1b248bcb94454284bdbd854490b747b8e34f0c4a5d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 4,
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "blame-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "blame-with-diff.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "blame-with-diff-no-file-filter.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "blame-parent-of-74537d9.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/blame/default-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n  [OK] blame-default.screen assertion\n[FAIL] blame-with-diff.screen != expected/blame-with-diff.screen\n\u001b[1mdiff --git a/expected/blame-with-diff.screen b/blame-with-diff.screen\u001b[m\n\u001b[1mindex 1bc19cb..65f4ebb 100644\u001b[m\n\u001b[1m--- a/expected/blame-with-diff.screen\u001b[m\n\u001b[1m+++ b/blame-with-diff.screen\u001b[m\n\u001b[36m@@ -8,22 +8,22 @@\u001b[m\n 4779f9b Jonas Fonseca      2013-11-26 20:13 -0500   8| object ScalaJSBenchmarks \u001b[m\n 90286e0 Jonas Fonseca      2013-10-14 13:15 -0400   9| \u001b[m\n [blame] 74537d9b257954056d3caa19eb3837500aded883:project/Build.scala - line  14%\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit 74537d9b257954056d3caa19eb3837500aded883\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthor:     Sébastien Doeraene <sjrdoeraene@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthorDate: Tue Oct 29 18:46:52 2013 +0100\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommit:     Sébastien Doeraene <sjrdoeraene@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommitDate: Tue Oct 29 18:46:52 2013 +0100\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m    Update for new groupId and package structure of Scala.js.\u001b[m\n\u001b[32m+\u001b[m\u001b[32m---\u001b[m\n\u001b[32m+\u001b[m\u001b[32m project/Build.scala  | 2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m project/build.sbt    | 2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m tracer/App.scala     | 4 ++--\u001b[m\n\u001b[32m+\u001b[m\u001b[32m tracer/Engine.scala  | 2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m tracer/JSTypes.scala | 2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 5 files changed, 6 insertions(+), 6 deletions(-)\u001b[m\n \u001b[m\n diff --git a/project/Build.scala b/project/Build.scala\u001b[m\n index 560bca1..1713681 100644\u001b[m\n --- a/project/Build.scala\u001b[m\n\u001b[31m-+++ b/project/Build.scala\u001b[m\n\u001b[31m-@@ -1,7 +1,7 @@\u001b[m\n\u001b[31m- import sbt._\u001b[m\n\u001b[31m- import Keys._\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m--import ch.epfl.lamp.sbtscalajs._\u001b[m\n\u001b[31m-+import scala.scalajs.sbtplugin._\u001b[m\n\u001b[31m- import ScalaJSPlugin._\u001b[m\n\u001b[31m- import ScalaJSKeys._\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-[diff] Changes to 'project/Build.scala' - line 20 of 24                     100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[diff] 74537d9b257954056d3caa19eb3837500aded883 - line 1 of 76               23%\u001b[m\n[FAIL] blame-with-diff-no-file-filter.screen != expected/blame-with-diff-no-file-filter.screen\n\u001b[1mdiff --git a/expected/blame-with-diff-no-file-filter.screen b/blame-with-diff-no-file-filter.screen\u001b[m\n\u001b[1mindex 6cfb5a0..65f4ebb 100644\u001b[m\n\u001b[1m--- a/expected/blame-with-diff-no-file-filter.screen\u001b[m\n\u001b[1m+++ b/blame-with-diff-no-file-filter.screen\u001b[m\n\u001b[36m@@ -8,22 +8,22 @@\u001b[m\n 4779f9b Jonas Fonseca      2013-11-26 20:13 -0500   8| object ScalaJSBenchmarks \u001b[m\n 90286e0 Jonas Fonseca      2013-10-14 13:15 -0400   9| \u001b[m\n [blame] 74537d9b257954056d3caa19eb3837500aded883:project/Build.scala - line  14%\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit 74537d9b257954056d3caa19eb3837500aded883\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthor:     Sébastien Doeraene <sjrdoeraene@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthorDate: Tue Oct 29 18:46:52 2013 +0100\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommit:     Sébastien Doeraene <sjrdoeraene@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommitDate: Tue Oct 29 18:46:52 2013 +0100\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m    Update for new groupId and package structure of Scala.js.\u001b[m\n\u001b[32m+\u001b[m\u001b[32m---\u001b[m\n\u001b[32m+\u001b[m\u001b[32m project/Build.scala  | 2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m project/build.sbt    | 2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m tracer/App.scala     | 4 ++--\u001b[m\n\u001b[32m+\u001b[m\u001b[32m tracer/Engine.scala  | 2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m tracer/JSTypes.scala | 2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 5 files changed, 6 insertions(+), 6 deletions(-)\u001b[m\n \u001b[m\n diff --git a/project/Build.scala b/project/Build.scala\u001b[m\n index 560bca1..1713681 100644\u001b[m\n --- a/project/Build.scala\u001b[m\n\u001b[31m-+++ b/project/Build.scala\u001b[m\n\u001b[31m-@@ -1,7 +1,7 @@\u001b[m\n\u001b[31m- import sbt._\u001b[m\n\u001b[31m- import Keys._\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m--import ch.epfl.lamp.sbtscalajs._\u001b[m\n\u001b[31m-+import scala.scalajs.sbtplugin._\u001b[m\n\u001b[31m- import ScalaJSPlugin._\u001b[m\n\u001b[31m- import ScalaJSKeys._\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-diff --git a/project/build.sbt b/project/build.sbt\u001b[m\n\u001b[31m-index 63f84d4..f5971c3 100644\u001b[m\n\u001b[31m---- a/project/build.sbt\u001b[m\n\u001b[31m-+++ b/project/build.sbt\u001b[m\n\u001b[31m-[diff] Changes to 'project/Build.scala' - line 24 of 76                      42%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[diff] 74537d9b257954056d3caa19eb3837500aded883 - line 1 of 76               23%\u001b[m\n[FAIL] blame-parent-of-74537d9.screen not found\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 4 out of 5 test(s)\r\n| [stderr] tig: Not implemented in Rust yet: parent\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n|   [OK] blame-default.screen assertion\r\n| [FAIL] blame-with-diff.screen != expected/blame-with-diff.screen\r\n| \u001b[1mdiff --git a/expected/blame-with-diff.screen b/blame-with-diff.screen\u001b[m\r\n| \u001b[1mindex 1bc19cb..65f4ebb 100644\u001b[m\r\n| \u001b[1m--- a/expected/blame-with-diff.screen\u001b[m\r\n| \u001b[1m+++ b/blame-with-diff.screen\u001b[m\r\n| \u001b[36m@@ -8,22 +8,22 @@\u001b[m\r\n|  4779f9b Jonas Fonseca      2013-11-26 20:13 -0500   8| object ScalaJSBenchmarks \u001b[m\r\n|  90286e0 Jonas Fonseca      2013-10-14 13:15 -0400   9| \u001b[m\r\n|  [blame] 74537d9b257954056d3caa19eb3837500aded883:project/Build.scala - line  14%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit 74537d9b257954056d3caa19eb3837500aded883\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mAuthor:     Sébastien Doeraene <sjrdoeraene@gmail.com>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mAuthorDate: Tue Oct 29 18:46:52 2013 +0100\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mCommit:     Sébastien Doeraene <sjrdoeraene@gmail.com>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mCommitDate: Tue Oct 29 18:46:52 2013 +0100\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    Update for new groupId and package structure of Scala.js.\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m---\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m project/Build.scala  | 2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m project/build.sbt    | 2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m tracer/App.scala     | 4 ++--\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m tracer/Engine.scala  | 2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m tracer/JSTypes.scala | 2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 5 files changed, 6 insertions(+), 6 deletions(-)\u001b[m\r\n|  \u001b[m\r\n|  diff --git a/project/Build.scala b/project/Build.scala\u001b[m\r\n|  index 560bca1..1713681 100644\u001b[m\r\n|  --- a/project/Build.scala\u001b[m\r\n| \u001b[31m-+++ b/project/Build.scala\u001b[m\r\n| \u001b[31m-@@ -1,7 +1,7 @@\u001b[m\r\n| \u001b[31m- import sbt._\u001b[m\r\n| \u001b[31m- import Keys._\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m--import ch.epfl.lamp.sbtscalajs._\u001b[m\r\n| \u001b[31m-+import scala.scalajs.sbtplugin._\u001b[m\r\n| \u001b[31m- import ScalaJSPlugin._\u001b[m\r\n| \u001b[31m- import ScalaJSKeys._\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-[diff] Changes to 'project/Build.scala' - line 20 of 24                     100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[diff] 74537d9b257954056d3caa19eb3837500aded883 - line 1 of 76               23%\u001b[m\r\n| [FAIL] blame-with-diff-no-file-filter.screen != expected/blame-with-diff-no-file-filter.screen\r\n| \u001b[1mdiff --git a/expected/blame-with-diff-no-file-filter.screen b/blame-with-diff-no-file-filter.screen\u001b[m\r\n| \u001b[1mindex 6cfb5a0..65f4ebb 100644\u001b[m\r\n| \u001b[1m--- a/expected/blame-with-diff-no-file-filter.screen\u001b[m\r\n| \u001b[1m+++ b/blame-with-diff-no-file-filter.screen\u001b[m\r\n| \u001b[36m@@ -8,22 +8,22 @@\u001b[m\r\n|  4779f9b Jonas Fonseca      2013-11-26 20:13 -0500   8| object ScalaJSBenchmarks \u001b[m\r\n|  90286e0 Jonas Fonseca      2013-10-14 13:15 -0400   9| \u001b[m\r\n|  [blame] 74537d9b257954056d3caa19eb3837500aded883:project/Build.scala - line  14%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit 74537d9b257954056d3caa19eb3837500aded883\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mAuthor:     Sébastien Doeraene <sjrdoeraene@gmail.com>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mAuthorDate: Tue Oct 29 18:46:52 2013 +0100\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mCommit:     Sébastien Doeraene <sjrdoeraene@gmail.com>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mCommitDate: Tue Oct 29 18:46:52 2013 +0100\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    Update for new groupId and package structure of Scala.js.\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m---\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m project/Build.scala  | 2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m project/build.sbt    | 2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m tracer/App.scala     | 4 ++--\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m tracer/Engine.scala  | 2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m tracer/JSTypes.scala | 2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 5 files changed, 6 insertions(+), 6 deletions(-)\u001b[m\r\n|  \u001b[m\r\n|  diff --git a/project/Build.scala b/project/Build.scala\u001b[m\r\n|  index 560bca1..1713681 100644\u001b[m\r\n|  --- a/project/Build.scala\u001b[m\r\n| \u001b[31m-+++ b/project/Build.scala\u001b[m\r\n| \u001b[31m-@@ -1,7 +1,7 @@\u001b[m\r\n| \u001b[31m- import sbt._\u001b[m\r\n| \u001b[31m- import Keys._\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m--import ch.epfl.lamp.sbtscalajs._\u001b[m\r\n| \u001b[31m-+import scala.scalajs.sbtplugin._\u001b[m\r\n| \u001b[31m- import ScalaJSPlugin._\u001b[m\r\n| \u001b[31m- import ScalaJSKeys._\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-diff --git a/project/build.sbt b/project/build.sbt\u001b[m\r\n| \u001b[31m-index 63f84d4..f5971c3 100644\u001b[m\r\n| \u001b[31m---- a/project/build.sbt\u001b[m\r\n| \u001b[31m-+++ b/project/build.sbt\u001b[m\r\n| \u001b[31m-[diff] Changes to 'project/Build.scala' - line 24 of 76                      42%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[diff] 74537d9b257954056d3caa19eb3837500aded883 - line 1 of 76               23%\u001b[m\r\n| [FAIL] blame-parent-of-74537d9.screen not found\r\n"
+        },
+        {
+          "script": "test/blame/initial-diff-test",
+          "script_sha256": "13f0d337f1954eb9f30b30d9009862fb24f69753cf4cc6a62f4ab998b5cbd193",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 2,
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "initial-diff.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "blame-deleted-line.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/blame/initial-diff-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n  [OK] initial-diff.screen assertion\n[FAIL] blame-deleted-line.screen not found\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 2 out of 3 test(s)\r\n| [stderr] tig: Not implemented in Rust yet: 20 # Move to a deleted line.\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n|   [OK] initial-diff.screen assertion\r\n| [FAIL] blame-deleted-line.screen not found\r\n"
+        },
+        {
+          "script": "test/blame/navigation-parent-test",
+          "script_sha256": "3cb5b99c305ca3c2d44defdf7a8a74dfc47cdbdffa148a1c3019d812e38cbc10",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 2
+          },
+          "assertions": [
+            {
+              "id": "recursive-blame.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/blame/navigation-parent-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] recursive-blame.screen not found\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Not implemented in Rust yet: parent\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] recursive-blame.screen not found\r\n"
+        },
+        {
+          "script": "test/blame/revargs-test",
+          "script_sha256": "05be7f205f0ee2687b231892da52af3c1517712d8aab2de874e39e39d8cc2f3d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 3
+          },
+          "assertions": [
+            {
+              "id": "limit.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "parent-of-4779f9b.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/blame/revargs-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] limit.screen not found\n[FAIL] parent-of-4779f9b.screen not found\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 3 out of 3 test(s)\r\n| [stderr] tig: git exited with exit status: 128: fatal: Needed a single revision\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] limit.screen not found\r\n| [FAIL] parent-of-4779f9b.screen not found\r\n"
+        },
+        {
+          "script": "test/blame/stash-test",
+          "script_sha256": "b402fe7909895fd01ceb41d020889731e350c78d0cf58d45c89b55351e1079ac",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 4
+          },
+          "assertions": [
+            {
+              "id": "diff.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "blame1.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "blame2.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/blame/stash-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] diff.screen != expected/diff.screen\n\u001b[1mdiff --git a/expected/diff.screen b/diff.screen\u001b[m\n\u001b[1mindex d95bdfd..9a62727 100644\u001b[m\n\u001b[1m--- a/expected/diff.screen\u001b[m\n\u001b[1m+++ b/diff.screen\u001b[m\n\u001b[36m@@ -1,2 +1,2 @@\u001b[m\n\u001b[31m--original line\u001b[m\n\u001b[31m-[diff] Changes to 'file' - line 9 of 10  90%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[diff] Changes to 'file' - line 18 of 19                                     94%\u001b[m\n[FAIL] blame1.screen not found\n[FAIL] blame2.screen not found\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 4 out of 4 test(s)\r\n| [stderr] tig: Expected a nonempty repository-relative path without '..'\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] diff.screen != expected/diff.screen\r\n| \u001b[1mdiff --git a/expected/diff.screen b/diff.screen\u001b[m\r\n| \u001b[1mindex d95bdfd..9a62727 100644\u001b[m\r\n| \u001b[1m--- a/expected/diff.screen\u001b[m\r\n| \u001b[1m+++ b/diff.screen\u001b[m\r\n| \u001b[36m@@ -1,2 +1,2 @@\u001b[m\r\n| \u001b[31m--original line\u001b[m\r\n| \u001b[31m-[diff] Changes to 'file' - line 9 of 10  90%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[diff] Changes to 'file' - line 18 of 19                                     94%\u001b[m\r\n| [FAIL] blame1.screen not found\r\n| [FAIL] blame2.screen not found\r\n"
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/blame-navigation-task-clone/target/release/tig",
+          "sha256": "f5a34c7b2d178b2199f94975112c89dd0ae2e7303897ce0f4ebe0427b15fb037"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/blame-navigation-task-clone/target/release/test-graph",
+          "sha256": "c1dc1a3c45e909e259e6ae4196da28c69a3ba92ec1aac5a7f3811a762b86ff8a"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "fail": 6
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/blame/blob-blame-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "recursive-blame.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/blame/default-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "blame-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "blame-with-diff.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "blame-with-diff-no-file-filter.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "blame-parent-of-74537d9.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/blame/initial-diff-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "initial-diff.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "blame-deleted-line.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/blame/navigation-parent-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "recursive-blame.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/blame/revargs-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "limit.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "parent-of-4779f9b.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/blame/stash-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "diff.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "blame1.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "blame2.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    }
+  ]
+}

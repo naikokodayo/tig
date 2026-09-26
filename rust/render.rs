@@ -569,6 +569,7 @@ mod tests {
             committer_time: 3600,
             committer_tz: "+0100".into(),
             filename: "old/name".into(),
+            previous: None,
             summary: String::new(),
             text: "first".into(),
         };

@@ -1,0 +1,12 @@
+{
+  "scope": "Additional real-PTY rename/boundary regressions; not full parity",
+  "binary_sha256": "b420f54b468596b826e1684fb0d6f820b90bc9a2c0303a4c27617ad0ab048c97",
+  "checks": [
+    "recursive blame uses historical quoted path and original line",
+    "parent follows previous filename and maps the inserted line",
+    "back restores original blame position",
+    "parent of a root line leaves the view usable",
+    "parent preserves the blame revision lower bound",
+    "read-only navigation preserves index and worktree"
+  ]
+}

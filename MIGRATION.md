@@ -582,6 +582,43 @@ receipt](migration/evidence/upstream-rust-only-after-stage-save-refs.json)
 records every transcript and reason. This predates the merged main-graph PR #8
 and subsequent work, so it is not a current-main or final benchmark result.
 
+### Blame navigation and origin tracing (2026-09-27)
+
+The blame view now uses Git's original line, historical filename and `previous`
+commit/path metadata when reopening a blamed version or its parent. Parent
+selection follows the zero-context blob diff, two-dot revision ranges retain
+their lower bound, and back restores the saved arguments and position. Enter
+opens the blamed file's diff at the corresponding line; toggling file filtering
+keeps that line in view. Deleted diff lines trace the old path/line before
+opening their origin, including stash diffs. Configured horizontal scrolling
+and numeric commands with trailing annotations are honored.
+
+The initial receipt started at `2fb2a871` and synchronized `9a691ee1`; its tested
+code is `1ec4145de69084e099720a6c28dadf36392ad65b`. The
+[before receipt](migration/evidence/blame-navigation-before.json) records all six
+requested scripts passing under C and failing under Rust (2 passing assertions,
+11 failing assertions and 5 additional runtime failure records). The
+[after receipt](migration/evidence/blame-navigation-after.json) records the exact
+source, C/Rust binary hashes, unchanged script hashes and per-assertion mapping.
+The requested six scripts now reach **12/13 passing Rust assertions**, without
+runtime failures; C passes **13/13**. The remaining initial-diff assertion is
+C's curses `x` separator versus Rust's `│`; origin path, line and viewport agree.
+This is still a failing original assertion, not a parity pass.
+
+Across all 15 original scripts actually run, C passes **89/89**, while Rust
+passes **87/89**. The other mismatch is the existing stash-list column/title
+format in `test/stash/start-on-line-test`; stash-to-diff-to-blame passes. The
+[check receipt](migration/evidence/blame-navigation-checks.json) and linked logs
+record Rust 1.81 formatting, 72 unit tests, Clippy, release build, 130 existing PTY
+checks and six added rename/boundary/navigation checks. Old-side path decoding
+also has a regression preventing an unprefixed `a/file` from resolving to
+`file`. No dependency, original C source or original test was changed.
+
+Scope remains limited: combined-diff blame tracing and the broader blame option
+surface (including copy-following flags) remain unsupported; full stash rendering,
+nested view behavior and curses screenshot encoding remain open migration work.
+The complete original suite was not rerun for this slice, and full parity and
+end-to-end benchmarks remain gated.
 
 ### Full strict paired snapshot after main graph, date `%s`, and prompt fixes
 
@@ -838,6 +875,33 @@ or runtime failures occurred. The exact source/binary manifest and new receipts
 are in [`refs-filter-replace-sync/checks.json`](migration/evidence/refs-filter-replace-sync/checks.json).
 Earlier receipts remain unchanged; this does not close the full migration gate.
 
+
+### Blame review and integrated-main validation (2026-09-27)
+
+Integrated main `86ce7680` and tested source `736b925ec2a8146ac0f52e2afe6e506f972ddde9`.
+The shared patch parser now removes literal tab header delimiters before decoding
+paths, preserving spaces and genuinely quoted tab filenames. Blame tracing first
+requires an ordinary hunk in the current file, then treats `--- deleted text` as
+a deleted content line. Replacement-line Enter still selects `-old`, and tracing
+returns to its older origin: paired execution confirmed that this is C's behavior,
+and the user explicitly chose to preserve it.
+
+[Review probes](migration/evidence/blame-review.json) cover ten paired C/Rust
+checks and two Rust quoted-tab regressions. All twelve pass. C stays in diff for
+quoted-tab filenames; those two Rust checks are not claimed as C parity.
+The [integrated check receipt](migration/evidence/blame-navigation-sync-checks.json)
+records formatting, **76 unit tests**, Clippy, both builds, **139 existing PTY
+checks**, six blame rename/boundary checks, six diff-input checks, and eight paired
+diff-navigation comparisons. Source, script and executable hashes are recorded.
+
+The [fresh original-script receipt](migration/evidence/blame-navigation-sync-after.json)
+contains 17 scripts: **C 98/98, Rust 96/98 assertions**,
+with no runtime failures or timeouts. The six requested blame scripts remain
+**C 13/13, Rust 12/13**. The only failures remain the saved `x`/`│` separator in
+initial-diff and the existing stash-list columns/title. Earlier `1ec4145d` receipts
+remain historical and unchanged. Original C, headers, original tests and dependencies
+are unchanged; first-party unsafe code remains forbidden. Full parity remains gated.
+
 ### Configuration review fixes after refs main integration
 
 After pushing the review fixes, main advanced to `b056a7ac` (PR #17). Merged it
@@ -874,3 +938,21 @@ editor scripts. This is not a rerun of the earlier 36-script scope or full suite
 and the checks log bind this latest source and binaries. Earlier wider receipts
 remain attributed to their own commits. The next commit is documentation and
 evidence only. The three P2 fixes are ready for re-review; full parity stays open.
+
+
+### Blame final main synchronization (2026-09-27)
+
+Merged main `b951cd9e` once after PRs #13 and #16; tested source `90713600fee60a1a5a3448ce37505eafa590ccc7`.
+The documentation conflict retained both records; no new behavior was added.
+[Final checks](migration/evidence/blame-navigation-final-checks.json) record
+formatting, **83 unit tests**, Clippy, release build, **140 existing PTY checks**,
+six blame-navigation checks, twelve review probes, six diff-input checks and eight
+paired diff-navigation comparisons. The twelve review probes retain their scope:
+ten paired C/Rust checks and two Rust quoted-tab regressions.
+
+[Final original-script pairing](migration/evidence/blame-navigation-final-after.json)
+records **C 98/98, Rust 96/98 assertions across 17 scripts**,
+with no runtime failure or timeout. The six requested blame scripts remain
+**C 13/13, Rust 12/13**; the separator and stash-list format remain the only failures.
+Earlier receipts are unchanged and remain bound to their own source commits.
+Full migration parity remains gated.

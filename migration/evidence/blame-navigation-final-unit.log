@@ -1,0 +1,103 @@
+   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/blame-navigation-task-clone)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.90s
+     Running unittests rust/lib.rs (target/debug/deps/tig_rs-5e4c9ca2cfbe52d4)
+
+running 59 tests
+test config::tests::cli_preserves_git_arguments_and_separator ... ok
+test commands::tests::expansion_preserves_arguments_and_requires_known_variables ... ok
+test config::tests::command_quotes_comments_continuations_and_sequences ... ok
+test config::tests::config_diagnostics_recover_without_changing_prompt_errors ... ok
+test config::tests::prefixed_legacy_colors_keep_the_callers_view ... ok
+test config::tests::diff_cli_switches_update_shared_config_without_eating_paths_or_filter_values ... ok
+test config::tests::source_cycles_missing_and_recovery ... ok
+test config::tests::append_colors_and_numeric_boundaries ... ok
+test config::tests::original_main_default_toggle_sequence ... ok
+test config::tests::source_summaries_belong_only_to_files_with_direct_errors ... ok
+test date::tests::tig_dates_and_relative_boundaries ... ok
+test config::tests::original_view_column_fixture_and_atomic_errors ... ok
+test git::tests::blame_porcelain_keeps_dates_and_historical_path ... ok
+test config::tests::config_enum_error_order_and_date_column_boundary ... ok
+test git::tests::filtered_refs_feed_history_and_replacement_decorations ... ok
+test config::tests::upstream_defaults_and_overrides ... ok
+test git::tests::history_option_values_and_paths_do_not_become_graph_flags ... ok
+test git::tests::nul_parsers_preserve_paths_and_reject_truncation ... ok
+test config::tests::typed_toggles_validate_and_preserve_state ... ok
+test git::tests::raw_date_fixture_and_invalid_headers ... ok
+test commands::tests::launched_nonzero_exit_is_distinct_from_spawn_failure ... ok
+test config::tests::original_compatibility_diagnostics_apply_supported_replacements ... ok
+test config::tests::show_revision_respects_end_of_options_and_path_separator ... ok
+test graph::golden_tests::upstream_graph_fixtures ... ok
+test graph::tests::linear_merge_and_boundary ... ok
+test graph::tests::raw_parents_and_colors ... ok
+test graph_v1::tests::boundary_root_and_octopus ... ok
+test graph_v1::tests::merge_and_shared_ancestor ... ok
+test graph_v1::tests::merge_in_right_column_retains_v1_metadata ... ok
+test help_view::tests::default_and_collapsed_help_follow_active_bindings ... ok
+test help_view::tests::user_commands_and_key_names_are_searchable ... ok
+test git::tests::applying_mailbox_without_head_name_uses_current_branch ... ok
+test patch::tests::malformed_and_unsupported_patches_fail ... ok
+test git::tests::path_filtered_history_connects_visible_commits ... ok
+test git::tests::branch_status_tracks_upstream_and_detached_tags ... ok
+test git::tests::filtered_status_preserves_paths_renames_and_conflicts ... ok
+test git::tests::worktree_diff_preserves_conflict_and_configured_prefixes_without_changing_index ... ok
+test patch::tests::configured_diff_prefix_cannot_stage_a_different_path ... ok
+test refs_view::tests::tig_reference_numeric_order ... ok
+test git::tests::show_applies_context_and_word_diff_without_changing_history ... ok
+test render::tests::blame_uses_configured_dates_columns_and_rename_paths ... ok
+test render::tests::auto_graphics_respects_locale_precedence ... ok
+test render::tests::dates_email_and_overrides ... ok
+test config::tests::saved_options_round_trip_and_never_overwrite ... ok
+test render::tests::reference_formats_and_graph_switches ... ok
+test render::tests::unicode_padding_clipping_and_controls ... ok
+test render::tests::zero_wall_time_is_blank_without_rejecting_unix_zero ... ok
+test render::tests::upstream_width_fixture ... ok
+test patch::tests::replacement_selection_and_no_newline_markers ... ok
+test tree_view::tests::modes_units_and_history_paths ... ok
+test patch::tests::unprefixed_patch_cannot_stage_same_named_root_file ... ok
+test trace::tests::trace_records_actual_commands_appends_and_never_changes_exit_status ... ok
+test render::tests::configured_truncation_delimiters_and_fallbacks ... ok
+test patch::tests::single_line_hunk_reverse_and_failure_are_index_only ... ok
+test git::tests::real_repository_roundtrip_and_literal_staging ... ok
+test refs_view::tests::refs_metadata_filter_and_columns ... ok
+test patch::tests::partial_blocks_and_split_hunks_keep_context_markers_and_index_safety ... ok
+test tree_view::tests::upstream_tree_screen_rows ... ok
+test commands::tests::selected_branch_never_uses_an_unrelated_checked_out_branch ... ok
+
+test result: ok. 59 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.14s
+
+     Running unittests rust/bin/test-graph.rs (target/debug/deps/test_graph-b5e0d8f8108b1d6b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests rust/main.rs (target/debug/deps/tig-33ccf7946334abad)
+
+running 24 tests
+test tests::changes_follow_index_order_and_do_not_stage_unmerged_entries ... ok
+test tests::diff_stat_jump_ignores_commit_message_bars ... ok
+test editor_tests::maps_stat_and_patch_rows_to_file_and_new_line ... ok
+test tests::diff_reload_tracks_source_line_within_the_same_file ... ok
+test editor_tests::deleted_diff_line_uses_old_path_and_old_hunk_count ... ok
+test editor_tests::patch_header_delimiters_preserve_spaces_and_quoted_tabs ... ok
+test editor_tests::preserves_literal_prefixes_and_ignores_commit_body ... ok
+test editor_tests::aggregate_stage_stats_jump_to_matching_patch_and_file ... ok
+test tests::grep_options_never_turn_pattern_or_option_values_into_revisions ... ok
+test tests::grep_nul_fields_preserve_colons_newlines_and_revision_paths ... ok
+test tests::log_message_cannot_replace_selected_commit ... ok
+test tests::diff_line_column_and_title_leave_patch_rows_intact ... ok
+test tests::terminal_content_is_safe_and_cell_clipped ... ok
+test tests::titles_split_focus_close_and_refresh_keep_context ... ok
+test tests::failed_grep_query_keeps_previous_arguments ... ok
+test tests::grep_filename_uses_cells_and_the_configured_delimiter ... ok
+test tests::nested_grep_tree_cannot_open_root_relative_tree_view ... ok
+test tests::unclosed_binding_argument_cannot_become_a_valid_toggle ... ok
+test editor_tests::blame_history_path_is_not_a_worktree_edit_target ... ok
+test tests::explicit_diff_detaches_parent_and_vertical_split_reserves_separator ... ok
+test tests::grep_tree_expression_reads_blob_from_its_own_tree ... ok
+test tests::first_tree_open_uses_invocation_directory_once ... ok
+test tests::main_graph_uses_history_traversal_options ... ok
+test tests::staging_last_untracked_file_refreshes_synthetic_main_parent ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.22s
+
