@@ -3,7 +3,12 @@
 Status: scoped improvement; full Rust migration/parity remains open.
 
 The branch began at `3e8f4b8` and merged `34684f7` before the final checks.
-Implementation source at verification: `cf6fda4089691d07a83aea4a136c1db8a95b6f57`.
+Initial implementation verification: `cf6fda4089691d07a83aea4a136c1db8a95b6f57`.
+Then merged the harness-only main `03f6a29f`. The authoritative paired rerun is
+`paired-rust-only.json` at `053885c90452c878c91b2ccb0b4e8c1aba38ffc4`. Rust
+implementation/PTY source hashes and the release executable SHA-256 are unchanged
+across this second merge; earlier unit/lint/PTY receipts apply to those exact files
+and executable. The new harness negative self-check passes (`harness-negative.json`).
 All work used the independent `stage-parity-task-clone`; the default dirty checkout
 was not edited. No upstream `test/` file was modified.
 
@@ -64,6 +69,24 @@ per-script outcomes, baseline comparison and hashes. A recipe error in the
 pre-existing status file-filter test prevents Make's final summary, so the
 receipt counts the actual `.test-result` records without treating that error
 as a pass.
+
+The final Rust-only paired run independently confirms C passes all 19 selected
+scripts and Rust passes 15, with four failed scripts and no skips. Its mapping
+records 98 passing and 7 failing Rust assertions, plus four C assertions not
+reached by the existing status trace failure. The runner exits 1 and keeps the
+parity gate **BLOCKED**. `receipt.json` and `upstream-related.log` retain the prior
+legacy Make run as scoped historical evidence; they do not replace this strict
+mapping. Local checkout prefixes in shared logs are normalized to `<clone>`;
+source, script and executable hashes are retained.
+
+Reproduce the authoritative scoped run with Rust 1.81 tools on PATH:
+
+```sh
+python3 rust/tests/upstream-suite.py --self-test
+python3 rust/tests/upstream-suite.py test/stage/*-test test/status/*-test \
+  test/main/update-unstaged-changes-test test/main/untracked-test \
+  --output migration/evidence/stage-parity/paired-rust-only.json
+```
 
 ## Deliberate split-chunk difference
 
