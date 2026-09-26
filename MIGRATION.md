@@ -519,3 +519,41 @@ became passing: two refs, four stage, and three tigrc. The full [paired
 receipt](migration/evidence/upstream-rust-only-after-stage-save-refs.json)
 records every transcript and reason. This predates the merged main-graph PR #8
 and subsequent work, so it is not a current-main or final benchmark result.
+
+### Blame navigation and origin tracing (2026-09-27)
+
+The blame view now uses Git's original line, historical filename and `previous`
+commit/path metadata when reopening a blamed version or its parent. Parent
+selection follows the zero-context blob diff, two-dot revision ranges retain
+their lower bound, and back restores the saved arguments and position. Enter
+opens the blamed file's diff at the corresponding line; toggling file filtering
+keeps that line in view. Deleted diff lines trace the old path/line before
+opening their origin, including stash diffs. Configured horizontal scrolling
+and numeric commands with trailing annotations are honored.
+
+This branch started at `2fb2a871` and synchronized `9a691ee1`; the final tested
+code is `1ec4145de69084e099720a6c28dadf36392ad65b`. The
+[before receipt](migration/evidence/blame-navigation-before.json) records all six
+requested scripts passing under C and failing under Rust (2 passing assertions,
+11 failing assertions and 5 additional runtime failure records). The
+[after receipt](migration/evidence/blame-navigation-after.json) records the exact
+source, C/Rust binary hashes, unchanged script hashes and per-assertion mapping.
+The requested six scripts now reach **12/13 passing Rust assertions**, without
+runtime failures; C passes **13/13**. The remaining initial-diff assertion is
+C's curses `x` separator versus Rust's `│`; origin path, line and viewport agree.
+This is still a failing original assertion, not a parity pass.
+
+Across all 15 original scripts actually run, C passes **89/89**, while Rust
+passes **87/89**. The other mismatch is the existing stash-list column/title
+format in `test/stash/start-on-line-test`; stash-to-diff-to-blame passes. The
+[check receipt](migration/evidence/blame-navigation-checks.json) and linked logs
+record Rust 1.81 formatting, 72 unit tests, Clippy, release build, 130 existing PTY
+checks and six added rename/boundary/navigation checks. Old-side path decoding
+also has a regression preventing an unprefixed `a/file` from resolving to
+`file`. No dependency, original C source or original test was changed.
+
+Scope remains limited: combined-diff blame tracing and the broader blame option
+surface (including copy-following flags) remain unsupported; full stash rendering,
+nested view behavior and curses screenshot encoding remain open migration work.
+The complete original suite was not rerun for this slice, and full parity and
+end-to-end benchmarks remain gated.
