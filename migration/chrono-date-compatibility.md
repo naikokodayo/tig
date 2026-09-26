@@ -67,3 +67,5 @@ Chrono `StrftimeItems::new` 对非法或未知规格产生 `Item::Error`，`new_
 ## 实现后的边界
 
 最终实现仅让已列入允许集合的常见指令使用系统 backend；`%E`、`%O`、padding 修饰符和任意扩展仍明确报错，而不是假称已实现全部 libc 格式。`TEST_TIME_NOW` 使用严格整数/范围校验，未模仿 C `atoi` 对无效文本变成零的行为。普通 raw Git 头由新解析入口读取，原版 date-test 的首个失败因此从 pager 提前退出转为可逐项验证。最终结果见 [`date-focused.json`](evidence/date-focused.json)：date 8/8，六个原版脚本合计 27/27；完整迁移兼容门仍开放。
+
+PR #4 合入后，blame 时间戳也复用相同 Chrono 转换，删除第二套手写 Gregorian 换算，保留 blame 的 0..9999 年范围。共享入口在附加偏移前使用 `checked_add_offset` 校验本地日期范围；最小/最大时间戳边界回归先失败再通过。Unix 0 显示层兼容规则也通过 blame 渲染回归覆盖。本地/locale 子进程成本同样适用于 blame 每行，未声称大历史性能达标。

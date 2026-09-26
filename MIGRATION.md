@@ -430,3 +430,24 @@ there is no cache, batching, or large-history performance claim. The zero-date
 guard avoids a process for the sentinel, but is a compatibility fix, not a general
 performance optimization. Measure representative histories before adding a
 bounded cache or batching while preserving TZ/locale semantics.
+
+### Date slice sync with PR #4 and eleventh evidence
+
+Merged blame main `a28f69d` and then documentation main `34684f79`, preserving
+pushed history. The parser insertion conflict retains both raw history and Git
+path decoding. Blame now reuses the Chrono timestamp/offset converter instead
+of a second handwritten Gregorian conversion; its existing 0..9999 year limit
+is retained. Its rendering regression also checks blank epoch-zero dates. New
+range tests first failed, then passed with an explicit checked offset conversion
+at Chrono's minimum/maximum timestamp, preventing out-of-range local dates.
+
+Rust 1.81 fmt, **67 unit tests**, Clippy with warnings denied, release build,
+**20 date/argument checks**, and **108 PTY checks** pass. The final documentation
+merge changes no tested Rust/Cargo files. Across 20 unchanged original recipes,
+there are **73 OK / 22 FAIL records**: twelve main/diff/config scripts pass
+**69/69**, seven blame scripts remain **3 OK / 16 FAIL** as reported by PR #4,
+and quote-test remains **1 OK / 6 FAIL** with the exact PR #2 receipt. FAIL records
+include process errors, not only screen mismatches. This is focused evidence,
+not a full-suite rerun. See [`date-blame-sync.json`](migration/evidence/date-blame-sync.json)
+and its focused/check logs. The per-local/locale-value subprocess limitation
+also applies to blame lines; no performance improvement is claimed.
