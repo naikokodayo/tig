@@ -93,5 +93,10 @@
     "filter-args-test has no Rust receipt because TIG_TRACE is missing; its C assertions remain NOT_REACHED.",
     "search-preload-test is skipped because Rust lacks readline.",
     "37 selected scripts are not the complete 154-script application suite; FAIL records include runtime errors and missing screens."
-  ]
+  ],
+  "documentation_sync": {
+    "main_commit": "2fb2a87105b77b0c2de37d6be766365acaa5ac1d",
+    "merged_head": "05ebaa86ba0bf03c83a3eee905b6ea18588f6b93",
+    "rust_tree_and_cargo_unchanged_from_tested_source": true
+  }
 }
