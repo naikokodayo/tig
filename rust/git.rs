@@ -353,6 +353,53 @@ impl Repository {
         }
         Ok(if unborn { Vec::new() } else { result })
     }
+    /// Reflog subjects and selectors accompany the same commit metadata as history.
+    pub fn reflog(&self, stash: bool, revisions: &[String]) -> Result<(Vec<Commit>, Vec<String>)> {
+        HistoryOptions::parse(revisions)?;
+        let mut args: Vec<String> = if stash {
+            vec!["stash".into(), "list".into()]
+        } else {
+            vec!["reflog".into(), "show".into()]
+        };
+        args.extend(
+            revisions
+                .iter()
+                .filter(|arg| {
+                    !stash
+                        || (arg.starts_with('-')
+                            && !matches!(arg.as_str(), "--all" | "--branches" | "--remotes"))
+                })
+                .cloned(),
+        );
+        args.extend([
+            "--no-color".into(),
+            "--no-show-signature".into(),
+            "--format=%H%x00%P%x00%aN%x00%aI%x00%gs%x00%D%x00%aE%x00%cN%x00%cE%x00%cI%x00%gd"
+                .into(),
+            "-z".into(),
+        ]);
+        let output = self.command(args)?;
+        let fields: Vec<_> = records(&output)?.collect();
+        if fields.len() % 11 != 0 {
+            return Err(GitError("Malformed reflog fields".into()));
+        }
+        let mut metadata = Vec::new();
+        let mut selectors = Vec::new();
+        for row in fields.chunks_exact(11) {
+            for field in &row[..10] {
+                metadata.extend_from_slice(field);
+                metadata.push(0);
+            }
+            selectors.push(text(row[10]));
+        }
+        let mut commits = parse_history(&metadata)?;
+        let upstream = self
+            .command(["rev-parse", "--symbolic-full-name", "@{upstream}"])
+            .map(|b| text(trim_lf(&b)))
+            .unwrap_or_default();
+        decorate_history(&mut commits, &self.refs()?, &upstream);
+        Ok((commits, selectors))
+    }
     fn is_unborn(&self) -> Result<bool> {
         match self.revision("HEAD") {
             Ok(_) => Ok(false),
