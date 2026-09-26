@@ -197,6 +197,9 @@ pub struct HistoryOptions {
 }
 impl HistoryOptions {
     pub fn parse(revisions: &[String]) -> Result<Self> {
+        Self::parse_for_view(revisions, false)
+    }
+    fn parse_for_view(revisions: &[String], reflog: bool) -> Result<Self> {
         let split = revisions
             .iter()
             .position(|a| a == "--")
@@ -236,6 +239,7 @@ impl HistoryOptions {
                 options.first_parent = true;
             }
             match name {
+                "--grep-reflog" if reflog => { expects_value = !inline_value; }
                 "--since" | "--after" | "--until" | "--before" | "--author" | "--committer" |
                 "--grep" | "--max-count" | "--skip" | "--min-parents" | "--max-parents" | "-n" => {
                     expects_value = !inline_value;
@@ -355,7 +359,7 @@ impl Repository {
     }
     /// Reflog subjects and selectors accompany the same commit metadata as history.
     pub fn reflog(&self, stash: bool, revisions: &[String]) -> Result<(Vec<Commit>, Vec<String>)> {
-        HistoryOptions::parse(revisions)?;
+        HistoryOptions::parse_for_view(revisions, true)?;
         let mut args: Vec<String> = if stash {
             vec!["stash".into(), "list".into()]
         } else {
@@ -1258,6 +1262,15 @@ mod tests {
         assert!(HistoryOptions::parse(&["--merge=oops".into()]).is_err());
         assert!(HistoryOptions::parse(&["--follow=yes".into()]).is_err());
         assert!(HistoryOptions::parse(&["--format=oops".into()]).is_err());
+        assert!(HistoryOptions::parse_for_view(&["--grep-reflog=checkout".into()], true).is_ok());
+        assert!(HistoryOptions::parse_for_view(
+            &["--grep-reflog".into(), "moving from main to topic".into()],
+            true
+        )
+        .is_ok());
+        assert!(HistoryOptions::parse_for_view(&["--grep-reflog".into()], true).is_err());
+        assert!(HistoryOptions::parse_for_view(&["--format=oops".into()], true).is_err());
+        assert!(HistoryOptions::parse(&["--grep-reflog=checkout".into()]).is_err());
     }
     #[test]
     fn blame_porcelain_keeps_dates_and_historical_path() {

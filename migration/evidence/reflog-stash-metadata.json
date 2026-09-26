@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "f32bfaa6bd85f7c62e6be8d2973245c3a26b20f7",
+  "source_commit": "2b016ddf4ec793e5fe889b8daca3cf53f93adfd8",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -94,7 +94,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig)\n    Finished `release` profile [optimized] target(s) in 31.56s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig)\n    Finished `release` profile [optimized] target(s) in 29.47s\n",
       "results": [
         {
           "script": "test/reflog/default-test",
@@ -144,7 +144,7 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/tig",
-          "sha256": "deb4a578027ce7b6c3d33e4cc66beac84e23ab095e6f94e563d9c01220f5be0a"
+          "sha256": "c986729f8957341a57ee4955a0b2d05d08af5cfcb1834e067b6f499c892b5161"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/test-graph",
@@ -190,7 +190,7 @@
     "rust/commands.rs": "5289316798c285a6055ff040aec0f7d355cfca6905bb8702d952a7b612104b19",
     "rust/config.rs": "2818658ce690aa15596b13040bfbfba812fecf8ba83dcb93671650ee7585d623",
     "rust/date.rs": "51d16041689246691bcfacc8a2f2654e39ae2a123c5aec770c449bfc6ced24f4",
-    "rust/git.rs": "38213c1f8014f71fe1f4eafcb699875364036491db2c475304daa87ea1bd6fbd",
+    "rust/git.rs": "4008d5ac80361fb563201ea0a57410ff51e231ce408608d4fbdebbb58a3836b2",
     "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
     "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
     "rust/help_view.rs": "029b06cf5c7c88523fe4fb4f3374f737f7fbffd7807169dcd8b8f207cf87b158",
@@ -210,7 +210,7 @@
     "rust/tests/graph-differential.py": "666efeca9ee6cd79cb8bd70cf5639f00438a6b6dff7135ad03f98e53de8d7c8e",
     "rust/tests/graph-v1-differential.py": "9e144d33dd228875d5a90b8068871102139ce3989324d98e6ffc5ce7d8830ace",
     "rust/tests/main-command-refresh.py": "8516d8d98e1a0b483cd66d8b648cce1c51003617a37d7fcda9ac8fa3c43ce7aa",
-    "rust/tests/reflog-stash-navigation.py": "9fe5d3f7992ac3a10ce3472429b08401ddccf9c4481c817362e8d84dc3f78d97",
+    "rust/tests/reflog-stash-navigation.py": "d90d1cdbfae03e8af6389dafd4cb7d36252feb7a7ddc7ea0665467a77ff882e2",
     "rust/tests/status-filter.py": "f59fae82a50882417f79c2d82f37275c23d1fabd1ca78a16dcd3d7d12ddf75c6",
     "rust/tests/terminal-smoke.py": "a09c21e70201587e58c116f2d9a9f7849c6472da6ebe3c0750dd56eb562173a4",
     "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
@@ -228,8 +228,18 @@
     "cargo fmt --check": "pass",
     "cargo test --quiet": "pass: 59 library + 24 application tests",
     "cargo clippy --all-targets -- -D warnings": "pass",
-    "python3 rust/tests/reflog-stash-navigation.py": "pass: reflog older entry opens main; stash older entry opens diff; both return and refresh",
+    "python3 rust/tests/reflog-stash-navigation.py": "PASS: reflog selects older entry, opens main, returns and refreshes\nPASS: stash selects older entry, opens diff, returns and refreshes\nPASS: paired C/Rust reflog filter ['--grep-reflog=checkout']\nPASS: paired C/Rust reflog filter ['--grep-reflog=moving from master to topic']\n",
     "git diff --check": "pass",
     "latest_main": "5f7ac639f23ee2d825d73c93619f7d7b01b4f556"
+  },
+  "review_regression": {
+    "before_source": "2b016ddf",
+    "before_transcript": "PASS: reflog selects older entry, opens main, returns and refreshes\nPASS: stash selects older entry, opens diff, returns and refreshes\nTraceback (most recent call last):\n  File \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/rust/tests/reflog-stash-navigation.py\", line 63, in <module>\n    assert code == 0 and not timed_out, (mode, arguments, code, transcript)\nAssertionError: ('rust', ['--grep-reflog=checkout'], 1, 'tig: Unsupported history option --grep-reflog=checkout: only revision, filtering, ordering and path options are allowed\\r\\n')\n",
+    "after_exit_code": 0,
+    "screen_comparison": "C/Rust rows and footer equal after stripping trailing whitespace (as upstream harness does)",
+    "binary_sha256": {
+      "src/tig": "36d6ed75f93a566c03395b3a36819bab773041cbc36360605827b3ee03b25885",
+      "target/release/tig": "c986729f8957341a57ee4955a0b2d05d08af5cfcb1834e067b6f499c892b5161"
+    }
   }
 }
