@@ -637,9 +637,17 @@ impl App {
         match name {
             "main" => {
                 let options = tig_rs::git::HistoryOptions::parse(&self.args)?;
-                let commits = repo.history(&self.args, 0)?;
                 let mut config = self.config.clone();
-                if !options.with_graph {
+                let configured_graph = tig_rs::render::main_graph_enabled(&config);
+                let graph = options.with_graph && configured_graph;
+                let order = self.config.value("commit-order").unwrap_or("auto");
+                let order = if order == "auto" && !configured_graph {
+                    "default"
+                } else {
+                    order
+                };
+                let commits = repo.history_ordered(&self.args, 0, order)?;
+                if !graph || order == "reverse" {
                     config
                         .settings
                         .insert("main-view-commit-title-graph".into(), vec!["no".into()]);

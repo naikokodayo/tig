@@ -443,6 +443,18 @@ pub fn main_refs_searchable(config: &Config) -> bool {
     })
 }
 
+pub fn main_graph_enabled(config: &Config) -> bool {
+    main_columns(config).is_ok_and(|columns| {
+        columns.iter().any(|column| {
+            column.name == "commit-title"
+                && !matches!(
+                    column.options.get("graph"),
+                    None | Some(&"no" | &"false" | &"0")
+                )
+        })
+    })
+}
+
 /// Render a complete main-view commit list, so autosized columns see all rows.
 /// The plain string result cannot represent Tig color/overflow attributes.
 pub fn render_commits(
