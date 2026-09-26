@@ -493,3 +493,15 @@ also pass. See [`date-percent-s-checks.json`](migration/evidence/date-percent-s-
 [`date-percent-s-harness-selftest.json`](migration/evidence/date-percent-s-harness-selftest.json).
 The full suite was not rerun; earlier broader receipts remain historical.
 Original C sources and original tests are unchanged by this date slice.
+
+
+### Non-local `%s` follow-up
+
+The PR #3 blanket refusal is replaced by a host POSIX bridge on 64-bit macOS
+and GNU/Linux with 64-bit system Perl and its core POSIX module. First-party
+unsafe remains forbidden; no Cargo dependency is added. Missing tools, other
+platforms and invalid output fail explicitly. The implementation retains the
+commit wall time and libc's `tm_isdst=0` behavior, including summer dates.
+Runtime requirements, evaluated Rust alternatives, differential/upstream
+receipts and the still-open performance/full-migration boundaries are in the
+[updated date compatibility record](migration/chrono-date-compatibility.md#非本地-s系统-posix-桥接).

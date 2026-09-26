@@ -28,4 +28,4 @@ jobs:
           perl -T -MPOSIX -e 'print "$^V\n"'
           make -j2
           python3 rust/tests/date-percent-s.py
-          RUSTUP_TOOLCHAIN=1.81.0 python3 rust/tests/upstream-suite.py test/main/date-test test/main/default-test test/main/stdin-test test/help/default-test
+          RUSTUP_TOOLCHAIN=1.81.0 python3 rust/tests/upstream-suite.py test/main/date-test test/main/default-test test/main/pretty-raw-test test/main/show-changes-after-rename-test test/main/show-changes-test test/main/update-unstaged-changes-test test/help/default-test

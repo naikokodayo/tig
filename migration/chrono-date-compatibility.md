@@ -82,7 +82,7 @@ PR #3 的边界改为明确拒绝非本地 `%s`，错误为 `Non-local %s date f
 
 ## 非本地 `%s`：系统 POSIX 桥接
 
-2026-09-27 的后续实现从 `e1cf5eeb` 开始，最终同步 main `ffcb9310`（stage PR #9）。采用系统 Perl 的核心 `POSIX::strftime("%s", gmtime(wall_seconds))`，只把结果插回已经按 token 解析的格式。提交偏移只用于得到 wall time；宿主 TZ 保留。`%%s`、本地 `%s`、零 wall time 空白和其它日期指令走既有路径。
+2026-09-27 的后续实现从 `e1cf5eeb` 开始，最终同步 main `f294b279`（stage PR #9、保存配置 PR #7、refs PR #6）。采用系统 Perl 的核心 `POSIX::strftime("%s", gmtime(wall_seconds))`，只把结果插回已经按 token 解析的格式。提交偏移只用于得到 wall time；宿主 TZ 保留。`%%s`、本地 `%s`、零 wall time 空白和其它日期指令走既有路径。
 
 这与 C 的关键调用链一致：`gmtime` 产生 `tm_isdst=0`，Darwin 与 glibc 的 `%s` 再对结构副本调用本机 `mktime`。Perl POSIX 包装保留该标志；它补充的 `tm_gmtoff`/`tm_zone` 不参与这两个 libc 的 `mktime` 转换。保留宿主库及其时区数据库也保留了非一小时 DST、负 DST、历史偏移与 POSIX TZ 规则，避免从冬夏样本猜测标准偏移。[Darwin strftime](https://github.com/apple-oss-distributions/Libc/blob/main/stdtime/FreeBSD/strftime.c)、[glibc strftime](https://github.com/bminor/glibc/blob/master/time/strftime_l.c)、[Perl POSIX 包装](https://github.com/Perl/perl5/blob/v5.34.1/ext/POSIX/POSIX.xs)、[Perl my_strftime](https://github.com/Perl/perl5/blob/v5.34.1/util.c)
 
@@ -117,3 +117,11 @@ python3 rust/tests/terminal-smoke.py
 `date-percent-s.py` 复用已有控制 PTY 工具，对未修改 C Tig 与 Rust 二进制逐例比较行输出、退出码、超时状态，并记录两端摘要。矩阵覆盖纽约冬夏、提交正负偏移、Kolkata、Lord Howe 半小时 DST、Dublin 负 DST、Casablanca、Apia、显式 POSIX TZ、空/未设置 TZ、时区文件、纽约 gap/fold 的墙上时间边界、负时间、2038 边界、9999 年、重复 `%s`、`%%s`、`%%%s` 和 locale 混合格式。修复前 156 个场景中 87 个明确被旧拒绝逻辑挡住，69 个既有路径通过；这不是全仓迁移完成率。
 
 最终本机检查和跨平台 CI 收据见下方记录；旧 `date-percent-s-*.json` 保留历史含义。**此门只在列明的平台和运行依赖范围内关闭；完整迁移、其它平台、自包含实现和大历史性能门仍开放。**
+
+
+本机最终源码 `cada44f7`（实现 `cb962b5b` + main `f294b279`）：Rust 1.81 fmt、69 个单元测试、Clippy `-D warnings`、release 均通过；36 个日期/错误路径检查、156/156 个 C/Rust 差分场景和 130 个控制 PTY 检查通过。收据：[`checks.json`](evidence/nonlocal-percent-s/checks.json)、[`environment.json`](evidence/nonlocal-percent-s/environment.json)、[`differential.json`](evidence/nonlocal-percent-s/differential.json)、[`pty.json`](evidence/nonlocal-percent-s/pty.json)。
+
+扩大的八脚本原版检查诚实保留为 **BLOCKED**：C 8/8、Rust 7/8，失败仅为已有 `test/main/stdin-test` 把提交 ID 输入显示在 pager；历史 `upstream-rust-only.json` 亦记录该失败。该脚本没有调用新的非本地自定义 `%s`。未修改原版断言，也没有把失败改成通过；新增日期 CI 门仅选择六个日期相关脚本与 help。失败原始收据见 [`upstream.json`](evidence/nonlocal-percent-s/upstream.json)。这不是全套重跑，完整迁移门仍开放。
+
+
+相关原版脚本的独立收据 [`upstream-focused.json`](evidence/nonlocal-percent-s/upstream-focused.json) 为 C/Rust 各 7/7 脚本、30/30 断言通过（日期六脚本 27 条 + help 3 条）。Linux x86_64 runner 使用系统 Perl 5.38.2，已完成 156/156 差分；对应 [Rust CI run 36267140776](https://github.com/naikokodayo/tig/actions/runs/36267140776) 的整体失败原因是上述额外纳入的 `--stdin` 脚本，原始 [Linux 日志](evidence/nonlocal-percent-s/linux-observed.log) 保留。之后只修正新增日期 CI 的脚本选择，未修改 Rust 实现或原版测试；不要求等待所有其它 Actions 才能评审本切片。
