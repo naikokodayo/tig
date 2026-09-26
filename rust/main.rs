@@ -1241,22 +1241,18 @@ impl App {
         Ok(())
     }
     fn trace_blame(&mut self) -> Result<()> {
-        let selected = self.view.selected;
-        let row = self
-            .view
-            .rows
-            .get(selected)
-            .ok_or("No selected diff line")?;
-        let hunk = self.view.rows[..=selected].iter().rfind(|row| {
+        let selected = self.view.source_index(self.view.selected);
+        let rows = self.view.source_rows();
+        let row = rows.get(selected).ok_or("No selected diff line")?;
+        let hunk = rows[..=selected].iter().rfind(|row| {
             row.starts_with("@@") || row.starts_with("diff ") || row.starts_with("commit ")
         });
         if row.starts_with("@@") || !hunk.is_some_and(|row| row.starts_with("@@ ")) {
             return Err("The line to trace must be inside an ordinary diff chunk".into());
         }
         let old = row.starts_with('-');
-        let (path, number) =
-            diff_target(&self.view.rows, selected, old).ok_or("No file and line to blame")?;
-        let revision = self.view.rows[..=selected]
+        let (path, number) = diff_target(rows, selected, old).ok_or("No file and line to blame")?;
+        let revision = rows[..=selected]
             .iter()
             .rev()
             .find_map(|row| row.strip_prefix("commit "))
@@ -3089,7 +3085,7 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
                 "tree" => "file",
                 _ => "line",
             },
-            if view.name == "tree" {
+            if view.name == "tree" || view.wrapping.is_some() {
                 view.line_numbers.get(view.selected).copied().unwrap_or(0)
             } else if view.name == "main" {
                 view.items[..=view.selected]
@@ -3107,7 +3103,9 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
                     .iter()
                     .filter(|item| matches!(item, Item::Changes(_)))
                     .count(),
-                _ => 0,
+                _ => view.wrapping.as_ref().map_or(0, |wrap| {
+                    wrap.lines.iter().filter(|line| line.1).count()
+                }),
             })
         ));
     }
