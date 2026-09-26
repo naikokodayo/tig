@@ -1639,7 +1639,7 @@ impl App {
                     {
                         self.swap_panes();
                         if matches!(self.selected(), Item::Status(_, false)) {
-                            self.enter()?;
+                            self.enter(self.split)?;
                         } else {
                             self.other = None;
                             self.split = false;
@@ -3497,6 +3497,37 @@ mod tests {
             app.repo().unwrap().command(["show", ":tracked"]).unwrap(),
             b"working\n"
         );
+        for split in [true, false] {
+            fs::write(root.join("advance-a"), "first\n").unwrap();
+            fs::write(root.join("advance-b"), "second\n").unwrap();
+            app.view = app.status_view(false).unwrap();
+            app.view.selected = app.view.items.iter().position(|item|
+                matches!(item, Item::Status(entry, false) if entry.path == PathBuf::from("advance-a"))).unwrap();
+            app.enter(true).unwrap();
+            if !split {
+                app.action("maximize").unwrap();
+            }
+            app.action("status-update").unwrap();
+            assert_eq!(app.view.name, "stage");
+            assert_eq!(app.view.path, PathBuf::from("advance-b"));
+            assert_eq!(
+                app.split, split,
+                "auto-advance must preserve the pane layout"
+            );
+            assert!(!app.parent_focused);
+            assert_eq!(
+                app.repo().unwrap().command(["show", ":advance-a"]).unwrap(),
+                b"first\n"
+            );
+            assert!(app.repo().unwrap().command(["show", ":advance-b"]).is_err());
+            app.action("view-close").unwrap();
+            app.repo()
+                .unwrap()
+                .command(["reset", "--", "advance-a"])
+                .unwrap();
+            fs::remove_file(root.join("advance-a")).unwrap();
+            fs::remove_file(root.join("advance-b")).unwrap();
+        }
         fs::remove_dir_all(root).unwrap();
     }
     #[test]
