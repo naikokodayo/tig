@@ -418,6 +418,7 @@ struct App {
     config: Config,
     view: View,
     help: Option<HelpView>,
+    tree_initialized: bool,
     previous: Vec<View>,
     pending_command: Option<tig_rs::commands::PreparedCommand>,
     other: Option<View>,
@@ -823,7 +824,26 @@ impl App {
         if name == "help" {
             self.help = Some(HelpView::new(&self.config, &self.view.name));
         }
-        let next = self.load(name)?;
+        // C tree_open applies repo.prefix only to the first tree view.
+        let old_path = self.path.clone();
+        if name == "tree" && !self.tree_initialized {
+            let repo = self.repo()?;
+            self.path = if repo.bare {
+                PathBuf::new()
+            } else {
+                repo.invocation
+                    .strip_prefix(repo.root.canonicalize()?)?
+                    .into()
+            };
+        }
+        let next = match self.load(name) {
+            Ok(next) => next,
+            Err(error) => {
+                self.path = old_path;
+                return Err(error);
+            }
+        };
+        self.tree_initialized |= name == "tree";
         self.previous.push(std::mem::replace(&mut self.view, next));
         Ok(())
     }
@@ -2092,6 +2112,7 @@ mod editor_tests {
             config: Config::defaults(),
             view,
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -2179,6 +2200,7 @@ mod editor_tests {
             config: Config::default(),
             view,
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -2696,6 +2718,7 @@ fn run() -> Result<()> {
         config,
         view: View::new(&cli.view),
         help: None,
+        tree_initialized: false,
         previous: vec![],
         pending_command: None,
         other: None,
@@ -3022,6 +3045,7 @@ mod tests {
             config,
             view: View::new("main"),
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -3113,12 +3137,117 @@ mod tests {
     }
 
     #[test]
+    fn first_tree_open_uses_invocation_directory_once() {
+        let root = env::temp_dir().join(format!("tig-tree-start-{}", std::process::id()));
+        fs::create_dir_all(&root).unwrap();
+        assert!(Command::new("tar")
+            .args([
+                "-xzf",
+                concat!(
+                    env!("CARGO_MANIFEST_DIR"),
+                    "/test/files/scala-js-benchmarks.tgz"
+                ),
+                "-C"
+            ])
+            .arg(&root)
+            .status()
+            .unwrap()
+            .success());
+        Repository::discover(&root)
+            .unwrap()
+            .command(["reset", "--hard"])
+            .unwrap();
+        let repo = Repository::discover(root.join("common/src")).unwrap();
+        let mut app = App {
+            repo: Some(repo),
+            config: Config::defaults(),
+            view: View::new("main"),
+            help: None,
+            tree_initialized: false,
+            previous: vec![],
+            pending_command: None,
+            other: None,
+            split: false,
+            parent_focused: false,
+            revision: "HEAD".into(),
+            path: PathBuf::new(),
+            args: vec![],
+            message: String::new(),
+            search: String::new(),
+            width: 80,
+            height: 20,
+        };
+        app.revision = "missing-revision".into();
+        assert!(app.action("view-tree").is_err());
+        assert!(!app.tree_initialized);
+        assert!(app.path.as_os_str().is_empty());
+        app.revision = "HEAD".into();
+        app.action("view-tree").unwrap();
+        assert_eq!(app.view.path, PathBuf::from("common/src"));
+        assert_eq!(app.view.rows[0], "Directory path /common/src/");
+        assert_eq!(app.edit_target(), None); // Parent entry is never editable.
+        app.action("parent").unwrap();
+        assert_eq!(app.view.path, PathBuf::from("common"));
+        app.action("parent").unwrap();
+        assert!(app.view.path.as_os_str().is_empty());
+        app.view.selected = app
+            .view
+            .items
+            .iter()
+            .position(|item| matches!(item, Item::Tree(e) if e.path == PathBuf::from("README.md")))
+            .unwrap();
+        assert_eq!(app.edit_target(), Some((PathBuf::from("README.md"), 0)));
+        app.edit().unwrap();
+        assert_eq!(
+            app.pending_command.as_ref().unwrap().argv.last().unwrap(),
+            "README.md"
+        );
+        // Closing and reopening must not reapply the startup prefix.
+        app.view = View::new("main");
+        app.previous.clear();
+        app.path.clear();
+        app.action("view-tree").unwrap();
+        assert!(app.view.path.as_os_str().is_empty());
+        // Display escaping must never change the selected Git/editor path.
+        fs::create_dir(root.join("-- foo bar")).unwrap();
+        let file = PathBuf::from("-- foo bar/as测试asd");
+        fs::write(root.join(&file), "unicode blob\n").unwrap();
+        let repo = app.repo().unwrap();
+        repo.command(["add", "--", "-- foo bar"]).unwrap();
+        repo.command([
+            "-c",
+            "user.name=Test",
+            "-c",
+            "user.email=test@example.invalid",
+            "commit",
+            "-qm",
+            "Unicode filename",
+        ])
+        .unwrap();
+        app.path = "-- foo bar".into();
+        app.open("tree").unwrap();
+        app.view.selected = 2;
+        assert!(app.view.rows[2].ends_with("as测试asd"));
+        assert_eq!(app.edit_target(), Some((file.clone(), 0)));
+        app.edit().unwrap();
+        assert_eq!(
+            app.pending_command.as_ref().unwrap().argv.last().unwrap(),
+            &PathBuf::from(".").join(&file).into_os_string()
+        );
+        app.enter().unwrap();
+        assert_eq!(app.view.path, file);
+        assert_eq!(app.view.rows, ["unicode blob"]);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
     fn unclosed_binding_argument_cannot_become_a_valid_toggle() {
         let mut app = App {
             repo: None,
             config: Config::defaults(),
             view: View::new("main"),
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -3153,6 +3282,7 @@ mod tests {
             config: Config::defaults(),
             view: View::new("grep"),
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -3237,6 +3367,7 @@ mod tests {
             config: Config::defaults(),
             view,
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -3287,6 +3418,7 @@ mod tests {
             config: Config::defaults(),
             view: View::new("main"),
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -3417,6 +3549,7 @@ mod tests {
             config: Config::default(),
             view: child,
             help: None,
+            tree_initialized: false,
             previous: vec![],
             pending_command: None,
             other: Some(parent),

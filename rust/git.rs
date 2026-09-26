@@ -22,7 +22,8 @@ pub struct Repository {
     pub root: PathBuf,
     pub git_dir: PathBuf,
     pub bare: bool,
-    pub(crate) invocation: PathBuf,
+    /// Canonical directory in which the repository was discovered.
+    pub invocation: PathBuf,
 }
 fn text(bytes: &[u8]) -> String {
     String::from_utf8_lossy(bytes).into_owned()
