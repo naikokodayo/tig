@@ -2564,7 +2564,7 @@ fn run() -> Result<()> {
         config.take_diff_options(&mut cli.git_args);
     }
     for message in &config.diagnostics {
-        eprintln!("tig: {message}");
+        eprintln!("tig warning: {message}");
     }
     let invocation = env::current_dir()?;
     let repo = Repository::discover(&invocation).ok();
@@ -2857,6 +2857,40 @@ mod tests {
             unsupported_grep_option(&["-e".into(), "--heading".into()]),
             None
         );
+    }
+
+    #[test]
+    fn unclosed_binding_argument_cannot_become_a_valid_toggle() {
+        let mut app = App {
+            repo: None,
+            config: Config::defaults(),
+            view: View::new("main"),
+            help: None,
+            previous: vec![],
+            pending_command: None,
+            other: None,
+            split: false,
+            parent_focused: false,
+            revision: "HEAD".into(),
+            path: PathBuf::new(),
+            args: vec![],
+            message: String::new(),
+            search: String::new(),
+            width: 80,
+            height: 20,
+        };
+        for quote in ["\"", "'"] {
+            app.config
+                .parse(&format!("bind generic a :toggle {quote}author"));
+            let before = app.config.settings.clone();
+            let command = app.binding("a");
+            assert!(app.action(&command).is_err());
+            assert_eq!(app.config.settings, before);
+            assert_eq!(
+                app.config.action("main", "a").unwrap()[1],
+                format!("{quote}author")
+            );
+        }
     }
 
     #[test]

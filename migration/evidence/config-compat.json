@@ -1,0 +1,133 @@
+{
+  "base_revision": "47f1a2b2d5d939518eb6372a5499677dc6def133",
+  "environment": "macOS arm64; Rust 1.81.0; original shell scripts run in a PTY with the Rust release binary first in PATH",
+  "sha256": {
+    "rust/config.rs": "e7099110aefd4e8acc24f11350379eec652a30e532ebb105c7e661459f43c39e",
+    "rust/main.rs": "d4f0a24a80bcebe5efdaeeb15544249d15904499eea34a797beb63352cd9e318",
+    "target/release/tig": "1f25c8306156888333cba749cefe4051e34e65ed96a0164dd390c82e243ef184"
+  },
+  "checks": {
+    "rustup run 1.81.0 cargo fmt --all -- --check": "PASS",
+    "rustup run 1.81.0 cargo test --locked --all-targets": "PASS: 44 library + 17 binary tests",
+    "rustup run 1.81.0 cargo clippy --locked --all-targets -- -D warnings": "PASS",
+    "rustup run 1.81.0 cargo build --locked --release": "PASS",
+    "git diff --check": "PASS"
+  },
+  "focused_command": "PATH=\"$PWD/target/release:$PWD/test/tools:$PATH\" TEST_OPTS=\"verbose no-indent\" GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=init.defaultBranch GIT_CONFIG_VALUE_0=master sh test/tigrc/<script>",
+  "quote_test_environment": "GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=init.defaultBranch GIT_CONFIG_VALUE_0=master",
+  "original_scripts": {
+    "source-test": {
+      "passed": 10,
+      "failed": 0,
+      "receipt": [
+        "  [OK] source-file-plain.screen assertion",
+        "  [OK] source-file-plain.stderr assertion",
+        "  [OK] source-file-quietly.screen assertion",
+        "  [OK] source-file-quietly.stderr assertion",
+        "  [OK] source-nonexistent-file.screen assertion",
+        "  [OK] source-nonexistent-file.stderr assertion",
+        "  [OK] source-nonexistent-file-quietly.screen assertion",
+        "  [OK] source-nonexistent-file-quietly.stderr assertion",
+        "  [OK] source-tilde-path.screen assertion",
+        "  [OK] source-tilde-path.stderr assertion"
+      ]
+    },
+    "parse-test": {
+      "passed": 2,
+      "failed": 0,
+      "receipt": [
+        "  [OK] stderr assertion",
+        "  [OK] help.screen assertion"
+      ]
+    },
+    "env-vars-test": {
+      "passed": 2,
+      "failed": 0,
+      "receipt": [
+        "  [OK] stderr assertion",
+        "  [OK] help.screen assertion"
+      ]
+    },
+    "xdg-config-home-test": {
+      "passed": 8,
+      "failed": 0,
+      "receipt": [
+        "  [OK] case-.tigrc.out assertion",
+        "  [OK] case-.tigrc.stderr assertion",
+        "  [OK] case-.config-tig-config.out assertion",
+        "  [OK] case-.config-tig-config.stderr assertion",
+        "  [OK] case-.config-tig-config.out assertion",
+        "  [OK] case-.config-tig-config.stderr assertion",
+        "  [OK] case-etc-tig-config.out assertion",
+        "  [OK] case-etc-tig-config.stderr assertion"
+      ]
+    },
+    "quote-test": {
+      "passed": 1,
+      "failed": 6,
+      "receipt": [
+        "[FAIL] unexpected status code: 1 (should be 0)",
+        "[FAIL] stderr != expected/stderr",
+        "diff --git a/expected/stderr b/stderr",
+        "index e69de29..32bcdac 100644",
+        "--- a/expected/stderr",
+        "+++ b/stderr",
+        "@@ -0,0 +1 @@",
+        "+tig: Unclosed command variable",
+        "  [OK] shell-command.txt assertion",
+        "[FAIL] quoted-prompt-with-spaces.screen not found",
+        "[FAIL] mid-quoted-prompt-with-spaces.screen not found",
+        "[FAIL] single-quoted-arg-with-escaped-chars.screen not found",
+        "[FAIL] double-quoted-arg-with-escaped-chars.screen not found"
+      ]
+    }
+  },
+  "quote_baseline_comparison": "A separately built unmodified e94a87b main produced a byte-for-byte identical quote-test receipt. The final release after merging PR #1 at base_revision was compared against that historical receipt; the same 6 failures remain. Unmodified base_revision was not rebuilt for a new differential comparison.",
+  "original_assertions_modified": false,
+  "full_suite_rerun": false,
+  "scope": "Configuration-file warning prefix, original diagnostic paths, per-file direct-error summaries, invalid global enum fallback, malformed quoted bindings, continuation line numbers and EOF. Prompt words/apply_command errors remain strict and atomic.",
+  "remaining": "Full configuration parity is not claimed. Column enum fallback/obsolete date modes and other non-bind quotation semantics are outside this slice. quote-test command-variable expansion remains failing. view-column-test, compat-error-test, append-option-test, builtin-error-test and other tigrc scripts may benefit from the shared diagnostics changes but were not rerun.",
+  "quote_baseline_revision": "e94a87b43eba520d0c0e54d1dd19c3d6ddd367b6",
+  "review_followup": {
+    "missing_source": "File does not exist retains the source argument including ~; the file summary still uses its expanded path. Regression covers source -q as well.",
+    "enum_order": "For global enums, C option_update first parses/stores the value and reports excess arguments only after successful parsing. Both jada extra (fallback warning, no) and all extra (arity warning, all) have state/diagnostic regressions; prompt errors remain atomic.",
+    "date_boundary": "Column date-display does not enter option_type/global enum recovery. local/short are regression-checked to leave state unchanged; full C obsolete date-mode recovery remains outside scope.",
+    "quoted_binding": "Unfinished quoted arguments preserve original bytes instead of losing quote characters. Actual App.binding -> App.action tests cover both quote kinds and assert unchanged configuration. Existing valid quoted shell-command assertions still pass."
+  },
+  "main_integration_scripts": {
+    "diff-context-test": {
+      "passed": 10,
+      "failed": 0,
+      "receipt": [
+        "  [OK] diff-default.screen assertion",
+        "  [OK] diff-u4.screen assertion",
+        "  [OK] diff-u5.screen assertion",
+        "  [OK] diff-u10.screen assertion",
+        "  [OK] diff-u8.screen assertion",
+        "  [OK] diff-default-from-main.screen assertion",
+        "  [OK] diff-u10-from-main.screen assertion",
+        "  [OK] diff-u4-from-main.screen assertion",
+        "  [OK] diff-u5-from-main.screen assertion",
+        "  [OK] diff-u8-from-main.screen assertion"
+      ]
+    },
+    "diff-wdiff-context-test": {
+      "passed": 10,
+      "failed": 0,
+      "receipt": [
+        "  [OK] diff-default.screen assertion",
+        "  [OK] diff-u4.screen assertion",
+        "  [OK] diff-u5.screen assertion",
+        "  [OK] diff-u10.screen assertion",
+        "  [OK] diff-u8.screen assertion",
+        "  [OK] diff-default-from-main.screen assertion",
+        "  [OK] diff-u10-from-main.screen assertion",
+        "  [OK] diff-u4-from-main.screen assertion",
+        "  [OK] diff-u5-from-main.screen assertion",
+        "  [OK] diff-u8-from-main.screen assertion"
+      ]
+    }
+  },
+  "main_integration_command": "PATH=\"$PWD/target/release:$PWD/test/tools:$PATH\" TEST_OPTS=\"verbose no-indent\" GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=init.defaultBranch GIT_CONFIG_VALUE_0=master sh test/diff/<script>",
+  "main_integration": "Merged origin/main 47f1a2b2 without conflicts; preserved both configuration diagnostics and the new shared diff switches. Reran all Rust checks, five configuration scripts and both merged diff-context scripts; no new focused failures. Original diff screen assertions use the harness default whitespace-insensitive comparison."
+}

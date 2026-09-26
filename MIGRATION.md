@@ -317,3 +317,20 @@ receipt. See `migration/evidence/rust-upstream-ninth.json` and its raw log for
 the exact binary hash and failures. The graph helper still routes through C
 under `SYSTEM_TIG=1`; early exits change assertion totals, so this is not a
 completion percentage. Full parity and the application benchmark remain gated.
+
+## Tenth checkpoint verification
+
+Reviewed [diff-context/word-diff PR #1](https://github.com/naikokodayo/tig/pull/1)
+is merged. It passes the two unchanged original context scripts (20 of 20
+assertions), including diff refresh, returning to main, and a CLI
+`--end-of-options` regression. The original harness ignores whitespace in
+screen comparisons; a few whitespace-only rows still differ and this focused
+result is not byte-for-byte screen parity.
+
+After merge, formatting, **57 Rust unit tests**, Clippy with warnings denied,
+release build and **108 PTY checks** pass. The full original suite attempted
+all 154 recipes and reported **186 of 589 assertions failed** in 150 tests,
+with 3 skips and 1 missing receipt. See
+`migration/evidence/rust-upstream-tenth.json` and its raw log. This is still a
+mixed helper route and early exits change the denominator, so the parity
+gate remains open and the end-to-end application benchmark remains gated.
