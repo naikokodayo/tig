@@ -1,0 +1,32 @@
+{
+  "status": "IN PROGRESS; parity gate OPEN",
+  "source_sha256": {
+    "rust/main.rs": "25834677ade0f1f3f617aa83cbef6ce282ce876501bf239fb80a2ea7bc065d22",
+    "rust/config.rs": "e6d17a97594494fced659acae80e8d6e1d0856b3f0734615932afd5664457e1b",
+    "rust/git.rs": "cf8f5e12f87fbd747ff425e41e0511b28c56a7aadd92f02c130f9d682fce0ca1",
+    "rust/commands.rs": "5fa5698077deecf66781cb42589d91470403bafaadd0ef5042f6ef440164bf38",
+    "rust/render.rs": "256dced644ee17f3a5586b47069189d0dbbb82daff700214f4df08b6b5a189b8",
+    "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+    "rust/tests/terminal-smoke.py": "7d5bc047d8c16e6eca7c71bd49938ffb65f267eb43b704a4d5e80249f2b49318"
+  },
+  "binary_sha256": "a153789b85f4500563d02e8c3f64cfbea92cbed1a0358b5588127aa876cd0b8e",
+  "checks": {
+    "unit_tests_passed": 29,
+    "clippy": "passed -D warnings",
+    "rustfmt": "passed",
+    "pty_checks_passed": 103,
+    "upstream_focused": {
+      "assertions_passed": 18,
+      "test_files": [
+        "test/main/default-test",
+        "test/status/start-on-line-test",
+        "test/status/refresh-test"
+      ],
+      "assertions_modified": false
+    },
+    "graph_v2_comparisons_passed": 2042,
+    "graph_v1_glyph_metadata_comparisons_passed": 4084
+  },
+  "full_suite": "See rust-upstream-second.json: pre-final-fix binary, 462/643 failed, mixed C graph route. Final focused checks do not close full parity.",
+  "known_status_edge": "Horizontal-column-only previous position restoration may differ from C; outside focused case coverage."
+}

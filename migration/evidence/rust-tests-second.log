@@ -1,0 +1,49 @@
+   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.88s
+     Running unittests rust/lib.rs (target/debug/deps/tig_rs-8456f0c18ff1cd77)
+
+running 27 tests
+test commands::tests::expansion_preserves_arguments_and_requires_known_variables ... ok
+test config::tests::cli_preserves_git_arguments_and_separator ... ok
+test config::tests::command_quotes_comments_continuations_and_sequences ... ok
+test config::tests::source_cycles_missing_and_recovery ... ok
+test git::tests::nul_parsers_preserve_paths_and_reject_truncation ... ok
+test config::tests::upstream_defaults_and_overrides ... ok
+test config::tests::original_main_default_toggle_sequence ... ok
+test config::tests::append_colors_and_numeric_boundaries ... ok
+test graph::tests::raw_parents_and_colors ... ok
+test graph::tests::linear_merge_and_boundary ... ok
+test graph::golden_tests::upstream_graph_fixtures ... ok
+test graph_v1::tests::boundary_root_and_octopus ... ok
+test graph_v1::tests::merge_in_right_column_retains_v1_metadata ... ok
+test graph_v1::tests::merge_and_shared_ancestor ... ok
+test patch::tests::malformed_and_unsupported_patches_fail ... ok
+test config::tests::typed_toggles_validate_and_preserve_state ... ok
+test config::tests::original_view_column_fixture_and_atomic_errors ... ok
+test render::tests::reference_formats_and_graph_switches ... ok
+test render::tests::dates_email_and_overrides ... ok
+test render::tests::unicode_padding_clipping_and_controls ... ok
+test render::tests::upstream_width_fixture ... ok
+test git::tests::branch_status_tracks_upstream_and_detached_tags ... ok
+test patch::tests::configured_diff_prefix_cannot_stage_a_different_path ... ok
+test patch::tests::replacement_selection_and_no_newline_markers ... ok
+test patch::tests::single_line_hunk_reverse_and_failure_are_index_only ... ok
+test git::tests::real_repository_roundtrip_and_literal_staging ... ok
+test commands::tests::selected_branch_never_uses_an_unrelated_checked_out_branch ... ok
+
+test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.64s
+
+     Running unittests rust/bin/test-graph.rs (target/debug/deps/test_graph-b048dca89f9e3f16)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests rust/main.rs (target/debug/deps/tig-98b6916dcf9cd30d)
+
+running 2 tests
+test tests::terminal_content_is_safe_and_cell_clipped ... ok
+test tests::titles_split_focus_close_and_refresh_keep_context ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -6,5 +6,7 @@ pub mod git;
 pub mod graph;
 pub mod model;
 
+pub mod commands;
+pub mod graph_v1;
 pub mod patch;
 pub mod render;

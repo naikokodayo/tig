@@ -5,7 +5,7 @@
 //! Dates use committer_date by default and date for use-author=yes.
 //! Short Git decorations do not identify slash-containing local branches;
 //! supply refs/heads/ or refs/remotes/ prefixes to disambiguate them.
-use crate::{config::Config, graph::Graph, model::Commit};
+use crate::{config::Config, graph::Graph, graph_v1, model::Commit};
 use std::collections::BTreeMap;
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
@@ -212,7 +212,7 @@ fn date(iso: &str, column: &Column<'_>) -> Result<String, String> {
     Ok(sanitize(&out))
 }
 
-fn refs(config: &Config, decorations: &str) -> String {
+pub fn refs(config: &Config, decorations: &str, separator: &str) -> String {
     let formats = config.settings.get("reference-format");
     let mut result = Vec::new();
     for item in decorations.split(", ").filter(|s| !s.is_empty()) {
@@ -249,7 +249,7 @@ fn refs(config: &Config, decorations: &str) -> String {
         };
         result.push(sanitize(&rendered));
     }
-    result.join(" ")
+    result.join(separator)
 }
 
 /// Render a complete main-view commit list, so autosized columns see all rows.
@@ -283,9 +283,17 @@ pub fn render_commits(
     let mut graph = Graph::new();
     let ascii = config.value("line-graphics") == Some("ascii");
     let mut canvases = Vec::with_capacity(commits.len());
+    let needs_v1 = columns
+        .iter()
+        .any(|column| column.options.get("graph") == Some(&"v1"));
+    let mut graph_v1 = graph_v1::Graph::new();
+    let mut canvases_v1 = Vec::new();
     for commit in commits {
         let parents: Vec<_> = commit.parents.iter().map(String::as_str).collect();
         canvases.push(graph.render_commit(&commit.oid, &parents, false));
+        if needs_v1 {
+            canvases_v1.push(graph_v1.render_commit(&commit.oid, &parents, false));
+        }
     }
     let mut fields = Vec::new();
     let mut sizes = Vec::new();
@@ -337,14 +345,18 @@ pub fn render_commits(
                     let mut text = String::new();
                     match col.options.get("graph").copied().unwrap_or("no") {
                         "yes" | "true" | "1" | "v2" => {
-                            text.push_str(&canvases[i].render(ascii));
+                            text.push_str(&graph_text(canvases[i].render(ascii), config));
+                            text.push(' ');
+                        }
+                        "v1" => {
+                            text.push_str(&graph_text(canvases_v1[i].render(ascii), config));
                             text.push(' ');
                         }
                         "no" | "false" | "0" => {}
                         other => return Err(format!("Unsupported graph renderer: {other}")),
                     }
                     if col.flag("refs", false)? {
-                        let refs = refs(config, &c.decorations);
+                        let refs = refs(config, &c.decorations, " ");
                         if !refs.is_empty() {
                             text.push_str(&refs);
                             text.push(' ');
@@ -409,6 +421,22 @@ pub fn render_commits(
         rows.push(row);
     }
     Ok(rows)
+}
+
+// Curses uses ASCII commit markers with line-drawing edges in its default mode.
+fn graph_text(text: String, config: &Config) -> String {
+    if matches!(config.value("line-graphics"), Some("ascii" | "utf-8")) {
+        text
+    } else {
+        text.chars()
+            .map(|c| match c {
+                '◯' | '∙' => 'o',
+                '◎' => 'I',
+                '●' => 'M',
+                other => other,
+            })
+            .collect()
+    }
 }
 
 #[cfg(test)]

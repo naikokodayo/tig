@@ -60,12 +60,13 @@ def main():
             oldest = git('rev-parse', 'HEAD').strip()
             (repo / 'fixture.txt').write_text('first line\nsecond line\n')
             git('commit', '-qam', 'newest fixture commit')
+            newest = git('rev-parse', 'HEAD').strip()
             worktree_text = 'first line\nsecond line\nunstaged fixture\nsecond added fixture\n'
             (repo / 'fixture.txt').write_text(worktree_text)
             def start(args=(), cwd=None):
                 nonlocal process, master, slave, release_read, release_write
                 master, slave = pty.openpty()
-                fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 24, 100, 0, 0))
+                fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 24, 200, 0, 0))
                 before = termios.tcgetattr(slave)
 
                 def controlling_tty():
@@ -110,34 +111,49 @@ def main():
                         break
                     received.extend(block)
                     transcript.extend(block)
-                    plain = ANSI.sub(b'', bytes(received)).decode(errors='replace')
-                    if all(text in plain for text in required) and all(x in received for x in raw_required):
+                    observed = bytes(received)
+                    if any(re.search(r'\[(main|diff|status|stage|tree|blob|blame)\]', text) for text in required):
+                        # Ignore the preceding frame's tail; wait for the focused title redraw.
+                        frame = observed.rfind(b'\x1b[1;1H\x1b[2J')
+                        if frame < 0:
+                            continue
+                        observed = observed[frame:]
+                        if not re.search(rb'\x1b\[7m\[(?:main|diff|status|stage|tree|blob|blame)\][^\x1b]*\x1b\[0m', observed):
+                            continue
+                    plain = ANSI.sub(b'', observed).decode(errors='replace')
+                    if all(text in plain or (text == 'PTY_CHILD_PID=' and text.encode() in received) for text in required) and all(x in observed for x in raw_required):
                         evidence['checks'].append({'name': label, 'passed': True,
                                                    'observed': plain, 'bytes': len(received)})
-                        return
+                        return plain
                 raise AssertionError(f'{label}: missing {required!r}; received {bytes(received)!r}')
 
-            expect('history rendering', ['newest fixture commit', 'oldest fixture commit', '[main] 1 of 2'])
-            expect('j selects second commit', ['[main] 2 of 2'], b'j')
+            expect('history rendering', ['newest fixture commit', 'oldest fixture commit', f'[main] {newest} - commit 1 of 2'])
+            expect('j selects second commit', [f'[main] {oldest} - commit 2 of 2'], b'j')
             expect('Enter opens selected commit diff', ['[diff]', oldest, 'oldest fixture commit'], b'\r')
-            expect('q returns to selected history row', ['[main] 2 of 2'], b'q')
+            expect('Tab focuses split parent', [f'[main] {oldest} - commit 2 of 2', '[diff]'], b'\t',
+                   raw_required=(b'\x1b[7m[main]',))
+            expect('Tab focuses split child', [f'[main] {oldest} - commit 2 of 2', '[diff]'], b'\t',
+                   raw_required=(b'\x1b[7m[diff]',))
+            expect('K loads previous parent commit into diff', [f'[main] {newest} - commit 1 of 2', f'[diff] {newest}'], b'K')
+            expect('J loads next parent commit into diff', [f'[main] {oldest} - commit 2 of 2', f'[diff] {oldest}'], b'J')
+            expect('O maximizes focused diff', [f'[diff] {oldest}'], b'O',
+                   raw_required=(b'\x1b[23;1H\x1b[7m[diff]',))
+            expect('q returns to selected history row', [f'[main] {oldest} - commit 2 of 2'], b'q')
             expect('search prompt', ['/'], b'/')
-            expect('search selects matching commit', ['[main] 1 of 2'], b'newest\r')
-            expect('status opens', ['Changes not staged for commit:', 'fixture.txt', '[status] 1 of 3'], b's')
-            expect('status selects unstaged fixture', ['[status] 3 of 3'], b'jj')
-            expect('u stages fixture', ['[status] 3 of 3'], b'u')
+            expect('search selects matching commit', [f'[main] {newest} - commit 1 of 2'], b'newest\r')
+            expect('status opens at header', ['Changes not staged for commit:', 'fixture.txt', '[status] Nothing to update'], b's')
+            expect('select unstaged fixture', ["[status] Press u to stage 'fixture.txt' for commit"], b'jjjj')
+            expect('u stages fixture', ["[status] Press u to unstage 'fixture.txt'"], b'u')
             assert git('diff', '--cached', '--name-only').strip() == 'fixture.txt'
             assert git('diff', '--name-only').strip() == ''
             evidence['checks'].append({'name': 'stage verified against Git index', 'passed': True})
-            expect('select staged fixture', ['[status] 2 of 3'], b'k')
             expect('Enter opens cached diff', ['+unstaged fixture', '[stage]'], b'\r')
             expect('R preserves cached diff', ['+unstaged fixture', '[stage]'], b'R')
-            expect('back from cached diff', ['[status] 2 of 3'], b'q')
-            expect('u unstages fixture', ['[status] 2 of 3'], b'u')
+            expect('back from cached diff', ["[status] Press u to unstage 'fixture.txt'"], b'q')
+            expect('u unstages fixture', ["[status] Press u to stage 'fixture.txt' for commit"], b'u')
             assert git('diff', '--cached', '--name-only').strip() == ''
             assert git('diff', '--name-only').strip() == 'fixture.txt'
             evidence['checks'].append({'name': 'unstage verified against Git index', 'passed': True})
-            expect('select unstaged file for line staging', ['[status] 3 of 3'], b'j')
             expect('open two-line unstaged patch', ['+unstaged fixture', '+second added fixture', '[stage]'], b'\r')
             expect('line staging search prompt', ['/'], b'/')
             expect('select added line A', ['[stage]'], b'+unstaged fixture\r',
@@ -149,55 +165,102 @@ def main():
             assert (repo / 'fixture.txt').read_text() == worktree_text
             evidence['checks'].append({'name': 'single-line stage index and unchanged worktree',
                                        'passed': True, 'cached_diff': cached})
-            expect('back to status after line stage', ['[status] 3 of 3'], b'q')
-            expect('refresh partially staged status', ['[status] 3 of 4'], b'R')
-            expect('select cached partial file', ['[status] 2 of 4'], b'k')
+            expect('back to status after line stage', ["[status] Press u to stage 'fixture.txt' for commit"], b'q')
+            expect('refresh partially staged status', ["[status] Press u to stage 'fixture.txt' for commit"], b'R')
+            expect('select cached partial file', ["[status] Press u to unstage 'fixture.txt'"], b'kk')
             expect('open cached partial patch', ['+unstaged fixture', '[stage]'], b'\r')
             expect('line unstage search prompt', ['/'], b'/')
             expect('select cached added line A', ['[stage]'], b'+unstaged fixture\r',
                    raw_required=(b'\x1b[7m+unstaged fixture',))
-            expect('1 unstages only selected line', ['[stage] 0 of 0'], b'1')
+            expect('1 unstages only selected line', ["[stage] Staged changes to 'fixture.txt'", ' 0%'], b'1')
             assert git('diff', '--cached') == ''
             assert (repo / 'fixture.txt').read_text() == worktree_text
             evidence['checks'].append({'name': 'single-line unstage empty index and unchanged worktree', 'passed': True})
-            expect('back after line unstage', ['[status] 2 of 4'], b'q')
-            expect('refresh fully unstaged status', ['[status] 2 of 3'], b'R')
-            expect('select file for hunk staging', ['[status] 3 of 3'], b'j')
+            expect('back after line unstage', ["[status] Press u to unstage 'fixture.txt'"], b'q')
+            expect('refresh fully unstaged status', ["[status] Press u to stage 'fixture.txt' for commit"], b'R')
             expect('open hunk for staging', ['+unstaged fixture', '+second added fixture', '[stage]'], b'\r')
             expect('hunk staging search prompt', ['/'], b'/')
             expect('select line within hunk', ['[stage]'], b'+unstaged fixture\r',
                    raw_required=(b'\x1b[7m+unstaged fixture',))
-            expect('u stages complete hunk', ['[stage] 0 of 0'], b'u')
+            expect('u stages complete hunk', ["[stage] Unstaged changes to 'fixture.txt'", ' 0%'], b'u')
             cached = git('diff', '--cached')
             assert '+unstaged fixture' in cached and '+second added fixture' in cached, cached
             assert git('show', ':fixture.txt') == worktree_text
             assert (repo / 'fixture.txt').read_text() == worktree_text
             evidence['checks'].append({'name': 'whole-hunk stage includes both lines and preserves worktree',
                                        'passed': True, 'cached_diff': cached})
-            expect('back after hunk stage', ['[status] 3 of 3'], b'q')
-            expect('refresh fully staged status', ['[status] 3 of 3'], b'R')
-            expect('select staged hunk file', ['[status] 2 of 3'], b'k')
+            expect('back after hunk stage', ["[status] Press u to stage 'fixture.txt' for commit"], b'q')
+            expect('refresh fully staged status', ["[status] Press u to unstage 'fixture.txt'"], b'R')
             expect('open cached hunk', ['+unstaged fixture', '+second added fixture', '[stage]'], b'\r')
             expect('hunk unstaging search prompt', ['/'], b'/')
             expect('select cached hunk line', ['[stage]'], b'+unstaged fixture\r',
                    raw_required=(b'\x1b[7m+unstaged fixture',))
-            expect('cached u unstages complete hunk', ['[stage] 0 of 0'], b'u')
+            expect('cached u unstages complete hunk', ["[stage] Staged changes to 'fixture.txt'", ' 0%'], b'u')
             assert git('diff', '--cached') == ''
             assert (repo / 'fixture.txt').read_text() == worktree_text
             evidence['checks'].append({'name': 'whole-hunk unstage empties index and preserves worktree', 'passed': True})
-            expect('back after hunk unstage', ['[status] 2 of 3'], b'q')
-            expect('back from status', ['[main] 1 of 2'], b'q')
-            expect('tree opens', ['fixture.txt', '[tree] 1 of 2'], b't')
-            expect('select root blob', ['[tree] 2 of 2'], b'j')
-            expect('Enter opens blob', ['first line', 'second line', '[blob] 1 of 2'], b'\r')
-            expect('q returns to tree', ['[tree] 2 of 2'], b'q')
-            expect('select nested tree', ['[tree] 1 of 2'], b'k')
-            expect('open nested tree', ['nested/child.txt', '[tree] 1 of 1'], b'\r')
-            expect('back restores parent tree', ['fixture.txt', '[tree] 1 of 2'], b'q')
-            expect('R preserves parent tree', ['fixture.txt', 'nested', '[tree] 1 of 2'], b'R')
+            expect('back after hunk unstage', ["[status] Press u to unstage 'fixture.txt'"], b'q')
+            expect('back from status', [f'[main] {newest} - commit 1 of 2'], b'q')
+            expect('external argv command prompt', [':'], b':')
+            expect('silent external argv command returns to history', [f'[main] {newest} - commit 1 of 2'],
+                   b'exec @git config --local pty.fixture "literal spaces ; $(touch should-not-exist)"\r')
+            assert git('config', '--local', 'pty.fixture').strip() == 'literal spaces ; $(touch should-not-exist)'
+            assert not (repo / 'should-not-exist').exists()
+            evidence['checks'].append({'name': 'external command literal argv without implicit shell', 'passed': True})
+            argv_path = 'argv space ; $(echo literal).txt'
+            (repo / argv_path).write_text('literal argv fixture\n')
+            expect('external path command prompt', [':'], b':')
+            expect('external command handles literal special filename', [f'[main] {newest} - commit 1 of 2'],
+                   f'exec @git add -- "{argv_path}"\r'.encode())
+            assert git('diff', '--cached', '--name-only').strip() == argv_path
+            assert git('show', ':' + argv_path) == 'literal argv fixture\n'
+            evidence['checks'].append({'name': 'external argv stages exact spaced special-character filename', 'passed': True})
+            expect('external cleanup command prompt', [':'], b':')
+            expect('external argv cleanup returns to history', [f'[main] {newest} - commit 1 of 2'],
+                   f'exec @git reset -- "{argv_path}"\r'.encode())
+            assert git('diff', '--cached') == ''
+            (repo / argv_path).unlink()
+            expect('echo command prompt', [':'], b':')
+            echoed = expect('plus command displays first stdout line',
+                            [f'[main] {newest} - commit 1 of 2', 'echo first line'],
+                            f'exec +"{sys.executable}" -c "print(\'echo first line\');print(\'hidden second line\')"\r'.encode(),
+                            raw_required=(b'\x1b[24;1Hecho first line\x1b[0m',))
+            assert 'hidden second line' not in echoed
+            expect('foreground command prompt', [':'], b':')
+            expect('foreground command waits for Enter', ['git version', 'Press Enter to continue'],
+                   b'exec !git --version\r')
+            assert termios.tcgetattr(slave) == before
+            expect('foreground command resumes raw UI after Enter', [f'[main] {newest} - commit 1 of 2'], b'\r')
+            assert not termios.tcgetattr(slave)[3] & termios.ICANON
+            expect('quick command prompt', [':'], b':')
+            quick = expect('successful quick command resumes without Enter', [f'[main] {newest} - commit 1 of 2'],
+                           b'exec >git --version\r')
+            assert 'Press Enter to continue' not in quick
+            expect('failed quick command prompt', [':'], b':')
+            expect('failed quick command still waits for Enter', ['Command exited with', 'Press Enter to continue'],
+                   b'exec >git not-a-real-pty-subcommand\r')
+            assert termios.tcgetattr(slave) == before
+            expect('failed command resumes after Enter', [f'[main] {newest} - commit 1 of 2'], b'\r')
+            expect('move off HEAD before default H', [f'[main] {oldest} - commit 2 of 2'], b'j')
+            expect('default H resolves HEAD and selects newest commit', [f'[main] {newest} - commit 1 of 2'], b'H',
+                   raw_required=(f'\x1b[7m[main] {newest} - commit 1 of 2'.encode(),))
+            expect('quoted key binding prompt', [':'], b':')
+            expect('install quoted H command binding', [f'[main] {newest} - commit 1 of 2'],
+                   b'bind main H +git -c "pty.binding=quoted H value" config --get pty.binding\r')
+            expect('H preserves quoted argv and echoes result', [f'[main] {newest} - commit 1 of 2', 'quoted H value'], b'H',
+                   raw_required=(b'\x1b[24;1Hquoted H value\x1b[0m',))
+            evidence['checks'].append({'name': 'foreground canonical tty, resumed raw UI, echo and quoted argv verified', 'passed': True})
+            expect('tree opens', ['fixture.txt', '[tree] - line 1 of 2'], b't')
+            expect('select root blob', ['[tree] - line 2 of 2'], b'j')
+            expect('Enter opens blob', ['first line', 'second line', '[blob] fixture.txt - line 1 of 2'], b'\r')
+            expect('q returns to tree', ['[tree] - line 2 of 2'], b'q')
+            expect('select nested tree', ['[tree] - line 1 of 2'], b'k')
+            expect('open nested tree', ['nested/child.txt', '[tree] - line 1 of 1'], b'\r')
+            expect('back restores parent tree', ['fixture.txt', '[tree] - line 1 of 2'], b'q')
+            expect('R preserves parent tree', ['fixture.txt', 'nested', '[tree] - line 1 of 2'], b'R')
             fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 12, 60, 0, 0))
             os.killpg(process.pid, signal.SIGWINCH)
-            expect('resize redraws status at row 11', ['[tree] 1 of 2'], raw_required=(b'\x1b[11;1H',))
+            expect('resize redraws status at row 11', ['[tree] - line 1 of 2'], raw_required=(b'\x1b[11;1H',))
             def finish(label, send=b'Q', expected_exit=0):
                 nonlocal process, master, slave, release_read, release_write
                 expect(label, [f'PTY_CHILD_EXIT={expected_exit}'], send,
@@ -220,18 +283,18 @@ def main():
 
             finish('quit leaves alternate screen and restores cursor')
             before, selector = start(('+2',))
-            expect('+2 sets initial selection', ['[main] 2 of 2'])
+            expect('+2 sets initial selection', [f'[main] {oldest} - commit 2 of 2'])
             finish('+2 session quit')
             before, selector = start(('blame', '--', 'fixture.txt'))
-            expect('blame -- file', ['first line', 'second line', '[blame] 1 of 2'])
+            expect('blame -- file', ['first line', 'second line', '[blame] fixture.txt - line 1 of 2'])
             finish('blame session quit')
             before, selector = start(('blame', '--', 'child.txt'), repo / 'nested')
-            expect('blame resolves subdirectory relative file', ['nested fixture line', '[blame] 1 of 1'])
+            expect('blame resolves subdirectory relative file', ['nested fixture line', '[blame] nested/child.txt - line 1 of 1'])
             finish('subdirectory blame session quit')
             for termination in (signal.SIGTERM, signal.SIGHUP, signal.SIGINT):
                 offset = len(transcript)
                 before, selector = start()
-                expect(termination.name + ' session history', ['[main] 1 of 2', 'PTY_CHILD_PID='])
+                expect(termination.name + ' session history', [f'[main] {newest} - commit 1 of 2', 'PTY_CHILD_PID='])
                 child_pid = int(re.search(rb'PTY_CHILD_PID=(\d+)', transcript[offset:]).group(1))
                 if termination == signal.SIGTERM:
                     expect('signal while search prompt active', ['/'], b'/')

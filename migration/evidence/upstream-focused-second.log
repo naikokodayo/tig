@@ -1,0 +1,4 @@
+      TEST  test/main/default-test
+      TEST  test/status/start-on-line-test
+      TEST  test/status/refresh-test
+   SUMMARY  Passed 18 assertions in 3 tests

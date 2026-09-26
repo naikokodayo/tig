@@ -28,7 +28,7 @@ enum Item {
     Commit(Commit),
     Status(StatusEntry, bool),
     Tree(TreeEntry),
-    Ref(String),
+    Ref(String, Option<String>),
     Text,
 }
 #[derive(Clone)]
@@ -72,6 +72,20 @@ impl View {
         }
         v
     }
+    fn restore_status_selection(&mut self) {
+        if self.name != "status" || (self.selected == 0 && self.top == 0) {
+            return;
+        }
+        self.selected = (self.selected..self.items.len())
+            .find(|&i| matches!(self.items[i], Item::Status(..)))
+            .or_else(|| {
+                (0..=self.selected.min(self.items.len().saturating_sub(1)))
+                    .rev()
+                    .find(|&i| matches!(self.items[i], Item::Status(..)))
+            })
+            .unwrap_or(0);
+        self.top = self.top.min(self.selected);
+    }
     fn move_by(&mut self, delta: isize) {
         self.selected = self
             .selected
@@ -84,6 +98,10 @@ struct App {
     config: Config,
     view: View,
     previous: Vec<View>,
+    pending_command: Option<tig_rs::commands::PreparedCommand>,
+    other: Option<View>,
+    split: bool,
+    parent_focused: bool,
     revision: String,
     path: PathBuf,
     args: Vec<String>,
@@ -122,30 +140,37 @@ impl App {
             }
             "status" => {
                 let entries = repo.status()?;
-                for (staged, title) in [
-                    (true, "Changes to be committed:"),
-                    (false, "Changes not staged for commit:"),
+                v.push(repo.status_header()?, Item::Text);
+                for (group, title) in [
+                    (0, "Changes to be committed:"),
+                    (1, "Changes not staged for commit:"),
+                    (2, "Untracked files:"),
                 ] {
                     v.push(title.into(), Item::Text);
+                    let start = v.rows.len();
                     for e in &entries {
-                        let visible = if staged {
-                            e.staged()
-                        } else {
-                            e.worktree != ' ' && e.worktree != '!'
+                        let visible = match group {
+                            0 => e.staged(),
+                            1 => e.index != '?' && e.worktree != ' ' && e.worktree != '!',
+                            _ => e.index == '?',
                         };
                         if visible {
                             v.push(
                                 format!(
-                                    "  {} {}",
-                                    if staged { e.index } else { e.worktree },
+                                    "{} {}",
+                                    if group == 0 { e.index } else { e.worktree },
                                     e.path.display()
                                 ),
-                                Item::Status(e.clone(), staged),
+                                Item::Status(e.clone(), group == 0),
                             );
                         }
                     }
+                    if v.rows.len() == start {
+                        v.push("  (no files)".into(), Item::Text);
+                    }
                 }
             }
+
             "tree" => {
                 for e in repo.tree(&self.revision, &self.path)? {
                     v.push(
@@ -163,7 +188,7 @@ impl App {
                             r.oid.get(..8).unwrap_or(&r.oid),
                             r.name
                         ),
-                        Item::Ref(r.oid),
+                        Item::Ref(r.oid, Some(r.name)),
                     );
                 }
             }
@@ -177,11 +202,22 @@ impl App {
                             b.line,
                             b.text
                         ),
-                        Item::Ref(b.oid),
+                        Item::Ref(b.oid, None),
                     );
                 }
             }
-            "diff" => return Ok(View::text(name, &repo.show(&self.revision)?)),
+            "diff" => {
+                let oid = repo.revision(&self.revision)?;
+                let mut view = View::text(name, &repo.show(&oid)?);
+                if let Some(commit) = repo.history(&[oid], 1)?.first() {
+                    let refs = tig_rs::render::refs(&self.config, &commit.decorations, ", ");
+                    if !refs.is_empty() && !view.rows.is_empty() {
+                        view.rows.insert(1, format!("Refs: {refs}"));
+                        view.items.insert(1, Item::Text);
+                    }
+                }
+                return Ok(view);
+            }
             "stage" => {
                 if self.view.untracked {
                     return Ok(View::text(
@@ -234,6 +270,17 @@ impl App {
         self.previous.push(std::mem::replace(&mut self.view, next));
         Ok(())
     }
+    fn sync_context(&mut self) {
+        self.revision = self.view.revision.clone();
+        self.path = self.view.path.clone();
+    }
+    fn swap_panes(&mut self) {
+        if let Some(other) = &mut self.other {
+            std::mem::swap(&mut self.view, other);
+            self.parent_focused = !self.parent_focused;
+            self.sync_context();
+        }
+    }
     fn selected(&self) -> Item {
         self.view
             .items
@@ -244,19 +291,21 @@ impl App {
     fn select_context(&mut self) {
         match self.selected() {
             Item::Commit(c) => self.revision = c.oid,
-            Item::Ref(id) => self.revision = id,
+            Item::Ref(id, _) => self.revision = id,
             Item::Tree(e) => self.path = e.path,
             Item::Status(e, _) => self.path = e.path,
             Item::Text => (),
         }
     }
     fn enter(&mut self) -> Result<()> {
+        let parent = self.view.clone();
+        let depth = self.previous.len();
         match self.selected() {
             Item::Commit(c) => {
                 self.revision = c.oid;
                 self.open("diff")?;
             }
-            Item::Ref(id) => {
+            Item::Ref(id, _) => {
                 self.revision = id;
                 self.open("diff")?;
             }
@@ -292,6 +341,12 @@ impl App {
             }
             Item::Text => (),
         }
+        if self.previous.len() > depth {
+            self.previous.truncate(depth);
+            self.other = Some(parent);
+            self.split = true;
+            self.parent_focused = false;
+        }
         Ok(())
     }
     fn find(&mut self, backwards: bool) {
@@ -313,31 +368,64 @@ impl App {
         self.message = format!("No match: {}", self.search);
     }
     fn goto_commit(&mut self, target: &str) -> Result<()> {
+        let target = self.repo()?.revision(target)?;
         let index = self
             .view
             .items
             .iter()
             .position(|item| match item {
-                Item::Commit(commit) => commit.oid.starts_with(target),
+                Item::Commit(commit) => commit.oid == target,
                 _ => false,
             })
             .ok_or("Commit not in this view")?;
         self.view.selected = index;
         Ok(())
     }
+    fn center_selection(&mut self) {
+        let visible = if self.split && self.other.is_some() {
+            let (vertical, parent, child) = self.pane_sizes();
+            if vertical {
+                self.height.saturating_sub(2)
+            } else {
+                (if self.parent_focused { parent } else { child }).saturating_sub(1)
+            }
+        } else {
+            self.height.saturating_sub(2)
+        }
+        .max(1);
+        if self.view.selected < self.view.top || self.view.selected >= self.view.top + visible {
+            self.view.top = self.view.selected.saturating_sub(visible / 2);
+        }
+    }
     fn action(&mut self, action: &str) -> Result<bool> {
         let action = action.strip_prefix(':').unwrap_or(action);
-        if action.starts_with("set ")
+        if let Some(command) = action.strip_prefix("exec ").or_else(|| {
+            action
+                .starts_with(['!', '@', '?', '<', '+', '>'])
+                .then_some(action)
+        }) {
+            let selected_ref = match self.selected() {
+                Item::Ref(_, name) => name,
+                _ => None,
+            };
+            self.select_context();
+            self.pending_command = Some(tig_rs::commands::prepare(
+                self.repo()?,
+                command,
+                &self.revision,
+                &self.path,
+                selected_ref.as_deref(),
+            )?);
+            return Ok(true);
+        }
+        if action.starts_with("toggle ")
+            || action.starts_with("set ")
             || action.starts_with("bind ")
             || action.starts_with("color ")
             || action.starts_with("source ")
         {
             let mut config = self.config.clone();
-            let errors = config.diagnostics.len();
-            config.parse(action);
-            if config.diagnostics.len() > errors {
-                return Err(config.diagnostics[errors..].join("; ").into());
-            }
+            config.apply_command_for_view(&self.view.name, action)?;
             self.config = config;
             return self.action("refresh");
         }
@@ -345,6 +433,9 @@ impl App {
             self.search = pattern.into();
             self.find(false);
             return Ok(true);
+        }
+        if !action.is_empty() && action.bytes().all(|byte| byte.is_ascii_digit()) {
+            return self.action(&format!("goto {action}"));
         }
         if let Some(target) = action.strip_prefix("goto ") {
             if let Ok(line) = target.parse::<usize>() {
@@ -354,6 +445,7 @@ impl App {
             } else {
                 self.goto_commit(target)?;
             }
+            self.center_selection();
             return Ok(true);
         }
         if !action.is_empty()
@@ -361,13 +453,31 @@ impl App {
             && action.len() >= 7
         {
             self.goto_commit(action)?;
+            self.center_selection();
             return Ok(true);
         }
-        let page = self.height.saturating_sub(2).max(1) as isize;
+        let page = if self.split && self.other.is_some() {
+            let (vertical, parent, child) = self.pane_sizes();
+            if vertical {
+                self.height.saturating_sub(2)
+            } else {
+                (if self.parent_focused { parent } else { child }).saturating_sub(1)
+            }
+        } else {
+            self.height.saturating_sub(2)
+        }
+        .max(1) as isize;
         match action {
             "quit" => return Ok(false),
             "view-close" | "back" => {
-                if let Some(v) = self.previous.pop() {
+                if self.other.is_some() {
+                    if !self.parent_focused {
+                        self.swap_panes();
+                    }
+                    self.other = None;
+                    self.split = false;
+                    self.parent_focused = false;
+                } else if let Some(v) = self.previous.pop() {
                     self.revision = v.revision.clone();
                     self.path = v.path.clone();
                     self.view = v;
@@ -376,6 +486,27 @@ impl App {
                 }
             }
             "enter" => self.enter()?,
+            "view-next" => {
+                if self.split {
+                    self.swap_panes();
+                } else {
+                    self.message = "Only one view is displayed".into();
+                }
+            }
+            "maximize" | "view-maximize" => self.split = false,
+            "next" | "previous" if self.other.is_some() && !self.parent_focused => {
+                let split = self.split;
+                self.swap_panes();
+                let old = self.view.selected;
+                self.view.move_by(if action == "next" { 1 } else { -1 });
+                if self.view.selected != old {
+                    self.enter()?;
+                }
+                if self.parent_focused {
+                    self.swap_panes();
+                }
+                self.split = split;
+            }
             "move-down" | "next" => self.view.move_by(1),
             "move-up" | "previous" => self.view.move_by(-1),
             "move-page-down" => self.view.move_by(page),
@@ -390,9 +521,15 @@ impl App {
             "find-next" => self.find(false),
             "find-prev" => self.find(true),
             "refresh" => {
-                let selected = self.view.selected;
-                self.view = self.load(&self.view.name)?;
-                self.view.selected = selected.min(self.view.rows.len().saturating_sub(1));
+                self.sync_context();
+                let old = self.view.clone();
+                if old.name != "pager" {
+                    self.view = self.load(&old.name)?;
+                }
+                self.view.selected = old.selected.min(self.view.rows.len().saturating_sub(1));
+                self.view.top = old.top;
+                self.view.left = old.left;
+                self.view.restore_status_selection();
             }
             "status-update" | "stage-update-line" if self.view.name == "stage" => {
                 if self.view.untracked {
@@ -452,37 +589,76 @@ impl App {
         }
         Ok(true)
     }
+    fn pane_sizes(&self) -> (bool, usize, usize) {
+        let vertical = self
+            .config
+            .settings
+            .get("vertical-split")
+            .and_then(|v| v.first())
+            .map(String::as_str)
+            .unwrap_or("auto");
+        let vertical = vertical == "vertical"
+            || vertical == "yes"
+            || vertical == "true"
+            || (vertical == "auto"
+                && (self.width > 160 || self.width > self.height.saturating_sub(1) * 4));
+        let total = if vertical {
+            self.width.saturating_sub(1)
+        } else {
+            self.height.saturating_sub(1)
+        };
+        let option = if vertical {
+            "split-view-width"
+        } else {
+            "split-view-height"
+        };
+        let size = self
+            .config
+            .settings
+            .get(option)
+            .and_then(|v| v.first())
+            .map(String::as_str)
+            .unwrap_or(if vertical { "50%" } else { "67%" });
+        let child = if let Some(percent) = size.strip_suffix('%') {
+            total * percent.parse::<usize>().unwrap_or(67).min(100) / 100
+        } else {
+            size.parse::<usize>().unwrap_or(total * 2 / 3)
+        };
+        let minimum = if vertical { 1 } else { 4.min(total / 2) };
+        let child = child.max(minimum).min(total.saturating_sub(minimum));
+        (vertical, total - child, child)
+    }
     fn screen(&mut self) -> Vec<String> {
-        let visible = self.height.saturating_sub(2).max(1);
-        if self.view.selected < self.view.top {
-            self.view.top = self.view.selected;
-        }
-        if self.view.selected >= self.view.top + visible {
-            self.view.top = self.view.selected + 1 - visible;
-        }
-        let mut lines: Vec<String> = (0..visible)
-            .map(|i| {
-                clip(
-                    self.view
-                        .rows
-                        .get(self.view.top + i)
-                        .map(String::as_str)
-                        .unwrap_or(""),
-                    self.view.left,
-                    self.width,
-                )
-            })
-            .collect();
-        lines.push(clip(
-            &format!(
-                "[{}] {} of {}",
-                self.view.name,
-                self.view.selected + usize::from(!self.view.rows.is_empty()),
-                self.view.rows.len()
-            ),
-            0,
-            self.width,
-        ));
+        let mut lines = if self.split && self.other.is_some() {
+            let (vertical, parent_size, child_size) = self.pane_sizes();
+            let other = self.other.as_mut().unwrap();
+            let (parent, child) = if self.parent_focused {
+                (&mut self.view, other)
+            } else {
+                (other, &mut self.view)
+            };
+            if vertical {
+                let left = pane_screen(parent, parent_size, self.height.saturating_sub(2));
+                let right = pane_screen(child, child_size, self.height.saturating_sub(2));
+                left.into_iter()
+                    .zip(right)
+                    .map(|(a, b)| {
+                        format!(
+                            "{}{}|{}",
+                            a,
+                            " ".repeat(parent_size.saturating_sub(cell_width(&a))),
+                            b
+                        )
+                    })
+                    .collect()
+            } else {
+                let mut lines = pane_screen(parent, self.width, parent_size.saturating_sub(1));
+                lines.extend(pane_screen(child, self.width, child_size.saturating_sub(1)));
+                lines
+            }
+        } else {
+            pane_screen(&mut self.view, self.width, self.height.saturating_sub(2))
+        };
         lines.push(clip(&self.message, 0, self.width));
         lines
     }
@@ -500,10 +676,7 @@ impl App {
                 self.search = pattern.into();
                 self.find(false);
             } else if let Some(n) = line.strip_prefix(":goto ") {
-                self.view.selected = n
-                    .parse::<usize>()?
-                    .saturating_sub(1)
-                    .min(self.view.rows.len().saturating_sub(1));
+                self.action(&format!("goto {n}"))?;
             } else {
                 let action = if let Some(a) = line.strip_prefix(':') {
                     a.to_string()
@@ -513,6 +686,13 @@ impl App {
                 if !self.action(&action)? {
                     break;
                 }
+                if let Some(command) = self.pending_command.take() {
+                    command.run(self.repo()?, false, true)?;
+                    if command.exit {
+                        break;
+                    }
+                    self.action("refresh")?;
+                }
             }
         }
         Ok(())
@@ -520,9 +700,104 @@ impl App {
     fn binding(&self, key: &str) -> String {
         self.config
             .action(&self.view.name, key)
-            .map(|a| a.join(" "))
+            .map(|a| {
+                if a.first().is_some_and(|arg| arg.starts_with(':')) {
+                    return a.join(" ");
+                }
+                a.iter()
+                    .enumerate()
+                    .map(|(index, arg)| {
+                        if index == 0 {
+                            arg.clone()
+                        } else {
+                            format!("\"{}\"", arg.replace('\\', "\\\\").replace('"', "\\\""))
+                        }
+                    })
+                    .collect::<Vec<_>>()
+                    .join(" ")
+            })
             .unwrap_or_else(|| key.into())
     }
+}
+
+fn cell_width(text: &str) -> usize {
+    text.chars().map(|c| c.width().unwrap_or(0)).sum()
+}
+fn pane_screen(view: &mut View, width: usize, visible: usize) -> Vec<String> {
+    let visible = visible.max(1);
+    if view.selected < view.top {
+        view.top = view.selected;
+    }
+    if view.selected >= view.top + visible {
+        view.top = view.selected + 1 - visible;
+    }
+    let mut lines: Vec<String> = (0..visible)
+        .map(|i| {
+            clip(
+                view.rows
+                    .get(view.top + i)
+                    .map(String::as_str)
+                    .unwrap_or(""),
+                view.left,
+                width,
+            )
+        })
+        .collect();
+    let reference = match view.items.get(view.selected) {
+        Some(Item::Commit(c)) => c.oid.clone(),
+        Some(Item::Status(e, staged)) => format!(
+            "Press u to {} '{}'{}",
+            if *staged { "unstage" } else { "stage" },
+            e.path.display(),
+            if *staged {
+                ""
+            } else if e.index == '?' {
+                " for addition"
+            } else {
+                " for commit"
+            }
+        ),
+        _ if view.name == "status" => "Nothing to update".into(),
+        _ if view.name == "diff" => view.revision.clone(),
+        _ if view.name == "stage" => format!(
+            "{} changes to '{}'",
+            if view.staged { "Staged" } else { "Unstaged" },
+            view.path.display()
+        ),
+        _ if view.name == "blob" || view.name == "blame" => view.path.display().to_string(),
+        _ => String::new(),
+    };
+    let mut title = format!("[{}]", view.name);
+    if !reference.is_empty() {
+        title.push_str(&format!(" {reference}"));
+    }
+    if view.name != "status" && !view.rows.is_empty() {
+        title.push_str(&format!(
+            " - {} {} of {}",
+            if view.name == "main" {
+                "commit"
+            } else {
+                "line"
+            },
+            view.selected + 1,
+            view.rows.len()
+        ));
+    }
+    let percent = if view.rows.is_empty() {
+        0
+    } else {
+        (view.top + visible).min(view.rows.len()) * 100 / view.rows.len()
+    };
+    let suffix = format!(" {percent}%");
+    let title_width = width.saturating_sub(suffix.len());
+    let title = clip(&title, 0, title_width);
+    lines.push(format!(
+        "{}{}{}",
+        title,
+        " ".repeat(title_width.saturating_sub(cell_width(&title))),
+        suffix
+    ));
+    lines
 }
 
 // Never allow Git/config content to inject terminal escapes. Width is terminal cells,
@@ -554,6 +829,7 @@ fn clip(text: &str, skip: usize, width: usize) -> String {
 struct Terminal {
     out: fs::File,
     stop: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    signals: Vec<signal_hook::SigId>,
 }
 impl Terminal {
     fn open() -> Result<Self> {
@@ -562,15 +838,16 @@ impl Terminal {
             .write(true)
             .open("/dev/tty")?;
         let stop = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+        let mut signals = Vec::new();
         for signal in [
             signal_hook::consts::SIGTERM,
             signal_hook::consts::SIGHUP,
             signal_hook::consts::SIGINT,
         ] {
-            signal_hook::flag::register(signal, stop.clone())?;
+            signals.push(signal_hook::flag::register(signal, stop.clone())?);
         }
         terminal::enable_raw_mode()?;
-        let mut t = Self { out, stop };
+        let mut t = Self { out, stop, signals };
         execute!(
             t.out,
             terminal::EnterAlternateScreen,
@@ -596,11 +873,48 @@ impl Terminal {
         queue!(self.out, cursor::MoveTo(0, 0), Clear(ClearType::All))?;
         for (i, line) in lines.iter().enumerate() {
             queue!(self.out, cursor::MoveTo(0, i as u16))?;
-            if i == app.view.selected.saturating_sub(app.view.top) || i + 2 == lines.len() {
-                queue!(self.out, SetAttribute(Attribute::Reverse))?;
-            }
             write!(self.out, "{line}")?;
             queue!(self.out, SetAttribute(Attribute::Reset))?;
+        }
+        let (x, y, width, visible) = if app.split && app.other.is_some() {
+            let (vertical, parent, child) = app.pane_sizes();
+            if vertical {
+                (
+                    if app.parent_focused { 0 } else { parent + 1 },
+                    0,
+                    if app.parent_focused { parent } else { child },
+                    app.height.saturating_sub(2),
+                )
+            } else {
+                (
+                    0,
+                    if app.parent_focused { 0 } else { parent },
+                    app.width,
+                    (if app.parent_focused { parent } else { child }).saturating_sub(1),
+                )
+            }
+        } else {
+            (0, 0, app.width, app.height.saturating_sub(2))
+        };
+        for row in [
+            y + app.view.selected.saturating_sub(app.view.top),
+            y + visible,
+        ] {
+            if let Some(line) = lines.get(row) {
+                let text = clip(line, x, width);
+                queue!(
+                    self.out,
+                    cursor::MoveTo(x as u16, row as u16),
+                    SetAttribute(Attribute::Reverse)
+                )?;
+                write!(
+                    self.out,
+                    "{}{}",
+                    text,
+                    " ".repeat(width.saturating_sub(cell_width(&text)))
+                )?;
+                queue!(self.out, SetAttribute(Attribute::Reset))?;
+            }
         }
         self.out.flush()?;
         Ok(())
@@ -646,6 +960,9 @@ impl Drop for Terminal {
             terminal::LeaveAlternateScreen
         );
         let _ = terminal::disable_raw_mode();
+        for signal in self.signals.drain(..) {
+            signal_hook::low_level::unregister(signal);
+        }
     }
 }
 fn key_name(code: KeyCode, modifiers: KeyModifiers) -> String {
@@ -702,6 +1019,10 @@ fn run() -> Result<()> {
         config,
         view: View::new(&cli.view),
         previous: vec![],
+        pending_command: None,
+        other: None,
+        split: false,
+        parent_focused: false,
         revision: "HEAD".into(),
         path: PathBuf::new(),
         args: cli.git_args.clone(),
@@ -752,7 +1073,10 @@ fn run() -> Result<()> {
         }
         app.view = app.load(&cli.view)?;
     }
-    app.view.selected = cli.line.min(app.view.rows.len().saturating_sub(1));
+    if cli.line > 0 || app.view.name != "status" {
+        app.view.selected = cli.line.min(app.view.rows.len().saturating_sub(1));
+    }
+    app.view.restore_status_selection();
     if let Ok(script) = env::var("TIG_SCRIPT") {
         app.width = env::var("COLUMNS")
             .ok()
@@ -764,8 +1088,10 @@ fn run() -> Result<()> {
             .and_then(|s| s.parse().ok())
             .unwrap_or(app.height)
             .max(3);
+        app.center_selection();
         return app.script(&script);
     }
+    app.center_selection();
     let mut terminal = Terminal::open()?;
     loop {
         terminal.draw(&mut app)?;
@@ -793,8 +1119,10 @@ fn run() -> Result<()> {
             }
         } else if action == "prompt" {
             if let Some(s) = terminal.prompt(&mut app, ":")? {
-                if let Err(e) = app.action(&s) {
-                    app.message = e.to_string();
+                match app.action(&s) {
+                    Ok(false) => break,
+                    Ok(true) => (),
+                    Err(e) => app.message = e.to_string(),
                 }
             }
         } else {
@@ -802,6 +1130,62 @@ fn run() -> Result<()> {
                 Ok(false) => break,
                 Ok(true) => (),
                 Err(e) => app.message = e.to_string(),
+            }
+        }
+        if let Some(command) = app.pending_command.take() {
+            let confirmed = if command.confirm {
+                let answer = terminal.prompt(
+                    &mut app,
+                    &format!(
+                        "Run {}{}? [y/N] ",
+                        command.display(),
+                        if command.exit { " and exit" } else { "" }
+                    ),
+                )?;
+                answer.is_some_and(|answer| matches!(answer.as_str(), "y" | "Y" | "yes"))
+            } else {
+                true
+            };
+            if !confirmed {
+                continue;
+            }
+            let result = if command.silent || command.echo {
+                command.run(app.repo()?, true, true)
+            } else {
+                drop(terminal);
+                let result = command.run(app.repo()?, true, false);
+                if result.is_err() || (!command.quick && !command.exit) {
+                    use std::io::{BufRead, BufReader};
+                    let mut tty = fs::OpenOptions::new()
+                        .read(true)
+                        .write(true)
+                        .open("/dev/tty")?;
+                    if let Err(error) = &result {
+                        writeln!(tty, "{error}")?;
+                    }
+                    write!(tty, "Press Enter to continue")?;
+                    tty.flush()?;
+                    BufReader::new(tty).read_line(&mut String::new())?;
+                }
+                terminal = Terminal::open()?;
+                result
+            };
+            match result {
+                Ok(output) => {
+                    if command.exit {
+                        break;
+                    }
+                    if let Err(error) = app.action("refresh") {
+                        app.message = error.to_string();
+                    } else if command.echo {
+                        app.message = String::from_utf8_lossy(&output.stdout)
+                            .lines()
+                            .next()
+                            .unwrap_or_default()
+                            .to_owned();
+                    }
+                }
+                Err(error) => app.message = error.to_string(),
             }
         }
     }
@@ -816,6 +1200,60 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn titles_split_focus_close_and_refresh_keep_context() {
+        let mut parent = View::text("pager", "one\ntwo\nthree\nfour\nfive\nsix");
+        parent.revision = "parent".into();
+        parent.path = "parent.txt".into();
+        parent.selected = 4;
+        let mut child = View::text("pager", "child one\nchild two");
+        child.revision = "child".into();
+        child.path = "child.txt".into();
+        child.left = 1;
+        let mut app = App {
+            repo: None,
+            config: Config::default(),
+            view: child,
+            previous: vec![],
+            pending_command: None,
+            other: Some(parent),
+            split: true,
+            parent_focused: false,
+            revision: "child".into(),
+            path: "child.txt".into(),
+            args: vec![],
+            message: String::new(),
+            search: String::new(),
+            width: 80,
+            height: 16,
+        };
+        app.config
+            .settings
+            .insert("vertical-split".into(), vec!["no".into()]);
+        let screen = app.screen();
+        assert_eq!(screen.len(), 16);
+        assert!(screen[4].starts_with("[pager] - line 5 of 6"));
+        assert!(screen[4].ends_with("83%"));
+        assert!(screen[14].ends_with("100%"));
+        app.action("view-next").unwrap();
+        assert!(app.parent_focused);
+        assert_eq!(app.path, PathBuf::from("parent.txt"));
+        app.action("refresh").unwrap();
+        assert_eq!(app.view.selected, 4);
+        assert_eq!(app.view.top, 1);
+        app.action("view-next").unwrap();
+        assert_eq!(app.view.left, 1);
+        app.action("maximize").unwrap();
+        assert!(!app.split);
+        app.action("view-close").unwrap();
+        assert_eq!(app.view.revision, "parent");
+        assert_eq!(app.view.selected, 4);
+        assert!(app.other.is_none());
+        app.view.selected = 5;
+        let lines = pane_screen(&mut app.view, 30, 2);
+        assert!(lines[2].ends_with("100%"));
+        assert_eq!(cell_width(&lines[2]), 30);
+    }
     #[test]
     fn terminal_content_is_safe_and_cell_clipped() {
         assert_eq!(clip("a界b", 0, 3), "a界");

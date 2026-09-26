@@ -4,15 +4,15 @@
 
 对照仓库：[jonas/tig](https://github.com/jonas/tig) 与 [naikokodayo/tig](https://github.com/naikokodayo/tig)。迁移工具包是流程和文档项目，本次没有为它虚构运行时性能指标。
 
-## 同机测量结果
+## 同机测量结果（2026-09-27 第二检查点）
 
 单位为毫秒，越低越好。每个工作负载先验证输出逐字节相同，再计时。
 
 | Workload | C median (ms) | Rust median (ms) | Time reduction | C p95 (ms) | Rust p95 (ms) |
 |---|---:|---:|---:|---:|---:|
-| tig_history | 13.707 | 12.715 | 7.2% | 21.909 | 18.676 |
-| linear_10000 | 11.117 | 8.394 | 24.5% | 12.302 | 9.375 |
-| diamonds_1000 | 6.929 | 5.589 | 19.3% | 8.055 | 7.049 |
+| tig_history | 13.996 | 13.025 | 6.9% | 14.882 | 14.745 |
+| linear_10000 | 11.045 | 8.603 | 22.1% | 13.264 | 15.679 |
+| diamonds_1000 | 6.980 | 5.543 | 20.6% | 7.139 | 6.659 |
 
 Unstripped helper size: C 442,088 bytes; Rust 482,824 bytes (+9.2%).
 
@@ -27,12 +27,12 @@ Unstripped helper size: C 442,088 bytes; Rust 482,824 bytes (+9.2%).
 - p95 使用 16 个样本的 nearest-rank（这里为最大值），不是大量独立运行估出的稳定尾延迟。
 - 本轮计时在原版测试和编译完成后执行；机器并非专用基准设备，未锁定 CPU 频率。差异不代表统计显著性或跨机器保证。
 - 尚未测量完整 UI 首屏、滚动、所有视图、大仓库内存、Git 子进程峰值 RSS 或全量冷构建成本。
-- 组件正确性另有 2,042 次 C/Rust 逐字节比较；不覆盖 curses 属性、graph v1 或 GH490 主视图样例。
+- 组件正确性另有 2,042 次 C/Rust 逐字节比较；本轮 v2 benchmark 不覆盖 curses 属性、graph v1 或 GH490 主视图样例。另有 v1 的 4,084 次字形和元数据差分通过，未混入 v2 性能数字。
 
 ## 证据与复现
 
-- [原始计时、哈希及二进制信息](evidence/benchmark.json)
-- [图形差分完整记录](evidence/graph-differential.json)
+- [原始计时、哈希及二进制信息](evidence/benchmark-second.json)
+- [图形差分完整记录](evidence/graph-differential-second.json)
 - [原版 C 测试基线](evidence/c-baseline.json)
 - [真实 PTY 检查](evidence/terminal-smoke.json)
 
@@ -47,3 +47,5 @@ python3 migration/benchmark.py \
 ```
 
 完整迁移后的 benchmark 必须等 [MIGRATION.md](../MIGRATION.md) 所列兼容门通过后再做；本报告不关闭该门。
+
+首次检查点的历史测量仍保留于 `evidence/benchmark.json`；当前表格来自第二次测量。

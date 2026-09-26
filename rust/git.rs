@@ -104,7 +104,7 @@ impl Repository {
     {
         run(&self.root, args)
     }
-    fn revision(&self, revision: &str) -> Result<String> {
+    pub fn revision(&self, revision: &str) -> Result<String> {
         let spec = format!("{revision}^{{commit}}");
         Ok(text(trim_lf(&self.command([
             "rev-parse",
@@ -263,6 +263,104 @@ impl Repository {
             args.push(file.into());
         }
         self.command(args)
+    }
+    /// Human-readable branch state, matching Tig's status header.
+    pub fn status_header(&self) -> Result<String> {
+        let output = self.command([
+            "status",
+            "--porcelain=v2",
+            "--branch",
+            "--untracked-files=no",
+        ])?;
+        let output = text(&output);
+        let field = |name: &str| output.lines().find_map(|line| line.strip_prefix(name));
+        let oid = field("# branch.oid ").unwrap_or("");
+        if oid == "(initial)" {
+            return Ok("Initial commit".into());
+        }
+        let branch = field("# branch.head ").unwrap_or("");
+        let markers = [
+            (
+                "rebase-apply/rebasing",
+                Some("rebase-apply/head-name"),
+                "Rebasing",
+            ),
+            (
+                "rebase-apply/applying",
+                Some("rebase-apply/head-name"),
+                "Applying mailbox to",
+            ),
+            (
+                "rebase-apply",
+                Some("rebase-apply/head-name"),
+                "Rebasing mailbox onto",
+            ),
+            (
+                "rebase-merge/interactive",
+                Some("rebase-merge/head-name"),
+                "Interactive rebase",
+            ),
+            (
+                "rebase-merge",
+                Some("rebase-merge/head-name"),
+                "Rebase merge",
+            ),
+            ("MERGE_HEAD", None, "Merging"),
+            ("BISECT_LOG", None, "Bisecting"),
+            ("HEAD", None, "On branch"),
+        ];
+        for (marker, name_file, prefix) in markers {
+            if !self.git_dir.join(marker).exists() {
+                continue;
+            }
+            let mut name = branch.to_owned();
+            if let Some(file) = name_file {
+                name = std::fs::read_to_string(self.git_dir.join(file))
+                    .map_err(|e| GitError(format!("Cannot read operation state: {e}")))?
+                    .trim()
+                    .trim_start_matches("refs/heads/")
+                    .to_owned();
+            }
+            if marker == "HEAD" && branch == "(detached)" {
+                let refs = self.refs()?;
+                let tag = refs.iter().find(|r| {
+                    r.name.starts_with("refs/tags/") && (r.oid == oid || r.target == oid)
+                });
+                return Ok(format!(
+                    "HEAD detached at {}",
+                    tag.map(|r| r.name.trim_start_matches("refs/tags/"))
+                        .unwrap_or(oid)
+                ));
+            }
+            let mut header = format!("{prefix} {name}");
+            if name_file.is_none() {
+                if let (Some(upstream), Some(counts)) =
+                    (field("# branch.upstream "), field("# branch.ab "))
+                {
+                    let mut counts = counts.split_whitespace();
+                    let ahead = counts
+                        .next()
+                        .and_then(|s| s.strip_prefix('+'))
+                        .and_then(|s| s.parse::<u64>().ok())
+                        .ok_or_else(|| GitError("Malformed ahead count".into()))?;
+                    let behind = counts
+                        .next()
+                        .and_then(|s| s.strip_prefix('-'))
+                        .and_then(|s| s.parse::<u64>().ok())
+                        .ok_or_else(|| GitError("Malformed behind count".into()))?;
+                    let info = match (ahead, behind) {
+                        (0, 0) => format!("Your branch is up-to-date with '{upstream}'."),
+                        (a, 0) => format!("Your branch is ahead of '{upstream}' by {a} commit{}.", if a == 1 {""} else {"s"}),
+                        (0, b) => format!("Your branch is behind '{upstream}' by {b} commit{}.", if b == 1 {""} else {"s"}),
+                        (a, b) => format!("Your branch and '{upstream}' have diverged, and have {a} and {b} different commits each, respectively"),
+                    };
+                    header.push_str(". ");
+                    header.push_str(&info);
+                }
+            }
+            return Ok(header);
+        }
+        Ok("Not currently on any branch".into())
     }
     pub fn status(&self) -> Result<Vec<StatusEntry>> {
         parse_status(&self.command(["status", "--porcelain=v1", "-z", "--untracked-files=all"])?)
@@ -518,10 +616,37 @@ mod tests {
         }
     }
     #[test]
+    fn branch_status_tracks_upstream_and_detached_tags() {
+        let f = Fixture::new();
+        let repo = f.repo();
+        fs::write(f.0.join("file"), "one\n").unwrap();
+        repo.command(["add", "file"]).unwrap();
+        repo.command(["commit", "-qm", "one"]).unwrap();
+        repo.command(["branch", "-M", "main"]).unwrap();
+        assert_eq!(repo.status_header().unwrap(), "On branch main");
+        repo.command(["branch", "baseline"]).unwrap();
+        repo.command(["branch", "--set-upstream-to=baseline", "main"])
+            .unwrap();
+        assert_eq!(
+            repo.status_header().unwrap(),
+            "On branch main. Your branch is up-to-date with 'baseline'."
+        );
+        fs::write(f.0.join("file"), "two\n").unwrap();
+        repo.command(["commit", "-qam", "two"]).unwrap();
+        assert_eq!(
+            repo.status_header().unwrap(),
+            "On branch main. Your branch is ahead of 'baseline' by 1 commit."
+        );
+        repo.command(["tag", "v1"]).unwrap();
+        repo.command(["checkout", "--detach", "v1"]).unwrap();
+        assert_eq!(repo.status_header().unwrap(), "HEAD detached at v1");
+    }
+    #[test]
     fn real_repository_roundtrip_and_literal_staging() {
         let f = Fixture::new();
         let repo = f.repo();
         assert!(repo.history(&[], 0).unwrap().is_empty());
+        assert_eq!(repo.status_header().unwrap(), "Initial commit");
         fs::write(f.0.join(":(glob)*"), "first\nsecond\n").unwrap();
         fs::write(f.0.join("other"), "keep\n").unwrap();
         let entry = repo

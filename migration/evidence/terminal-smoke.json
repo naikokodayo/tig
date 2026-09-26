@@ -1,128 +1,146 @@
 {
   "scope": "Implemented Rust UI workflows only; not upstream parity",
-  "binary_sha256": "c382922888e011a923b8df8457383d5a3b6871491f9f7a262a74803c9d90d33b",
+  "binary_sha256": "a153789b85f4500563d02e8c3f64cfbea92cbed1a0358b5588127aa876cd0b8e",
   "checks": [
     {
       "name": "history rendering",
       "passed": true,
-      "observed": "PTY_CHILD_PID=69711\r\n2026-09-26 23:57 +0800 PTY Fixture \u2219 [master] newest fixture commit2026-09-26 23:57 +0800 PTY Fixture \u25ce oldest fixture commit[main] 1 of 2",
-      "bytes": 479
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 1094
     },
     {
       "name": "j selects second commit",
       "passed": true,
-      "observed": "2026-09-26 23:57 +0800 PTY Fixture \u2219 [master] newest fixture commit2026-09-26 23:57 +0800 PTY Fixture \u25ce oldest fixture commit[main] 2 of 2",
-      "bytes": 426
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - commit 2 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit                                                                                                                                              [main] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - commit 2 of 2                                                                                                                                     100%",
+      "bytes": 1019
     },
     {
       "name": "Enter opens selected commit diff",
       "passed": true,
-      "observed": "commit 88cc87f420a096ea26bbfba0dc1be4a0ff9ddcceAuthor:     PTY Fixture <pty@example.invalid>AuthorDate: Sat Sep 26 23:57:59 2026 +0800Commit:     PTY Fixture <pty@example.invalid>CommitDate: Sat Sep 26 23:57:59 2026 +0800    oldest fixture commit--- fixture.txt      | 1 + nested/child.txt | 1 + 2 files changed, 2 insertions(+)diff --git a/fixture.txt b/fixture.txtnew file mode 100644index 0000000..08fe272--- /dev/null+++ b/fixture.txt@@ -0,0 +1 @@+first linediff --git a/nested/child.txt b/nested/child.txtnew file mode 100644index 0000000..b0679ee[diff] 1 of 26",
-      "bytes": 839
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                 |commit 2b37c54e3d5ad1e9f6c47e0412abef380bd56a862026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit                                          |Author:     PTY Fixture <pty@example.invalid>                                                                                                    |AuthorDate: Sun Sep 27 00:20:22 2026 +0800                                                                                                    |Commit:     PTY Fixture <pty@example.invalid>                                                                                                    |CommitDate: Sun Sep 27 00:20:22 2026 +0800                                                                                                    |                                                                                                    |    oldest fixture commit                                                                                                    |---                                                                                                    | fixture.txt      | 1 +                                                                                                    | nested/child.txt | 1 +                                                                                                    | 2 files changed, 2 insertions(+)                                                                                                    |                                                                                                    |diff --git a/fixture.txt b/fixture.txt                                                                                                    |new file mode 100644                                                                                                    |index 0000000..08fe272                                                                                                    |--- /dev/null                                                                                                    |+++ b/fixture.txt                                                                                                    |@@ -0,0 +1 @@                                                                                                    |+first line                                                                                                    |diff --git a/nested/child.txt b/nested/child.txt                                                                                                    |new file mode 100644                                                                                                    |index 0000000..b0679ee[main] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - commit 2 of 2                                 100%|[diff] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - line 1 of 26                                  84%commit 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86                                                    [diff] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - line 1 of 26                                  84%",
+      "bytes": 3470
+    },
+    {
+      "name": "Tab focuses split parent",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                 |commit 2b37c54e3d5ad1e9f6c47e0412abef380bd56a862026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit                                          |Author:     PTY Fixture <pty@example.invalid>                                                                                                    |AuthorDate: Sun Sep 27 00:20:22 2026 +0800                                                                                                    |Commit:     PTY Fixture <pty@example.invalid>                                                                                                    |CommitDate: Sun Sep 27 00:20:22 2026 +0800                                                                                                    |                                                                                                    |    oldest fixture commit                                                                                                    |---                                                                                                    | fixture.txt      | 1 +                                                                                                    | nested/child.txt | 1 +                                                                                                    | 2 files changed, 2 insertions(+)                                                                                                    |                                                                                                    |diff --git a/fixture.txt b/fixture.txt                                                                                                    |new file mode 100644                                                                                                    |index 0000000..08fe272                                                                                                    |--- /dev/null                                                                                                    |+++ b/fixture.txt                                                                                                    |@@ -0,0 +1 @@                                                                                                    |+first line                                                                                                    |diff --git a/nested/child.txt b/nested/child.txt                                                                                                    |new file mode 100644                                                                                                    |index 0000000..b0679ee[main] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - commit 2 of 2                                 100%|[diff] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - line 1 of 26                                  84%2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit                                          [main] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - commit 2 of 2                                 100%",
+      "bytes": 3468
+    },
+    {
+      "name": "Tab focuses split child",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                 |commit 2b37c54e3d5ad1e9f6c47e0412abef380bd56a862026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit                                          |Author:     PTY Fixture <pty@example.invalid>                                                                                                    |AuthorDate: Sun Sep 27 00:20:22 2026 +0800                                                                                                    |Commit:     PTY Fixture <pty@example.invalid>                                                                                                    |CommitDate: Sun Sep 27 00:20:22 2026 +0800                                                                                                    |                                                                                                    |    oldest fixture commit                                                                                                    |---                                                                                                    | fixture.txt      | 1 +                                                                                                    | nested/child.txt | 1 +                                                                                                    | 2 files changed, 2 insertions(+)                                                                                                    |                                                                                                    |diff --git a/fixture.txt b/fixture.txt                                                                                                    |new file mode 100644                                                                                                    |index 0000000..08fe272                                                                                                    |--- /dev/null                                                                                                    |+++ b/fixture.txt                                                                                                    |@@ -0,0 +1 @@                                                                                                    |+first line                                                                                                    |diff --git a/nested/child.txt b/nested/child.txt                                                                                                    |new file mode 100644                                                                                                    |index 0000000..b0679ee[main] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - commit 2 of 2                                 100%|[diff] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - line 1 of 26                                  84%commit 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86                                                    [diff] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - line 1 of 26                                  84%",
+      "bytes": 3470
+    },
+    {
+      "name": "K loads previous parent commit into diff",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                 |commit e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit                                          |Refs: [master]                                                                                                    |Author:     PTY Fixture <pty@example.invalid>                                                                                                    |AuthorDate: Sun Sep 27 00:20:22 2026 +0800                                                                                                    |Commit:     PTY Fixture <pty@example.invalid>                                                                                                    |CommitDate: Sun Sep 27 00:20:22 2026 +0800                                                                                                    |                                                                                                    |    newest fixture commit                                                                                                    |---                                                                                                    | fixture.txt | 1 +                                                                                                    | 1 file changed, 1 insertion(+)                                                                                                    |                                                                                                    |diff --git a/fixture.txt b/fixture.txt                                                                                                    |index 08fe272..06fcdd7 100644                                                                                                    |--- a/fixture.txt                                                                                                    |+++ b/fixture.txt                                                                                                    |@@ -1 +1,2 @@                                                                                                    | first line                                                                                                    |+second line                                                                                                    |                                                                                                    |                                                                                                    |[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                 100%|[diff] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - line 1 of 19                                 100%commit e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c                                                    [diff] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - line 1 of 19                                 100%",
+      "bytes": 3367
+    },
+    {
+      "name": "J loads next parent commit into diff",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                 |commit 2b37c54e3d5ad1e9f6c47e0412abef380bd56a862026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit                                          |Author:     PTY Fixture <pty@example.invalid>                                                                                                    |AuthorDate: Sun Sep 27 00:20:22 2026 +0800                                                                                                    |Commit:     PTY Fixture <pty@example.invalid>                                                                                                    |CommitDate: Sun Sep 27 00:20:22 2026 +0800                                                                                                    |                                                                                                    |    oldest fixture commit                                                                                                    |---                                                                                                    | fixture.txt      | 1 +                                                                                                    | nested/child.txt | 1 +                                                                                                    | 2 files changed, 2 insertions(+)                                                                                                    |                                                                                                    |diff --git a/fixture.txt b/fixture.txt                                                                                                    |new file mode 100644                                                                                                    |index 0000000..08fe272                                                                                                    |--- /dev/null                                                                                                    |+++ b/fixture.txt                                                                                                    |@@ -0,0 +1 @@                                                                                                    |+first line                                                                                                    |diff --git a/nested/child.txt b/nested/child.txt                                                                                                    |new file mode 100644                                                                                                    |index 0000000..b0679ee[main] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - commit 2 of 2                                 100%|[diff] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - line 1 of 26                                  84%commit 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86                                                    [diff] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - line 1 of 26                                  84%",
+      "bytes": 3470
+    },
+    {
+      "name": "O maximizes focused diff",
+      "passed": true,
+      "observed": "commit 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86Author:     PTY Fixture <pty@example.invalid>AuthorDate: Sun Sep 27 00:20:22 2026 +0800Commit:     PTY Fixture <pty@example.invalid>CommitDate: Sun Sep 27 00:20:22 2026 +0800    oldest fixture commit--- fixture.txt      | 1 + nested/child.txt | 1 + 2 files changed, 2 insertions(+)diff --git a/fixture.txt b/fixture.txtnew file mode 100644index 0000000..08fe272--- /dev/null+++ b/fixture.txt@@ -0,0 +1 @@+first linediff --git a/nested/child.txt b/nested/child.txtnew file mode 100644index 0000000..b0679ee[diff] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - line 1 of 26                                                                                                                                       84%commit 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86                                                                                                                                                         [diff] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - line 1 of 26                                                                                                                                       84%",
+      "bytes": 1446
     },
     {
       "name": "q returns to selected history row",
       "passed": true,
-      "observed": "2026-09-26 23:57 +0800 PTY Fixture \u2219 [master] newest fixture commit2026-09-26 23:57 +0800 PTY Fixture \u25ce oldest fixture commit[main] 2 of 2",
-      "bytes": 400
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - commit 2 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit                                                                                                                                              [main] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - commit 2 of 2                                                                                                                                     100%",
+      "bytes": 1019
     },
     {
       "name": "search prompt",
       "passed": true,
       "observed": "/",
-      "bytes": 27
+      "bytes": 12
     },
     {
       "name": "search selects matching commit",
       "passed": true,
-      "observed": "/n/ne/new/newe/newes/newest2026-09-26 23:57 +0800 PTY Fixture \u2219 [master] newest fixture commit2026-09-26 23:57 +0800 PTY Fixture \u25ce oldest fixture commit[main] 1 of 2\u001b[",
-      "bytes": 495
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 1112
     },
     {
-      "name": "status opens",
+      "name": "status opens at header",
       "passed": true,
-      "observed": "0mChanges to be committed:Changes not staged for commit:  M fixture.txt[status] 1 of 3\u001b[",
-      "bytes": 361
+      "observed": "On branch masterChanges to be committed:  (no files)Changes not staged for commit:M fixture.txtUntracked files:  (no files)[status] Nothing to update                                                                                                                                                                          100%On branch master                                                                                                                                                                                        [status] Nothing to update                                                                                                                                                                          100%",
+      "bytes": 1017
     },
     {
-      "name": "status selects unstaged fixture",
+      "name": "select unstaged fixture",
       "passed": true,
-      "observed": "24;1HChanges to be committed:Changes not staged for commit:  M fixture.txt[status] 2 of 3Changes to be committed:Changes not staged for commit:  M fixture.txt[status] 3 of 3\u001b[",
-      "bytes": 721
+      "observed": "On branch masterChanges to be committed:  (no files)Changes not staged for commit:M fixture.txtUntracked files:  (no files)[status] Press u to stage 'fixture.txt' for commit                                                                                                                                                  100%M fixture.txt                                                                                                                                                                                           [status] Press u to stage 'fixture.txt' for commit                                                                                                                                                  100%",
+      "bytes": 4068
     },
     {
       "name": "u stages fixture",
       "passed": true,
-      "observed": "0mChanges to be committed:  M fixture.txtChanges not staged for commit:[status] 3 of 3",
-      "bytes": 355
+      "observed": "On branch masterChanges to be committed:M fixture.txtChanges not staged for commit:  (no files)Untracked files:  (no files)[status] Press u to unstage 'fixture.txt'                                                                                                                                                           100%M fixture.txt                                                                                                                                                                                           [status] Press u to unstage 'fixture.txt'                                                                                                                                                           100%",
+      "bytes": 1017
     },
     {
       "name": "stage verified against Git index",
       "passed": true
     },
     {
-      "name": "select staged fixture",
-      "passed": true,
-      "observed": "Changes to be committed:  M fixture.txtChanges not staged for commit:[status] 2 of 3\u001b[0",
-      "bytes": 349
-    },
-    {
       "name": "Enter opens cached diff",
       "passed": true,
-      "observed": "m fixture.txt | 2 ++ 1 file changed, 2 insertions(+)diff --git a/fixture.txt b/fixture.txtindex 06fcdd7..311142c 100644--- a/fixture.txt+++ b/fixture.txt@@ -1,2 +1,4 @@ first line second line+unstaged fixture+second added fixture[stage] 1 of 12\u001b[0",
-      "bytes": 527
+      "observed": "On branch master                                                                                    | fixture.txt | 2 ++Changes to be committed:                                                                            | 1 file changed, 2 insertions(+)M fixture.txt                                                                                       |Changes not staged for commit:                                                                      |diff --git a/fixture.txt b/fixture.txt  (no files)                                                                                        |index 06fcdd7..311142c 100644Untracked files:                                                                                    |--- a/fixture.txt  (no files)                                                                                        |+++ b/fixture.txt                                                                                                    |@@ -1,2 +1,4 @@                                                                                                    | first line                                                                                                    | second line                                                                                                    |+unstaged fixture                                                                                                    |+second added fixture                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[status] Press u to unstage 'fixture.txt'                                                       100%|[stage] Staged changes to 'fixture.txt' - line 1 of 12                                         100% fixture.txt | 2 ++                                                                                [stage] Staged changes to 'fixture.txt' - line 1 of 12                                         100%",
+      "bytes": 3146
     },
     {
       "name": "R preserves cached diff",
       "passed": true,
-      "observed": "m fixture.txt | 2 ++ 1 file changed, 2 insertions(+)diff --git a/fixture.txt b/fixture.txtindex 06fcdd7..311142c 100644--- a/fixture.txt+++ b/fixture.txt@@ -1,2 +1,4 @@ first line second line+unstaged fixture+second added fixture[stage] 1 of 12\u001b[0",
-      "bytes": 505
+      "observed": "On branch master                                                                                    | fixture.txt | 2 ++Changes to be committed:                                                                            | 1 file changed, 2 insertions(+)M fixture.txt                                                                                       |Changes not staged for commit:                                                                      |diff --git a/fixture.txt b/fixture.txt  (no files)                                                                                        |index 06fcdd7..311142c 100644Untracked files:                                                                                    |--- a/fixture.txt  (no files)                                                                                        |+++ b/fixture.txt                                                                                                    |@@ -1,2 +1,4 @@                                                                                                    | first line                                                                                                    | second line                                                                                                    |+unstaged fixture                                                                                                    |+second added fixture                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[status] Press u to unstage 'fixture.txt'                                                       100%|[stage] Staged changes to 'fixture.txt' - line 1 of 12                                         100% fixture.txt | 2 ++                                                                                [stage] Staged changes to 'fixture.txt' - line 1 of 12                                         100%",
+      "bytes": 3146
     },
     {
       "name": "back from cached diff",
       "passed": true,
-      "observed": "mChanges to be committed:  M fixture.txtChanges not staged for commit:[status] 2 of 3\u001b[",
-      "bytes": 360
+      "observed": "On branch masterChanges to be committed:M fixture.txtChanges not staged for commit:  (no files)Untracked files:  (no files)[status] Press u to unstage 'fixture.txt'                                                                                                                                                           100%M fixture.txt                                                                                                                                                                                           [status] Press u to unstage 'fixture.txt'                                                                                                                                                           100%",
+      "bytes": 1017
     },
     {
       "name": "u unstages fixture",
       "passed": true,
-      "observed": "24;1HChanges to be committed:Changes not staged for commit:  M fixture.txt[status] 2 of 3",
-      "bytes": 362
+      "observed": "On branch masterChanges to be committed:  (no files)Changes not staged for commit:M fixture.txtUntracked files:  (no files)[status] Press u to stage 'fixture.txt' for commit                                                                                                                                                  100%M fixture.txt                                                                                                                                                                                           [status] Press u to stage 'fixture.txt' for commit                                                                                                                                                  100%",
+      "bytes": 1017
     },
     {
       "name": "unstage verified against Git index",
       "passed": true
     },
     {
-      "name": "select unstaged file for line staging",
-      "passed": true,
-      "observed": "Changes to be committed:Changes not staged for commit:  M fixture.txt[status] 3 of 3\u001b[",
-      "bytes": 348
-    },
-    {
       "name": "open two-line unstaged patch",
       "passed": true,
-      "observed": "0m fixture.txt | 2 ++ 1 file changed, 2 insertions(+)diff --git a/fixture.txt b/fixture.txtindex 06fcdd7..311142c 100644--- a/fixture.txt+++ b/fixture.txt@@ -1,2 +1,4 @@ first line second line+unstaged fixture+second added fixture[stage] 1 of 12\u001b[",
-      "bytes": 527
+      "observed": "On branch master                                                                                    | fixture.txt | 2 ++Changes to be committed:                                                                            | 1 file changed, 2 insertions(+)  (no files)                                                                                        |Changes not staged for commit:                                                                      |diff --git a/fixture.txt b/fixture.txtM fixture.txt                                                                                       |index 06fcdd7..311142c 100644Untracked files:                                                                                    |--- a/fixture.txt  (no files)                                                                                        |+++ b/fixture.txt                                                                                                    |@@ -1,2 +1,4 @@                                                                                                    | first line                                                                                                    | second line                                                                                                    |+unstaged fixture                                                                                                    |+second added fixture                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[status] Press u to stage 'fixture.txt' for commit                                              100%|[stage] Unstaged changes to 'fixture.txt' - line 1 of 12                                       100% fixture.txt | 2 ++                                                                                [stage] Unstaged changes to 'fixture.txt' - line 1 of 12                                       100%",
+      "bytes": 3146
     },
     {
       "name": "line staging search prompt",
       "passed": true,
-      "observed": "0m/",
-      "bytes": 14
+      "observed": "/",
+      "bytes": 12
     },
     {
       "name": "select added line A",
       "passed": true,
-      "observed": "/+/+u/+un/+uns/+unst/+unsta/+unstag/+unstage/+unstaged/+unstaged /+unstaged f/+unstaged fi/+unstaged fix/+unstaged fixt/+unstaged fixtu/+unstaged fixtur/+unstaged fixture fixture.txt | 2 ++ 1 file changed, 2 insertions(+)diff --git a/fixture.txt b/fixture.txtindex 06fcdd7..311142c 100644--- a/fixture.txt+++ b/fixture.txt@@ -1,2 +1,4 @@ first line second line+unstaged fixture+second added fixture[stage] 11 of 12",
-      "bytes": 874
+      "observed": "On branch master                                                                                    | fixture.txt | 2 ++Changes to be committed:                                                                            | 1 file changed, 2 insertions(+)  (no files)                                                                                        |Changes not staged for commit:                                                                      |diff --git a/fixture.txt b/fixture.txtM fixture.txt                                                                                       |index 06fcdd7..311142c 100644Untracked files:                                                                                    |--- a/fixture.txt  (no files)                                                                                        |+++ b/fixture.txt                                                                                                    |@@ -1,2 +1,4 @@                                                                                                    | first line                                                                                                    | second line                                                                                                    |+unstaged fixture                                                                                                    |+second added fixture                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[status] Press u to stage 'fixture.txt' for commit                                              100%|[stage] Unstaged changes to 'fixture.txt' - line 11 of 12                                      100%+unstaged fixture                                                                                  [stage] Unstaged changes to 'fixture.txt' - line 11 of 12                                      100%",
+      "bytes": 3504
     },
     {
       "name": "1 stages only selected line",
       "passed": true,
-      "observed": " fixture.txt | 1 + 1 file changed, 1 insertion(+)diff --git a/fixture.txt b/fixture.txtindex b97a9e1..311142c 100644--- a/fixture.txt+++ b/fixture.txt@@ -1,3 +1,4 @@ first line second line unstaged fixture+second added fixture[stage] 11 of 12",
-      "bytes": 500
+      "observed": "On branch master                                                                                    | fixture.txt | 1 +Changes to be committed:                                                                            | 1 file changed, 1 insertion(+)  (no files)                                                                                        |Changes not staged for commit:                                                                      |diff --git a/fixture.txt b/fixture.txtM fixture.txt                                                                                       |index b97a9e1..311142c 100644Untracked files:                                                                                    |--- a/fixture.txt  (no files)                                                                                        |+++ b/fixture.txt                                                                                                    |@@ -1,3 +1,4 @@                                                                                                    | first line                                                                                                    | second line                                                                                                    | unstaged fixture                                                                                                    |+second added fixture                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[status] Press u to stage 'fixture.txt' for commit                                              100%|[stage] Unstaged changes to 'fixture.txt' - line 11 of 12                                      100% unstaged fixture                                                                                  [stage] Unstaged changes to 'fixture.txt' - line 11 of 12                                      100%",
+      "bytes": 3145
     },
     {
       "name": "single-line stage index and unchanged worktree",
@@ -132,44 +150,44 @@
     {
       "name": "back to status after line stage",
       "passed": true,
-      "observed": "Changes to be committed:Changes not staged for commit:  M fixture.txt[status] 3 of 3\u001b[",
-      "bytes": 363
+      "observed": "On branch masterChanges to be committed:  (no files)Changes not staged for commit:M fixture.txtUntracked files:  (no files)[status] Press u to stage 'fixture.txt' for commit                                                                                                                                                  100%M fixture.txt                                                                                                                                                                                           [status] Press u to stage 'fixture.txt' for commit                                                                                                                                                  100%",
+      "bytes": 1017
     },
     {
       "name": "refresh partially staged status",
       "passed": true,
-      "observed": "24;1HChanges to be committed:  M fixture.txtChanges not staged for commit:  M fixture.txt[status] 3 of 4",
-      "bytes": 381
+      "observed": "On branch masterChanges to be committed:M fixture.txtChanges not staged for commit:M fixture.txtUntracked files:  (no files)[status] Press u to stage 'fixture.txt' for commit                                                                                                                                                  100%M fixture.txt                                                                                                                                                                                           [status] Press u to stage 'fixture.txt' for commit                                                                                                                                                  100%",
+      "bytes": 1018
     },
     {
       "name": "select cached partial file",
       "passed": true,
-      "observed": "Changes to be committed:  M fixture.txtChanges not staged for commit:  M fixture.txt[status] 2 of 4\u001b[",
-      "bytes": 370
+      "observed": "On branch masterChanges to be committed:M fixture.txtChanges not staged for commit:M fixture.txtUntracked files:  (no files)[status] Press u to unstage 'fixture.txt'                                                                                                                                                           100%M fixture.txt                                                                                                                                                                                           [status] Press u to unstage 'fixture.txt'                                                                                                                                                           100%",
+      "bytes": 2036
     },
     {
       "name": "open cached partial patch",
       "passed": true,
-      "observed": "0m fixture.txt | 1 + 1 file changed, 1 insertion(+)diff --git a/fixture.txt b/fixture.txtindex 06fcdd7..b97a9e1 100644--- a/fixture.txt+++ b/fixture.txt@@ -1,2 +1,3 @@ first line second line+unstaged fixture[stage] 1 of 11\u001b[0",
-      "bytes": 494
+      "observed": "On branch master                                                                                    | fixture.txt | 1 +Changes to be committed:                                                                            | 1 file changed, 1 insertion(+)M fixture.txt                                                                                       |Changes not staged for commit:                                                                      |diff --git a/fixture.txt b/fixture.txtM fixture.txt                                                                                       |index 06fcdd7..b97a9e1 100644Untracked files:                                                                                    |--- a/fixture.txt  (no files)                                                                                        |+++ b/fixture.txt                                                                                                    |@@ -1,2 +1,3 @@                                                                                                    | first line                                                                                                    | second line                                                                                                    |+unstaged fixture                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[status] Press u to unstage 'fixture.txt'                                                       100%|[stage] Staged changes to 'fixture.txt' - line 1 of 11                                         100% fixture.txt | 1 +                                                                                 [stage] Staged changes to 'fixture.txt' - line 1 of 11                                         100%",
+      "bytes": 3123
     },
     {
       "name": "line unstage search prompt",
       "passed": true,
-      "observed": "m/",
-      "bytes": 13
+      "observed": "/",
+      "bytes": 12
     },
     {
       "name": "select cached added line A",
       "passed": true,
-      "observed": "/+/+u/+un/+uns/+unst/+unsta/+unstag/+unstage/+unstaged/+unstaged /+unstaged f/+unstaged fi/+unstaged fix/+unstaged fixt/+unstaged fixtu/+unstaged fixtur/+unstaged fixture fixture.txt | 1 + 1 file changed, 1 insertion(+)diff --git a/fixture.txt b/fixture.txtindex 06fcdd7..b97a9e1 100644--- a/fixture.txt+++ b/fixture.txt@@ -1,2 +1,3 @@ first line second line+unstaged fixture[stage] 11 of 11\u001b[",
-      "bytes": 849
+      "observed": "On branch master                                                                                    | fixture.txt | 1 +Changes to be committed:                                                                            | 1 file changed, 1 insertion(+)M fixture.txt                                                                                       |Changes not staged for commit:                                                                      |diff --git a/fixture.txt b/fixture.txtM fixture.txt                                                                                       |index 06fcdd7..b97a9e1 100644Untracked files:                                                                                    |--- a/fixture.txt  (no files)                                                                                        |+++ b/fixture.txt                                                                                                    |@@ -1,2 +1,3 @@                                                                                                    | first line                                                                                                    | second line                                                                                                    |+unstaged fixture                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[status] Press u to unstage 'fixture.txt'                                                       100%|[stage] Staged changes to 'fixture.txt' - line 11 of 11                                        100%+unstaged fixture                                                                                  [stage] Staged changes to 'fixture.txt' - line 11 of 11                                        100%",
+      "bytes": 3481
     },
     {
       "name": "1 unstages only selected line",
       "passed": true,
-      "observed": "0m[stage] 0 of 0\u001b[24;1",
-      "bytes": 284
+      "observed": "On branch master                                                                                    |Changes to be committed:                                                                            |M fixture.txt                                                                                       |Changes not staged for commit:                                                                      |M fixture.txt                                                                                       |Untracked files:                                                                                    |  (no files)                                                                                        |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[status] Press u to unstage 'fixture.txt'                                                       100%|[stage] Staged changes to 'fixture.txt'                                                          0%                                                                                                   [stage] Staged changes to 'fixture.txt'                                                          0%",
+      "bytes": 2918
     },
     {
       "name": "single-line unstage empty index and unchanged worktree",
@@ -178,26 +196,20 @@
     {
       "name": "back after line unstage",
       "passed": true,
-      "observed": "HChanges to be committed:  M fixture.txtChanges not staged for commit:  M fixture.txt[status] 2 of 4\u001b[",
-      "bytes": 375
+      "observed": "On branch masterChanges to be committed:M fixture.txtChanges not staged for commit:M fixture.txtUntracked files:  (no files)[status] Press u to unstage 'fixture.txt'                                                                                                                                                           100%M fixture.txt                                                                                                                                                                                           [status] Press u to unstage 'fixture.txt'                                                                                                                                                           100%",
+      "bytes": 1018
     },
     {
       "name": "refresh fully unstaged status",
       "passed": true,
-      "observed": "0mChanges to be committed:Changes not staged for commit:  M fixture.txt[status] 2 of 3\u001b[24;",
-      "bytes": 353
-    },
-    {
-      "name": "select file for hunk staging",
-      "passed": true,
-      "observed": "1HChanges to be committed:Changes not staged for commit:  M fixture.txt[status] 3 of 3\u001b[",
-      "bytes": 354
+      "observed": "On branch masterChanges to be committed:  (no files)Changes not staged for commit:M fixture.txtUntracked files:  (no files)[status] Press u to stage 'fixture.txt' for commit                                                                                                                                                  100%M fixture.txt                                                                                                                                                                                           [status] Press u to stage 'fixture.txt' for commit                                                                                                                                                  100%",
+      "bytes": 1017
     },
     {
       "name": "open hunk for staging",
       "passed": true,
-      "observed": "24;1H fixture.txt | 2 ++ 1 file changed, 2 insertions(+)diff --git a/fixture.txt b/fixture.txtindex 06fcdd7..311142c 100644--- a/fixture.txt+++ b/fixture.txt@@ -1,2 +1,4 @@ first line second line+unstaged fixture+second added fixture[stage] 1 of 12",
-      "bytes": 525
+      "observed": "On branch master                                                                                    | fixture.txt | 2 ++Changes to be committed:                                                                            | 1 file changed, 2 insertions(+)  (no files)                                                                                        |Changes not staged for commit:                                                                      |diff --git a/fixture.txt b/fixture.txtM fixture.txt                                                                                       |index 06fcdd7..311142c 100644Untracked files:                                                                                    |--- a/fixture.txt  (no files)                                                                                        |+++ b/fixture.txt                                                                                                    |@@ -1,2 +1,4 @@                                                                                                    | first line                                                                                                    | second line                                                                                                    |+unstaged fixture                                                                                                    |+second added fixture                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[status] Press u to stage 'fixture.txt' for commit                                              100%|[stage] Unstaged changes to 'fixture.txt' - line 1 of 12                                       100% fixture.txt | 2 ++                                                                                [stage] Unstaged changes to 'fixture.txt' - line 1 of 12                                       100%",
+      "bytes": 3146
     },
     {
       "name": "hunk staging search prompt",
@@ -208,14 +220,14 @@
     {
       "name": "select line within hunk",
       "passed": true,
-      "observed": "/+/+u/+un/+uns/+unst/+unsta/+unstag/+unstage/+unstaged/+unstaged /+unstaged f/+unstaged fi/+unstaged fix/+unstaged fixt/+unstaged fixtu/+unstaged fixtur/+unstaged fixture fixture.txt | 2 ++ 1 file changed, 2 insertions(+)diff --git a/fixture.txt b/fixture.txtindex 06fcdd7..311142c 100644--- a/fixture.txt+++ b/fixture.txt@@ -1,2 +1,4 @@ first line second line+unstaged fixture+second added fixture[stage] 11 of 12",
-      "bytes": 874
+      "observed": "On branch master                                                                                    | fixture.txt | 2 ++Changes to be committed:                                                                            | 1 file changed, 2 insertions(+)  (no files)                                                                                        |Changes not staged for commit:                                                                      |diff --git a/fixture.txt b/fixture.txtM fixture.txt                                                                                       |index 06fcdd7..311142c 100644Untracked files:                                                                                    |--- a/fixture.txt  (no files)                                                                                        |+++ b/fixture.txt                                                                                                    |@@ -1,2 +1,4 @@                                                                                                    | first line                                                                                                    | second line                                                                                                    |+unstaged fixture                                                                                                    |+second added fixture                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[status] Press u to stage 'fixture.txt' for commit                                              100%|[stage] Unstaged changes to 'fixture.txt' - line 11 of 12                                      100%+unstaged fixture                                                                                  [stage] Unstaged changes to 'fixture.txt' - line 11 of 12                                      100%",
+      "bytes": 3504
     },
     {
       "name": "u stages complete hunk",
       "passed": true,
-      "observed": "[stage] 0 of 0\u001b[24;",
-      "bytes": 281
+      "observed": "On branch master                                                                                    |Changes to be committed:                                                                            |  (no files)                                                                                        |Changes not staged for commit:                                                                      |M fixture.txt                                                                                       |Untracked files:                                                                                    |  (no files)                                                                                        |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[status] Press u to stage 'fixture.txt' for commit                                              100%|[stage] Unstaged changes to 'fixture.txt'                                                        0%                                                                                                   [stage] Unstaged changes to 'fixture.txt'                                                        0%",
+      "bytes": 2918
     },
     {
       "name": "whole-hunk stage includes both lines and preserves worktree",
@@ -225,44 +237,38 @@
     {
       "name": "back after hunk stage",
       "passed": true,
-      "observed": "1HChanges to be committed:Changes not staged for commit:  M fixture.txt[status] 3 of 3",
-      "bytes": 363
+      "observed": "On branch masterChanges to be committed:  (no files)Changes not staged for commit:M fixture.txtUntracked files:  (no files)[status] Press u to stage 'fixture.txt' for commit                                                                                                                                                  100%M fixture.txt                                                                                                                                                                                           [status] Press u to stage 'fixture.txt' for commit                                                                                                                                                  100%",
+      "bytes": 1017
     },
     {
       "name": "refresh fully staged status",
       "passed": true,
-      "observed": "Changes to be committed:  M fixture.txtChanges not staged for commit:[status] 3 of 3",
-      "bytes": 342
-    },
-    {
-      "name": "select staged hunk file",
-      "passed": true,
-      "observed": "Changes to be committed:  M fixture.txtChanges not staged for commit:[status] 2 of 3\u001b[",
-      "bytes": 363
+      "observed": "On branch masterChanges to be committed:M fixture.txtChanges not staged for commit:  (no files)Untracked files:  (no files)[status] Press u to unstage 'fixture.txt'                                                                                                                                                           100%M fixture.txt                                                                                                                                                                                           [status] Press u to unstage 'fixture.txt'                                                                                                                                                           100%",
+      "bytes": 1017
     },
     {
       "name": "open cached hunk",
       "passed": true,
-      "observed": "24;1H fixture.txt | 2 ++ 1 file changed, 2 insertions(+)diff --git a/fixture.txt b/fixture.txtindex 06fcdd7..311142c 100644--- a/fixture.txt+++ b/fixture.txt@@ -1,2 +1,4 @@ first line second line+unstaged fixture+second added fixture[stage] 1 of 12\u001b[",
-      "bytes": 516
+      "observed": "On branch master                                                                                    | fixture.txt | 2 ++Changes to be committed:                                                                            | 1 file changed, 2 insertions(+)M fixture.txt                                                                                       |Changes not staged for commit:                                                                      |diff --git a/fixture.txt b/fixture.txt  (no files)                                                                                        |index 06fcdd7..311142c 100644Untracked files:                                                                                    |--- a/fixture.txt  (no files)                                                                                        |+++ b/fixture.txt                                                                                                    |@@ -1,2 +1,4 @@                                                                                                    | first line                                                                                                    | second line                                                                                                    |+unstaged fixture                                                                                                    |+second added fixture                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[status] Press u to unstage 'fixture.txt'                                                       100%|[stage] Staged changes to 'fixture.txt' - line 1 of 12                                         100% fixture.txt | 2 ++                                                                                [stage] Staged changes to 'fixture.txt' - line 1 of 12                                         100%",
+      "bytes": 3146
     },
     {
       "name": "hunk unstaging search prompt",
       "passed": true,
-      "observed": "24;1H/",
-      "bytes": 21
+      "observed": "/",
+      "bytes": 12
     },
     {
       "name": "select cached hunk line",
       "passed": true,
-      "observed": "/+/+u/+un/+uns/+unst/+unsta/+unstag/+unstage/+unstaged/+unstaged /+unstaged f/+unstaged fi/+unstaged fix/+unstaged fixt/+unstaged fixtu/+unstaged fixtur/+unstaged fixture fixture.txt | 2 ++ 1 file changed, 2 insertions(+)diff --git a/fixture.txt b/fixture.txtindex 06fcdd7..311142c 100644--- a/fixture.txt+++ b/fixture.txt@@ -1,2 +1,4 @@ first line second line+unstaged fixture+second added fixture[stage] 11 of 12\u001b[0",
-      "bytes": 862
+      "observed": "On branch master                                                                                    | fixture.txt | 2 ++Changes to be committed:                                                                            | 1 file changed, 2 insertions(+)M fixture.txt                                                                                       |Changes not staged for commit:                                                                      |diff --git a/fixture.txt b/fixture.txt  (no files)                                                                                        |index 06fcdd7..311142c 100644Untracked files:                                                                                    |--- a/fixture.txt  (no files)                                                                                        |+++ b/fixture.txt                                                                                                    |@@ -1,2 +1,4 @@                                                                                                    | first line                                                                                                    | second line                                                                                                    |+unstaged fixture                                                                                                    |+second added fixture                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[status] Press u to unstage 'fixture.txt'                                                       100%|[stage] Staged changes to 'fixture.txt' - line 11 of 12                                        100%+unstaged fixture                                                                                  [stage] Staged changes to 'fixture.txt' - line 11 of 12                                        100%",
+      "bytes": 3504
     },
     {
       "name": "cached u unstages complete hunk",
       "passed": true,
-      "observed": "m[stage] 0 of 0\u001b[0",
-      "bytes": 298
+      "observed": "On branch master                                                                                    |Changes to be committed:                                                                            |M fixture.txt                                                                                       |Changes not staged for commit:                                                                      |  (no files)                                                                                        |Untracked files:                                                                                    |  (no files)                                                                                        |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[status] Press u to unstage 'fixture.txt'                                                       100%|[stage] Staged changes to 'fixture.txt'                                                          0%                                                                                                   [stage] Staged changes to 'fixture.txt'                                                          0%",
+      "bytes": 2918
     },
     {
       "name": "whole-hunk unstage empties index and preserves worktree",
@@ -271,74 +277,212 @@
     {
       "name": "back after hunk unstage",
       "passed": true,
-      "observed": "mChanges to be committed:  M fixture.txtChanges not staged for commit:[status] 2 of 3\u001b[",
-      "bytes": 356
+      "observed": "On branch masterChanges to be committed:M fixture.txtChanges not staged for commit:  (no files)Untracked files:  (no files)[status] Press u to unstage 'fixture.txt'                                                                                                                                                           100%M fixture.txt                                                                                                                                                                                           [status] Press u to unstage 'fixture.txt'                                                                                                                                                           100%",
+      "bytes": 1017
     },
     {
       "name": "back from status",
       "passed": true,
-      "observed": "0m2026-09-26 23:57 +0800 PTY Fixture \u2219 [master] newest fixture commit2026-09-26 23:57 +0800 PTY Fixture \u25ce oldest fixture commit[main] 1 of 2\u001b[24;1",
-      "bytes": 412
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 1019
+    },
+    {
+      "name": "external argv command prompt",
+      "passed": true,
+      "observed": ":",
+      "bytes": 12
+    },
+    {
+      "name": "silent external argv command returns to history",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 5312
+    },
+    {
+      "name": "external command literal argv without implicit shell",
+      "passed": true
+    },
+    {
+      "name": "external path command prompt",
+      "passed": true,
+      "observed": ":",
+      "bytes": 12
+    },
+    {
+      "name": "external command handles literal special filename",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 2957
+    },
+    {
+      "name": "external argv stages exact spaced special-character filename",
+      "passed": true
+    },
+    {
+      "name": "external cleanup command prompt",
+      "passed": true,
+      "observed": ":",
+      "bytes": 12
+    },
+    {
+      "name": "external argv cleanup returns to history",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 3086
+    },
+    {
+      "name": "echo command prompt",
+      "passed": true,
+      "observed": ":",
+      "bytes": 12
+    },
+    {
+      "name": "plus command displays first stdout line",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%echo first line2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 9341
+    },
+    {
+      "name": "foreground command prompt",
+      "passed": true,
+      "observed": ":",
+      "bytes": 12
+    },
+    {
+      "name": "foreground command waits for Enter",
+      "passed": true,
+      "observed": ":e:ex:exe:exec:exec :exec !:exec !g:exec !gi:exec !git:exec !git :exec !git -:exec !git --:exec !git --v:exec !git --ve:exec !git --ver:exec !git --vers:exec !git --versi:exec !git --versio:exec !git --versiongit version 2.50.1 (Apple Git-155)\r\nPress Enter to continue",
+      "bytes": 535
+    },
+    {
+      "name": "foreground command resumes raw UI after Enter",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 1075
+    },
+    {
+      "name": "quick command prompt",
+      "passed": true,
+      "observed": ":",
+      "bytes": 12
+    },
+    {
+      "name": "successful quick command resumes without Enter",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 1585
+    },
+    {
+      "name": "failed quick command prompt",
+      "passed": true,
+      "observed": ":",
+      "bytes": 12
+    },
+    {
+      "name": "failed quick command still waits for Enter",
+      "passed": true,
+      "observed": ":e:ex:exe:exec:exec :exec >:exec >g:exec >gi:exec >git:exec >git :exec >git n:exec >git no:exec >git not:exec >git not-:exec >git not-a:exec >git not-a-:exec >git not-a-r:exec >git not-a-re:exec >git not-a-rea:exec >git not-a-real:exec >git not-a-real-:exec >git not-a-real-p:exec >git not-a-real-pt:exec >git not-a-real-pty:exec >git not-a-real-pty-:exec >git not-a-real-pty-s:exec >git not-a-real-pty-su:exec >git not-a-real-pty-sub:exec >git not-a-real-pty-subc:exec >git not-a-real-pty-subco:exec >git not-a-real-pty-subcom:exec >git not-a-real-pty-subcomm:exec >git not-a-real-pty-subcomma:exec >git not-a-real-pty-subcomman:exec >git not-a-real-pty-subcommandgit: 'not-a-real-pty-subcommand' is not a git command. See 'git --help'.\r\nCommand exited with exit status: 1: \r\nPress Enter to continue",
+      "bytes": 1243
+    },
+    {
+      "name": "failed command resumes after Enter",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%Command exited with exit status: 1: 2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 1111
+    },
+    {
+      "name": "move off HEAD before default H",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - commit 2 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit                                                                                                                                              [main] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - commit 2 of 2                                                                                                                                     100%",
+      "bytes": 1019
+    },
+    {
+      "name": "default H resolves HEAD and selects newest commit",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 1019
+    },
+    {
+      "name": "quoted key binding prompt",
+      "passed": true,
+      "observed": ":",
+      "bytes": 12
+    },
+    {
+      "name": "install quoted H command binding",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 4596
+    },
+    {
+      "name": "H preserves quoted argv and echoes result",
+      "passed": true,
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%quoted H value2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 1033
+    },
+    {
+      "name": "foreground canonical tty, resumed raw UI, echo and quoted argv verified",
+      "passed": true
     },
     {
       "name": "tree opens",
       "passed": true,
-      "observed": "H040000 tree nested100644 blob fixture.txt[tree] 1 of 2\u001b[0",
-      "bytes": 331
+      "observed": "040000 tree nested100644 blob fixture.txt[tree] - line 1 of 2                                                                                                                                                                                100%040000 tree nested                                                                                                                                                                                      [tree] - line 1 of 2                                                                                                                                                                                100%",
+      "bytes": 935
     },
     {
       "name": "select root blob",
       "passed": true,
-      "observed": "m040000 tree nested100644 blob fixture.txt[tree] 2 of 2",
-      "bytes": 313
+      "observed": "040000 tree nested100644 blob fixture.txt[tree] - line 2 of 2                                                                                                                                                                                100%100644 blob fixture.txt                                                                                                                                                                                 [tree] - line 2 of 2                                                                                                                                                                                100%",
+      "bytes": 935
     },
     {
       "name": "Enter opens blob",
       "passed": true,
-      "observed": "first linesecond line[blob] 1 of 2",
-      "bytes": 311
+      "observed": "040000 tree nested                                                                                  |first line100644 blob fixture.txt                                                                             |second line                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[tree] - line 2 of 2                                                                            100%|[blob] fixture.txt - line 1 of 2                                                               100%first line                                                                                         [blob] fixture.txt - line 1 of 2                                                               100%",
+      "bytes": 2939
     },
     {
       "name": "q returns to tree",
       "passed": true,
-      "observed": "040000 tree nested100644 blob fixture.txt[tree] 2 of 2\u001b[",
-      "bytes": 329
+      "observed": "040000 tree nested100644 blob fixture.txt[tree] - line 2 of 2                                                                                                                                                                                100%100644 blob fixture.txt                                                                                                                                                                                 [tree] - line 2 of 2                                                                                                                                                                                100%",
+      "bytes": 935
     },
     {
       "name": "select nested tree",
       "passed": true,
-      "observed": "24;1H040000 tree nested100644 blob fixture.txt[tree] 1 of 2\u001b[0",
-      "bytes": 335
+      "observed": "040000 tree nested100644 blob fixture.txt[tree] - line 1 of 2                                                                                                                                                                                100%040000 tree nested                                                                                                                                                                                      [tree] - line 1 of 2                                                                                                                                                                                100%",
+      "bytes": 935
     },
     {
       "name": "open nested tree",
       "passed": true,
-      "observed": "m100644 blob nested/child.txt[tree] 1 of 1",
-      "bytes": 311
+      "observed": "040000 tree nested                                                                                  |100644 blob nested/child.txt100644 blob fixture.txt                                                                             |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |                                                                                                    |[tree] - line 1 of 2                                                                            100%|[tree] - line 1 of 1                                                                           100%100644 blob nested/child.txt                                                                       [tree] - line 1 of 1                                                                           100%",
+      "bytes": 2946
     },
     {
       "name": "back restores parent tree",
       "passed": true,
-      "observed": "040000 tree nested100644 blob fixture.txt[tree] 1 of 2",
-      "bytes": 316
+      "observed": "040000 tree nested100644 blob fixture.txt[tree] - line 1 of 2                                                                                                                                                                                100%040000 tree nested                                                                                                                                                                                      [tree] - line 1 of 2                                                                                                                                                                                100%",
+      "bytes": 935
     },
     {
       "name": "R preserves parent tree",
       "passed": true,
-      "observed": "040000 tree nested100644 blob fixture.txt[tree] 1 of 2\u001b[24;",
-      "bytes": 336
+      "observed": "040000 tree nested100644 blob fixture.txt[tree] - line 1 of 2                                                                                                                                                                                100%040000 tree nested                                                                                                                                                                                      [tree] - line 1 of 2                                                                                                                                                                                100%",
+      "bytes": 935
     },
     {
       "name": "resize redraws status at row 11",
       "passed": true,
-      "observed": "1H040000 tree nested100644 blob fixture.txt[tree] 1 of 2\u001b[",
-      "bytes": 192
+      "observed": "040000 tree nested100644 blob fixture.txt[tree] - line 1 of 2                                    100%040000 tree nested                                          [tree] - line 1 of 2                                    100%",
+      "bytes": 383
     },
     {
       "name": "quit leaves alternate screen and restores cursor",
       "passed": true,
-      "observed": "12;1HPTY_CHILD_EXIT=0\r\n",
-      "bytes": 85
+      "observed": "PTY_CHILD_EXIT=0\r\n",
+      "bytes": 76
     },
     {
       "name": "quit leaves alternate screen and restores cursor terminal restoration",
@@ -365,8 +509,8 @@
     {
       "name": "+2 sets initial selection",
       "passed": true,
-      "observed": "PTY_CHILD_PID=70215\r\n2026-09-26 23:57 +0800 PTY Fixture \u2219 [master] newest fixture commit2026-09-26 23:57 +0800 PTY Fixture \u25ce oldest fixture commit[main] 2 of 2",
-      "bytes": 490
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - commit 2 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit                                                                                                                                              [main] 2b37c54e3d5ad1e9f6c47e0412abef380bd56a86 - commit 2 of 2                                                                                                                                     100%",
+      "bytes": 1094
     },
     {
       "name": "+2 session quit",
@@ -399,14 +543,14 @@
     {
       "name": "blame -- file",
       "passed": true,
-      "observed": "PTY_CHILD_PID=70277\r\n88cc87f4 PTY Fixture            1 first line18516900 PTY Fixture            2 second line[blame] 1 of 2\u001b[0",
-      "bytes": 439
+      "observed": "2b37c54e PTY Fixture            1 first linee8931dc6 PTY Fixture            2 second line[blame] fixture.txt - line 1 of 2                                                                                                                                                                   100%2b37c54e PTY Fixture            1 first line                                                                                                                                                            [blame] fixture.txt - line 1 of 2                                                                                                                                                                   100%",
+      "bytes": 1058
     },
     {
       "name": "blame session quit",
       "passed": true,
-      "observed": "mPTY_CHILD_EXIT=0\r\n",
-      "bytes": 88
+      "observed": "PTY_CHILD_EXIT=0\r\n",
+      "bytes": 76
     },
     {
       "name": "blame session quit terminal restoration",
@@ -433,8 +577,8 @@
     {
       "name": "blame resolves subdirectory relative file",
       "passed": true,
-      "observed": "PTY_CHILD_PID=70339\r\n88cc87f4 PTY Fixture            1 nested fixture line[blame] 1 of 1",
-      "bytes": 415
+      "observed": "2b37c54e PTY Fixture            1 nested fixture line[blame] nested/child.txt - line 1 of 1                                                                                                                                                              100%2b37c54e PTY Fixture            1 nested fixture line                                                                                                                                                   [blame] nested/child.txt - line 1 of 1                                                                                                                                                              100%",
+      "bytes": 1022
     },
     {
       "name": "subdirectory blame session quit",
@@ -467,14 +611,14 @@
     {
       "name": "SIGTERM session history",
       "passed": true,
-      "observed": "PTY_CHILD_PID=70401\r\n2026-09-26 23:57 +0800 PTY Fixture \u2219 [master] newest fixture commit2026-09-26 23:57 +0800 PTY Fixture \u25ce oldest fixture commit[main] 1 of 2\u001b[24;1",
-      "bytes": 485
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 1094
     },
     {
       "name": "signal while search prompt active",
       "passed": true,
-      "observed": "H/",
-      "bytes": 17
+      "observed": "/",
+      "bytes": 12
     },
     {
       "name": "SIGTERM exit",
@@ -507,14 +651,14 @@
     {
       "name": "SIGHUP session history",
       "passed": true,
-      "observed": "PTY_CHILD_PID=70463\r\n2026-09-26 23:57 +0800 PTY Fixture \u2219 [master] newest fixture commit2026-09-26 23:57 +0800 PTY Fixture \u25ce oldest fixture commit[main] 1 of 2\u001b[",
-      "bytes": 477
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 1094
     },
     {
       "name": "SIGHUP exit",
       "passed": true,
-      "observed": "0mtig: Terminal interrupted\r\nPTY_CHILD_EXIT=1\r\n",
-      "bytes": 116
+      "observed": "tig: Terminal interrupted\r\nPTY_CHILD_EXIT=1\r\n",
+      "bytes": 103
     },
     {
       "name": "SIGHUP exit terminal restoration",
@@ -541,14 +685,14 @@
     {
       "name": "SIGINT session history",
       "passed": true,
-      "observed": "PTY_CHILD_PID=70525\r\n2026-09-26 23:57 +0800 PTY Fixture \u2219 [master] newest fixture commit2026-09-26 23:57 +0800 PTY Fixture \u25ce oldest fixture commit[main] 1 of 2",
-      "bytes": 479
+      "observed": "2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit2026-09-27 00:20 +0800 PTY Fixture I oldest fixture commit[main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%2026-09-27 00:20 +0800 PTY Fixture o [master] newest fixture commit                                                                                                                                     [main] e8931dc6e2f3bf5d59755f0ca148b9f0b96a559c - commit 1 of 2                                                                                                                                     100%",
+      "bytes": 1094
     },
     {
       "name": "SIGINT exit",
       "passed": true,
       "observed": "tig: Terminal interrupted\r\nPTY_CHILD_EXIT=1\r\n",
-      "bytes": 114
+      "bytes": 103
     },
     {
       "name": "SIGINT exit terminal restoration",
@@ -574,5 +718,5 @@
     }
   ],
   "passed": true,
-  "transcript_sha256": "989af6250c3d7bfd647df4f9af642b3443311b9352c777892b7def15c0814dab"
+  "transcript_sha256": "50f91bc4a1ffd05e58bce672d96eba453f55b2c67fe658842e23049759e054d4"
 }
