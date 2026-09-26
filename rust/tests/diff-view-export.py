@@ -37,22 +37,42 @@ with tempfile.TemporaryDirectory(prefix='tig-view-export-') as temporary:
     config = directory / 'tigrc'
     steps = directory / 'steps'
     env.update(TIGRC_USER=str(config), TIG_SCRIPT=str(steps))
-    for case, wrapped, width in [("ordinary", False, 40), ("wrapped", True, 40), ("split", False, 181)]:
+    for case, wrapped, width in [("ordinary", False, 40), ("wrapped", True, 40), ("split", False, 181), ("metadata", False, 80), ("custom", False, 80)]:
         env["COLUMNS"] = str(width)
         config.write_text(f'set wrap-lines = {"yes" if wrapped else "no"}\n')
+        if case == 'custom':
+            with config.open('a') as file:
+                file.write('color "custom input" red default\n')
         captures = {}
         for mode, binary in [('c', ROOT / 'src/tig'), ('rust', args.rust_binary.resolve())]:
             output = directory / f'{mode}-{case}.data'
             # Refusing wrapped export must not truncate an existing destination.
             output.write_text('untouched\n')
             steps.write_text((':enter\n' if case == 'split' else '') + f':save-view {output}\n:quit\n')
-            code, timed_out, transcript = h.terminal([str(binary), '-C', str(repo), *(['log'] if case == 'split' else ['show', 'HEAD'])], env, 20)
+            command = [str(binary), '-C', str(repo), *(['log'] if case == 'split' else ['show', 'HEAD'])]
+            if case in ('metadata', 'custom'):
+                source = directory / 'input'
+                source.write_text('commit ' + 'a' * 40 + '\n' + ''.join(
+                    prefix + 'value\n' for prefix in ('Author: ', 'Commit: ', 'Tagger: ', 'Date: ',
+                                                       'AuthorDate: ', 'CommitDate: ', 'TaggerDate: ')) + 'custom input\n')
+                command = ['/bin/sh', '-c', 'exec "$1" -C "$2" show < "$3"',
+                           'sh', str(binary), str(repo), str(source)]
+            code, timed_out, transcript = h.terminal(command, env, 20)
             captures[mode] = {'exit_code': code, 'timed_out': timed_out,
                               'transcript': transcript, 'data': output.read_text()}
             assert not timed_out, captures[mode]
         c, rust = captures['c'], captures['rust']
         assert c['exit_code'] == 0, c
-        if case == 'split':
+        if case == 'custom':
+            lines = c['data'].splitlines()
+            index = next(i for i, line in enumerate(lines) if 'text=[custom input]' in line)
+            assert 'type= selected=0' in lines[index - 1], c
+            if args.before:
+                assert rust['exit_code'] == 0 and rust['data'] != c['data'], captures
+            else:
+                assert rust['exit_code'] != 0 and rust['data'] == 'untouched\n', rust
+                assert 'save-view does not support custom color rules yet' in rust['transcript'], rust
+        elif case == 'split':
             assert c['exit_code'] == rust['exit_code'] == 0, captures
             assert 'Prev: log\nParent: log\n' in c['data'], c
             if args.before:
