@@ -506,3 +506,64 @@ The [paired receipt](migration/evidence/upstream-rust-only-after-date.json)
 includes binary hashes, raw transcripts, and per-script outcomes. The parity
 gate remains **OPEN**. This source snapshot predates the later stage,
 save-options, and refs merges; these numbers are not a result for current main.
+
+## Diff input, pane width and navigation slice (2026-09-27)
+
+This slice starts from fork main `2fb2a871` in an independent clone. No
+`AGENTS.md` is present in that checkout. The old after-date full-suite snapshot
+remains historical; a fresh strict paired run reproduces all ten requested
+scripts failing on Rust, while C passes all 23 assertions. See
+[`diff-render-before.json`](migration/evidence/diff-render-before.json).
+
+Three bounded mechanisms are corrected:
+
+- `tig show` consumes supplied diff text, retains its commit ID and redraws it
+  without resolving HEAD or re-reading Git. Empty input and terminal control
+  characters are handled safely. Forwarding revision lists with `show --stdin`
+  remains explicitly unsupported, rather than displaying revision names as a patch.
+- Vertical splits reserve the separator in the child pane, matching C's 91/89
+  content widths at 181 columns. Initial diff loads and diff/log refreshes pass
+  the actual pane width to Git's native stat formatter. Script dimensions are
+  applied before loading content. Log width does not enable stats when disabled.
+- Explicitly opening the current diff detaches its parent navigation, including
+  after maximize. `next` then moves within that diff instead of opening the
+  parent's next commit. The parent remains available through view-close.
+
+At source `3b028e0cdedf34e9edd242fd28937f5d5d18464c`, the ten requested scripts
+now have **4 passing / 6 failing scripts**, with **15 OK / 8 FAIL assertion
+records and 1 additional runtime failure**. C passes all ten and all 23
+assertions. The newly passing scripts are diff-stat-split, diff-stdin,
+maximized-navigation and open-after-split. The log diff-stat refresh assertion
+also passes; its initial split assertion still fails.
+
+The final paired run adds twelve related, unchanged diff/editor/log/main/width
+scripts: **C 22/22 scripts and 160/160 assertions; Rust 16 passing / 6 failing
+scripts, 152 OK / 8 FAIL assertion records and 1 additional runtime failure**.
+No scripts are skipped and the adapter reports no unmatched assertion IDs.
+The missing `view.data` output is counted as a failed assertion, not a pass.
+This is focused evidence, not a full-suite result or a completion percentage.
+See [`diff-render-after.json`](migration/evidence/diff-render-after.json) for
+source, executable routing/hashes, original script hashes and raw transcripts.
+
+Remaining requested failures:
+
+- `diff/commit-title-wrap-test` and `diff/wrap-lines-test`: visual wrapping and
+  continuation markers are still missing. Supplied title text now loads.
+- `diff/diff-highlight-test`: configured external highlighter output is not used.
+- `diff/diff-stat-test`: `save-view` and its typed cell dump are unimplemented;
+  the script exits and its expected output is absent.
+- `diff/line-number-test`: the command output is not opened as a pager view.
+- `log/diff-stat-test`: the initially loaded, wide parent stat rows need cell-aware
+  truncation after splitting; refreshing the parent regenerates matching rows.
+
+Rust 1.81 formatting, **70 unit tests**, Clippy with warnings denied, release
+build, **130 real PTY checks**, **6 supplied-diff input checks**, and **29 existing
+date/argument checks** pass. [`diff-render-checks.json`](migration/evidence/diff-render-checks.json)
+binds the source manifest and release binary SHA-256 to the
+[check log](migration/evidence/diff-render-checks.log); the separate
+[PTY receipt](migration/evidence/diff-render-pty.json) carries the same source
+and binary identity. Reproduce the added boundary checks with
+`python3 rust/tests/diff-input.py` after the release build.
+
+First-party Rust remains unsafe-free. No dependency, original C source or
+original test was changed. Full parity and application benchmarks remain gated.
