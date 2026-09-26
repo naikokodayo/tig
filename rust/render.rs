@@ -5,7 +5,12 @@
 //! Dates use committer_date by default and date for use-author=yes.
 //! Short Git decorations do not identify slash-containing local branches;
 //! supply refs/heads/ or refs/remotes/ prefixes to disambiguate them.
-use crate::{config::Config, graph::Graph, graph_v1, model::Commit};
+use crate::{
+    config::Config,
+    graph::Graph,
+    graph_v1,
+    model::{BlameLine, Commit},
+};
 use std::collections::BTreeMap;
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
@@ -138,6 +143,151 @@ pub(crate) fn date(iso: &str, column: &Column<'_>) -> Result<String, String> {
         column.options.get("format").copied(),
     )
     .map(|value| sanitize(&value))
+}
+
+fn blame_date(seconds: i64, zone: &str) -> Result<String, String> {
+    let date = crate::date::from_timestamp(seconds, zone)?;
+    if !(0..=9999).contains(&chrono::Datelike::year(&date)) {
+        return Err("Blame date outside supported years".into());
+    }
+    Ok(date.to_rfc3339())
+}
+
+pub fn render_blame(
+    config: &Config,
+    lines: &[BlameLine],
+    width: usize,
+) -> Result<Vec<String>, String> {
+    let specs = config
+        .settings
+        .get("blame-view")
+        .ok_or("blame-view is not configured")?;
+    let show_filename = lines
+        .first()
+        .is_some_and(|first| lines.iter().any(|line| line.filename != first.filename));
+    let ascii = config.value("line-graphics") == Some("ascii");
+    let mut rows = vec![String::new(); lines.len()];
+    for spec in specs {
+        let (name, rest) = spec.split_once(':').unwrap_or((spec, "yes"));
+        let mut parts = rest.split(',');
+        let mut col = Column {
+            name,
+            display: parts.next().unwrap_or("yes"),
+            options: parts
+                .map(|part| part.split_once('=').unwrap_or((part, "yes")))
+                .collect(),
+        };
+        let prefix = format!("blame-view-{name}-");
+        for (key, values) in &config.settings {
+            if let (Some(option), Some(value)) = (key.strip_prefix(&prefix), values.first()) {
+                if option == "display" {
+                    col.display = value;
+                } else {
+                    col.options.insert(option, value);
+                }
+            }
+        }
+        if !col.enabled() || (name == "file-name" && col.display == "auto" && !show_filename) {
+            continue;
+        }
+        let fixed = col.number("width")?;
+        let values: Vec<String> = lines
+            .iter()
+            .enumerate()
+            .map(|(i, line)| -> Result<String, String> {
+                Ok(match name {
+                    "id" => sanitize(&line.oid),
+                    "file-name" => sanitize(&line.filename.to_string_lossy()),
+                    "author" => author(&line.author, &line.author_email, col.display, fixed)?,
+                    "committer" => {
+                        author(&line.committer, &line.committer_email, col.display, fixed)?
+                    }
+                    "date" => date(
+                        &blame_date(
+                            if col.flag("use-author", false)? {
+                                line.author_time
+                            } else {
+                                line.committer_time
+                            },
+                            if col.flag("use-author", false)? {
+                                &line.author_tz
+                            } else {
+                                &line.committer_tz
+                            },
+                        )?,
+                        &col,
+                    )?,
+                    "line-number" => {
+                        let interval = col.number("interval")?;
+                        let interval = if interval == 0 { 5 } else { interval };
+                        if i == 0 || line.line % interval == 0 {
+                            line.line.to_string()
+                        } else {
+                            String::new()
+                        }
+                    }
+                    "text" => sanitize(&line.text),
+                    _ => return Err(format!("Unsupported blame-view column: {name}")),
+                })
+            })
+            .collect::<Result<_, _>>()?;
+        let max = match col.options.get("maxwidth") {
+            Some(value) if value.ends_with('%') => {
+                width.saturating_mul(
+                    value
+                        .trim_end_matches('%')
+                        .parse::<usize>()
+                        .map_err(|_| "Invalid maxwidth")?,
+                ) / 100
+            }
+            _ => col.number("maxwidth")?,
+        };
+        let mut cells = if fixed > 0 {
+            fixed
+        } else if name == "id" {
+            config.usize_value("id-width", 7).max(1)
+        } else {
+            values.iter().map(|value| value.width()).max().unwrap_or(0)
+        };
+        if name == "line-number" {
+            cells = cells.clamp(3, 9);
+        }
+        if fixed == 0 && max > 0 {
+            cells = cells.min(max);
+        }
+        cells = cells.min(width);
+        for (row, value) in rows.iter_mut().zip(&values) {
+            if name == "text" {
+                row.push_str(value);
+                continue;
+            }
+            let mut clipped = clip(value, cells);
+            if matches!(name, "author" | "committer" | "file-name")
+                && value.width() > cells
+                && (name == "file-name" || cells > 10)
+            {
+                let delimiter = config.value("truncation-delimiter").unwrap_or("~");
+                let delimiter = sanitize(if delimiter == "utf-8" {
+                    "…"
+                } else {
+                    delimiter
+                });
+                clipped = clip(value, cells.saturating_sub(delimiter.width()));
+                clipped.push_str(&clip(&delimiter, cells));
+            }
+            let padding = " ".repeat(cells.saturating_sub(clipped.width()));
+            if name == "line-number" {
+                row.push_str(&padding);
+                row.push_str(&clipped);
+                row.push_str(if ascii { "| " } else { "│ " });
+            } else {
+                row.push_str(&clipped);
+                row.push_str(&padding);
+                row.push(' ');
+            }
+        }
+    }
+    Ok(rows)
 }
 
 pub fn refs(config: &Config, decorations: &str, separator: &str) -> String {
@@ -386,6 +536,80 @@ fn graph_text(text: String, config: &Config) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn blame_uses_configured_dates_columns_and_rename_paths() {
+        let mut config = Config::defaults();
+        config.parse("set line-graphics = ascii\nset blame-view-date-use-author = yes");
+        let mut first = BlameLine {
+            oid: "a".repeat(40),
+            original_line: 1,
+            line: 1,
+            author: "Author".into(),
+            author_email: "a@example.test".into(),
+            author_time: 0,
+            author_tz: "-0200".into(),
+            committer: "Committer".into(),
+            committer_email: "c@example.test".into(),
+            committer_time: 3600,
+            committer_tz: "+0100".into(),
+            filename: "old/name".into(),
+            summary: String::new(),
+            text: "first".into(),
+        };
+        let rows = render_blame(&config, &[first.clone()], 200).unwrap();
+        assert_eq!(rows[0], "aaaaaaa Author 1969-12-31 22:00 -0200   1| first");
+        let mut zero = first.clone();
+        zero.author_tz = "+0000".into();
+        assert_eq!(
+            render_blame(&config, &[zero], 200).unwrap()[0],
+            "aaaaaaa Author    1| first"
+        );
+        assert_eq!(
+            blame_date(951782400, "+0000").unwrap(),
+            "2000-02-29T00:00:00+00:00"
+        );
+        assert!(blame_date(253402300800, "+0000").is_err());
+        assert!(blame_date(-62167219201, "+0000").is_err());
+        assert!(blame_date(i64::MAX, "+0000").is_err());
+        assert!(blame_date(0, "+2460").is_err());
+        config.parse("set blame-view-date-use-author = no");
+        assert_eq!(
+            render_blame(&config, &[first.clone()], 200).unwrap()[0],
+            "aaaaaaa Author 1970-01-01 02:00 +0100   1| first"
+        );
+        config.parse("set blame-view-date-use-author = yes");
+        first.filename = "new/name".into();
+        first.line = 2;
+        let rows = render_blame(
+            &config,
+            &[
+                first.clone(),
+                BlameLine {
+                    filename: "old/name".into(),
+                    line: 3,
+                    ..first.clone()
+                },
+            ],
+            200,
+        )
+        .unwrap();
+        assert!(rows[0].starts_with("aaaaaaa new/name "));
+        assert!(rows[1].starts_with("aaaaaaa old/name "));
+        config.parse("set blame-view = text");
+        assert_eq!(
+            render_blame(
+                &config,
+                &[BlameLine {
+                    filename: "x".into(),
+                    line: 4,
+                    ..first
+                }],
+                80
+            )
+            .unwrap(),
+            ["first"]
+        );
+    }
     fn commit() -> Commit {
         Commit {
             oid: "ee912870202200a0b9cf4fd86ba57243212d341e".into(),

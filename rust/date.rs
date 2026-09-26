@@ -18,6 +18,12 @@ pub fn now() -> Result<DateTime<Utc>, String> {
 pub fn raw(value: &str) -> Result<String, String> {
     let invalid = || format!("Invalid raw commit date: {value:?}");
     let (seconds, zone) = value.split_once(' ').ok_or_else(invalid)?;
+    let seconds = seconds.parse().map_err(|_| invalid())?;
+    from_timestamp(seconds, zone).map(|date| date.to_rfc3339())
+}
+
+pub(crate) fn from_timestamp(seconds: i64, zone: &str) -> Result<DateTime<FixedOffset>, String> {
+    let invalid = || format!("Invalid commit timestamp or timezone: {seconds} {zone:?}");
     if zone.len() != 5
         || !matches!(zone.as_bytes()[0], b'+' | b'-')
         || !zone.as_bytes()[1..].iter().all(u8::is_ascii_digit)
@@ -25,12 +31,11 @@ pub fn raw(value: &str) -> Result<String, String> {
         return Err(invalid());
     }
     let offset: FixedOffset = zone.parse().map_err(|_| invalid())?;
-    let date = seconds
-        .parse()
-        .ok()
-        .and_then(|seconds| DateTime::from_timestamp(seconds, 0))
+    let date = DateTime::from_timestamp(seconds, 0).ok_or_else(invalid)?;
+    date.naive_utc()
+        .checked_add_offset(offset)
         .ok_or_else(invalid)?;
-    Ok(date.with_timezone(&offset).to_rfc3339())
+    Ok(date.with_timezone(&offset))
 }
 
 pub fn changes_date() -> Result<String, String> {
@@ -216,6 +221,12 @@ mod tests {
         assert!(format("2023-02-29T00:00:00Z", "default", false, None).is_err());
         for invalid in ["%", "%Q", "%#z", "%Ec", "%Od"] {
             assert!(format(&iso, "custom", false, Some(invalid)).is_err());
+        }
+        for (seconds, zone) in [
+            (DateTime::<Utc>::MAX_UTC.timestamp(), "+0001"),
+            (DateTime::<Utc>::MIN_UTC.timestamp(), "-0001"),
+        ] {
+            assert!(from_timestamp(seconds, zone).is_err());
         }
         assert!(raw("1440961292 +2460").is_err());
         assert!(raw("9223372036854775807 +0000").is_err());
