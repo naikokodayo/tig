@@ -306,30 +306,7 @@ fn status_mark(entry: &StatusEntry, group: usize) -> Option<char> {
 }
 
 fn changes_date() -> Result<String> {
-    let mut date = Command::new("date");
-    if let Ok(seconds) = env::var("TEST_TIME_NOW") {
-        let seconds: i64 = seconds.parse()?;
-        date.arg("-u");
-        if cfg!(target_os = "linux") {
-            date.arg("-d").arg(format!("@{seconds}"));
-        } else {
-            date.arg("-r").arg(seconds.to_string());
-        }
-    }
-    let output = date.arg("+%Y-%m-%dT%H:%M:%S%z").output()?;
-    if !output.status.success() {
-        return Err(format!("date failed: {}", String::from_utf8_lossy(&output.stderr)).into());
-    }
-    let value = String::from_utf8(output.stdout)?;
-    let value = value.trim();
-    if value.len() < 5 {
-        return Err("Invalid current date".into());
-    }
-    Ok(format!(
-        "{}:{}",
-        &value[..value.len() - 2],
-        &value[value.len() - 2..]
-    ))
+    tig_rs::date::changes_date().map_err(Into::into)
 }
 
 fn changes_commit(kind: ChangeKind, parent: String, date: &str, oid: &str) -> Commit {
@@ -360,6 +337,7 @@ struct View {
     staged: bool,
     untracked: bool,
     raw_patch: Vec<u8>,
+    from_stdin: bool,
     sort_field: Option<String>,
     sort_reverse: bool,
     args: Vec<String>,
@@ -379,6 +357,7 @@ impl View {
             staged: false,
             untracked: false,
             raw_patch: Vec::new(),
+            from_stdin: false,
             sort_field: None,
             sort_reverse: false,
             args: Vec::new(),
@@ -395,6 +374,23 @@ impl View {
             v.push(line.into(), Item::Text);
         }
         v
+    }
+    fn redraw_stdin(&mut self, config: &Config, width: usize) -> Result<()> {
+        let commits: Vec<_> = self
+            .items
+            .iter()
+            .filter_map(|item| match item {
+                Item::Commit(commit) => Some(commit.clone()),
+                _ => None,
+            })
+            .collect();
+        // Like main_needs_graph(OPEN_STDIN), raw input has no generated graph.
+        let mut config = config.clone();
+        config
+            .settings
+            .insert("main-view-commit-title-graph".into(), vec!["no".into()]);
+        self.rows = tig_rs::render::render_commits(&config, &commits, width)?;
+        Ok(())
     }
     fn restore_status_selection(&mut self) {
         if self.name != "status" || (self.selected == 0 && self.top == 0) {
@@ -497,6 +493,11 @@ impl App {
                 v.push(row.text, Item::Text);
             }
             return Ok(v);
+        }
+        if name == "main" && self.view.from_stdin {
+            let mut view = self.view.clone();
+            view.redraw_stdin(&self.config, self.width)?;
+            return Ok(view);
         }
         let repo = self.repo()?;
         match name {
@@ -2623,7 +2624,22 @@ fn run() -> Result<()> {
     if cli.view == "pager" {
         let mut text = String::new();
         io::Read::read_to_string(&mut io::stdin(), &mut text)?;
-        app.view = View::text("pager", &text);
+        if cli
+            .git_args
+            .iter()
+            .take_while(|arg| !matches!(arg.as_str(), "--" | "--end-of-options"))
+            .any(|arg| arg == "--pretty=raw")
+        {
+            let commits = tig_rs::git::parse_raw_history(&text)?;
+            app.view = View::new("main");
+            app.view.from_stdin = true;
+            for commit in commits {
+                app.view.push(String::new(), Item::Commit(commit));
+            }
+            app.view.redraw_stdin(&app.config, app.width)?;
+        } else {
+            app.view = View::text("pager", &text);
+        }
     } else {
         if cli.view == "blame" {
             if let Some(path) = app.args.pop() {

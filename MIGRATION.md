@@ -22,8 +22,9 @@ License: GPL-2.0-or-later; original history, COPYING and copyright notices retai
   Canonical diff path prefixes are forced and regression-tested against user
   `diff.noprefix` settings to avoid modifying a similarly named wrong path.
 - `rust/render.rs`: configurable main columns, widths, author/committer metadata,
-  reference formats and common date formats. Local/relative dates remain
-  unsupported.
+  reference formats and common date formats. Local and relative dates share
+  `rust/date.rs`; Chrono validates/converts dates and GNU/BSD `date` supplies
+  system timezone/locale formatting. See the dated compatibility receipt below.
 - `rust/config.rs`: configuration/CLI parsing, include diagnostics, bindings,
   binding assignment order, validated scoped column/global toggles and
   argument-list updates.
@@ -103,6 +104,7 @@ cargo test --locked --all-targets
 cargo clippy --locked --all-targets -- -D warnings
 cargo build --locked --release
 python3 rust/tests/terminal-smoke.py
+python3 rust/tests/date-compatibility.py
 python3 rust/tests/graph-differential.py --c-binary /path/to/original/test/tools/test-graph --rust-binary target/release/test-graph
 ```
 
@@ -349,3 +351,145 @@ on `3e8f4b8e`, before the subsequently merged blame PR #4. The FAIL total
 includes process errors and timeouts, so it is not solely a count of
 behavioral assertion mismatches. The graph helper still routes through C;
 Rust full parity and the application benchmark remain gated.
+
+## Rust-only original-test adapter
+
+Use `python3 rust/tests/upstream-suite.py` for future original-suite evidence.
+It runs C first and then explicitly selects **both Rust executables**, records
+per-script exits and original assertions, and maps assertions not reached by
+Rust. `make RUST_ONLY=1 test` provides the same application/helper routing;
+`--self-test` on the Python runner verifies intentional failures cannot pass.
+This replaces the mixed-helper adapter as the evidence method. The historical
+ninth, tenth and eleventh mixed-helper receipts remain unchanged.
+
+See [the versioned harness report](migration/UPSTREAM-HARNESS.md). Its full
+Rust-only snapshot is based on `47f1a2b`; subsequent configuration and blame
+merges have separate focused receipts, not a relabeled full-suite count.
+The parity gate remains blocked, including missing `TIG_TRACE` semantics.
+The final documentation-only synchronization to `34684f79` changes none of
+the code validated after PR #4.
+
+
+## Date compatibility slice (2026-09-27)
+
+Raw `--pretty=raw` stdin now enters main, retains author/committer timestamps,
+and redraws the owned input on date toggles. Previously it entered pager and
+stopped the original date script: **9 failures in 9 assertions**, including
+an unexpected exit. On this slice the unchanged date script passes **8/8**
+(the extra exit failure disappears). Six original focused scripts pass **27/27**
+on both the freshly built C reference and Rust. See
+[`date-focused.json`](migration/evidence/date-focused.json) and its C/Rust logs.
+
+Chrono **0.4.45**, with defaults disabled and only `std`, replaces handwritten
+calendar validation and timestamp conversion. The added lockfile closure is
+`num-traits 0.2.19` and build dependency `autocfg 1.5.1`; all support Rust 1.81
+and offer a GPL-compatible MIT license option. See the
+[dependency and semantic investigation](migration/chrono-date-compatibility.md).
+Tig's relative thresholds and wording remain explicit. Nonlocal `%Z` emits the
+commit's numeric offset; local/locale formatting uses GNU/BSD `date` with the
+system timezone, DST rules and locale. `TEST_TIME_NOW` is shared with synthetic
+change rows; invalid overrides return errors rather than falling back to now.
+
+Rust 1.81 fmt, **55 unit tests**, Clippy with warnings denied, release build,
+**108 PTY checks**, and **13 isolated date checks** pass on macOS arm64. Date
+checks include a DST boundary, POSIX TZ, French locale, future and negative
+timestamps, and error handling. The new script is also wired into Linux/macOS
+CI; this local receipt does not assert those remote results. See
+[`date-checks.log`](migration/evidence/date-checks.log) and
+[`date-terminal-smoke.json`](migration/evidence/date-terminal-smoke.json).
+
+Scope remains bounded: the full upstream suite was not rerun, and the historical
+207/590 failure count must not be reduced arithmetically. Native formatting costs
+one process per local/locale date and requires GNU/BSD `date`; UTF-8 output is
+required. Format modifiers (`%E`, `%O`, padding flags), arbitrary libc extensions,
+and C's pathological empty/escaped timezone-format behavior are not claimed:
+unrecognized formats return explicit errors. Raw input supports ordinary Git
+headers, not a complete reflog/boundary/decorations parser. First-party unsafe
+code remains forbidden; original C files and tests are unchanged.
+
+### Date slice sync with PR #1
+
+Merged fork main `47f1a2b2` into the date branch without textual conflicts.
+Integration review found that raw-stdin detection also needed to honor the new
+`--end-of-options` boundary. A binary regression first reproduced raw text
+incorrectly opening main; the detector now stops at either option terminator.
+
+After that fix, Rust 1.81 fmt, **59 unit tests**, Clippy with warnings denied,
+release build, **15 isolated date/argument checks**, and **108 PTY checks** pass.
+The six original date-related scripts still pass **27/27**; the two original
+PR #1 diff-context scripts additionally pass **20/20**, for **47/47** focused
+assertions and zero failures. See [`date-sync.json`](migration/evidence/date-sync.json)
+and its checks/focused logs for the new binary hash. Earlier date receipts
+remain historical. The full upstream suite was not rerun.
+
+### Date slice sync with PR #2 and zero-date review fix
+
+Merged fork main `3e8f4b8e`; the only text conflict combined both appended
+migration records. Configuration parsing/diagnostics and date toggles retain
+both slices' behavior. The review's Unix-zero display regression first failed,
+then passed with a display-only guard matching C `time->sec == 0`. This field
+is commit wall time, so raw `0 +0000` and `-32400 +0900` display no date, while
+`0 +0900` remains `1970-01-01 09:00 +0900`. Parsing still accepts valid Unix zero.
+Five equivalent C binary probes confirm these display cases.
+
+Rust 1.81 fmt, **64 unit tests**, Clippy with warnings denied, release build,
+**20 isolated date/argument checks**, and **108 PTY checks** pass. Twelve original
+focused scripts pass **69/69** assertions (main/date-related 27, diff-context 20,
+configuration 22). The additional original quote-test remains **1 pass / 6 failures**;
+its receipt exactly matches PR #2's saved record. This is **70 passes / 6 failures**
+across all 13 scripts actually run, not an all-green suite. The full upstream
+suite was not rerun. See [`date-config-sync.json`](migration/evidence/date-config-sync.json)
+and its focused/check logs for the final binary and exact scope.
+
+Performance limitation: every local/locale date still starts one system `date`
+process, including repeated redraws. Large histories may therefore block the UI;
+there is no cache, batching, or large-history performance claim. The zero-date
+guard avoids a process for the sentinel, but is a compatibility fix, not a general
+performance optimization. Measure representative histories before adding a
+bounded cache or batching while preserving TZ/locale semantics.
+
+### Date slice sync with PR #4 and eleventh evidence
+
+Merged blame main `a28f69d` and then documentation main `34684f79`, preserving
+pushed history. The parser insertion conflict retains both raw history and Git
+path decoding. Blame now reuses the Chrono timestamp/offset converter instead
+of a second handwritten Gregorian conversion; its existing 0..9999 year limit
+is retained. Its rendering regression also checks blank epoch-zero dates. New
+range tests first failed, then passed with an explicit checked offset conversion
+at Chrono's minimum/maximum timestamp, preventing out-of-range local dates.
+
+Rust 1.81 fmt, **67 unit tests**, Clippy with warnings denied, release build,
+**20 date/argument checks**, and **108 PTY checks** pass. The final documentation
+merge changes no tested Rust/Cargo files. Across 20 unchanged original recipes,
+there are **73 OK / 22 FAIL records**: twelve main/diff/config scripts pass
+**69/69**, seven blame scripts remain **3 OK / 16 FAIL** as reported by PR #4,
+and quote-test remains **1 OK / 6 FAIL** with the exact PR #2 receipt. FAIL records
+include process errors, not only screen mismatches. This is focused evidence,
+not a full-suite rerun. See [`date-blame-sync.json`](migration/evidence/date-blame-sync.json)
+and its focused/check logs. The per-local/locale-value subprocess limitation
+also applies to blame lines; no performance improvement is claimed.
+
+
+### Date slice: nonlocal `%s` gate and PR #5 harness sync
+
+Merged main `03f6a29f` without rewriting pushed history; the additive migration
+record conflict preserves both slices. Review reproduced a silent discrepancy:
+C's nonlocal `%s` feeds wall time through libc `mktime` under the user's TZ with
+`tm_isdst=0`, whereas the Rust backend had formatted it under UTC. The shared
+formatter now explicitly rejects nonlocal `%s`; local `%s`, literal `%%s`, and
+zero-date blank display remain supported. **Exact nonlocal `%s` compatibility
+is an OPEN gate**, not a completed parity fix. No unsafe FFI or new dependency
+was introduced. Primary-source rationale and follow-up boundary are recorded in
+[`chrono-date-compatibility.md`](migration/chrono-date-compatibility.md).
+
+At `f22e363`, Rust 1.81 fmt, **67 unit tests**, Clippy with warnings denied,
+release build, **29 isolated date/argument checks**, and **108 PTY checks** pass.
+The new upstream adapter runs six unchanged main/date scripts against C and
+Rust-only binaries: **27/27 actual assertions pass on each side**, with no
+missing assertions or runtime failures. The adapter's negative self-checks
+also pass. See [`date-percent-s-checks.json`](migration/evidence/date-percent-s-checks.json),
+[`date-percent-s-upstream.json`](migration/evidence/date-percent-s-upstream.json),
+[`date-percent-s-pty.json`](migration/evidence/date-percent-s-pty.json), and
+[`date-percent-s-harness-selftest.json`](migration/evidence/date-percent-s-harness-selftest.json).
+The full suite was not rerun; earlier broader receipts remain historical.
+Original C sources and original tests are unchanged by this date slice.

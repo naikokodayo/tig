@@ -551,6 +551,92 @@ pub fn parse_history(bytes: &[u8]) -> Result<Vec<Commit>> {
         })
         .collect())
 }
+/// Read the header and first nonempty subject of Git's --pretty=raw stream.
+/// Keep these records owned so column toggles can redraw without rereading stdin.
+pub fn parse_raw_history(input: &str) -> Result<Vec<Commit>> {
+    let mut commits: Vec<Commit> = Vec::new();
+    let mut in_header = false;
+    let valid_oid =
+        |oid: &str| matches!(oid.len(), 40 | 64) && oid.bytes().all(|c| c.is_ascii_hexdigit());
+    for line in input.lines() {
+        if let Some(header) = line.strip_prefix("commit ") {
+            let mut ids = header.split_whitespace();
+            let oid = ids
+                .next()
+                .ok_or_else(|| GitError("Missing raw commit ID".into()))?;
+            if !valid_oid(oid) {
+                return Err(GitError("Invalid raw commit ID".into()));
+            }
+            let parents: Vec<String> = ids.map(str::to_owned).collect();
+            if !parents.iter().all(|id| valid_oid(id)) {
+                return Err(GitError("Invalid raw parent ID".into()));
+            }
+            commits.push(Commit {
+                oid: oid.into(),
+                parents,
+                author: String::new(),
+                date: String::new(),
+                author_email: String::new(),
+                committer: String::new(),
+                committer_email: String::new(),
+                committer_date: String::new(),
+                subject: String::new(),
+                decorations: String::new(),
+            });
+            in_header = true;
+            continue;
+        }
+        let Some(commit) = commits.last_mut() else {
+            continue;
+        };
+        if line.is_empty() {
+            in_header = false;
+        } else if in_header {
+            if let Some(parent) = line.strip_prefix("parent ") {
+                if !valid_oid(parent) {
+                    return Err(GitError("Invalid raw parent ID".into()));
+                }
+                if !commit.parents.iter().any(|id| id == parent) {
+                    commit.parents.push(parent.into());
+                }
+            } else if let Some((kind, ident)) = line
+                .split_once(' ')
+                .filter(|(kind, _)| matches!(*kind, "author" | "committer"))
+            {
+                let (ident, time) = ident
+                    .rsplit_once("> ")
+                    .ok_or_else(|| GitError("Invalid raw author header".into()))?;
+                let (name, email) = ident
+                    .rsplit_once(" <")
+                    .ok_or_else(|| GitError("Invalid raw author identity".into()))?;
+                let date = crate::date::raw(time).map_err(GitError)?;
+                if kind == "author" {
+                    commit.author = name.into();
+                    commit.author_email = email.into();
+                    commit.date = date;
+                } else {
+                    commit.committer = name.into();
+                    commit.committer_email = email.into();
+                    commit.committer_date = date;
+                }
+            }
+        } else if commit.subject.is_empty() {
+            if let Some(subject) = line.strip_prefix("    ") {
+                commit.subject = subject.trim_start().into();
+            }
+        }
+    }
+    if commits
+        .iter()
+        .any(|commit| commit.date.is_empty() || commit.committer_date.is_empty())
+    {
+        return Err(GitError(
+            "Missing raw commit author or committer date".into(),
+        ));
+    }
+    Ok(commits)
+}
+
 /// Decode Git's C-quoted pathname without treating it as a worktree path.
 pub fn parse_git_path(raw: &[u8]) -> Result<PathBuf> {
     if !raw.starts_with(b"\"") {
@@ -724,6 +810,28 @@ mod tests {
             let _ = fs::remove_dir_all(&self.0);
         }
     }
+    #[test]
+    fn raw_date_fixture_and_invalid_headers() {
+        let input = include_str!("../test/main/date-test.in");
+        let commits = parse_raw_history(input).unwrap();
+        assert_eq!(commits.len(), 25);
+        assert_eq!(commits[0].date, "2015-08-31T04:01:32+09:00");
+        assert_eq!(commits[0].committer_date, "2015-08-31T04:15:58+09:00");
+        assert_eq!(commits[0].subject, "Add zsh completion file for autoload");
+        assert_eq!(commits[1].author, "Jonas Fonseca");
+        assert!(parse_raw_history(&input.replace("1440961292 +0900", "broken")).is_err());
+        assert!(parse_raw_history("commit not-an-id").is_err());
+        assert!(parse_raw_history("commit 91912eb97da4f6907015dab41ef9bba315730854").is_err());
+        let body = input.replace(
+            "Add zsh completion file for autoload",
+            "commit this subject",
+        );
+        assert_eq!(
+            parse_raw_history(&body).unwrap()[0].subject,
+            "commit this subject"
+        );
+    }
+
     #[test]
     fn nul_parsers_preserve_paths_and_reject_truncation() {
         let rows = parse_status(b"R  new\nname\0old\tname\0?? :(glob)*\0").unwrap();
