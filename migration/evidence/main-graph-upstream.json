@@ -1,0 +1,3246 @@
+{
+  "schema": 1,
+  "source_commit": "b614633bc1e01476de46727307b9479f05a8b427",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "BLOCKED",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/diff/line-number-test",
+          "script_sha256": "4f169e7dbcd1ec8d8958c12e64fc4c030c0a3093100492a3c7af9c4e41036e72",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "added-line-number.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/line-number-test/.test-result",
+          "receipt": "  [OK] added-line-number.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/all-arg-test",
+          "script_sha256": "75f118364ab7237a1719bce081b672599097d9820d5bf959ec7238731492a60c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "final.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "detached.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/all-arg-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] stderr assertion\n  [OK] final.screen assertion\n  [OK] detached.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/author-name-change-test",
+          "script_sha256": "cf98937433b79471867f6fe6526b2d932e17a5019ca8fc8a2f69995dc6bcc38f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/author-name-change-test/.test-result",
+          "receipt": "  [OK] main-default.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/boundary-test",
+          "script_sha256": "74e2e050399801013310584dee78409edf18779f387853bd1df039e8d697fb07",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "merge-view.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/boundary-test/.test-result",
+          "receipt": "  [OK] merge-view.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/branch-var-test",
+          "script_sha256": "2ed95c116b403b74c4389b9940dd5b928572db92a1de25ca1c3f6e4c3e969aa4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/branch-var-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] main.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/commit-order-edge-case-test",
+          "script_sha256": "305a58baac2652a97ffd98afa2d10638c65e13be778867a23d0897c0a6acac24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "ensure-topo-order-with-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "graph-supports-date-order.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/commit-order-edge-case-test/.test-result",
+          "receipt": "  [OK] ensure-topo-order-with-graph.screen assertion\n  [OK] graph-supports-date-order.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/commit-title-overflow-test",
+          "script_sha256": "6725bacb3bf45a7d4465bab47aaa916fc6ddc013492174d5ab94dc8550b62f54",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-commit-titles.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/commit-title-overflow-test/.test-result",
+          "receipt": "  [OK] main-commit-titles.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/date-test",
+          "script_sha256": "b050de02b7fcb48d19e400aa43e9ac5256450674b2555717ecfff6497873f955",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "default-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "local-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "relative-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "relative-compact-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-short-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-tz-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "no-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-date.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/date-test/.test-result",
+          "receipt": "  [OK] default-date.screen assertion\n  [OK] local-date.screen assertion\n  [OK] relative-date.screen assertion\n  [OK] relative-compact-date.screen assertion\n  [OK] custom-short-date.screen assertion\n  [OK] custom-tz-date.screen assertion\n  [OK] no-date.screen assertion\n  [OK] custom-date.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/default-test",
+          "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-ref-format.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-remotes-hidden.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/default-test/.test-result",
+          "receipt": "  [OK] main-default.screen assertion\n  [OK] main-ref-format.screen assertion\n  [OK] main-remotes-hidden.screen assertion\n  [OK] main-no-refs.screen assertion\n  [OK] main-no-graph.screen assertion\n  [OK] main-with-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/emoji-test",
+          "script_sha256": "51ed42b7aba3e56404e0dee7b1a9a18f1cee925419feb2a665f103572853764f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "emoji-commit-titles-col-46.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-46.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-unset.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-unset.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-300.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-300.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/emoji-test/.test-result",
+          "receipt": "  [OK] emoji-commit-titles-col-46.screen assertion\n  [OK] emoji-commit-titles-col-46.stderr assertion\n  [OK] emoji-commit-titles-col-unset.screen assertion\n  [OK] emoji-commit-titles-col-unset.stderr assertion\n  [OK] emoji-commit-titles-col-300.screen assertion\n  [OK] emoji-commit-titles-col-300.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/escape-control-characters-test",
+          "script_sha256": "f0afbbd19bf33724e569022ba500c4e159857aab1a4680bf293c443e25c431e3",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/escape-control-characters-test/.test-result",
+          "receipt": "  [OK] screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/filter-args-test",
+          "script_sha256": "71a55ff435f3cd25168a004233b7ea6c34e71137c9483a91e921aaae49e3c9c4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "rev-parse.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "log.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "filtered.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/filter-args-test/.test-result",
+          "receipt": "  [OK] rev-parse.trace assertion\n  [OK] log.trace assertion\n  [OK] filtered.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/git-alias-test",
+          "script_sha256": "6376a028dd925590fdb854ef9b7b979e032c7a05e2d265b2c30c53f0105b3155",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "alias-vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/git-alias-test/.test-result",
+          "receipt": "  [OK] alias-vars assertion\n  [OK] main.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/goto-test",
+          "script_sha256": "2ec9c12269d3ffd14b14e643a8a328096a7ff04a768c8cdf2948b5a4e3238ff0",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "commit-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-1-back.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-2.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-2-again.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-5.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-5-still.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-3.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/goto-test/.test-result",
+          "receipt": "  [OK] commit-1.screen assertion\n  [OK] commit-1-back.screen assertion\n  [OK] commit-2.screen assertion\n  [OK] commit-2-again.screen assertion\n  [OK] commit-5.screen assertion\n  [OK] commit-5-still.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] commit-3.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/graph-argument-test",
+          "script_sha256": "dec2e0ff1c54fbc34224b177df4e30d786473f12bde2800dd9f6b278a30675db",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "follow.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "follow.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-parent.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-parent.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/graph-argument-test/.test-result",
+          "receipt": "  [OK] follow.screen assertion\n  [OK] follow.stderr assertion\n  [OK] first-parent.screen assertion\n  [OK] first-parent.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/jump-ends-test",
+          "script_sha256": "72446dd77ed40b9215b369c063233e7daa934f3ce106f1fedbe01fb644dcbd5c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-goto-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-1.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-1.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-2.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-2.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/jump-ends-test/.test-result",
+          "receipt": "  [OK] main-goto-1.screen assertion\n  [OK] main-goto-1.stderr assertion\n  [OK] main-goto-max.screen assertion\n  [OK] main-goto-max.stderr assertion\n  [OK] main-goto-max-plus-1.screen assertion\n  [OK] main-goto-max-plus-1.stderr assertion\n  [OK] main-goto-max-plus-2.screen assertion\n  [OK] main-goto-max-plus-2.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/mailmap-test",
+          "script_sha256": "83d27512940a1a35f0d9089321a5fbf5267ae55a6c636da9b6406f4448ed1b1c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "mailmapped.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mailmapped-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/mailmap-test/.test-result",
+          "receipt": "  [OK] mailmapped.screen assertion\n  [OK] mailmapped-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/main-options-test",
+          "script_sha256": "dddb92e5a6a90488359c6a2f47eb84415b22308e52940f206bca268593db4fe0",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "with-10-lines.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/main-options-test/.test-result",
+          "receipt": "  [OK] with-10-lines.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/merge-test",
+          "script_sha256": "57723b9fd6ed6157ecaeaa6efd30ad1ead43a4ccf039eec3ec6971351cab7d71",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-with-conflict.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/merge-test/.test-result",
+          "receipt": "  [OK] main-with-conflict.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/no-matching-commmits-test",
+          "script_sha256": "e1bf5d04ecaf3a855b65548e2a6ebe1697bc787597cfa5b97927acec79ed7bfe",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "tig-did-not-exit-as-expected#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/no-matching-commmits-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n  [OK] tig-did-not-exit-as-expected does not exist\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/no-merges-test",
+          "script_sha256": "dce74d5e289a5e7830f96e1ccede6b85bb17a5b5d7da32ba72789e0857e82a47",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "no-merges.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/no-merges-test/.test-result",
+          "receipt": "  [OK] no-merges.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/pretty-raw-test",
+          "script_sha256": "03a00e6802091e2f011df0e405fa3f586dcd37e868a42145734e6b75932d3c94",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-pretty-raw.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/pretty-raw-test/.test-result",
+          "receipt": "  [OK] main-pretty-raw.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/refresh-periodic-test",
+          "script_sha256": "f7d8f6eb6ae2ba733d210d52f5140d14ce23a765961fa8a8c561dfe257e5446c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commiting-change-and-sleeping-hello.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commiting-change-and-sleeping-world.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/refresh-periodic-test/.test-result",
+          "receipt": "  [OK] main-with-unstaged.screen assertion\n  [OK] main-after-add-a.screen assertion\n  [OK] main-after-commit.screen assertion\n  [OK] main-after-commiting-change-and-sleeping-hello.screen assertion\n  [OK] main-after-commiting-change-and-sleeping-world.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/refresh-test",
+          "script_sha256": "299ee5ce1fc8fd738059aa30604c50411c876e8c0a7035684056f85b94b79111",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-all.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-soft.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-a-and-bc.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-hard.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-tag.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/refresh-test/.test-result",
+          "receipt": "  [OK] main-with-unstaged.screen assertion\n  [OK] main-after-add-a.screen assertion\n  [OK] main-after-add-all.screen assertion\n  [OK] main-after-commit.screen assertion\n  [OK] main-after-reset-soft.screen assertion\n  [OK] main-after-reset-a-and-bc.screen assertion\n  [OK] main-after-reset-hard.screen assertion\n  [OK] main-after-tag.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/search-preload-test",
+          "script_sha256": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/search-preload-test/.test-result",
+          "receipt": "  [OK] main.screen assertion\n  [OK] stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/search-test",
+          "script_sha256": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-search-author.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-empty.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-find-next.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title-no-match.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-time.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-smart-case.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/search-test/.test-result",
+          "receipt": "  [OK] main-search-author.screen assertion\n  [OK] main-search-author-empty.screen assertion\n  [OK] main-search-author-find-next.screen assertion\n  [OK] main-search-title.screen assertion\n  [OK] main-search-title-no-match.screen assertion\n  [OK] main-search-refs.screen assertion\n  [OK] main-search-time.screen assertion\n  [OK] main-search-smart-case.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/show-changes-after-rename-test",
+          "script_sha256": "667f4b735c4588dff1445d4901d899c1bbfdfc278713d54c1b38182d725ef2b4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "default.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/show-changes-after-rename-test/.test-result",
+          "receipt": "  [OK] default.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/show-changes-test",
+          "script_sha256": "243aabd40fe83a59940f0289d19596d94d1cd7fccc088e3f1116f79b0e13b709",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 9
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-and-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-and-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-renamed.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-all-refs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/show-changes-test/.test-result",
+          "receipt": "  [OK] main-with-unstaged.screen assertion\n  [OK] main-with-unstaged-split.screen assertion\n  [OK] main-with-unstaged-and-staged-split.screen assertion\n  [OK] main-with-staged.screen assertion\n  [OK] main-with-staged-split.screen assertion\n  [OK] main-with-staged-and-unstaged.screen assertion\n  [OK] main-with-renamed.screen assertion\n  [OK] main-with-conflict.screen assertion\n  [OK] main-all-refs.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/start-on-line-test",
+          "script_sha256": "09118ca562b3167b5ced4913185fe7e8b99062f40e7ce4a9a97091a92219187d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/start-on-line-test/.test-result",
+          "receipt": "  [OK] position.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/stdin-test",
+          "script_sha256": "5b3882f86125941300e9d641670dba620ee0a2bfa69af5405e240f1f0a15eda7",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-stdin.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/stdin-test/.test-result",
+          "receipt": "  [OK] main-stdin.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/submodule-test",
+          "script_sha256": "ae7a945fee6bf5676a0435fb3335e92ca8c2f61f823e9a188ed06f36f91c340b",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main-submodule.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-submodule-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/submodule-test/.test-result",
+          "receipt": "  [OK] main-submodule.screen assertion\n  [OK] main-submodule-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/unbind-default-quit-key-test",
+          "script_sha256": "7853b856078605aebae6dd66f193eefb32320c2439ab3077020deac54bf4baf3",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "work-dir/gh-483-main-q-noquit#1",
+              "status": "OK"
+            },
+            {
+              "id": "work-dir/gh-483-generic-qb-executed#1",
+              "status": "OK"
+            },
+            {
+              "id": "work-dir/gh-483-main-qa-executed#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/unbind-default-quit-key-test/.test-result",
+          "receipt": "  [OK] work-dir/gh-483-main-q-noquit does not exist\n  [OK] work-dir/gh-483-generic-qb-executed does not exist\n  [OK] work-dir/gh-483-main-qa-executed does not exist\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/untracked-test",
+          "script_sha256": "1903b8792865653883d9590fcd7f876a94823fa89e350b7e1d81c32d365ea13f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/untracked-test/.test-result",
+          "receipt": "  [OK] start.screen assertion\n  [OK] result.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/update-unstaged-changes-test",
+          "script_sha256": "241f169bbd0c507256bb23b2a56963cd1dafd3325a642693d7f21c5ef871ce8c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/update-unstaged-changes-test/.test-result",
+          "receipt": "  [OK] start.screen assertion\n  [OK] result.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/vertical-lines-test",
+          "script_sha256": "70db7c2628291db5ea02a0a15759bcf547790067ea981b15e068c6ea738fd5fc",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "main-verticals-ascii.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-verticals-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-verticals-utf8.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/vertical-lines-test/.test-result",
+          "receipt": "  [OK] main-verticals-ascii.screen assertion\n  [OK] main-verticals-default.screen assertion\n  [OK] main-verticals-utf8.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/view-split-test",
+          "script_sha256": "1893d1cec14ce3191fe06aca35c9f3e71891bb61f40b8cedb645bc52b82a16f4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "main-vsplit-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-vsplit-25-75.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-hsplit-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-hsplit-50-50.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/view-split-test/.test-result",
+          "receipt": "  [OK] main-vsplit-default.screen assertion\n  [OK] main-vsplit-25-75.screen assertion\n  [OK] main-hsplit-default.screen assertion\n  [OK] main-hsplit-50-50.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/refs/default-test",
+          "script_sha256": "fa6f469aa8cceb5487604f8d8e9ca02154eb6190592a533470bd729918fefcb5",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "refs-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-with-line-number.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/refs/default-test/.test-result",
+          "receipt": "  [OK] refs-default.screen assertion\n  [OK] refs-with-line-number.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/main-graph-task-clone/src/tig",
+          "sha256": "e8e7da4044dbe09000d1393d47b46e1f554fe8df12c4880464da58eb02f603a9"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/main-graph-task-clone/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 37
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/main-graph-task-clone/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/main-graph-task-clone/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/main-graph-task-clone/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.06s\n",
+      "results": [
+        {
+          "script": "test/diff/line-number-test",
+          "script_sha256": "4f169e7dbcd1ec8d8958c12e64fc4c030c0a3093100492a3c7af9c4e41036e72",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "added-line-number.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/line-number-test/.test-result",
+          "receipt": "[FAIL] added-line-number.screen != expected/added-line-number.screen\n\u001b[1mdiff --git a/expected/added-line-number.screen b/added-line-number.screen\u001b[m\n\u001b[1mindex 2886c59..816a40e 100644\u001b[m\n\u001b[1m--- a/expected/added-line-number.screen\u001b[m\n\u001b[1m+++ b/added-line-number.screen\u001b[m\n\u001b[36m@@ -1,2 +1,2 @@\u001b[m\n\u001b[31m-1\u001b[m\n\u001b[31m-[pager] echo 1 - line 1 of 1 100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+new line 1\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[stage] Staged changes to 'README.m 100%\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] added-line-number.screen != expected/added-line-number.screen\r\n| \u001b[1mdiff --git a/expected/added-line-number.screen b/added-line-number.screen\u001b[m\r\n| \u001b[1mindex 2886c59..816a40e 100644\u001b[m\r\n| \u001b[1m--- a/expected/added-line-number.screen\u001b[m\r\n| \u001b[1m+++ b/added-line-number.screen\u001b[m\r\n| \u001b[36m@@ -1,2 +1,2 @@\u001b[m\r\n| \u001b[31m-1\u001b[m\r\n| \u001b[31m-[pager] echo 1 - line 1 of 1 100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+new line 1\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[stage] Staged changes to 'README.m 100%\u001b[m\r\n"
+        },
+        {
+          "script": "test/main/all-arg-test",
+          "script_sha256": "75f118364ab7237a1719bce081b672599097d9820d5bf959ec7238731492a60c",
+          "exit_code": 1,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "script_exit_nonzero",
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 2
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/all-arg-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] vars_assert_count != expected/vars_assert_count\n\u001b[1mdiff --git a/expected/vars_assert_count b/vars_assert_count\u001b[m\n\u001b[1mindex e69de29..d00491f 100644\u001b[m\n\u001b[1m--- a/expected/vars_assert_count\u001b[m\n\u001b[1m+++ b/vars_assert_count\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m1\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/main-graph-task-clone/test/tools/libtest.sh: line 403: vars: No such file or directory\r\n| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Unsupported command variable: revargs\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] vars_assert_count != expected/vars_assert_count\r\n| \u001b[1mdiff --git a/expected/vars_assert_count b/vars_assert_count\u001b[m\r\n| \u001b[1mindex e69de29..d00491f 100644\u001b[m\r\n| \u001b[1m--- a/expected/vars_assert_count\u001b[m\r\n| \u001b[1m+++ b/vars_assert_count\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m1\u001b[m\r\n"
+        },
+        {
+          "script": "test/main/author-name-change-test",
+          "script_sha256": "cf98937433b79471867f6fe6526b2d932e17a5019ca8fc8a2f69995dc6bcc38f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/author-name-change-test/.test-result",
+          "receipt": "  [OK] main-default.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/boundary-test",
+          "script_sha256": "74e2e050399801013310584dee78409edf18779f387853bd1df039e8d697fb07",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 2
+          },
+          "assertions": [
+            {
+              "id": "merge-view.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/boundary-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] merge-view.screen not found\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Unsupported history option --boundary: only revision, filtering, ordering and path options are allowed\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] merge-view.screen not found\r\n"
+        },
+        {
+          "script": "test/main/branch-var-test",
+          "script_sha256": "2ed95c116b403b74c4389b9940dd5b928572db92a1de25ca1c3f6e4c3e969aa4",
+          "exit_code": 1,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "script_exit_nonzero",
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 2
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/branch-var-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] vars_assert_count != expected/vars_assert_count\n\u001b[1mdiff --git a/expected/vars_assert_count b/vars_assert_count\u001b[m\n\u001b[1mindex e69de29..b8626c4 100644\u001b[m\n\u001b[1m--- a/expected/vars_assert_count\u001b[m\n\u001b[1m+++ b/vars_assert_count\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m4\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/main-graph-task-clone/test/tools/libtest.sh: line 403: vars: No such file or directory\r\n| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Unsupported command variable: branch\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] vars_assert_count != expected/vars_assert_count\r\n| \u001b[1mdiff --git a/expected/vars_assert_count b/vars_assert_count\u001b[m\r\n| \u001b[1mindex e69de29..b8626c4 100644\u001b[m\r\n| \u001b[1m--- a/expected/vars_assert_count\u001b[m\r\n| \u001b[1m+++ b/vars_assert_count\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m4\u001b[m\r\n"
+        },
+        {
+          "script": "test/main/commit-order-edge-case-test",
+          "script_sha256": "305a58baac2652a97ffd98afa2d10638c65e13be778867a23d0897c0a6acac24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 1,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "ensure-topo-order-with-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "graph-supports-date-order.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/commit-order-edge-case-test/.test-result",
+          "receipt": "  [OK] ensure-topo-order-with-graph.screen assertion\n[FAIL] graph-supports-date-order.screen != expected/graph-supports-date-order.screen\n\u001b[1mdiff --git a/expected/graph-supports-date-order.screen b/graph-supports-date-order.screen\u001b[m\n\u001b[1mindex a051568..4ab93fd 100644\u001b[m\n\u001b[1m--- a/expected/graph-supports-date-order.screen\u001b[m\n\u001b[1m+++ b/graph-supports-date-order.screen\u001b[m\n\u001b[36m@@ -1,6 +1,6 @@\u001b[m\n 2014-02-01 22:36 -0600 Benjamin Bergman ●─╮ Merge branch 'feature_branch'\u001b[m\n\u001b[31m-2014-02-01 22:36 -0600 Benjamin Bergman ∙ │ More master\u001b[m\n 2014-02-01 22:35 -0600 Benjamin Bergman │ ∙ More featuresA\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2014-02-01 22:36 -0600 Benjamin Bergman ∙ │ More master\u001b[m\n 2014-02-01 22:21 -0600 Benjamin Bergman ●─│─╮ Merge branch 'feature_branch'\u001b[m\n 2014-02-01 23:00 -0600 Benjamin Bergman │ ∙─╯ Add feature\u001b[m\n 2014-02-01 22:21 -0600 Benjamin Bergman ∙ │ Add to master\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 2 test(s)\r\n|   [OK] ensure-topo-order-with-graph.screen assertion\r\n| [FAIL] graph-supports-date-order.screen != expected/graph-supports-date-order.screen\r\n| \u001b[1mdiff --git a/expected/graph-supports-date-order.screen b/graph-supports-date-order.screen\u001b[m\r\n| \u001b[1mindex a051568..4ab93fd 100644\u001b[m\r\n| \u001b[1m--- a/expected/graph-supports-date-order.screen\u001b[m\r\n| \u001b[1m+++ b/graph-supports-date-order.screen\u001b[m\r\n| \u001b[36m@@ -1,6 +1,6 @@\u001b[m\r\n|  2014-02-01 22:36 -0600 Benjamin Bergman ●─╮ Merge branch 'feature_branch'\u001b[m\r\n| \u001b[31m-2014-02-01 22:36 -0600 Benjamin Bergman ∙ │ More master\u001b[m\r\n|  2014-02-01 22:35 -0600 Benjamin Bergman │ ∙ More featuresA\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2014-02-01 22:36 -0600 Benjamin Bergman ∙ │ More master\u001b[m\r\n|  2014-02-01 22:21 -0600 Benjamin Bergman ●─│─╮ Merge branch 'feature_branch'\u001b[m\r\n|  2014-02-01 23:00 -0600 Benjamin Bergman │ ∙─╯ Add feature\u001b[m\r\n|  2014-02-01 22:21 -0600 Benjamin Bergman ∙ │ Add to master\u001b[m\r\n"
+        },
+        {
+          "script": "test/main/commit-title-overflow-test",
+          "script_sha256": "6725bacb3bf45a7d4465bab47aaa916fc6ddc013492174d5ab94dc8550b62f54",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-commit-titles.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/commit-title-overflow-test/.test-result",
+          "receipt": "  [OK] main-commit-titles.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/date-test",
+          "script_sha256": "b050de02b7fcb48d19e400aa43e9ac5256450674b2555717ecfff6497873f955",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 9
+          },
+          "assertions": [
+            {
+              "id": "default-date.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "local-date.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "relative-date.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "relative-compact-date.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "custom-short-date.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "custom-tz-date.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "no-date.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "custom-date.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/date-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] default-date.screen != expected/default-date.screen\n\u001b[1mdiff --git a/expected/default-date.screen b/default-date.screen\u001b[m\n\u001b[1mindex 0f1fc95..c63293f 100644\u001b[m\n\u001b[1m--- a/expected/default-date.screen\u001b[m\n\u001b[1m+++ b/default-date.screen\u001b[m\n\u001b[36m@@ -1,26 +1,26 @@\u001b[m\n\u001b[31m-2015-08-31 04:01 +0900 Kentaro Wada        Add zsh completion file for autoload\u001b[m\n\u001b[31m-2015-08-23 18:32 -0400 Jonas Fonseca       Refactor DEFINE_ALLOCATOR to use help\u001b[m\n\u001b[31m-2015-07-16 11:46 +0200 Sven Wegener        display: factor out separator functio\u001b[m\n\u001b[31m-2015-08-22 16:20 -0400 Jonas Fonseca       Merge pull request #429 from ideal/ma\u001b[m\n\u001b[31m-2015-08-18 15:24 +0800 ideal               check if mem is NULL in DEFINE_ALLOCA\u001b[m\n\u001b[31m-2015-06-07 23:44 -0400 Jonas Fonseca       Use git_init to initialize the test/s\u001b[m\n\u001b[31m-2015-04-06 20:34 -0400 Jonas Fonseca       Keep unstaged changes view open after\u001b[m\n\u001b[31m-2015-03-30 07:43 -0400 Jonas Fonseca       When redrawing the readline prompt al\u001b[m\n\u001b[31m-2015-02-02 21:53 -0500 Jonas Fonseca       Move script helper before usages in t\u001b[m\n\u001b[31m-2015-01-29 10:44 -0500 Jonas Fonseca       Merge branch 'hashed-refs'\u001b[m\n\u001b[31m-2014-12-04 11:22 -0500 Jonas Fonseca       hashed-refs: Use a hash table as the\u001b[m\n\u001b[31m-2014-11-08 09:55 -0500 Jonas Fonseca       Unify option_info lookup for normal o\u001b[m\n\u001b[31m-2014-10-06 21:22 -0400 Jonas Fonseca       Add option to turn off automatic enab\u001b[m\n\u001b[31m-2014-09-23 12:54 +0200 Tom Greuter         Add option to install Tig with Homebr\u001b[m\n\u001b[31m-2014-09-04 07:19 -0400 Jonas Fonseca       Fix diff context restoring for diff o\u001b[m\n\u001b[31m-2013-12-15 09:55 +1100 Michael Barlow      Add mouse support\u001b[m\n\u001b[31m-2012-09-30 22:43 -0400 Jonas Fonseca       Refactor stage view title formatting\u001b[m\n\u001b[31m-2012-08-30 10:47 -0400 Jonas Fonseca       [GH #83] WIP: main view lazy navigati\u001b[m\n\u001b[31m-2011-10-13 11:46 +0530 P. Sadik            Create and use dup() of STDIN_FILENO\u001b[m\n\u001b[31m-2010-09-15 21:01 -0400 Jonathan Neuschäfer Don't show out-of-sight tildes\u001b[m\n\u001b[31m-2010-06-28 10:26 +0200 Pierre Habouzit     Add an option to ignore unknown direc\u001b[m\n\u001b[31m-2009-01-17 23:10 +0100 Jonas Fonseca       Fix another regression from the dirty\u001b[m\n\u001b[31m-2007-09-29 23:23 +0200 Jonas Fonseca       tig-0.10.git\u001b[m\n\u001b[31m-2006-09-12 00:22 +0200 Jonas Fonseca       Only split the tree view when the tre\u001b[m\n\u001b[31m-2006-04-10 18:39 +0200 Jonas Fonseca       Initial commit\u001b[m\n\u001b[31m-[main] 91912eb97da4f6907015dab41ef9bba315730854 - commit 1 of 25            100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit 91912eb97da4f6907015dab41ef9bba315730854\u001b[m\n\u001b[32m+\u001b[m\u001b[32mauthor Kentaro Wada <www.kentaro.wada@example.com> 1440961292 +0900\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommitter Kentaro Wada <www.kentaro.wada@example.com> 1440962158 +0900\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m    Add zsh completion file for autoload\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit 517b7e0decb2ec30333f045f7605025c0195f895\u001b[m\n\u001b[32m+\u001b[m\u001b[32mauthor Jonas Fonseca <jonas.fonseca@example.com> 1440369159 -0400\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommitter Jonas Fonseca <jonas.fonseca@example.com> 1440925276 +0200\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m    Refactor DEFINE_ALLOCATOR to use helper method and asserts\u001b[m\n\u001b[32m+\u001b[m\u001b[41m    \u001b[m\n\u001b[32m+\u001b[m\u001b[32m    Move main code to helper method and only keep assertion checks and code\u001b[m\n\u001b[32m+\u001b[m\u001b[32m    that dereferences the passed pointer.\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit 0e6cbc428c16968abccb6cb298f95ddcf3969bc6\u001b[m\n\u001b[32m+\u001b[m\u001b[32mauthor Sven Wegener <sven.wegener@example.com> 1437039987 +0200\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommitter Sven Wegener <sven.wegener@example.com> 1440764705 +0200\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m    display: factor out separator functions\u001b[m\n\u001b[32m+\u001b[m\u001b[41m    \u001b[m\n\u001b[32m+\u001b[m\u001b[32m    Signed-off-by: Sven Wegener <sven.wegener@example.com>\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit 07b1b4dcbf6a4aae5f842be73d444403e53d488a\u001b[m\n\u001b[32m+\u001b[m\u001b[32mauthor Jonas Fonseca <jonas.fonseca@example.com> 1440274835 -0400\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[pager] - line 1 of 201                                                      12%\u001b[m\n[FAIL] local-date.screen not found\n[FAIL] relative-date.screen not found\n[FAIL] relative-compact-date.screen not found\n[FAIL] custom-short-date.screen not found\n[FAIL] custom-tz-date.screen not found\n[FAIL] no-date.screen not found\n[FAIL] custom-date.screen not found\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 9 out of 9 test(s)\r\n| [stderr] tig: The pager view does not have a date column configured\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] default-date.screen != expected/default-date.screen\r\n| \u001b[1mdiff --git a/expected/default-date.screen b/default-date.screen\u001b[m\r\n| \u001b[1mindex 0f1fc95..c63293f 100644\u001b[m\r\n| \u001b[1m--- a/expected/default-date.screen\u001b[m\r\n| \u001b[1m+++ b/default-date.screen\u001b[m\r\n| \u001b[36m@@ -1,26 +1,26 @@\u001b[m\r\n| \u001b[31m-2015-08-31 04:01 +0900 Kentaro Wada        Add zsh completion file for autoload\u001b[m\r\n| \u001b[31m-2015-08-23 18:32 -0400 Jonas Fonseca       Refactor DEFINE_ALLOCATOR to use help\u001b[m\r\n| \u001b[31m-2015-07-16 11:46 +0200 Sven Wegener        display: factor out separator functio\u001b[m\r\n| \u001b[31m-2015-08-22 16:20 -0400 Jonas Fonseca       Merge pull request #429 from ideal/ma\u001b[m\r\n| \u001b[31m-2015-08-18 15:24 +0800 ideal               check if mem is NULL in DEFINE_ALLOCA\u001b[m\r\n| \u001b[31m-2015-06-07 23:44 -0400 Jonas Fonseca       Use git_init to initialize the test/s\u001b[m\r\n| \u001b[31m-2015-04-06 20:34 -0400 Jonas Fonseca       Keep unstaged changes view open after\u001b[m\r\n| \u001b[31m-2015-03-30 07:43 -0400 Jonas Fonseca       When redrawing the readline prompt al\u001b[m\r\n| \u001b[31m-2015-02-02 21:53 -0500 Jonas Fonseca       Move script helper before usages in t\u001b[m\r\n| \u001b[31m-2015-01-29 10:44 -0500 Jonas Fonseca       Merge branch 'hashed-refs'\u001b[m\r\n| \u001b[31m-2014-12-04 11:22 -0500 Jonas Fonseca       hashed-refs: Use a hash table as the\u001b[m\r\n| \u001b[31m-2014-11-08 09:55 -0500 Jonas Fonseca       Unify option_info lookup for normal o\u001b[m\r\n| \u001b[31m-2014-10-06 21:22 -0400 Jonas Fonseca       Add option to turn off automatic enab\u001b[m\r\n| \u001b[31m-2014-09-23 12:54 +0200 Tom Greuter         Add option to install Tig with Homebr\u001b[m\r\n| \u001b[31m-2014-09-04 07:19 -0400 Jonas Fonseca       Fix diff context restoring for diff o\u001b[m\r\n| \u001b[31m-2013-12-15 09:55 +1100 Michael Barlow      Add mouse support\u001b[m\r\n| \u001b[31m-2012-09-30 22:43 -0400 Jonas Fonseca       Refactor stage view title formatting\u001b[m\r\n| \u001b[31m-2012-08-30 10:47 -0400 Jonas Fonseca       [GH #83] WIP: main view lazy navigati\u001b[m\r\n| \u001b[31m-2011-10-13 11:46 +0530 P. Sadik            Create and use dup() of STDIN_FILENO\u001b[m\r\n| \u001b[31m-2010-09-15 21:01 -0400 Jonathan Neuschäfer Don't show out-of-sight tildes\u001b[m\r\n| \u001b[31m-2010-06-28 10:26 +0200 Pierre Habouzit     Add an option to ignore unknown direc\u001b[m\r\n| \u001b[31m-2009-01-17 23:10 +0100 Jonas Fonseca       Fix another regression from the dirty\u001b[m\r\n| \u001b[31m-2007-09-29 23:23 +0200 Jonas Fonseca       tig-0.10.git\u001b[m\r\n| \u001b[31m-2006-09-12 00:22 +0200 Jonas Fonseca       Only split the tree view when the tre\u001b[m\r\n| \u001b[31m-2006-04-10 18:39 +0200 Jonas Fonseca       Initial commit\u001b[m\r\n| \u001b[31m-[main] 91912eb97da4f6907015dab41ef9bba315730854 - commit 1 of 25            100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit 91912eb97da4f6907015dab41ef9bba315730854\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mauthor Kentaro Wada <www.kentaro.wada@example.com> 1440961292 +0900\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommitter Kentaro Wada <www.kentaro.wada@example.com> 1440962158 +0900\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    Add zsh completion file for autoload\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit 517b7e0decb2ec30333f045f7605025c0195f895\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mauthor Jonas Fonseca <jonas.fonseca@example.com> 1440369159 -0400\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommitter Jonas Fonseca <jonas.fonseca@example.com> 1440925276 +0200\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    Refactor DEFINE_ALLOCATOR to use helper method and asserts\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[41m    \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    Move main code to helper method and only keep assertion checks and code\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    that dereferences the passed pointer.\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit 0e6cbc428c16968abccb6cb298f95ddcf3969bc6\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mauthor Sven Wegener <sven.wegener@example.com> 1437039987 +0200\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommitter Sven Wegener <sven.wegener@example.com> 1440764705 +0200\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    display: factor out separator functions\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[41m    \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    Signed-off-by: Sven Wegener <sven.wegener@example.com>\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit 07b1b4dcbf6a4aae5f842be73d444403e53d488a\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mauthor Jonas Fonseca <jonas.fonseca@example.com> 1440274835 -0400\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[pager] - line 1 of 201                                                      12%\u001b[m\r\n| [FAIL] local-date.screen not found\r\n| [FAIL] relative-date.screen not found\r\n| [FAIL] relative-compact-date.screen not found\r\n| [FAIL] custom-short-date.screen not found\r\n| [FAIL] custom-tz-date.screen not found\r\n| [FAIL] no-date.screen not found\r\n| [FAIL] custom-date.screen not found\r\n"
+        },
+        {
+          "script": "test/main/default-test",
+          "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-ref-format.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-remotes-hidden.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/default-test/.test-result",
+          "receipt": "  [OK] main-default.screen assertion\n  [OK] main-ref-format.screen assertion\n  [OK] main-remotes-hidden.screen assertion\n  [OK] main-no-refs.screen assertion\n  [OK] main-no-graph.screen assertion\n  [OK] main-with-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/emoji-test",
+          "script_sha256": "51ed42b7aba3e56404e0dee7b1a9a18f1cee925419feb2a665f103572853764f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "emoji-commit-titles-col-46.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-46.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-unset.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-unset.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-300.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-300.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/emoji-test/.test-result",
+          "receipt": "  [OK] emoji-commit-titles-col-46.screen assertion\n  [OK] emoji-commit-titles-col-46.stderr assertion\n  [OK] emoji-commit-titles-col-unset.screen assertion\n  [OK] emoji-commit-titles-col-unset.stderr assertion\n  [OK] emoji-commit-titles-col-300.screen assertion\n  [OK] emoji-commit-titles-col-300.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/escape-control-characters-test",
+          "script_sha256": "f0afbbd19bf33724e569022ba500c4e159857aab1a4680bf293c443e25c431e3",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/escape-control-characters-test/.test-result",
+          "receipt": "[FAIL] screen != expected/screen\n\u001b[1mdiff --git a/expected/screen b/screen\u001b[m\n\u001b[1mindex c41ecc7..f77a468 100644\u001b[m\n\u001b[1m--- a/expected/screen\u001b[m\n\u001b[1m+++ b/screen\u001b[m\n\u001b[36m@@ -1,19 +1,19 @@\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a Check GBM_BO_USE_LINEAR correctly v2\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a extend conditional group GBM_BO_USE_LINEAR  over both usages\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a glamor: Deal with glamor_glyphs_init being removed from xserver\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a add some new tonga pci ids\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a add new bonaire pci id\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a Link against libgbm\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a Disable tiling for PRIME shared pixmap\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a Use gbm_bo_get_fd to get DMA_BUF fd\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a ddx: use amdgpu_query_crtc_from_id\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a ddx: remove AMDGPUIsAccelWorking\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a ddx: enable acceleration by default on Hawaii\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a Remove throttling from amdgpu_dri2_copy_region2\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a fixup README\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a Add 10-amdgpu.conf xorg.conf.d snippet\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a Document Option \"AccelMethod\" in the manpage\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a Fix build when gbm.h doesn't define GBM_BO_USE_LINEAR\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a glamor: Handle GLAMOR_* flags removed from xserver\u001b[m\n\u001b[31m-2015-08-19 11:12 -0700 a Move #include \"radeon_glamor.h\" from amdgpu_drv.h to where it's needed\u001b[m\n\u001b[31m-[main] 7363156 - commit 1 of 19                                                                  94%\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > 7363156 e75e9f3\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Check GBM_BO_USE\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > e75e9f3 37b389e\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00extend condition\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > 37b389e 2291704\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00glamor: Deal wit\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > 2291704 e71be4a\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00add some new ton\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > e71be4a b795d1e\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00add new bonaire\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > b795d1e 7e3b273\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Link against lib\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > 7e3b273 4840f91\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Disable tiling f\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > 4840f91 b69c5b3\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Use gbm_bo_get_f\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > b69c5b3 91aa694\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00ddx: use amdgpu_\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > 91aa694 afc3304\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00ddx: remove AMDG\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > afc3304 8a34a81\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00ddx: enable acce\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > 8a34a81 9f61a55\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Remove throttlin\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > 9f61a55 a49ad11\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00fixup README\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > a49ad11 fa4aed6\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Add 10-amdgpu.co\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > fa4aed6 fe4a4b6\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Document Option\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > fe4a4b6 84df3e7\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Fix build when g\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > 84df3e7 b947f4b\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00glamor: Handle G\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit > b947f4b ff62bf6\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Move #include \"r\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[pager] - line 1 of 19                                                                           94%\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] screen != expected/screen\r\n| \u001b[1mdiff --git a/expected/screen b/screen\u001b[m\r\n| \u001b[1mindex c41ecc7..f77a468 100644\u001b[m\r\n| \u001b[1m--- a/expected/screen\u001b[m\r\n| \u001b[1m+++ b/screen\u001b[m\r\n| \u001b[36m@@ -1,19 +1,19 @@\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a Check GBM_BO_USE_LINEAR correctly v2\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a extend conditional group GBM_BO_USE_LINEAR  over both usages\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a glamor: Deal with glamor_glyphs_init being removed from xserver\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a add some new tonga pci ids\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a add new bonaire pci id\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a Link against libgbm\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a Disable tiling for PRIME shared pixmap\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a Use gbm_bo_get_fd to get DMA_BUF fd\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a ddx: use amdgpu_query_crtc_from_id\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a ddx: remove AMDGPUIsAccelWorking\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a ddx: enable acceleration by default on Hawaii\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a Remove throttling from amdgpu_dri2_copy_region2\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a fixup README\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a Add 10-amdgpu.conf xorg.conf.d snippet\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a Document Option \"AccelMethod\" in the manpage\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a Fix build when gbm.h doesn't define GBM_BO_USE_LINEAR\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a glamor: Handle GLAMOR_* flags removed from xserver\u001b[m\r\n| \u001b[31m-2015-08-19 11:12 -0700 a Move #include \"radeon_glamor.h\" from amdgpu_drv.h to where it's needed\u001b[m\r\n| \u001b[31m-[main] 7363156 - commit 1 of 19                                                                  94%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > 7363156 e75e9f3\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Check GBM_BO_USE\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > e75e9f3 37b389e\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00extend condition\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > 37b389e 2291704\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00glamor: Deal wit\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > 2291704 e71be4a\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00add some new ton\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > e71be4a b795d1e\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00add new bonaire\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > b795d1e 7e3b273\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Link against lib\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > 7e3b273 4840f91\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Disable tiling f\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > 4840f91 b69c5b3\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Use gbm_bo_get_f\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > b69c5b3 91aa694\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00ddx: use amdgpu_\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > 91aa694 afc3304\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00ddx: remove AMDG\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > afc3304 8a34a81\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00ddx: enable acce\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > 8a34a81 9f61a55\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Remove throttlin\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > 9f61a55 a49ad11\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00fixup README\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > a49ad11 fa4aed6\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Add 10-amdgpu.co\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > fa4aed6 fe4a4b6\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Document Option\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > fe4a4b6 84df3e7\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Fix build when g\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > 84df3e7 b947f4b\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00glamor: Handle G\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit > b947f4b ff62bf6\\x00a <b.c> 1440007968 -0700\\x00a <b.c> 1440007968 -0700\\x00Move #include \"r\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[pager] - line 1 of 19                                                                           94%\u001b[m\r\n"
+        },
+        {
+          "script": "test/main/filter-args-test",
+          "script_sha256": "71a55ff435f3cd25168a004233b7ea6c34e71137c9483a91e921aaae49e3c9c4",
+          "exit_code": 1,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "script_exit_nonzero",
+            "missing_receipt"
+          ],
+          "checks": {},
+          "assertions": [],
+          "receipt_path": "test/tmp/main/filter-args-test/.test-result",
+          "receipt": "",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "test/main/filter-args-test: line 34: /Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/main-graph-task-clone/test/tmp/main/filter-args-test/trace: No such file or directory\r\n| No test results found\r\n"
+        },
+        {
+          "script": "test/main/git-alias-test",
+          "script_sha256": "6376a028dd925590fdb854ef9b7b979e032c7a05e2d265b2c30c53f0105b3155",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 1,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "alias-vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/git-alias-test/.test-result",
+          "receipt": "  [OK] alias-vars assertion\n[FAIL] main.screen != expected/main.screen\n\u001b[1mdiff --git a/expected/main.screen b/main.screen\u001b[m\n\u001b[1mindex b69b6bd..f25c10e 100644\u001b[m\n\u001b[1m--- a/expected/main.screen\u001b[m\n\u001b[1m+++ b/main.screen\u001b[m\n\u001b[36m@@ -1,4 +1,4 @@\u001b[m\n\u001b[31m-2014-03-01 17:26 -0500 Jonas Fonseca * [work-branch] [master] WIP: Upgrade to 0.\u001b[m\n\u001b[31m-2014-01-16 22:51 -0500 Jonas Fonseca I Move classes under org.scalajs.benchmark\u001b[m\n \u001b[m\n\u001b[31m-[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 2             100%\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[main]                                                                        0%\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 2 test(s)\r\n|   [OK] alias-vars assertion\r\n| [FAIL] main.screen != expected/main.screen\r\n| \u001b[1mdiff --git a/expected/main.screen b/main.screen\u001b[m\r\n| \u001b[1mindex b69b6bd..f25c10e 100644\u001b[m\r\n| \u001b[1m--- a/expected/main.screen\u001b[m\r\n| \u001b[1m+++ b/main.screen\u001b[m\r\n| \u001b[36m@@ -1,4 +1,4 @@\u001b[m\r\n| \u001b[31m-2014-03-01 17:26 -0500 Jonas Fonseca * [work-branch] [master] WIP: Upgrade to 0.\u001b[m\r\n| \u001b[31m-2014-01-16 22:51 -0500 Jonas Fonseca I Move classes under org.scalajs.benchmark\u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 2             100%\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[main]                                                                        0%\u001b[m\r\n"
+        },
+        {
+          "script": "test/main/goto-test",
+          "script_sha256": "2ec9c12269d3ffd14b14e643a8a328096a7ff04a768c8cdf2948b5a4e3238ff0",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 9
+          },
+          "assertions": [
+            {
+              "id": "commit-1.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "commit-1-back.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "commit-2.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "commit-2-again.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "commit-5.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "commit-5-still.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "unstaged-changes.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "commit-3.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/goto-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] commit-1.screen not found\n[FAIL] commit-1-back.screen not found\n[FAIL] commit-2.screen not found\n[FAIL] commit-2-again.screen not found\n[FAIL] commit-5.screen not found\n[FAIL] commit-5-still.screen not found\n[FAIL] unstaged-changes.screen not found\n[FAIL] commit-3.screen not found\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 9 out of 9 test(s)\r\n| [stderr] tig: Unsupported history option --merge: only revision, filtering, ordering and path options are allowed\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] commit-1.screen not found\r\n| [FAIL] commit-1-back.screen not found\r\n| [FAIL] commit-2.screen not found\r\n| [FAIL] commit-2-again.screen not found\r\n| [FAIL] commit-5.screen not found\r\n| [FAIL] commit-5-still.screen not found\r\n| [FAIL] unstaged-changes.screen not found\r\n| [FAIL] commit-3.screen not found\r\n"
+        },
+        {
+          "script": "test/main/graph-argument-test",
+          "script_sha256": "dec2e0ff1c54fbc34224b177df4e30d786473f12bde2800dd9f6b278a30675db",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "follow.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "follow.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-parent.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-parent.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/graph-argument-test/.test-result",
+          "receipt": "  [OK] follow.screen assertion\n  [OK] follow.stderr assertion\n  [OK] first-parent.screen assertion\n  [OK] first-parent.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/jump-ends-test",
+          "script_sha256": "72446dd77ed40b9215b369c063233e7daa934f3ce106f1fedbe01fb644dcbd5c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 6,
+            "FAIL": 2
+          },
+          "assertions": [
+            {
+              "id": "main-goto-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-1.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-1.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "main-goto-max-plus-1.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-2.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "main-goto-max-plus-2.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/jump-ends-test/.test-result",
+          "receipt": "  [OK] main-goto-1.screen assertion\n  [OK] main-goto-1.stderr assertion\n  [OK] main-goto-max.screen assertion\n  [OK] main-goto-max.stderr assertion\n[FAIL] main-goto-max-plus-1.screen != expected/main-goto-max-plus-1.screen\n\u001b[1mdiff --git a/expected/main-goto-max-plus-1.screen b/main-goto-max-plus-1.screen\u001b[m\n\u001b[1mindex 8d15950..0b5a99f 100644\u001b[m\n\u001b[1m--- a/expected/main-goto-max-plus-1.screen\u001b[m\n\u001b[1m+++ b/main-goto-max-plus-1.screen\u001b[m\n\u001b[36m@@ -1,4 +1,4 @@\u001b[m\n\u001b[31m-2014-03-01 17:26 -0500 Jonas Fonseca      o [master] WIP: Upgrade to 0.4-SNAPSHO\u001b[m\n\u001b[31m-2014-03-01 15:59 -0500 Jonas Fonseca      o Add type parameter for js.Dynamic\u001b[m\n\u001b[31m-2014-01-16 22:51 -0500 Jonas Fonseca      o Move classes under org.scalajs.bench\u001b[m\n\u001b[31m-[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 48              6%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2013-10-14 16:09 -0400 Jonas Fonseca      o Move description of the optimizeJS w\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2013-10-14 13:15 -0400 Jonas Fonseca      I Initial import of Tracer benchmark\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[main] 90286e0752016a6bca30dfa7ca236d1f99345eb8 - commit 48 of 48           100%\u001b[m\n  [OK] main-goto-max-plus-1.stderr assertion\n[FAIL] main-goto-max-plus-2.screen != expected/main-goto-max-plus-2.screen\n\u001b[1mdiff --git a/expected/main-goto-max-plus-2.screen b/main-goto-max-plus-2.screen\u001b[m\n\u001b[1mindex 8d15950..0b5a99f 100644\u001b[m\n\u001b[1m--- a/expected/main-goto-max-plus-2.screen\u001b[m\n\u001b[1m+++ b/main-goto-max-plus-2.screen\u001b[m\n\u001b[36m@@ -1,4 +1,4 @@\u001b[m\n\u001b[31m-2014-03-01 17:26 -0500 Jonas Fonseca      o [master] WIP: Upgrade to 0.4-SNAPSHO\u001b[m\n\u001b[31m-2014-03-01 15:59 -0500 Jonas Fonseca      o Add type parameter for js.Dynamic\u001b[m\n\u001b[31m-2014-01-16 22:51 -0500 Jonas Fonseca      o Move classes under org.scalajs.bench\u001b[m\n\u001b[31m-[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 48              6%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2013-10-14 16:09 -0400 Jonas Fonseca      o Move description of the optimizeJS w\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2013-10-14 13:15 -0400 Jonas Fonseca      I Initial import of Tracer benchmark\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[main] 90286e0752016a6bca30dfa7ca236d1f99345eb8 - commit 48 of 48           100%\u001b[m\n  [OK] main-goto-max-plus-2.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 2 out of 8 test(s)\r\n|   [OK] main-goto-1.screen assertion\r\n|   [OK] main-goto-1.stderr assertion\r\n|   [OK] main-goto-max.screen assertion\r\n|   [OK] main-goto-max.stderr assertion\r\n| [FAIL] main-goto-max-plus-1.screen != expected/main-goto-max-plus-1.screen\r\n| \u001b[1mdiff --git a/expected/main-goto-max-plus-1.screen b/main-goto-max-plus-1.screen\u001b[m\r\n| \u001b[1mindex 8d15950..0b5a99f 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-goto-max-plus-1.screen\u001b[m\r\n| \u001b[1m+++ b/main-goto-max-plus-1.screen\u001b[m\r\n| \u001b[36m@@ -1,4 +1,4 @@\u001b[m\r\n| \u001b[31m-2014-03-01 17:26 -0500 Jonas Fonseca      o [master] WIP: Upgrade to 0.4-SNAPSHO\u001b[m\r\n| \u001b[31m-2014-03-01 15:59 -0500 Jonas Fonseca      o Add type parameter for js.Dynamic\u001b[m\r\n| \u001b[31m-2014-01-16 22:51 -0500 Jonas Fonseca      o Move classes under org.scalajs.bench\u001b[m\r\n| \u001b[31m-[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 48              6%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2013-10-14 16:09 -0400 Jonas Fonseca      o Move description of the optimizeJS w\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2013-10-14 13:15 -0400 Jonas Fonseca      I Initial import of Tracer benchmark\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[main] 90286e0752016a6bca30dfa7ca236d1f99345eb8 - commit 48 of 48           100%\u001b[m\r\n|   [OK] main-goto-max-plus-1.stderr assertion\r\n| [FAIL] main-goto-max-plus-2.screen != expected/main-goto-max-plus-2.screen\r\n| \u001b[1mdiff --git a/expected/main-goto-max-plus-2.screen b/main-goto-max-plus-2.screen\u001b[m\r\n| \u001b[1mindex 8d15950..0b5a99f 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-goto-max-plus-2.screen\u001b[m\r\n| \u001b[1m+++ b/main-goto-max-plus-2.screen\u001b[m\r\n| \u001b[36m@@ -1,4 +1,4 @@\u001b[m\r\n| \u001b[31m-2014-03-01 17:26 -0500 Jonas Fonseca      o [master] WIP: Upgrade to 0.4-SNAPSHO\u001b[m\r\n| \u001b[31m-2014-03-01 15:59 -0500 Jonas Fonseca      o Add type parameter for js.Dynamic\u001b[m\r\n| \u001b[31m-2014-01-16 22:51 -0500 Jonas Fonseca      o Move classes under org.scalajs.bench\u001b[m\r\n| \u001b[31m-[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 48              6%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2013-10-14 16:09 -0400 Jonas Fonseca      o Move description of the optimizeJS w\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2013-10-14 13:15 -0400 Jonas Fonseca      I Initial import of Tracer benchmark\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[main] 90286e0752016a6bca30dfa7ca236d1f99345eb8 - commit 48 of 48           100%\u001b[m\r\n|   [OK] main-goto-max-plus-2.stderr assertion\r\n"
+        },
+        {
+          "script": "test/main/mailmap-test",
+          "script_sha256": "83d27512940a1a35f0d9089321a5fbf5267ae55a6c636da9b6406f4448ed1b1c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 1,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "mailmapped.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mailmapped-diff.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/mailmap-test/.test-result",
+          "receipt": "  [OK] mailmapped.screen assertion\n[FAIL] mailmapped-diff.screen != expected/mailmapped-diff.screen\n\u001b[1mdiff --git a/expected/mailmapped-diff.screen b/mailmapped-diff.screen\u001b[m\n\u001b[1mindex 805924c..b7418a1 100644\u001b[m\n\u001b[1m--- a/expected/mailmapped-diff.screen\u001b[m\n\u001b[1m+++ b/mailmapped-diff.screen\u001b[m\n\u001b[36m@@ -1,5 +1,5 @@\u001b[m\n commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\n\u001b[31m-Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5cb3412\u001b[m\n\u001b[32m+\u001b[m\u001b[32mRefs: [master], {origin/master}, {origin/HEAD}\u001b[m\n Author:     Full Throttle <f.throttle@example.org>\u001b[m\n AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n Commit:     ¯\\_(ツ)_/¯ <omitter@example.net>\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 2 test(s)\r\n|   [OK] mailmapped.screen assertion\r\n| [FAIL] mailmapped-diff.screen != expected/mailmapped-diff.screen\r\n| \u001b[1mdiff --git a/expected/mailmapped-diff.screen b/mailmapped-diff.screen\u001b[m\r\n| \u001b[1mindex 805924c..b7418a1 100644\u001b[m\r\n| \u001b[1m--- a/expected/mailmapped-diff.screen\u001b[m\r\n| \u001b[1m+++ b/mailmapped-diff.screen\u001b[m\r\n| \u001b[36m@@ -1,5 +1,5 @@\u001b[m\r\n|  commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\r\n| \u001b[31m-Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5cb3412\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mRefs: [master], {origin/master}, {origin/HEAD}\u001b[m\r\n|  Author:     Full Throttle <f.throttle@example.org>\u001b[m\r\n|  AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n|  Commit:     ¯\\_(ツ)_/¯ <omitter@example.net>\u001b[m\r\n"
+        },
+        {
+          "script": "test/main/main-options-test",
+          "script_sha256": "dddb92e5a6a90488359c6a2f47eb84415b22308e52940f206bca268593db4fe0",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "with-10-lines.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/main-options-test/.test-result",
+          "receipt": "[FAIL] with-10-lines.screen != expected/with-10-lines.screen\n\u001b[1mdiff --git a/expected/with-10-lines.screen b/with-10-lines.screen\u001b[m\n\u001b[1mindex 6e5eb3f..6df9f1d 100644\u001b[m\n\u001b[1m--- a/expected/with-10-lines.screen\u001b[m\n\u001b[1m+++ b/with-10-lines.screen\u001b[m\n\u001b[36m@@ -8,8 +8,8 @@\u001b[m\n 2010-02-06 15:02 +0000 作者                  o Commit 9 C\u001b[m\n 2010-01-29 02:40 +0000 René Lévesque         o Commit 9 B\u001b[m\n 2010-01-20 14:18 +0000 A. U. Thor            o Commit 9 A\u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m-[main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 10            100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-12 01:56 +0000 Max Power             o Commit 8 E\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-03 13:33 +0000 Jørgen Thygesen Brahe o Commit 8 D\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-26 01:11 +0000 作者                  o Commit 8 C\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-17 12:49 +0000 René Lévesque         o <v1.0> Commit 8 B\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 50             28%\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] with-10-lines.screen != expected/with-10-lines.screen\r\n| \u001b[1mdiff --git a/expected/with-10-lines.screen b/with-10-lines.screen\u001b[m\r\n| \u001b[1mindex 6e5eb3f..6df9f1d 100644\u001b[m\r\n| \u001b[1m--- a/expected/with-10-lines.screen\u001b[m\r\n| \u001b[1m+++ b/with-10-lines.screen\u001b[m\r\n| \u001b[36m@@ -8,8 +8,8 @@\u001b[m\r\n|  2010-02-06 15:02 +0000 作者                  o Commit 9 C\u001b[m\r\n|  2010-01-29 02:40 +0000 René Lévesque         o Commit 9 B\u001b[m\r\n|  2010-01-20 14:18 +0000 A. U. Thor            o Commit 9 A\u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m-[main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 10            100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-12 01:56 +0000 Max Power             o Commit 8 E\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-03 13:33 +0000 Jørgen Thygesen Brahe o Commit 8 D\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-26 01:11 +0000 作者                  o Commit 8 C\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-17 12:49 +0000 René Lévesque         o <v1.0> Commit 8 B\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 50             28%\u001b[m\r\n"
+        },
+        {
+          "script": "test/main/merge-test",
+          "script_sha256": "57723b9fd6ed6157ecaeaa6efd30ad1ead43a4ccf039eec3ec6971351cab7d71",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 2
+          },
+          "assertions": [
+            {
+              "id": "main-with-conflict.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/merge-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] main-with-conflict.screen not found\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Unsupported history option --merge: only revision, filtering, ordering and path options are allowed\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] main-with-conflict.screen not found\r\n"
+        },
+        {
+          "script": "test/main/no-matching-commmits-test",
+          "script_sha256": "e1bf5d04ecaf3a855b65548e2a6ebe1697bc787597cfa5b97927acec79ed7bfe",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 1,
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "tig-did-not-exit-as-expected#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/no-matching-commmits-test/.test-result",
+          "receipt": "[FAIL] stderr != expected/stderr\n\u001b[1mdiff --git a/expected/stderr b/stderr\u001b[m\n\u001b[1mindex f0fa825..6d1affd 100644\u001b[m\n\u001b[1m--- a/expected/stderr\u001b[m\n\u001b[1m+++ b/stderr\u001b[m\n\u001b[36m@@ -1 +1,3 @@\u001b[m\n\u001b[31m-tig: No revisions match the given arguments.\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig: git exited with exit status: 128: fatal: ambiguous argument 'some-ref-that-does-not-exist': unknown revision or path not in the working tree.\u001b[m\n\u001b[32m+\u001b[m\u001b[32mUse '--' to separate paths from revisions, like this:\u001b[m\n\u001b[32m+\u001b[m\u001b[32m'git <command> [<revision>...] -- [<file>...]'\u001b[m\n  [OK] tig-did-not-exit-as-expected does not exist\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 2 test(s)\r\n| [FAIL] stderr != expected/stderr\r\n| \u001b[1mdiff --git a/expected/stderr b/stderr\u001b[m\r\n| \u001b[1mindex f0fa825..6d1affd 100644\u001b[m\r\n| \u001b[1m--- a/expected/stderr\u001b[m\r\n| \u001b[1m+++ b/stderr\u001b[m\r\n| \u001b[36m@@ -1 +1,3 @@\u001b[m\r\n| \u001b[31m-tig: No revisions match the given arguments.\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig: git exited with exit status: 128: fatal: ambiguous argument 'some-ref-that-does-not-exist': unknown revision or path not in the working tree.\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mUse '--' to separate paths from revisions, like this:\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m'git <command> [<revision>...] -- [<file>...]'\u001b[m\r\n|   [OK] tig-did-not-exit-as-expected does not exist\r\n"
+        },
+        {
+          "script": "test/main/no-merges-test",
+          "script_sha256": "dce74d5e289a5e7830f96e1ccede6b85bb17a5b5d7da32ba72789e0857e82a47",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "no-merges.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/no-merges-test/.test-result",
+          "receipt": "  [OK] no-merges.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/pretty-raw-test",
+          "script_sha256": "03a00e6802091e2f011df0e405fa3f586dcd37e868a42145734e6b75932d3c94",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "main-pretty-raw.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/pretty-raw-test/.test-result",
+          "receipt": "[FAIL] main-pretty-raw.screen != expected/main-pretty-raw.screen\n\u001b[1mdiff --git a/expected/main-pretty-raw.screen b/main-pretty-raw.screen\u001b[m\n\u001b[1mindex fdebeca..5437138 100644\u001b[m\n\u001b[1m--- a/expected/main-pretty-raw.screen\u001b[m\n\u001b[1m+++ b/main-pretty-raw.screen\u001b[m\n\u001b[36m@@ -1,15 +1,15 @@\u001b[m\n\u001b[31m-2010-03-29 17:15 +0000 Jørgen Thygesen Brahe Commit 10 D\u001b[m\n\u001b[31m-2010-02-15 03:24 +0000 Jørgen Thygesen Brahe Commit 9 D\u001b[m\n\u001b[31m-2010-01-03 13:33 +0000 Jørgen Thygesen Brahe Commit 8 D\u001b[m\n\u001b[31m-2009-11-21 23:43 +0000 Jørgen Thygesen Brahe Commit 7 D\u001b[m\n\u001b[31m-2009-10-10 09:52 +0000 Jørgen Thygesen Brahe Commit 6 D\u001b[m\n\u001b[31m-2009-08-28 20:01 +0000 Jørgen Thygesen Brahe Commit 5 D\u001b[m\n\u001b[31m-2009-07-17 06:10 +0000 Jørgen Thygesen Brahe Commit 4 D\u001b[m\n\u001b[31m-2009-06-04 16:19 +0000 Jørgen Thygesen Brahe Commit 3 D\u001b[m\n\u001b[31m-2009-04-23 02:28 +0000 Jørgen Thygesen Brahe Commit 2 D\u001b[m\n\u001b[31m-2009-03-11 12:38 +0000 Jørgen Thygesen Brahe Commit 1 D\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtree 4b825dc642cb6eb9a060e54bf8d69288fbee4904\u001b[m\n\u001b[32m+\u001b[m\u001b[32mparent 8d53d6a41f8540749c0db5d0b53e48d2f178dce4\u001b[m\n\u001b[32m+\u001b[m\u001b[32mauthor Jørgen Thygesen Brahe <brache@example.dk> 1269882930 +0000\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommitter Committer <c.ommitter@example.net> 1269882930 +0000\u001b[m\n \u001b[m\n\u001b[32m+\u001b[m\u001b[32m    Commit 10 D\u001b[m\n \u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit 5633519083f21695dda4fe1f546272abb80668cd\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtree 4b825dc642cb6eb9a060e54bf8d69288fbee4904\u001b[m\n\u001b[32m+\u001b[m\u001b[32mparent 711615619913109be8fd85f2c378839acaa6db11\u001b[m\n\u001b[32m+\u001b[m\u001b[32mauthor Jørgen Thygesen Brahe <brache@example.dk> 1266204280 +0000\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommitter Committer <c.ommitter@example.net> 1266204280 +0000\u001b[m\n \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m-[main] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - commit 1 of 10            100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[pager] - line 1 of 79                                                       17%\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] main-pretty-raw.screen != expected/main-pretty-raw.screen\r\n| \u001b[1mdiff --git a/expected/main-pretty-raw.screen b/main-pretty-raw.screen\u001b[m\r\n| \u001b[1mindex fdebeca..5437138 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-pretty-raw.screen\u001b[m\r\n| \u001b[1m+++ b/main-pretty-raw.screen\u001b[m\r\n| \u001b[36m@@ -1,15 +1,15 @@\u001b[m\r\n| \u001b[31m-2010-03-29 17:15 +0000 Jørgen Thygesen Brahe Commit 10 D\u001b[m\r\n| \u001b[31m-2010-02-15 03:24 +0000 Jørgen Thygesen Brahe Commit 9 D\u001b[m\r\n| \u001b[31m-2010-01-03 13:33 +0000 Jørgen Thygesen Brahe Commit 8 D\u001b[m\r\n| \u001b[31m-2009-11-21 23:43 +0000 Jørgen Thygesen Brahe Commit 7 D\u001b[m\r\n| \u001b[31m-2009-10-10 09:52 +0000 Jørgen Thygesen Brahe Commit 6 D\u001b[m\r\n| \u001b[31m-2009-08-28 20:01 +0000 Jørgen Thygesen Brahe Commit 5 D\u001b[m\r\n| \u001b[31m-2009-07-17 06:10 +0000 Jørgen Thygesen Brahe Commit 4 D\u001b[m\r\n| \u001b[31m-2009-06-04 16:19 +0000 Jørgen Thygesen Brahe Commit 3 D\u001b[m\r\n| \u001b[31m-2009-04-23 02:28 +0000 Jørgen Thygesen Brahe Commit 2 D\u001b[m\r\n| \u001b[31m-2009-03-11 12:38 +0000 Jørgen Thygesen Brahe Commit 1 D\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtree 4b825dc642cb6eb9a060e54bf8d69288fbee4904\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mparent 8d53d6a41f8540749c0db5d0b53e48d2f178dce4\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mauthor Jørgen Thygesen Brahe <brache@example.dk> 1269882930 +0000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommitter Committer <c.ommitter@example.net> 1269882930 +0000\u001b[m\r\n|  \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    Commit 10 D\u001b[m\r\n|  \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit 5633519083f21695dda4fe1f546272abb80668cd\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtree 4b825dc642cb6eb9a060e54bf8d69288fbee4904\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mparent 711615619913109be8fd85f2c378839acaa6db11\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mauthor Jørgen Thygesen Brahe <brache@example.dk> 1266204280 +0000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommitter Committer <c.ommitter@example.net> 1266204280 +0000\u001b[m\r\n|  \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m-[main] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - commit 1 of 10            100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[pager] - line 1 of 79                                                       17%\u001b[m\r\n"
+        },
+        {
+          "script": "test/main/refresh-periodic-test",
+          "script_sha256": "f7d8f6eb6ae2ba733d210d52f5140d14ce23a765961fa8a8c561dfe257e5446c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commiting-change-and-sleeping-hello.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commiting-change-and-sleeping-world.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/refresh-periodic-test/.test-result",
+          "receipt": "  [OK] main-with-unstaged.screen assertion\n  [OK] main-after-add-a.screen assertion\n  [OK] main-after-commit.screen assertion\n  [OK] main-after-commiting-change-and-sleeping-hello.screen assertion\n  [OK] main-after-commiting-change-and-sleeping-world.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/refresh-test",
+          "script_sha256": "299ee5ce1fc8fd738059aa30604c50411c876e8c0a7035684056f85b94b79111",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 7,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-all.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-soft.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-a-and-bc.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-hard.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-tag.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/refresh-test/.test-result",
+          "receipt": "  [OK] main-with-unstaged.screen assertion\n  [OK] main-after-add-a.screen assertion\n  [OK] main-after-add-all.screen assertion\n  [OK] main-after-commit.screen assertion\n  [OK] main-after-reset-soft.screen assertion\n  [OK] main-after-reset-a-and-bc.screen assertion\n  [OK] main-after-reset-hard.screen assertion\n[FAIL] main-after-tag.screen not found\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 8 test(s)\r\n|   [OK] main-with-unstaged.screen assertion\r\n|   [OK] main-after-add-a.screen assertion\r\n|   [OK] main-after-add-all.screen assertion\r\n|   [OK] main-after-commit.screen assertion\r\n|   [OK] main-after-reset-soft.screen assertion\r\n|   [OK] main-after-reset-a-and-bc.screen assertion\r\n|   [OK] main-after-reset-hard.screen assertion\r\n| [FAIL] main-after-tag.screen not found\r\n"
+        },
+        {
+          "script": "test/main/search-preload-test",
+          "script_sha256": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "skip",
+          "reasons": [],
+          "checks": {},
+          "assertions": [],
+          "receipt_path": "test/tmp/main/search-preload-test/.test-result",
+          "receipt": "",
+          "skip": "The test requires a tig compiled with readline\n",
+          "skipped_cases": {},
+          "transcript": "[skipped] The test requires a tig compiled with readline\r\n"
+        },
+        {
+          "script": "test/main/search-test",
+          "script_sha256": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-search-author.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-empty.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-find-next.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title-no-match.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-time.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-smart-case.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/search-test/.test-result",
+          "receipt": "  [OK] main-search-author.screen assertion\n  [OK] main-search-author-empty.screen assertion\n  [OK] main-search-author-find-next.screen assertion\n  [OK] main-search-title.screen assertion\n  [OK] main-search-title-no-match.screen assertion\n  [OK] main-search-refs.screen assertion\n  [OK] main-search-time.screen assertion\n  [OK] main-search-smart-case.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/show-changes-after-rename-test",
+          "script_sha256": "667f4b735c4588dff1445d4901d899c1bbfdfc278713d54c1b38182d725ef2b4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "default.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/show-changes-after-rename-test/.test-result",
+          "receipt": "  [OK] default.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/show-changes-test",
+          "script_sha256": "243aabd40fe83a59940f0289d19596d94d1cd7fccc088e3f1116f79b0e13b709",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 9
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-and-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-and-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-renamed.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-all-refs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/show-changes-test/.test-result",
+          "receipt": "  [OK] main-with-unstaged.screen assertion\n  [OK] main-with-unstaged-split.screen assertion\n  [OK] main-with-unstaged-and-staged-split.screen assertion\n  [OK] main-with-staged.screen assertion\n  [OK] main-with-staged-split.screen assertion\n  [OK] main-with-staged-and-unstaged.screen assertion\n  [OK] main-with-renamed.screen assertion\n  [OK] main-with-conflict.screen assertion\n  [OK] main-all-refs.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/start-on-line-test",
+          "script_sha256": "09118ca562b3167b5ced4913185fe7e8b99062f40e7ce4a9a97091a92219187d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/start-on-line-test/.test-result",
+          "receipt": "  [OK] position.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/stdin-test",
+          "script_sha256": "5b3882f86125941300e9d641670dba620ee0a2bfa69af5405e240f1f0a15eda7",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "main-stdin.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/stdin-test/.test-result",
+          "receipt": "[FAIL] main-stdin.screen != expected/main-stdin.screen\n\u001b[1mdiff --git a/expected/main-stdin.screen b/main-stdin.screen\u001b[m\n\u001b[1mindex 905b4a8..7b8259b 100644\u001b[m\n\u001b[1m--- a/expected/main-stdin.screen\u001b[m\n\u001b[1m+++ b/main-stdin.screen\u001b[m\n\u001b[36m@@ -1,8 +1,8 @@\u001b[m\n\u001b[31m-2010-01-12 01:56 +0000 Max Power             Commit 8 E\u001b[m\n\u001b[31m-2010-01-03 13:33 +0000 Jørgen Thygesen Brahe Commit 8 D\u001b[m\n\u001b[31m-2009-12-26 01:11 +0000 作者                  Commit 8 C\u001b[m\n\u001b[31m-2009-12-17 12:49 +0000 René Lévesque         <v1.0> Commit 8 B\u001b[m\n\u001b[31m-2009-12-09 00:27 +0000 A. U. Thor            Commit 8 A\u001b[m\n\u001b[32m+\u001b[m\u001b[32md9a8c8b1e52ba7f1673cebb271f1fc0bdac3579b\u001b[m\n\u001b[32m+\u001b[m\u001b[32m545eb1fa92b902b6799e2a1691419c3158254a0a\u001b[m\n\u001b[32m+\u001b[m\u001b[32mb45b5704c34dbd4c5fd89d58d45238ad136ae166\u001b[m\n\u001b[32m+\u001b[m\u001b[32m957f2b368e6fa5c0757f36b1441e32729ee5e9c7\u001b[m\n\u001b[32m+\u001b[m\u001b[32mbb547b114762a30235cee10ca364edcef8c2595c\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[36m@@ -12,4 +12,4 @@\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[31m-[main] d9a8c8b1e52ba7f1673cebb271f1fc0bdac3579b - commit 1 of 5             100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[pager] - line 1 of 5                                                       100%\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] main-stdin.screen != expected/main-stdin.screen\r\n| \u001b[1mdiff --git a/expected/main-stdin.screen b/main-stdin.screen\u001b[m\r\n| \u001b[1mindex 905b4a8..7b8259b 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-stdin.screen\u001b[m\r\n| \u001b[1m+++ b/main-stdin.screen\u001b[m\r\n| \u001b[36m@@ -1,8 +1,8 @@\u001b[m\r\n| \u001b[31m-2010-01-12 01:56 +0000 Max Power             Commit 8 E\u001b[m\r\n| \u001b[31m-2010-01-03 13:33 +0000 Jørgen Thygesen Brahe Commit 8 D\u001b[m\r\n| \u001b[31m-2009-12-26 01:11 +0000 作者                  Commit 8 C\u001b[m\r\n| \u001b[31m-2009-12-17 12:49 +0000 René Lévesque         <v1.0> Commit 8 B\u001b[m\r\n| \u001b[31m-2009-12-09 00:27 +0000 A. U. Thor            Commit 8 A\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32md9a8c8b1e52ba7f1673cebb271f1fc0bdac3579b\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m545eb1fa92b902b6799e2a1691419c3158254a0a\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mb45b5704c34dbd4c5fd89d58d45238ad136ae166\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m957f2b368e6fa5c0757f36b1441e32729ee5e9c7\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mbb547b114762a30235cee10ca364edcef8c2595c\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[36m@@ -12,4 +12,4 @@\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-[main] d9a8c8b1e52ba7f1673cebb271f1fc0bdac3579b - commit 1 of 5             100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[pager] - line 1 of 5                                                       100%\u001b[m\r\n"
+        },
+        {
+          "script": "test/main/submodule-test",
+          "script_sha256": "ae7a945fee6bf5676a0435fb3335e92ca8c2f61f823e9a188ed06f36f91c340b",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 1,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "main-submodule.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-submodule-diff.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/submodule-test/.test-result",
+          "receipt": "  [OK] main-submodule.screen assertion\n[FAIL] main-submodule-diff.screen != expected/main-submodule-diff.screen\n\u001b[1mdiff --git a/expected/main-submodule-diff.screen b/main-submodule-diff.screen\u001b[m\n\u001b[1mindex e50b0ed..dbd6a95 100644\u001b[m\n\u001b[1m--- a/expected/main-submodule-diff.screen\u001b[m\n\u001b[1m+++ b/main-submodule-diff.screen\u001b[m\n\u001b[36m@@ -21,26 +21,26 @@\u001b[m \u001b[mCommitDate: Sun Sep 6 08:23:30 2009 +0000\u001b[m\n  repo-two-c | 2 +-\u001b[m\n  3 files changed, 3 insertions(+), 3 deletions(-)\u001b[m\n \u001b[m\n\u001b[31m-Submodule repo-two-a a1d2fa2..598d4e4:\u001b[m\n\u001b[31m-  > [repo-two-a] Commit 5\u001b[m\n\u001b[31m-Submodule repo-two-b f3866fb..8ab92f1:\u001b[m\n\u001b[31m-  > [repo-two-b] Commit 5\u001b[m\n\u001b[31m-Submodule repo-two-c cd41885..e4b7821:\u001b[m\n\u001b[31m-  > [repo-two-c] Commit 5\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-[diff] feeb2dfd5e09e887e4b6c901e7d91a4c85a7831d - line 1 of 20              100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdiff --git a/repo-two-a b/repo-two-a\u001b[m\n\u001b[32m+\u001b[m\u001b[32mindex a1d2fa2..598d4e4 160000\u001b[m\n\u001b[32m+\u001b[m\u001b[32m--- a/repo-two-a\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+++ b/repo-two-a\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -1 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-Subproject commit a1d2fa223a5f983adaad9a22df5c518aefba1d07\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+Subproject commit 598d4e4d8b652f28e7b78fd4f95124fadb10efcf\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdiff --git a/repo-two-b b/repo-two-b\u001b[m\n\u001b[32m+\u001b[m\u001b[32mindex f3866fb..8ab92f1 160000\u001b[m\n\u001b[32m+\u001b[m\u001b[32m--- a/repo-two-b\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+++ b/repo-two-b\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -1 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-Subproject commit f3866fb983d82c8fc2b01423dde37084f59385d5\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+Subproject commit 8ab92f1f22470039668eb12d405e4356dcae8305\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdiff --git a/repo-two-c b/repo-two-c\u001b[m\n\u001b[32m+\u001b[m\u001b[32mindex cd41885..e4b7821 160000\u001b[m\n\u001b[32m+\u001b[m\u001b[32m--- a/repo-two-c\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+++ b/repo-two-c\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -1 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-Subproject commit cd41885fa2b86fa6aae5308bba55c76a97498dcc\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+Subproject commit e4b78219ea174bc0c7f97024cf18fc1e6c08013a\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[diff] feeb2dfd5e09e887e4b6c901e7d91a4c85a7831d - line 1 of 35              100%\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 2 test(s)\r\n|   [OK] main-submodule.screen assertion\r\n| [FAIL] main-submodule-diff.screen != expected/main-submodule-diff.screen\r\n| \u001b[1mdiff --git a/expected/main-submodule-diff.screen b/main-submodule-diff.screen\u001b[m\r\n| \u001b[1mindex e50b0ed..dbd6a95 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-submodule-diff.screen\u001b[m\r\n| \u001b[1m+++ b/main-submodule-diff.screen\u001b[m\r\n| \u001b[36m@@ -21,26 +21,26 @@\u001b[m \u001b[mCommitDate: Sun Sep 6 08:23:30 2009 +0000\u001b[m\r\n|   repo-two-c | 2 +-\u001b[m\r\n|   3 files changed, 3 insertions(+), 3 deletions(-)\u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-Submodule repo-two-a a1d2fa2..598d4e4:\u001b[m\r\n| \u001b[31m-  > [repo-two-a] Commit 5\u001b[m\r\n| \u001b[31m-Submodule repo-two-b f3866fb..8ab92f1:\u001b[m\r\n| \u001b[31m-  > [repo-two-b] Commit 5\u001b[m\r\n| \u001b[31m-Submodule repo-two-c cd41885..e4b7821:\u001b[m\r\n| \u001b[31m-  > [repo-two-c] Commit 5\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-[diff] feeb2dfd5e09e887e4b6c901e7d91a4c85a7831d - line 1 of 20              100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdiff --git a/repo-two-a b/repo-two-a\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mindex a1d2fa2..598d4e4 160000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m--- a/repo-two-a\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+++ b/repo-two-a\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m@@ -1 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-Subproject commit a1d2fa223a5f983adaad9a22df5c518aefba1d07\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+Subproject commit 598d4e4d8b652f28e7b78fd4f95124fadb10efcf\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdiff --git a/repo-two-b b/repo-two-b\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mindex f3866fb..8ab92f1 160000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m--- a/repo-two-b\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+++ b/repo-two-b\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m@@ -1 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-Subproject commit f3866fb983d82c8fc2b01423dde37084f59385d5\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+Subproject commit 8ab92f1f22470039668eb12d405e4356dcae8305\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdiff --git a/repo-two-c b/repo-two-c\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mindex cd41885..e4b7821 160000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m--- a/repo-two-c\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+++ b/repo-two-c\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m@@ -1 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-Subproject commit cd41885fa2b86fa6aae5308bba55c76a97498dcc\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+Subproject commit e4b78219ea174bc0c7f97024cf18fc1e6c08013a\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[diff] feeb2dfd5e09e887e4b6c901e7d91a4c85a7831d - line 1 of 35              100%\u001b[m\r\n"
+        },
+        {
+          "script": "test/main/unbind-default-quit-key-test",
+          "script_sha256": "7853b856078605aebae6dd66f193eefb32320c2439ab3077020deac54bf4baf3",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 2,
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "work-dir/gh-483-main-q-noquit#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "work-dir/gh-483-generic-qb-executed#1",
+              "status": "OK"
+            },
+            {
+              "id": "work-dir/gh-483-main-qa-executed#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/unbind-default-quit-key-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] work-dir/gh-483-main-q-noquit should not exist\n  [OK] work-dir/gh-483-generic-qb-executed does not exist\n  [OK] work-dir/gh-483-main-qa-executed does not exist\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 2 out of 4 test(s)\r\n| [stderr] tig: Not implemented in Rust yet: none\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] work-dir/gh-483-main-q-noquit should not exist\r\n|   [OK] work-dir/gh-483-generic-qb-executed does not exist\r\n|   [OK] work-dir/gh-483-main-qa-executed does not exist\r\n"
+        },
+        {
+          "script": "test/main/untracked-test",
+          "script_sha256": "1903b8792865653883d9590fcd7f876a94823fa89e350b7e1d81c32d365ea13f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/untracked-test/.test-result",
+          "receipt": "  [OK] start.screen assertion\n  [OK] result.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/update-unstaged-changes-test",
+          "script_sha256": "241f169bbd0c507256bb23b2a56963cd1dafd3325a642693d7f21c5ef871ce8c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/update-unstaged-changes-test/.test-result",
+          "receipt": "  [OK] start.screen assertion\n  [OK] result.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/vertical-lines-test",
+          "script_sha256": "70db7c2628291db5ea02a0a15759bcf547790067ea981b15e068c6ea738fd5fc",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 3
+          },
+          "assertions": [
+            {
+              "id": "main-verticals-ascii.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "main-verticals-default.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "main-verticals-utf8.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/vertical-lines-test/.test-result",
+          "receipt": "[FAIL] main-verticals-ascii.screen != expected/main-verticals-ascii.screen\n\u001b[1mdiff --git a/expected/main-verticals-ascii.screen b/main-verticals-ascii.screen\u001b[m\n\u001b[1mindex 3a9d90d..bcdfd4d 100644\u001b[m\n\u001b[1m--- a/expected/main-verticals-ascii.screen\u001b[m\n\u001b[1m+++ b/main-verticals-ascii.screen\u001b[m\n\u001b[36m@@ -1,17 +1,17 @@\u001b[m\n\u001b[31m-  1| 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac\u001b[m\n\u001b[31m-   | 2010-03-29 17:15 +0000 Jørgen Thy~ |   | Refs: [master], {origin/master}, {\u001b[m\n\u001b[31m-   | 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex\u001b[m\n\u001b[31m-   | 2010-03-12 16:31 +0000 René Léves~ |   | AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[31m-  5| 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@\u001b[m\n\u001b[31m-   | 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[31m-   | 2010-02-15 03:24 +0000 Jørgen Thy~ |   |\u001b[m\n\u001b[31m-   | 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E\u001b[m\n\u001b[31m-   | 2010-01-29 02:40 +0000 René Léves~ |\u001b[m\n\u001b[31m- 10| 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\n\u001b[31m-   | 2010-01-12 01:56 +0000 Max Power   |\u001b[m\n\u001b[31m-   | 2010-01-03 13:33 +0000 Jørgen Thy~ |\u001b[m\n\u001b[31m-   | 2009-12-26 01:11 +0000 作者        |\u001b[m\n\u001b[31m-   | 2009-12-17 12:49 +0000 René Léves~ |\u001b[m\n\u001b[31m- 15| 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\n\u001b[31m-   | 2009-11-30 12:05 +0000 Max Power   |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m  1│ 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   | Refs: [master], {origin/master}, {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-12 16:31 +0000 René Lévesqu|   | AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[32m+\u001b[m\u001b[32m  5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   |\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-29 02:40 +0000 René Lévesqu|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 10│ 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-12 01:56 +0000 Max Power   |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-03 13:33 +0000 Jørgen Thyge|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2009-12-26 01:11 +0000 作者        |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2009-12-17 12:49 +0000 René Lévesqu|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 15│ 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2009-11-30 12:05 +0000 Max Power   |\u001b[m\n [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%\u001b[m\n[FAIL] main-verticals-default.screen != expected/main-verticals-default.screen\n\u001b[1mdiff --git a/expected/main-verticals-default.screen b/main-verticals-default.screen\u001b[m\n\u001b[1mindex 8a13299..bcdfd4d 100644\u001b[m\n\u001b[1m--- a/expected/main-verticals-default.screen\u001b[m\n\u001b[1m+++ b/main-verticals-default.screen\u001b[m\n\u001b[36m@@ -1,17 +1,17 @@\u001b[m\n\u001b[31m-  1x 2010-04-07 05:37 +0000 Max Power   |  1x commit 5cb3412a5e06e506840495b91ac\u001b[m\n\u001b[31m-   x 2010-03-29 17:15 +0000 Jørgen Thy~ |   x Refs: [master], {origin/master}, {\u001b[m\n\u001b[31m-   x 2010-03-21 04:53 +0000 作者        |   x Author:     Max Power <power123@ex\u001b[m\n\u001b[31m-   x 2010-03-12 16:31 +0000 René Léves~ |   x AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[31m-  5x 2010-03-04 04:09 +0000 A. U. Thor  |  5x Commit:     Committer <c.ommitter@\u001b[m\n\u001b[31m-   x 2010-02-23 15:46 +0000 Max Power   |   x CommitDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[31m-   x 2010-02-15 03:24 +0000 Jørgen Thy~ |   x\u001b[m\n\u001b[31m-   x 2010-02-06 15:02 +0000 作者        |   x     Commit 10 E\u001b[m\n\u001b[31m-   x 2010-01-29 02:40 +0000 René Léves~ |\u001b[m\n\u001b[31m- 10x 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\n\u001b[31m-   x 2010-01-12 01:56 +0000 Max Power   |\u001b[m\n\u001b[31m-   x 2010-01-03 13:33 +0000 Jørgen Thy~ |\u001b[m\n\u001b[31m-   x 2009-12-26 01:11 +0000 作者        |\u001b[m\n\u001b[31m-   x 2009-12-17 12:49 +0000 René Léves~ |\u001b[m\n\u001b[31m- 15x 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\n\u001b[31m-   x 2009-11-30 12:05 +0000 Max Power   |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m  1│ 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   | Refs: [master], {origin/master}, {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-12 16:31 +0000 René Lévesqu|   | AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[32m+\u001b[m\u001b[32m  5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   |\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-29 02:40 +0000 René Lévesqu|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 10│ 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-12 01:56 +0000 Max Power   |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-03 13:33 +0000 Jørgen Thyge|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2009-12-26 01:11 +0000 作者        |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2009-12-17 12:49 +0000 René Lévesqu|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 15│ 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2009-11-30 12:05 +0000 Max Power   |\u001b[m\n [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%\u001b[m\n[FAIL] main-verticals-utf8.screen != expected/main-verticals-utf8.screen\n\u001b[1mdiff --git a/expected/main-verticals-utf8.screen b/main-verticals-utf8.screen\u001b[m\n\u001b[1mindex 6a3007c..3ae17ee 100644\u001b[m\n\u001b[1m--- a/expected/main-verticals-utf8.screen\u001b[m\n\u001b[1m+++ b/main-verticals-utf8.screen\u001b[m\n\u001b[36m@@ -1,17 +1,17 @@\u001b[m\n   1│ 2010-04-07 05:37 +0000 Max Power   |  1│ commit 5cb3412a5e06e506840495b91ac\u001b[m\n\u001b[31m-   │ 2010-03-29 17:15 +0000 Jørgen Thy~ |   │ Refs: [master], {origin/master}, {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   │ Refs: [master], {origin/master}, {\u001b[m\n    │ 2010-03-21 04:53 +0000 作者        |   │ Author:     Max Power <power123@ex\u001b[m\n\u001b[31m-   │ 2010-03-12 16:31 +0000 René Léves~ |   │ AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-12 16:31 +0000 René Lévesqu|   │ AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\n   5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5│ Commit:     Committer <c.ommitter@\u001b[m\n    │ 2010-02-23 15:46 +0000 Max Power   |   │ CommitDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[31m-   │ 2010-02-15 03:24 +0000 Jørgen Thy~ |   │\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   │\u001b[m\u001b[41m \u001b[m\n    │ 2010-02-06 15:02 +0000 作者        |   │     Commit 10 E\u001b[m\n\u001b[31m-   │ 2010-01-29 02:40 +0000 René Léves~ |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-29 02:40 +0000 René Lévesqu|\u001b[m\n  10│ 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\n    │ 2010-01-12 01:56 +0000 Max Power   |\u001b[m\n\u001b[31m-   │ 2010-01-03 13:33 +0000 Jørgen Thy~ |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-03 13:33 +0000 Jørgen Thyge|\u001b[m\n    │ 2009-12-26 01:11 +0000 作者        |\u001b[m\n\u001b[31m-   │ 2009-12-17 12:49 +0000 René Léves~ |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2009-12-17 12:49 +0000 René Lévesqu|\u001b[m\n  15│ 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\n    │ 2009-11-30 12:05 +0000 Max Power   |\u001b[m\n [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 3 out of 3 test(s)\r\n| [FAIL] main-verticals-ascii.screen != expected/main-verticals-ascii.screen\r\n| \u001b[1mdiff --git a/expected/main-verticals-ascii.screen b/main-verticals-ascii.screen\u001b[m\r\n| \u001b[1mindex 3a9d90d..bcdfd4d 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-verticals-ascii.screen\u001b[m\r\n| \u001b[1m+++ b/main-verticals-ascii.screen\u001b[m\r\n| \u001b[36m@@ -1,17 +1,17 @@\u001b[m\r\n| \u001b[31m-  1| 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac\u001b[m\r\n| \u001b[31m-   | 2010-03-29 17:15 +0000 Jørgen Thy~ |   | Refs: [master], {origin/master}, {\u001b[m\r\n| \u001b[31m-   | 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex\u001b[m\r\n| \u001b[31m-   | 2010-03-12 16:31 +0000 René Léves~ |   | AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[31m-  5| 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@\u001b[m\r\n| \u001b[31m-   | 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[31m-   | 2010-02-15 03:24 +0000 Jørgen Thy~ |   |\u001b[m\r\n| \u001b[31m-   | 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E\u001b[m\r\n| \u001b[31m-   | 2010-01-29 02:40 +0000 René Léves~ |\u001b[m\r\n| \u001b[31m- 10| 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[31m-   | 2010-01-12 01:56 +0000 Max Power   |\u001b[m\r\n| \u001b[31m-   | 2010-01-03 13:33 +0000 Jørgen Thy~ |\u001b[m\r\n| \u001b[31m-   | 2009-12-26 01:11 +0000 作者        |\u001b[m\r\n| \u001b[31m-   | 2009-12-17 12:49 +0000 René Léves~ |\u001b[m\r\n| \u001b[31m- 15| 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[31m-   | 2009-11-30 12:05 +0000 Max Power   |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m  1│ 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   | Refs: [master], {origin/master}, {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-12 16:31 +0000 René Lévesqu|   | AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m  5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   |\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-29 02:40 +0000 René Lévesqu|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 10│ 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-12 01:56 +0000 Max Power   |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-03 13:33 +0000 Jørgen Thyge|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2009-12-26 01:11 +0000 作者        |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2009-12-17 12:49 +0000 René Lévesqu|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 15│ 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2009-11-30 12:05 +0000 Max Power   |\u001b[m\r\n|  [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%\u001b[m\r\n| [FAIL] main-verticals-default.screen != expected/main-verticals-default.screen\r\n| \u001b[1mdiff --git a/expected/main-verticals-default.screen b/main-verticals-default.screen\u001b[m\r\n| \u001b[1mindex 8a13299..bcdfd4d 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-verticals-default.screen\u001b[m\r\n| \u001b[1m+++ b/main-verticals-default.screen\u001b[m\r\n| \u001b[36m@@ -1,17 +1,17 @@\u001b[m\r\n| \u001b[31m-  1x 2010-04-07 05:37 +0000 Max Power   |  1x commit 5cb3412a5e06e506840495b91ac\u001b[m\r\n| \u001b[31m-   x 2010-03-29 17:15 +0000 Jørgen Thy~ |   x Refs: [master], {origin/master}, {\u001b[m\r\n| \u001b[31m-   x 2010-03-21 04:53 +0000 作者        |   x Author:     Max Power <power123@ex\u001b[m\r\n| \u001b[31m-   x 2010-03-12 16:31 +0000 René Léves~ |   x AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[31m-  5x 2010-03-04 04:09 +0000 A. U. Thor  |  5x Commit:     Committer <c.ommitter@\u001b[m\r\n| \u001b[31m-   x 2010-02-23 15:46 +0000 Max Power   |   x CommitDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[31m-   x 2010-02-15 03:24 +0000 Jørgen Thy~ |   x\u001b[m\r\n| \u001b[31m-   x 2010-02-06 15:02 +0000 作者        |   x     Commit 10 E\u001b[m\r\n| \u001b[31m-   x 2010-01-29 02:40 +0000 René Léves~ |\u001b[m\r\n| \u001b[31m- 10x 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[31m-   x 2010-01-12 01:56 +0000 Max Power   |\u001b[m\r\n| \u001b[31m-   x 2010-01-03 13:33 +0000 Jørgen Thy~ |\u001b[m\r\n| \u001b[31m-   x 2009-12-26 01:11 +0000 作者        |\u001b[m\r\n| \u001b[31m-   x 2009-12-17 12:49 +0000 René Léves~ |\u001b[m\r\n| \u001b[31m- 15x 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[31m-   x 2009-11-30 12:05 +0000 Max Power   |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m  1│ 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   | Refs: [master], {origin/master}, {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-12 16:31 +0000 René Lévesqu|   | AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m  5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   |\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-29 02:40 +0000 René Lévesqu|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 10│ 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-12 01:56 +0000 Max Power   |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-03 13:33 +0000 Jørgen Thyge|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2009-12-26 01:11 +0000 作者        |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2009-12-17 12:49 +0000 René Lévesqu|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 15│ 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2009-11-30 12:05 +0000 Max Power   |\u001b[m\r\n|  [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%\u001b[m\r\n| [FAIL] main-verticals-utf8.screen != expected/main-verticals-utf8.screen\r\n| \u001b[1mdiff --git a/expected/main-verticals-utf8.screen b/main-verticals-utf8.screen\u001b[m\r\n| \u001b[1mindex 6a3007c..3ae17ee 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-verticals-utf8.screen\u001b[m\r\n| \u001b[1m+++ b/main-verticals-utf8.screen\u001b[m\r\n| \u001b[36m@@ -1,17 +1,17 @@\u001b[m\r\n|    1│ 2010-04-07 05:37 +0000 Max Power   |  1│ commit 5cb3412a5e06e506840495b91ac\u001b[m\r\n| \u001b[31m-   │ 2010-03-29 17:15 +0000 Jørgen Thy~ |   │ Refs: [master], {origin/master}, {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   │ Refs: [master], {origin/master}, {\u001b[m\r\n|     │ 2010-03-21 04:53 +0000 作者        |   │ Author:     Max Power <power123@ex\u001b[m\r\n| \u001b[31m-   │ 2010-03-12 16:31 +0000 René Léves~ |   │ AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-12 16:31 +0000 René Lévesqu|   │ AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\r\n|    5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5│ Commit:     Committer <c.ommitter@\u001b[m\r\n|     │ 2010-02-23 15:46 +0000 Max Power   |   │ CommitDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[31m-   │ 2010-02-15 03:24 +0000 Jørgen Thy~ |   │\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   │\u001b[m\u001b[41m \u001b[m\r\n|     │ 2010-02-06 15:02 +0000 作者        |   │     Commit 10 E\u001b[m\r\n| \u001b[31m-   │ 2010-01-29 02:40 +0000 René Léves~ |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-29 02:40 +0000 René Lévesqu|\u001b[m\r\n|   10│ 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\r\n|     │ 2010-01-12 01:56 +0000 Max Power   |\u001b[m\r\n| \u001b[31m-   │ 2010-01-03 13:33 +0000 Jørgen Thy~ |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-03 13:33 +0000 Jørgen Thyge|\u001b[m\r\n|     │ 2009-12-26 01:11 +0000 作者        |\u001b[m\r\n| \u001b[31m-   │ 2009-12-17 12:49 +0000 René Léves~ |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2009-12-17 12:49 +0000 René Lévesqu|\u001b[m\r\n|   15│ 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\r\n|     │ 2009-11-30 12:05 +0000 Max Power   |\u001b[m\r\n|  [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%\u001b[m\r\n"
+        },
+        {
+          "script": "test/main/view-split-test",
+          "script_sha256": "1893d1cec14ce3191fe06aca35c9f3e71891bb61f40b8cedb645bc52b82a16f4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 1,
+            "FAIL": 3
+          },
+          "assertions": [
+            {
+              "id": "main-vsplit-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-vsplit-25-75.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "main-hsplit-default.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "main-hsplit-50-50.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/view-split-test/.test-result",
+          "receipt": "  [OK] main-vsplit-default.screen assertion\n[FAIL] main-vsplit-25-75.screen != expected/main-vsplit-25-75.screen\n\u001b[1mdiff --git a/expected/main-vsplit-25-75.screen b/main-vsplit-25-75.screen\u001b[m\n\u001b[1mindex 6a136ae..3d724a9 100644\u001b[m\n\u001b[1m--- a/expected/main-vsplit-25-75.screen\u001b[m\n\u001b[1m+++ b/main-vsplit-25-75.screen\u001b[m\n\u001b[36m@@ -1,17 +1,17 @@\u001b[m\n\u001b[31m-2010-04-07 05:37 +0 |commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\n\u001b[31m-2010-03-29 17:15 +0 |Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5c\u001b[m\n\u001b[31m-2010-03-21 04:53 +0 |Author:     Max Power <power123@example.org>\u001b[m\n\u001b[31m-2010-03-12 16:31 +0 |AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n\u001b[31m-2010-03-04 04:09 +0 |Commit:     Committer <c.ommitter@example.net>\u001b[m\n\u001b[31m-2010-02-23 15:46 +0 |CommitDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n\u001b[31m-2010-02-15 03:24 +0 |\u001b[m\n\u001b[31m-2010-02-06 15:02 +0 |    Commit 10 E\u001b[m\n\u001b[31m-2010-01-29 02:40 +0 |\u001b[m\n\u001b[31m-2010-01-20 14:18 +0 |\u001b[m\n\u001b[31m-2010-01-12 01:56 +0 |\u001b[m\n\u001b[31m-2010-01-03 13:33 +0 |\u001b[m\n\u001b[31m-2009-12-26 01:11 +0 |\u001b[m\n\u001b[31m-2009-12-17 12:49 +0 |\u001b[m\n\u001b[31m-2009-12-09 00:27 +0 |\u001b[m\n\u001b[31m-2009-11-30 12:05 +0 |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-04-07 05:37 +00|commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-29 17:15 +00|Refs: [master], {origin/master}, {origin/HEAD}\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-21 04:53 +00|Author:     Max Power <power123@example.org>\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-12 16:31 +00|AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-04 04:09 +00|Commit:     Committer <c.ommitter@example.net>\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-02-23 15:46 +00|CommitDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-02-15 03:24 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-02-06 15:02 +00|    Commit 10 E\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-29 02:40 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-20 14:18 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-12 01:56 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-03 13:33 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-26 01:11 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-17 12:49 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-09 00:27 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-11-30 12:05 +00|\u001b[m\n [main] 5cb3412a5 32%|[diff] 5cb3412a5e06e506840495b91acc885037a48b72 - line 100%\u001b[m\n[FAIL] main-hsplit-default.screen != expected/main-hsplit-default.screen\n\u001b[1mdiff --git a/expected/main-hsplit-default.screen b/main-hsplit-default.screen\u001b[m\n\u001b[1mindex a33b33e..18606b0 100644\u001b[m\n\u001b[1m--- a/expected/main-hsplit-default.screen\u001b[m\n\u001b[1m+++ b/main-hsplit-default.screen\u001b[m\n\u001b[36m@@ -5,7 +5,7 @@\u001b[m\n 2010-03-04 04:09 +0000 A. U. Thor            o Commit 10 A\u001b[m\n [main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 50             10%\u001b[m\n commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\n\u001b[31m-Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5cb3412\u001b[m\n\u001b[32m+\u001b[m\u001b[32mRefs: [master], {origin/master}, {origin/HEAD}\u001b[m\n Author:     Max Power <power123@example.org>\u001b[m\n AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n Commit:     Committer <c.ommitter@example.net>\u001b[m\n[FAIL] main-hsplit-50-50.screen != expected/main-hsplit-50-50.screen\n\u001b[1mdiff --git a/expected/main-hsplit-50-50.screen b/main-hsplit-50-50.screen\u001b[m\n\u001b[1mindex 226db63..936278c 100644\u001b[m\n\u001b[1m--- a/expected/main-hsplit-50-50.screen\u001b[m\n\u001b[1m+++ b/main-hsplit-50-50.screen\u001b[m\n\u001b[36m@@ -8,7 +8,7 @@\u001b[m\n 2010-02-06 15:02 +0000 作者                  o Commit 9 C\u001b[m\n [main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 50             16%\u001b[m\n commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\n\u001b[31m-Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5cb3412\u001b[m\n\u001b[32m+\u001b[m\u001b[32mRefs: [master], {origin/master}, {origin/HEAD}\u001b[m\n Author:     Max Power <power123@example.org>\u001b[m\n AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n Commit:     Committer <c.ommitter@example.net>\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 3 out of 4 test(s)\r\n|   [OK] main-vsplit-default.screen assertion\r\n| [FAIL] main-vsplit-25-75.screen != expected/main-vsplit-25-75.screen\r\n| \u001b[1mdiff --git a/expected/main-vsplit-25-75.screen b/main-vsplit-25-75.screen\u001b[m\r\n| \u001b[1mindex 6a136ae..3d724a9 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-vsplit-25-75.screen\u001b[m\r\n| \u001b[1m+++ b/main-vsplit-25-75.screen\u001b[m\r\n| \u001b[36m@@ -1,17 +1,17 @@\u001b[m\r\n| \u001b[31m-2010-04-07 05:37 +0 |commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\r\n| \u001b[31m-2010-03-29 17:15 +0 |Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5c\u001b[m\r\n| \u001b[31m-2010-03-21 04:53 +0 |Author:     Max Power <power123@example.org>\u001b[m\r\n| \u001b[31m-2010-03-12 16:31 +0 |AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n| \u001b[31m-2010-03-04 04:09 +0 |Commit:     Committer <c.ommitter@example.net>\u001b[m\r\n| \u001b[31m-2010-02-23 15:46 +0 |CommitDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n| \u001b[31m-2010-02-15 03:24 +0 |\u001b[m\r\n| \u001b[31m-2010-02-06 15:02 +0 |    Commit 10 E\u001b[m\r\n| \u001b[31m-2010-01-29 02:40 +0 |\u001b[m\r\n| \u001b[31m-2010-01-20 14:18 +0 |\u001b[m\r\n| \u001b[31m-2010-01-12 01:56 +0 |\u001b[m\r\n| \u001b[31m-2010-01-03 13:33 +0 |\u001b[m\r\n| \u001b[31m-2009-12-26 01:11 +0 |\u001b[m\r\n| \u001b[31m-2009-12-17 12:49 +0 |\u001b[m\r\n| \u001b[31m-2009-12-09 00:27 +0 |\u001b[m\r\n| \u001b[31m-2009-11-30 12:05 +0 |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-04-07 05:37 +00|commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-29 17:15 +00|Refs: [master], {origin/master}, {origin/HEAD}\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-21 04:53 +00|Author:     Max Power <power123@example.org>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-12 16:31 +00|AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-04 04:09 +00|Commit:     Committer <c.ommitter@example.net>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-02-23 15:46 +00|CommitDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-02-15 03:24 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-02-06 15:02 +00|    Commit 10 E\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-29 02:40 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-20 14:18 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-12 01:56 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-03 13:33 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-26 01:11 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-17 12:49 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-09 00:27 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-11-30 12:05 +00|\u001b[m\r\n|  [main] 5cb3412a5 32%|[diff] 5cb3412a5e06e506840495b91acc885037a48b72 - line 100%\u001b[m\r\n| [FAIL] main-hsplit-default.screen != expected/main-hsplit-default.screen\r\n| \u001b[1mdiff --git a/expected/main-hsplit-default.screen b/main-hsplit-default.screen\u001b[m\r\n| \u001b[1mindex a33b33e..18606b0 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-hsplit-default.screen\u001b[m\r\n| \u001b[1m+++ b/main-hsplit-default.screen\u001b[m\r\n| \u001b[36m@@ -5,7 +5,7 @@\u001b[m\r\n|  2010-03-04 04:09 +0000 A. U. Thor            o Commit 10 A\u001b[m\r\n|  [main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 50             10%\u001b[m\r\n|  commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\r\n| \u001b[31m-Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5cb3412\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mRefs: [master], {origin/master}, {origin/HEAD}\u001b[m\r\n|  Author:     Max Power <power123@example.org>\u001b[m\r\n|  AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n|  Commit:     Committer <c.ommitter@example.net>\u001b[m\r\n| [FAIL] main-hsplit-50-50.screen != expected/main-hsplit-50-50.screen\r\n| \u001b[1mdiff --git a/expected/main-hsplit-50-50.screen b/main-hsplit-50-50.screen\u001b[m\r\n| \u001b[1mindex 226db63..936278c 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-hsplit-50-50.screen\u001b[m\r\n| \u001b[1m+++ b/main-hsplit-50-50.screen\u001b[m\r\n| \u001b[36m@@ -8,7 +8,7 @@\u001b[m\r\n|  2010-02-06 15:02 +0000 作者                  o Commit 9 C\u001b[m\r\n|  [main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 50             16%\u001b[m\r\n|  commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\r\n| \u001b[31m-Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5cb3412\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mRefs: [master], {origin/master}, {origin/HEAD}\u001b[m\r\n|  Author:     Max Power <power123@example.org>\u001b[m\r\n|  AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n|  Commit:     Committer <c.ommitter@example.net>\u001b[m\r\n"
+        },
+        {
+          "script": "test/refs/default-test",
+          "script_sha256": "fa6f469aa8cceb5487604f8d8e9ca02154eb6190592a533470bd729918fefcb5",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "refs-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-with-line-number.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/refs/default-test/.test-result",
+          "receipt": "  [OK] refs-default.screen assertion\n  [OK] refs-with-line-number.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/main-graph-task-clone/target/release/tig",
+          "sha256": "f9494349221beb8a5c1847a19072f54c72884e7c00c1c3f77b3ed90a794872e7"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/main-graph-task-clone/target/release/test-graph",
+          "sha256": "27004692adff197e2c942e43704311fcbcd35690cb12d12ad2e7fee7e4723713"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "fail": 22,
+        "pass": 14,
+        "skip": 1
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/diff/line-number-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "added-line-number.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/all-arg-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        },
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        },
+        {
+          "id": "final.screen#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        },
+        {
+          "id": "detached.screen#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        }
+      ]
+    },
+    {
+      "script": "test/main/author-name-change-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/boundary-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "merge-view.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/branch-var-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        },
+        {
+          "id": "main.screen#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        }
+      ]
+    },
+    {
+      "script": "test/main/commit-order-edge-case-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "ensure-topo-order-with-graph.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "graph-supports-date-order.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/commit-title-overflow-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-commit-titles.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/date-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "default-date.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "local-date.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "relative-date.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "relative-compact-date.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "custom-short-date.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "custom-tz-date.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "no-date.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "custom-date.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/default-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-ref-format.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-remotes-hidden.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-no-refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-no-graph.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-diff.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/emoji-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "emoji-commit-titles-col-46.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "emoji-commit-titles-col-46.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "emoji-commit-titles-col-unset.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "emoji-commit-titles-col-unset.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "emoji-commit-titles-col-300.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "emoji-commit-titles-col-300.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/escape-control-characters-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/filter-args-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "rev-parse.trace#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        },
+        {
+          "id": "log.trace#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        },
+        {
+          "id": "filtered.screen#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        }
+      ]
+    },
+    {
+      "script": "test/main/git-alias-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "alias-vars#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/goto-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "commit-1.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "commit-1-back.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "commit-2.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "commit-2-again.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "commit-5.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "commit-5-still.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "unstaged-changes.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "commit-3.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/graph-argument-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "follow.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "follow.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "first-parent.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "first-parent.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/jump-ends-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "main-goto-1.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-goto-1.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-goto-max.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-goto-max.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-goto-max-plus-1.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "main-goto-max-plus-1.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-goto-max-plus-2.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "main-goto-max-plus-2.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/mailmap-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "mailmapped.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "mailmapped-diff.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/main-options-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "with-10-lines.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/merge-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "main-with-conflict.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/no-matching-commmits-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "tig-did-not-exit-as-expected#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/no-merges-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "no-merges.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/pretty-raw-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "main-pretty-raw.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/refresh-periodic-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-with-unstaged.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-add-a.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-commit.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-commiting-change-and-sleeping-hello.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-commiting-change-and-sleeping-world.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/refresh-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "main-with-unstaged.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-add-a.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-add-all.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-commit.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-reset-soft.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-reset-a-and-bc.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-reset-hard.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-tag.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/search-preload-test",
+      "c_status": "pass",
+      "rust_status": "skip",
+      "assertions": [
+        {
+          "id": "main.screen#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        },
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        }
+      ]
+    },
+    {
+      "script": "test/main/search-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-search-author.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-author-empty.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-author-find-next.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-title.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-title-no-match.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-time.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-smart-case.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/show-changes-after-rename-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/show-changes-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-with-unstaged.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-unstaged-split.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-unstaged-and-staged-split.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-staged.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-staged-split.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-staged-and-unstaged.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-renamed.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-conflict.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-all-refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/start-on-line-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "position.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/stdin-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "main-stdin.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/submodule-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "main-submodule.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-submodule-diff.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/unbind-default-quit-key-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "work-dir/gh-483-main-q-noquit#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "work-dir/gh-483-generic-qb-executed#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "work-dir/gh-483-main-qa-executed#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/untracked-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "start.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "result.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/update-unstaged-changes-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "start.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "result.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/vertical-lines-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "main-verticals-ascii.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "main-verticals-default.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "main-verticals-utf8.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/view-split-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "main-vsplit-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-vsplit-25-75.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "main-hsplit-default.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "main-hsplit-50-50.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/refs/default-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "refs-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "refs-with-line-number.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "scope": "Final PR #8 review verification after date, stage, save-options and refs merges; includes the implicit-subdirectory-path fix",
+  "source_commit": "d72a77a35fad2ca06cf3f9c6a89df34a87b738e3",
+  "synced_main": "f294b279ca4be0f11fda0b794a4398331cfdaf91",
+  "rust_binary_sha256": "f158954b30409659cfecc6b0a4afcc95202d296a533b38b47fcd75e5c7e965a2",
+  "source_sha256": {
+    "rust/git.rs": "a9f009f328ddde9a622b3ca569473c6140d4773c1e42b414f1d83e992bced225",
+    "rust/main.rs": "4744349af9288cbb90f0993c7d1ee6ea1f04ac20fbe9e3a65c81d9f3efe57a50",
+    "rust/commands.rs": "d277d85bab05c246bb5ed0ca18e62c8b1058780b2e60e38357691bd083cc2944",
+    "Cargo.lock": "4dff74ef4ccdb94d739984c33d6b06c217c12144f4095dde5e16bf10902ebbb5"
+  },
+  "toolchain": "rustc 1.81.0 (eeb90cda1 2024-09-04)",
+  "checks": {
+    "fmt": true,
+    "unit_tests": 71,
+    "clippy_D_warnings": true,
+    "release_build": true,
+    "pty_checks": 130,
+    "date_compatibility_checks": 29,
+    "strict_harness_negative_checks": true,
+    "c_rust_subdirectory_screens": 5,
+    "first_party_unsafe": "forbid"
+  },
+  "review_fix": {
+    "commit": "65c894b",
+    "problem": "Implicit paths in a subdirectory could select an unrelated same-named root file.",
+    "fix": "Repository stores its discovery directory. History without -- uses that directory for native Git revision/path disambiguation; explicit -- paths retain the existing root-relative normalization. Other commands still run at the repository root.",
+    "regression_command": "rustup run 1.81.0 cargo test --locked --bin tig main_graph_uses_history_traversal_options",
+    "regression_coverage": [
+      "root and subdirectory contain distinct Build.scala files",
+      "implicit --follow from project/ selects the same eight file-history commits as the root-qualified path",
+      "explicit root-relative paths remain unchanged",
+      "revision plus implicit file path",
+      "ambiguous branch/file name fails instead of guessing"
+    ],
+    "c_comparison_receipt": "main-graph-subdir.json"
+  },
+  "receipts": {
+    "checks": "main-graph-review-checks.log",
+    "pty": "main-graph-review-pty.json",
+    "paired_upstream": "main-graph-review-upstream.json",
+    "previous_checkpoint": "main-graph.json"
+  },
+  "paired_command": "rustup run 1.81.0 python3 rust/tests/upstream-suite.py test/main/*-test test/refs/default-test test/diff/line-number-test --output migration/evidence/main-graph-review-upstream.json",
+  "paired_scripts": 37,
+  "c_summary": {
+    "pass": 37
+  },
+  "rust_summary": {
+    "fail": 20,
+    "pass": 16,
+    "skip": 1
+  },
+  "c_OK_records": 121,
+  "rust_OK_records": 79,
+  "rust_FAIL_records": 38,
+  "main_FAIL_records": 37,
+  "remaining_main_FAIL_records": {
+    "test/main/all-arg-test": 2,
+    "test/main/boundary-test": 2,
+    "test/main/branch-var-test": 2,
+    "test/main/commit-order-edge-case-test": 1,
+    "test/main/escape-control-characters-test": 2,
+    "test/main/git-alias-test": 1,
+    "test/main/goto-test": 9,
+    "test/main/jump-ends-test": 2,
+    "test/main/mailmap-test": 1,
+    "test/main/main-options-test": 1,
+    "test/main/merge-test": 2,
+    "test/main/no-matching-commmits-test": 1,
+    "test/main/refresh-test": 1,
+    "test/main/stdin-test": 1,
+    "test/main/submodule-test": 1,
+    "test/main/unbind-default-quit-key-test": 2,
+    "test/main/vertical-lines-test": 3,
+    "test/main/view-split-test": 3
+  },
+  "targeted_original_scripts": {
+    "test/main/graph-argument-test": "4/4 assertions pass",
+    "test/main/no-merges-test": "1/1 assertion passes"
+  },
+  "inherited_main_changes_since_previous_receipt": [
+    "date-test now passes 8 assertions; its earlier 9 FAIL records included a runtime failure.",
+    "pretty-raw-test now passes its assertion.",
+    "escape-control-characters-test still fails: the merged raw-input parser rejects its custom abbreviated/NUL-delimited commit stream with Invalid raw commit ID, adding a runtime FAIL to the missing-screen FAIL. That parser path is unchanged by this PR."
+  ],
+  "original_c_and_selected_scripts_unmodified": true,
+  "c_graph_helper_used_as_rust_main_evidence": false,
+  "parity_gate": "BLOCKED",
+  "rust_complete": false,
+  "limitations": [
+    "Main parent/back navigation, merge/boundary arguments, commit-order settings, split layout and command/pager refresh remain outside this slice.",
+    "filter-args-test has no Rust receipt because TIG_TRACE is missing; its C assertions remain NOT_REACHED.",
+    "search-preload-test is skipped because Rust lacks readline.",
+    "37 selected scripts are not the complete 154-script application suite; FAIL records include runtime errors and missing screens."
+  ],
+  "documentation_sync": {
+    "main_commit": "2fb2a87105b77b0c2de37d6be766365acaa5ac1d",
+    "merged_head": "05ebaa86ba0bf03c83a3eee905b6ea18588f6b93",
+    "rust_tree_and_cargo_unchanged_from_tested_source": true
+  }
+}
