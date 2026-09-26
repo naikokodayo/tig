@@ -1,0 +1,568 @@
+{
+  "schema": 1,
+  "source_commit": "4d809b59cfb0ecc6e85059e1bcf9f992e988c571",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "PASS_SELECTED_SCRIPTS",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/main/all-arg-test",
+          "script_sha256": "75f118364ab7237a1719bce081b672599097d9820d5bf959ec7238731492a60c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "final.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "detached.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/all-arg-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] stderr assertion\n  [OK] final.screen assertion\n  [OK] detached.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/regressions/github-1136-test",
+          "script_sha256": "b575998f86183937ea1307dedd899204f83e43a634a9872a2fe9c9b2f583f7f0",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "bang-cmdlineargs-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bang-cmdlineargs-doesnt-crash.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "echo-cmdlineargs-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "echo-cmdlineargs-doesnt-crash.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "bang-fileargs-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bang-fileargs-doesnt-crash.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "echo-fileargs-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "echo-fileargs-doesnt-crash.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/regressions/github-1136-test/.test-result",
+          "receipt": "  [OK] bang-cmdlineargs-doesnt-crash.screen assertion\n  [OK] bang-cmdlineargs-doesnt-crash.stderr assertion\n  [OK] echo-cmdlineargs-doesnt-crash.screen assertion\n  [OK] echo-cmdlineargs-doesnt-crash.stderr assertion\n  [OK] bang-fileargs-doesnt-crash.screen assertion\n  [OK] bang-fileargs-doesnt-crash.stderr assertion\n  [OK] echo-fileargs-doesnt-crash.screen assertion\n  [OK] echo-fileargs-doesnt-crash.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/escape-var-test",
+          "script_sha256": "8ac261a47c2b3fdc0b1647df9cebc8f11ede82e7a442ed828c31b675adb19900",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "shell-command.txt#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/escape-var-test/.test-result",
+          "receipt": "  [OK] shell-command.txt assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/quote-test",
+          "script_sha256": "9039c2c6365ae453ddae606b7135555f111f0d8ef02cd03a8420badd3e978f9d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "shell-command.txt#1",
+              "status": "OK"
+            },
+            {
+              "id": "quoted-prompt-with-spaces.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mid-quoted-prompt-with-spaces.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "single-quoted-arg-with-escaped-chars.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "double-quoted-arg-with-escaped-chars.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/quote-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n  [OK] shell-command.txt assertion\n  [OK] quoted-prompt-with-spaces.screen assertion\n  [OK] mid-quoted-prompt-with-spaces.screen assertion\n  [OK] single-quoted-arg-with-escaped-chars.screen assertion\n  [OK] double-quoted-arg-with-escaped-chars.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/src/tig",
+          "sha256": "e40f261ef1a50ebc5bc8c912fa827fb05a863d334739c38ee0691ec20ac1ed77"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 4
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.04s\n",
+      "results": [
+        {
+          "script": "test/main/all-arg-test",
+          "script_sha256": "75f118364ab7237a1719bce081b672599097d9820d5bf959ec7238731492a60c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "final.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "detached.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/all-arg-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] stderr assertion\n  [OK] final.screen assertion\n  [OK] detached.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/regressions/github-1136-test",
+          "script_sha256": "b575998f86183937ea1307dedd899204f83e43a634a9872a2fe9c9b2f583f7f0",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "bang-cmdlineargs-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bang-cmdlineargs-doesnt-crash.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "echo-cmdlineargs-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "echo-cmdlineargs-doesnt-crash.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "bang-fileargs-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bang-fileargs-doesnt-crash.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "echo-fileargs-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "echo-fileargs-doesnt-crash.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/regressions/github-1136-test/.test-result",
+          "receipt": "  [OK] bang-cmdlineargs-doesnt-crash.screen assertion\n  [OK] bang-cmdlineargs-doesnt-crash.stderr assertion\n  [OK] echo-cmdlineargs-doesnt-crash.screen assertion\n  [OK] echo-cmdlineargs-doesnt-crash.stderr assertion\n  [OK] bang-fileargs-doesnt-crash.screen assertion\n  [OK] bang-fileargs-doesnt-crash.stderr assertion\n  [OK] echo-fileargs-doesnt-crash.screen assertion\n  [OK] echo-fileargs-doesnt-crash.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/escape-var-test",
+          "script_sha256": "8ac261a47c2b3fdc0b1647df9cebc8f11ede82e7a442ed828c31b675adb19900",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "shell-command.txt#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/escape-var-test/.test-result",
+          "receipt": "  [OK] shell-command.txt assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/quote-test",
+          "script_sha256": "9039c2c6365ae453ddae606b7135555f111f0d8ef02cd03a8420badd3e978f9d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "shell-command.txt#1",
+              "status": "OK"
+            },
+            {
+              "id": "quoted-prompt-with-spaces.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mid-quoted-prompt-with-spaces.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "single-quoted-arg-with-escaped-chars.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "double-quoted-arg-with-escaped-chars.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/quote-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n  [OK] shell-command.txt assertion\n  [OK] quoted-prompt-with-spaces.screen assertion\n  [OK] mid-quoted-prompt-with-spaces.screen assertion\n  [OK] single-quoted-arg-with-escaped-chars.screen assertion\n  [OK] double-quoted-arg-with-escaped-chars.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target/release/tig",
+          "sha256": "649f4b38abb1db82b7df50ab4785d14311d691a8b8e142f972870ed460bd893b"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target/release/test-graph",
+          "sha256": "12800398bb09f9f5f9740bf8aa391cac23b7cae0d110a6d07ea0d90ed66ac9c7"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 4
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/main/all-arg-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "final.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "detached.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/regressions/github-1136-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "bang-cmdlineargs-doesnt-crash.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bang-cmdlineargs-doesnt-crash.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "echo-cmdlineargs-doesnt-crash.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "echo-cmdlineargs-doesnt-crash.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bang-fileargs-doesnt-crash.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bang-fileargs-doesnt-crash.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "echo-fileargs-doesnt-crash.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "echo-fileargs-doesnt-crash.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tigrc/escape-var-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "shell-command.txt#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tigrc/quote-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "shell-command.txt#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "quoted-prompt-with-spaces.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "mid-quoted-prompt-with-spaces.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "single-quoted-arg-with-escaped-chars.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "double-quoted-arg-with-escaped-chars.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ],
+  "source_sha256": {
+    "rust/commands.rs": "917ad335821d64b4cc90cb5671be92948e5ec36c14729b6886c3ace09638bfbf",
+    "rust/main.rs": "e8bed668f6694bfb80ca50254029cebecfc52960d2adb605907a85c11f52ca05"
+  },
+  "baseline": {
+    "source_commit": "ac78df21291964083a6cb13a08da5d127fdcc60e",
+    "raw_rust_failures": [
+      {
+        "script": "test/main/all-arg-test",
+        "script_sha256": "75f118364ab7237a1719bce081b672599097d9820d5bf959ec7238731492a60c",
+        "exit_code": 1,
+        "status": "fail",
+        "reasons": [
+          "script_exit_nonzero",
+          "failed_checks"
+        ],
+        "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] vars_assert_count != expected/vars_assert_count\n\u001b[1mdiff --git a/expected/vars_assert_count b/vars_assert_count\u001b[m\n\u001b[1mindex e69de29..d00491f 100644\u001b[m\n\u001b[1m--- a/expected/vars_assert_count\u001b[m\n\u001b[1m+++ b/vars_assert_count\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m1\u001b[m\n",
+        "transcript": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/test/tools/libtest.sh: line 403: vars: No such file or directory\r\n| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Unsupported command variable: revargs\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] vars_assert_count != expected/vars_assert_count\r\n| \u001b[1mdiff --git a/expected/vars_assert_count b/vars_assert_count\u001b[m\r\n| \u001b[1mindex e69de29..d00491f 100644\u001b[m\r\n| \u001b[1m--- a/expected/vars_assert_count\u001b[m\r\n| \u001b[1m+++ b/vars_assert_count\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m1\u001b[m\r\n"
+      },
+      {
+        "script": "test/regressions/github-1136-test",
+        "script_sha256": "b575998f86183937ea1307dedd899204f83e43a634a9872a2fe9c9b2f583f7f0",
+        "exit_code": 0,
+        "status": "fail",
+        "reasons": [
+          "failed_checks"
+        ],
+        "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] bang-cmdlineargs-doesnt-crash.screen not found\n[FAIL] bang-cmdlineargs-doesnt-crash.stderr != expected/bang-cmdlineargs-doesnt-crash.stderr\n\u001b[1mdiff --git a/expected/bang-cmdlineargs-doesnt-crash.stderr b/bang-cmdlineargs-doesnt-crash.stderr\u001b[m\n\u001b[1mindex e69de29..016efb0 100644\u001b[m\n\u001b[1m--- a/expected/bang-cmdlineargs-doesnt-crash.stderr\u001b[m\n\u001b[1m+++ b/bang-cmdlineargs-doesnt-crash.stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig: Unsupported command variable: cmdlineargs\u001b[m\n[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] echo-cmdlineargs-doesnt-crash.screen not found\n[FAIL] echo-cmdlineargs-doesnt-crash.stderr != expected/echo-cmdlineargs-doesnt-crash.stderr\n\u001b[1mdiff --git a/expected/echo-cmdlineargs-doesnt-crash.stderr b/echo-cmdlineargs-doesnt-crash.stderr\u001b[m\n\u001b[1mindex e69de29..470a923 100644\u001b[m\n\u001b[1m--- a/expected/echo-cmdlineargs-doesnt-crash.stderr\u001b[m\n\u001b[1m+++ b/echo-cmdlineargs-doesnt-crash.stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig: Not implemented in Rust yet: echo %(cmdlineargs)\u001b[m\n[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] bang-fileargs-doesnt-crash.screen not found\n[FAIL] bang-fileargs-doesnt-crash.stderr != expected/bang-fileargs-doesnt-crash.stderr\n\u001b[1mdiff --git a/expected/bang-fileargs-doesnt-crash.stderr b/bang-fileargs-doesnt-crash.stderr\u001b[m\n\u001b[1mindex e69de29..dc87749 100644\u001b[m\n\u001b[1m--- a/expected/bang-fileargs-doesnt-crash.stderr\u001b[m\n\u001b[1m+++ b/bang-fileargs-doesnt-crash.stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig: Unsupported command variable: fileargs\u001b[m\n[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] echo-fileargs-doesnt-crash.screen not found\n[FAIL] echo-fileargs-doesnt-crash.stderr != expected/echo-fileargs-doesnt-crash.stderr\n\u001b[1mdiff --git a/expected/echo-fileargs-doesnt-crash.stderr b/echo-fileargs-doesnt-crash.stderr\u001b[m\n\u001b[1mindex e69de29..de201be 100644\u001b[m\n\u001b[1m--- a/expected/echo-fileargs-doesnt-crash.stderr\u001b[m\n\u001b[1m+++ b/echo-fileargs-doesnt-crash.stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig: Not implemented in Rust yet: echo %(fileargs)\u001b[m\n",
+        "transcript": "| Failed 12 out of 12 test(s)\r\n| [stderr] [bang-cmdlineargs-doesnt-crash] tig: Unsupported command variable: cmdlineargs\r\n| [stderr] [echo-cmdlineargs-doesnt-crash] tig: Not implemented in Rust yet: echo %(cmdlineargs)\r\n| [stderr] [bang-fileargs-doesnt-crash] tig: Unsupported command variable: fileargs\r\n| [stderr] [echo-fileargs-doesnt-crash] tig: Not implemented in Rust yet: echo %(fileargs)\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] bang-cmdlineargs-doesnt-crash.screen not found\r\n| [FAIL] bang-cmdlineargs-doesnt-crash.stderr != expected/bang-cmdlineargs-doesnt-crash.stderr\r\n| \u001b[1mdiff --git a/expected/bang-cmdlineargs-doesnt-crash.stderr b/bang-cmdlineargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1mindex e69de29..016efb0 100644\u001b[m\r\n| \u001b[1m--- a/expected/bang-cmdlineargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1m+++ b/bang-cmdlineargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig: Unsupported command variable: cmdlineargs\u001b[m\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] echo-cmdlineargs-doesnt-crash.screen not found\r\n| [FAIL] echo-cmdlineargs-doesnt-crash.stderr != expected/echo-cmdlineargs-doesnt-crash.stderr\r\n| \u001b[1mdiff --git a/expected/echo-cmdlineargs-doesnt-crash.stderr b/echo-cmdlineargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1mindex e69de29..470a923 100644\u001b[m\r\n| \u001b[1m--- a/expected/echo-cmdlineargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1m+++ b/echo-cmdlineargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig: Not implemented in Rust yet: echo %(cmdlineargs)\u001b[m\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] bang-fileargs-doesnt-crash.screen not found\r\n| [FAIL] bang-fileargs-doesnt-crash.stderr != expected/bang-fileargs-doesnt-crash.stderr\r\n| \u001b[1mdiff --git a/expected/bang-fileargs-doesnt-crash.stderr b/bang-fileargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1mindex e69de29..dc87749 100644\u001b[m\r\n| \u001b[1m--- a/expected/bang-fileargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1m+++ b/bang-fileargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig: Unsupported command variable: fileargs\u001b[m\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] echo-fileargs-doesnt-crash.screen not found\r\n| [FAIL] echo-fileargs-doesnt-crash.stderr != expected/echo-fileargs-doesnt-crash.stderr\r\n| \u001b[1mdiff --git a/expected/echo-fileargs-doesnt-crash.stderr b/echo-fileargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1mindex e69de29..de201be 100644\u001b[m\r\n| \u001b[1m--- a/expected/echo-fileargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[1m+++ b/echo-fileargs-doesnt-crash.stderr\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig: Not implemented in Rust yet: echo %(fileargs)\u001b[m\r\n"
+      },
+      {
+        "script": "test/tigrc/escape-var-test",
+        "script_sha256": "8ac261a47c2b3fdc0b1647df9cebc8f11ede82e7a442ed828c31b675adb19900",
+        "exit_code": 0,
+        "status": "fail",
+        "reasons": [
+          "failed_checks"
+        ],
+        "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] shell-command.txt not found\n",
+        "transcript": "| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Unsupported command variable: refname\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] shell-command.txt not found\r\n"
+      },
+      {
+        "script": "test/tigrc/quote-test",
+        "script_sha256": "9039c2c6365ae453ddae606b7135555f111f0d8ef02cd03a8420badd3e978f9d",
+        "exit_code": 0,
+        "status": "fail",
+        "reasons": [
+          "failed_checks"
+        ],
+        "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] stderr != expected/stderr\n\u001b[1mdiff --git a/expected/stderr b/stderr\u001b[m\n\u001b[1mindex e69de29..32bcdac 100644\u001b[m\n\u001b[1m--- a/expected/stderr\u001b[m\n\u001b[1m+++ b/stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig: Unclosed command variable\u001b[m\n  [OK] shell-command.txt assertion\n[FAIL] quoted-prompt-with-spaces.screen not found\n[FAIL] mid-quoted-prompt-with-spaces.screen not found\n[FAIL] single-quoted-arg-with-escaped-chars.screen not found\n[FAIL] double-quoted-arg-with-escaped-chars.screen not found\n",
+        "transcript": "| Failed 6 out of 7 test(s)\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] stderr != expected/stderr\r\n| \u001b[1mdiff --git a/expected/stderr b/stderr\u001b[m\r\n| \u001b[1mindex e69de29..32bcdac 100644\u001b[m\r\n| \u001b[1m--- a/expected/stderr\u001b[m\r\n| \u001b[1m+++ b/stderr\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig: Unclosed command variable\u001b[m\r\n|   [OK] shell-command.txt assertion\r\n| [FAIL] quoted-prompt-with-spaces.screen not found\r\n| [FAIL] mid-quoted-prompt-with-spaces.screen not found\r\n| [FAIL] single-quoted-arg-with-escaped-chars.screen not found\r\n| [FAIL] double-quoted-arg-with-escaped-chars.screen not found\r\n"
+      }
+    ]
+  },
+  "validation": {
+    "cargo_fmt_check": "pass",
+    "cargo_test_all_targets": "60 library + 24 application passed",
+    "cargo_clippy_all_targets_deny_warnings": "pass",
+    "cargo_build_release": "pass",
+    "terminal_smoke_pty_checks": 150,
+    "main_command_refresh_pty_cases": 2
+  }
+}
