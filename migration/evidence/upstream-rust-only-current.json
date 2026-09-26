@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "578217033cde4719581617d5e46da1e04f2f6052",
+  "source_commit": "d59e2d52f719ef5b43ff501cadd8852119f2a61e",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -5105,7 +5105,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 30.62s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 41.00s\n",
       "results": [
         {
           "script": "test/blame/blob-blame-test",
@@ -5168,13 +5168,10 @@
           "script_sha256": "13f0d337f1954eb9f30b30d9009862fb24f69753cf4cc6a62f4ab998b5cbd193",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "OK": 1,
-            "FAIL": 1
+            "OK": 2
           },
           "assertions": [
             {
@@ -5183,14 +5180,14 @@
             },
             {
               "id": "blame-deleted-line.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/blame/initial-diff-test/.test-result",
-          "receipt": "  [OK] initial-diff.screen assertion\n[FAIL] blame-deleted-line.screen != expected/blame-deleted-line.screen\n\u001b[1mdiff --git a/expected/blame-deleted-line.screen b/blame-deleted-line.screen\u001b[m\n\u001b[1mindex fa995b6..9b449b7 100644\u001b[m\n\u001b[1m--- a/expected/blame-deleted-line.screen\u001b[m\n\u001b[1m+++ b/blame-deleted-line.screen\u001b[m\n\u001b[36m@@ -1,22 +1,22 @@\u001b[m\n\u001b[31m-0400   1x /*                     __\u001b[m\n\u001b[31m-0400   2x **     ________ ___   / /  ___      __ ____  Scala.js Benchmarks\u001b[m\n\u001b[31m-0400   3x **    / __/ __// _ | / /  / _ | __ / // __/  (c) 2003-2013, LAMP/EPFL\u001b[m\n\u001b[31m-0400   4x **  __\\ \\/ /__/ __ |/ /__/ __ |/_// /_\\ \\    (c) 2013, Jonas Fonseca\u001b[m\n\u001b[31m-0400   5x ** /____/\\___/_/ |_/____/_/ | |__/ /____/\u001b[m\n\u001b[31m-0400   6x **                          |/____/\u001b[m\n\u001b[31m-0400   7x \\*\u001b[m\n\u001b[31m-0400   8x\u001b[m\n\u001b[31m-0400   9x package benchmarks\u001b[m\n\u001b[31m-0400  10x\u001b[m\n\u001b[31m-0400  11x import scala.compat.Platform\u001b[m\n\u001b[31m-0500  12x import scala.scalajs.js\u001b[m\n\u001b[31m-0500  13x\u001b[m\n\u001b[31m-0500  14x object Benchmark {\u001b[m\n\u001b[31m-0500  15x   val benchmarks = js.Array[js.Function0[Unit]]()\u001b[m\n\u001b[31m-0500  16x\u001b[m\n\u001b[31m-0500  17x   val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\n\u001b[31m-0500  18x   global(\"ScalaJSBenchmarks\") = benchmarks\u001b[m\n\u001b[31m-0500  19x\u001b[m\n\u001b[31m-0500  20x   def add(benchmark: Benchmark) {\u001b[m\n\u001b[31m-0500  21x     benchmarks.push {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m0400   1│ /*                     __\u001b[m\u001b[41m                                             \u001b[m\n\u001b[32m+\u001b[m\u001b[32m0400   2│ **     ________ ___   / /  ___      __ ____  Scala.js Benchmarks\u001b[m\u001b[41m      \u001b[m\n\u001b[32m+\u001b[m\u001b[32m0400   3│ **    / __/ __// _ | / /  / _ | __ / // __/  (c) 2003-2013, LAMP/EPFL\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m0400   4│ **  __\\ \\/ /__/ __ |/ /__/ __ |/_// /_\\ \\    (c) 2013, Jonas Fonseca\u001b[m\u001b[41m  \u001b[m\n\u001b[32m+\u001b[m\u001b[32m0400   5│ ** /____/\\___/_/ |_/____/_/ | |__/ /____/\u001b[m\u001b[41m                             \u001b[m\n\u001b[32m+\u001b[m\u001b[32m0400   6│ **                          |/____/\u001b[m\u001b[41m                                   \u001b[m\n\u001b[32m+\u001b[m\u001b[32m0400   7│ \\*\u001b[m\u001b[41m                                                                    \u001b[m\n\u001b[32m+\u001b[m\u001b[32m0400   8│\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m0400   9│ package benchmarks\u001b[m\n\u001b[32m+\u001b[m\u001b[32m0400  10│\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m0400  11│ import scala.compat.Platform\u001b[m\n\u001b[32m+\u001b[m\u001b[32m0500  12│ import scala.scalajs.js\u001b[m\n\u001b[32m+\u001b[m\u001b[32m0500  13│\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m0500  14│ object Benchmark {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m0500  15│   val benchmarks = js.Array[js.Function0[Unit]]()\u001b[m\n\u001b[32m+\u001b[m\u001b[32m0500  16│\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m0500  17│   val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\n\u001b[32m+\u001b[m\u001b[32m0500  18│   global(\"ScalaJSBenchmarks\") = benchmarks\u001b[m\n\u001b[32m+\u001b[m\u001b[32m0500  19│\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m0500  20│   def add(benchmark: Benchmark) {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m0500  21│     benchmarks.push {\u001b[m\n [blame] 34d6868cfae60a7cc2494d282eaee27efa900059:common/Benchmark.scala - li 21%\u001b[m\n",
+          "receipt": "  [OK] initial-diff.screen assertion\n  [OK] blame-deleted-line.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 2 test(s)\r\n|   [OK] initial-diff.screen assertion\r\n| [FAIL] blame-deleted-line.screen != expected/blame-deleted-line.screen\r\n| \u001b[1mdiff --git a/expected/blame-deleted-line.screen b/blame-deleted-line.screen\u001b[m\r\n| \u001b[1mindex fa995b6..9b449b7 100644\u001b[m\r\n| \u001b[1m--- a/expected/blame-deleted-line.screen\u001b[m\r\n| \u001b[1m+++ b/blame-deleted-line.screen\u001b[m\r\n| \u001b[36m@@ -1,22 +1,22 @@\u001b[m\r\n| \u001b[31m-0400   1x /*                     __\u001b[m\r\n| \u001b[31m-0400   2x **     ________ ___   / /  ___      __ ____  Scala.js Benchmarks\u001b[m\r\n| \u001b[31m-0400   3x **    / __/ __// _ | / /  / _ | __ / // __/  (c) 2003-2013, LAMP/EPFL\u001b[m\r\n| \u001b[31m-0400   4x **  __\\ \\/ /__/ __ |/ /__/ __ |/_// /_\\ \\    (c) 2013, Jonas Fonseca\u001b[m\r\n| \u001b[31m-0400   5x ** /____/\\___/_/ |_/____/_/ | |__/ /____/\u001b[m\r\n| \u001b[31m-0400   6x **                          |/____/\u001b[m\r\n| \u001b[31m-0400   7x \\*\u001b[m\r\n| \u001b[31m-0400   8x\u001b[m\r\n| \u001b[31m-0400   9x package benchmarks\u001b[m\r\n| \u001b[31m-0400  10x\u001b[m\r\n| \u001b[31m-0400  11x import scala.compat.Platform\u001b[m\r\n| \u001b[31m-0500  12x import scala.scalajs.js\u001b[m\r\n| \u001b[31m-0500  13x\u001b[m\r\n| \u001b[31m-0500  14x object Benchmark {\u001b[m\r\n| \u001b[31m-0500  15x   val benchmarks = js.Array[js.Function0[Unit]]()\u001b[m\r\n| \u001b[31m-0500  16x\u001b[m\r\n| \u001b[31m-0500  17x   val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\r\n| \u001b[31m-0500  18x   global(\"ScalaJSBenchmarks\") = benchmarks\u001b[m\r\n| \u001b[31m-0500  19x\u001b[m\r\n| \u001b[31m-0500  20x   def add(benchmark: Benchmark) {\u001b[m\r\n| \u001b[31m-0500  21x     benchmarks.push {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0400   1│ /*                     __\u001b[m\u001b[41m                                             \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0400   2│ **     ________ ___   / /  ___      __ ____  Scala.js Benchmarks\u001b[m\u001b[41m      \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0400   3│ **    / __/ __// _ | / /  / _ | __ / // __/  (c) 2003-2013, LAMP/EPFL\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0400   4│ **  __\\ \\/ /__/ __ |/ /__/ __ |/_// /_\\ \\    (c) 2013, Jonas Fonseca\u001b[m\u001b[41m  \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0400   5│ ** /____/\\___/_/ |_/____/_/ | |__/ /____/\u001b[m\u001b[41m                             \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0400   6│ **                          |/____/\u001b[m\u001b[41m                                   \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0400   7│ \\*\u001b[m\u001b[41m                                                                    \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0400   8│\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0400   9│ package benchmarks\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0400  10│\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0400  11│ import scala.compat.Platform\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0500  12│ import scala.scalajs.js\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0500  13│\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0500  14│ object Benchmark {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0500  15│   val benchmarks = js.Array[js.Function0[Unit]]()\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0500  16│\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0500  17│   val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0500  18│   global(\"ScalaJSBenchmarks\") = benchmarks\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0500  19│\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0500  20│   def add(benchmark: Benchmark) {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m0500  21│     benchmarks.push {\u001b[m\r\n|  [blame] 34d6868cfae60a7cc2494d282eaee27efa900059:common/Benchmark.scala - li 21%\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/blame/navigation-parent-test",
@@ -5481,24 +5478,22 @@
           "script_sha256": "2e3504a253b87cb00c42babbf7014ca384fbe2951bba56232a10ef5a688e151d",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 2
+            "OK": 1
           },
           "assertions": [
             {
               "id": "view.data#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/diff/diff-stat-test/.test-result",
-          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] view.data not found\n",
+          "receipt": "  [OK] view.data assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Not implemented in Rust yet: save-view HOME/view.data\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] view.data not found\r\n"
+          "transcript": ""
         },
         {
           "script": "test/diff/diff-stdin-test",
@@ -6718,18 +6713,15 @@
           "script_sha256": "c315cbf3e114e901c2694ac64cabc1106c9751e03f5f5803ef2780bc7fb2f2b6",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 1,
-            "OK": 1
+            "OK": 2
           },
           "assertions": [
             {
               "id": "diff-stat.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "diff-stat-after-refresh.screen#1",
@@ -6737,10 +6729,10 @@
             }
           ],
           "receipt_path": "test/tmp/log/diff-stat-test/.test-result",
-          "receipt": "[FAIL] diff-stat.screen != expected/diff-stat.screen\n\u001b[1mdiff --git a/expected/diff-stat.screen b/diff-stat.screen\u001b[m\n\u001b[1mindex 4ff3376..d1d6291 100644\u001b[m\n\u001b[1m--- a/expected/diff-stat.screen\u001b[m\n\u001b[1m+++ b/diff-stat.screen\u001b[m\n\u001b[36m@@ -9,16 +9,16 @@\u001b[m \u001b[mDate:   Sat Mar 1 17:26:01 2014 -0500\u001b[m\n  common/src/main/scala/org/scalajs/benchmark/Benchmark.scala              | 11 +++++------ |---\u001b[m\n  common/src/main/scala/org/scalajs/benchmark/BenchmarkApp.scala           |  2 +-          | common/benchmark-runner.sh                                           |  5 +++--\u001b[m\n  common/start-benchmark.js                                                |  9 +++++++--   | common/src/main/scala/org/scalajs/benchmark/Benchmark.scala          | 11 +++++------\u001b[m\n\u001b[31m- deltablue/exports.js                                                   | 13 ------------- | common/src/main/scala/org/scalajs/benchmark/BenchmarkApp.scala       |  2 +-\u001b[m\n\u001b[31m- .../src/main/scala/org/scalajs/benchmark/deltablue/DeltaBlue.scala     |  7 +++++++       | common/start-benchmark.js                                            |  9 +++++++--\u001b[m\n\u001b[31m- project/Build.scala                                                    | 13 ++++--------- | deltablue/exports.js                                                 | 13 -------------\u001b[m\n\u001b[32m+\u001b[m\u001b[32m deltablue/exports.js                                                     | 13 ------------| common/src/main/scala/org/scalajs/benchmark/BenchmarkApp.scala       |  2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m deltablue/src/main/scala/org/scalajs/benchmark/deltablue/DeltaBlue.scala |  7 +++++++     | common/start-benchmark.js                                            |  9 +++++++--\u001b[m\n\u001b[32m+\u001b[m\u001b[32m project/Build.scala                                                      | 13 ++++--------| deltablue/exports.js                                                 | 13 -------------\u001b[m\n  project/build.sbt                                                        |  5 ++++-       | .../src/main/scala/org/scalajs/benchmark/deltablue/DeltaBlue.scala   |  7 +++++++\u001b[m\n\u001b[31m- richards/exports.js                                                    | 13 ------------- | project/Build.scala                                                  | 13 ++++---------\u001b[m\n\u001b[32m+\u001b[m\u001b[32m richards/exports.js                                                      | 13 ------------| project/Build.scala                                                  | 13 ++++---------\u001b[m\n  richards/src/main/scala/org/scalajs/benchmark/richards/Richards.scala    |  3 +++         | project/build.sbt                                                    |  5 ++++-\u001b[m\n  run.sh                                                                   |  2 +-          | richards/exports.js                                                  | 13 -------------\u001b[m\n\u001b[31m- sudoku/exports.js                                                      | 13 ------------- | .../src/main/scala/org/scalajs/benchmark/richards/Richards.scala     |  3 +++\u001b[m\n\u001b[32m+\u001b[m\u001b[32m sudoku/exports.js                                                        | 13 ------------| .../src/main/scala/org/scalajs/benchmark/richards/Richards.scala     |  3 +++\u001b[m\n  sudoku/src/main/scala/org/scalajs/benchmark/sudoku/Sudoku.scala          |  2 ++          | run.sh                                                               |  2 +-\u001b[m\n\u001b[31m- tracer/exports.js                                                      | 13 ------------- | sudoku/exports.js                                                    | 13 -------------\u001b[m\n\u001b[32m+\u001b[m\u001b[32m tracer/exports.js                                                        | 13 ------------| sudoku/exports.js                                                    | 13 -------------\u001b[m\n  tracer/index-dev.html                                                    |  2 +-          | sudoku/src/main/scala/org/scalajs/benchmark/sudoku/Sudoku.scala      |  2 ++\u001b[m\n  tracer/index.html                                                        |  2 +-          | tracer/exports.js                                                    | 13 -------------\u001b[m\n  tracer/src/main/scala/org/scalajs/benchmark/tracer/Tracer.scala          |  3 +++         | tracer/index-dev.html                                                |  2 +-\u001b[m\n  [OK] diff-stat-after-refresh.screen assertion\n",
+          "receipt": "  [OK] diff-stat.screen assertion\n  [OK] diff-stat-after-refresh.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 2 test(s)\r\n| [FAIL] diff-stat.screen != expected/diff-stat.screen\r\n| \u001b[1mdiff --git a/expected/diff-stat.screen b/diff-stat.screen\u001b[m\r\n| \u001b[1mindex 4ff3376..d1d6291 100644\u001b[m\r\n| \u001b[1m--- a/expected/diff-stat.screen\u001b[m\r\n| \u001b[1m+++ b/diff-stat.screen\u001b[m\r\n| \u001b[36m@@ -9,16 +9,16 @@\u001b[m \u001b[mDate:   Sat Mar 1 17:26:01 2014 -0500\u001b[m\r\n|   common/src/main/scala/org/scalajs/benchmark/Benchmark.scala              | 11 +++++------ |---\u001b[m\r\n|   common/src/main/scala/org/scalajs/benchmark/BenchmarkApp.scala           |  2 +-          | common/benchmark-runner.sh                                           |  5 +++--\u001b[m\r\n|   common/start-benchmark.js                                                |  9 +++++++--   | common/src/main/scala/org/scalajs/benchmark/Benchmark.scala          | 11 +++++------\u001b[m\r\n| \u001b[31m- deltablue/exports.js                                                   | 13 ------------- | common/src/main/scala/org/scalajs/benchmark/BenchmarkApp.scala       |  2 +-\u001b[m\r\n| \u001b[31m- .../src/main/scala/org/scalajs/benchmark/deltablue/DeltaBlue.scala     |  7 +++++++       | common/start-benchmark.js                                            |  9 +++++++--\u001b[m\r\n| \u001b[31m- project/Build.scala                                                    | 13 ++++--------- | deltablue/exports.js                                                 | 13 -------------\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m deltablue/exports.js                                                     | 13 ------------| common/src/main/scala/org/scalajs/benchmark/BenchmarkApp.scala       |  2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m deltablue/src/main/scala/org/scalajs/benchmark/deltablue/DeltaBlue.scala |  7 +++++++     | common/start-benchmark.js                                            |  9 +++++++--\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m project/Build.scala                                                      | 13 ++++--------| deltablue/exports.js                                                 | 13 -------------\u001b[m\r\n|   project/build.sbt                                                        |  5 ++++-       | .../src/main/scala/org/scalajs/benchmark/deltablue/DeltaBlue.scala   |  7 +++++++\u001b[m\r\n| \u001b[31m- richards/exports.js                                                    | 13 ------------- | project/Build.scala                                                  | 13 ++++---------\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m richards/exports.js                                                      | 13 ------------| project/Build.scala                                                  | 13 ++++---------\u001b[m\r\n|   richards/src/main/scala/org/scalajs/benchmark/richards/Richards.scala    |  3 +++         | project/build.sbt                                                    |  5 ++++-\u001b[m\r\n|   run.sh                                                                   |  2 +-          | richards/exports.js                                                  | 13 -------------\u001b[m\r\n| \u001b[31m- sudoku/exports.js                                                      | 13 ------------- | .../src/main/scala/org/scalajs/benchmark/richards/Richards.scala     |  3 +++\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m sudoku/exports.js                                                        | 13 ------------| .../src/main/scala/org/scalajs/benchmark/richards/Richards.scala     |  3 +++\u001b[m\r\n|   sudoku/src/main/scala/org/scalajs/benchmark/sudoku/Sudoku.scala          |  2 ++          | run.sh                                                               |  2 +-\u001b[m\r\n| \u001b[31m- tracer/exports.js                                                      | 13 ------------- | sudoku/exports.js                                                    | 13 -------------\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m tracer/exports.js                                                        | 13 ------------| sudoku/exports.js                                                    | 13 -------------\u001b[m\r\n|   tracer/index-dev.html                                                    |  2 +-          | sudoku/src/main/scala/org/scalajs/benchmark/sudoku/Sudoku.scala      |  2 ++\u001b[m\r\n|   tracer/index.html                                                        |  2 +-          | tracer/exports.js                                                    | 13 -------------\u001b[m\r\n|   tracer/src/main/scala/org/scalajs/benchmark/tracer/Tracer.scala          |  3 +++         | tracer/index-dev.html                                                |  2 +-\u001b[m\r\n|   [OK] diff-stat-after-refresh.screen assertion\r\n"
+          "transcript": ""
         },
         {
           "script": "test/log/log-graph-test",
@@ -6931,27 +6923,32 @@
         {
           "script": "test/main/branch-var-test",
           "script_sha256": "2ed95c116b403b74c4389b9940dd5b928572db92a1de25ca1c3f6e4c3e969aa4",
-          "exit_code": 1,
+          "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "script_exit_nonzero",
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 2
+            "OK": 3
           },
           "assertions": [
             {
               "id": "vars_assert_count#1",
-              "status": "FAIL"
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/main/branch-var-test/.test-result",
-          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] vars_assert_count != expected/vars_assert_count\n\u001b[1mdiff --git a/expected/vars_assert_count b/vars_assert_count\u001b[m\n\u001b[1mindex e69de29..b8626c4 100644\u001b[m\n\u001b[1m--- a/expected/vars_assert_count\u001b[m\n\u001b[1m+++ b/vars_assert_count\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m4\u001b[m\n",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] main.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/test/tools/libtest.sh: line 403: vars: No such file or directory\r\n| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Unsupported command variable: branch\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] vars_assert_count != expected/vars_assert_count\r\n| \u001b[1mdiff --git a/expected/vars_assert_count b/vars_assert_count\u001b[m\r\n| \u001b[1mindex e69de29..b8626c4 100644\u001b[m\r\n| \u001b[1m--- a/expected/vars_assert_count\u001b[m\r\n| \u001b[1m+++ b/vars_assert_count\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m4\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/main/commit-order-edge-case-test",
@@ -7140,24 +7137,22 @@
           "script_sha256": "f0afbbd19bf33724e569022ba500c4e159857aab1a4680bf293c443e25c431e3",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 2
+            "OK": 1
           },
           "assertions": [
             {
               "id": "screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/main/escape-control-characters-test/.test-result",
-          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] screen not found\n",
+          "receipt": "  [OK] screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Invalid raw commit ID\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] screen not found\r\n"
+          "transcript": ""
         },
         {
           "script": "test/main/filter-args-test",
@@ -7197,13 +7192,10 @@
           "script_sha256": "6376a028dd925590fdb854ef9b7b979e032c7a05e2d265b2c30c53f0105b3155",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "OK": 1,
-            "FAIL": 1
+            "OK": 2
           },
           "assertions": [
             {
@@ -7212,14 +7204,14 @@
             },
             {
               "id": "main.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/main/git-alias-test/.test-result",
-          "receipt": "  [OK] alias-vars assertion\n[FAIL] main.screen != expected/main.screen\n\u001b[1mdiff --git a/expected/main.screen b/main.screen\u001b[m\n\u001b[1mindex b69b6bd..f25c10e 100644\u001b[m\n\u001b[1m--- a/expected/main.screen\u001b[m\n\u001b[1m+++ b/main.screen\u001b[m\n\u001b[36m@@ -1,4 +1,4 @@\u001b[m\n\u001b[31m-2014-03-01 17:26 -0500 Jonas Fonseca * [work-branch] [master] WIP: Upgrade to 0.\u001b[m\n\u001b[31m-2014-01-16 22:51 -0500 Jonas Fonseca I Move classes under org.scalajs.benchmark\u001b[m\n \u001b[m\n\u001b[31m-[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 2             100%\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[main]                                                                        0%\u001b[m\n",
+          "receipt": "  [OK] alias-vars assertion\n  [OK] main.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 2 test(s)\r\n|   [OK] alias-vars assertion\r\n| [FAIL] main.screen != expected/main.screen\r\n| \u001b[1mdiff --git a/expected/main.screen b/main.screen\u001b[m\r\n| \u001b[1mindex b69b6bd..f25c10e 100644\u001b[m\r\n| \u001b[1m--- a/expected/main.screen\u001b[m\r\n| \u001b[1m+++ b/main.screen\u001b[m\r\n| \u001b[36m@@ -1,4 +1,4 @@\u001b[m\r\n| \u001b[31m-2014-03-01 17:26 -0500 Jonas Fonseca * [work-branch] [master] WIP: Upgrade to 0.\u001b[m\r\n| \u001b[31m-2014-01-16 22:51 -0500 Jonas Fonseca I Move classes under org.scalajs.benchmark\u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 2             100%\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[main]                                                                        0%\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/main/goto-test",
@@ -7753,24 +7745,22 @@
           "script_sha256": "5b3882f86125941300e9d641670dba620ee0a2bfa69af5405e240f1f0a15eda7",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 1
+            "OK": 1
           },
           "assertions": [
             {
               "id": "main-stdin.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/main/stdin-test/.test-result",
-          "receipt": "[FAIL] main-stdin.screen != expected/main-stdin.screen\n\u001b[1mdiff --git a/expected/main-stdin.screen b/main-stdin.screen\u001b[m\n\u001b[1mindex 905b4a8..7b8259b 100644\u001b[m\n\u001b[1m--- a/expected/main-stdin.screen\u001b[m\n\u001b[1m+++ b/main-stdin.screen\u001b[m\n\u001b[36m@@ -1,8 +1,8 @@\u001b[m\n\u001b[31m-2010-01-12 01:56 +0000 Max Power             Commit 8 E\u001b[m\n\u001b[31m-2010-01-03 13:33 +0000 Jørgen Thygesen Brahe Commit 8 D\u001b[m\n\u001b[31m-2009-12-26 01:11 +0000 作者                  Commit 8 C\u001b[m\n\u001b[31m-2009-12-17 12:49 +0000 René Lévesque         <v1.0> Commit 8 B\u001b[m\n\u001b[31m-2009-12-09 00:27 +0000 A. U. Thor            Commit 8 A\u001b[m\n\u001b[32m+\u001b[m\u001b[32md9a8c8b1e52ba7f1673cebb271f1fc0bdac3579b\u001b[m\n\u001b[32m+\u001b[m\u001b[32m545eb1fa92b902b6799e2a1691419c3158254a0a\u001b[m\n\u001b[32m+\u001b[m\u001b[32mb45b5704c34dbd4c5fd89d58d45238ad136ae166\u001b[m\n\u001b[32m+\u001b[m\u001b[32m957f2b368e6fa5c0757f36b1441e32729ee5e9c7\u001b[m\n\u001b[32m+\u001b[m\u001b[32mbb547b114762a30235cee10ca364edcef8c2595c\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[36m@@ -12,4 +12,4 @@\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[31m-[main] d9a8c8b1e52ba7f1673cebb271f1fc0bdac3579b - commit 1 of 5             100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[pager] - line 1 of 5                                                       100%\u001b[m\n",
+          "receipt": "  [OK] main-stdin.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] main-stdin.screen != expected/main-stdin.screen\r\n| \u001b[1mdiff --git a/expected/main-stdin.screen b/main-stdin.screen\u001b[m\r\n| \u001b[1mindex 905b4a8..7b8259b 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-stdin.screen\u001b[m\r\n| \u001b[1m+++ b/main-stdin.screen\u001b[m\r\n| \u001b[36m@@ -1,8 +1,8 @@\u001b[m\r\n| \u001b[31m-2010-01-12 01:56 +0000 Max Power             Commit 8 E\u001b[m\r\n| \u001b[31m-2010-01-03 13:33 +0000 Jørgen Thygesen Brahe Commit 8 D\u001b[m\r\n| \u001b[31m-2009-12-26 01:11 +0000 作者                  Commit 8 C\u001b[m\r\n| \u001b[31m-2009-12-17 12:49 +0000 René Lévesque         <v1.0> Commit 8 B\u001b[m\r\n| \u001b[31m-2009-12-09 00:27 +0000 A. U. Thor            Commit 8 A\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32md9a8c8b1e52ba7f1673cebb271f1fc0bdac3579b\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m545eb1fa92b902b6799e2a1691419c3158254a0a\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mb45b5704c34dbd4c5fd89d58d45238ad136ae166\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m957f2b368e6fa5c0757f36b1441e32729ee5e9c7\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mbb547b114762a30235cee10ca364edcef8c2595c\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[36m@@ -12,4 +12,4 @@\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-[main] d9a8c8b1e52ba7f1673cebb271f1fc0bdac3579b - commit 1 of 5             100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[pager] - line 1 of 5                                                       100%\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/main/submodule-test",
@@ -10192,18 +10182,18 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig",
-          "sha256": "5c0cc8ec6b1be018183c63fa0cd1c96d32cad729e2b80af74bf36836b83c76ea"
+          "sha256": "966929474b11c4425a389132962ac30d3b88eb46af7338a347df2abad4c42449"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph",
-          "sha256": "7814f98a9cc9667e1750699533f1b89e3f5c2fa310f1b506d378d3d2c57b8a8f"
+          "sha256": "cef42b529157a36aeaa22dfa939b47b5f10cf800da2ff5155f386f01d718ec79"
         }
       },
       "binaries_unchanged": true,
       "summary": {
-        "pass": 134,
-        "fail": 17,
-        "skip": 3
+        "pass": 141,
+        "skip": 3,
+        "fail": 10
       }
     }
   },
@@ -10250,7 +10240,7 @@
     {
       "script": "test/blame/initial-diff-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "initial-diff.screen#1",
@@ -10260,7 +10250,7 @@
         {
           "id": "blame-deleted-line.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -10466,12 +10456,12 @@
     {
       "script": "test/diff/diff-stat-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "view.data#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -11346,12 +11336,12 @@
     {
       "script": "test/log/diff-stat-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "diff-stat.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "diff-stat-after-refresh.screen#1",
@@ -11487,22 +11477,22 @@
     {
       "script": "test/main/branch-var-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "vars_assert_count#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "vars#1",
           "c": "OK",
-          "rust": "NOT_REACHED"
+          "rust": "OK"
         },
         {
           "id": "main.screen#1",
           "c": "OK",
-          "rust": "NOT_REACHED"
+          "rust": "OK"
         }
       ]
     },
@@ -11659,12 +11649,12 @@
     {
       "script": "test/main/escape-control-characters-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -11693,7 +11683,7 @@
     {
       "script": "test/main/git-alias-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "alias-vars#1",
@@ -11703,7 +11693,7 @@
         {
           "id": "main.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -12132,12 +12122,12 @@
     {
       "script": "test/main/stdin-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "main-stdin.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },

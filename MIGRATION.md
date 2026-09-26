@@ -660,17 +660,20 @@ the executable hashes and individual transcripts. This is 17 more passing
 Rust scripts than the preceding `86ce7680` snapshot. The parity gate remains
 **OPEN**; completed follow-up slices must be retested against their merged source.
 
-### Current strict paired snapshot after key bindings and view integration
+### Current strict paired snapshot after diff, stdin, Git alias, and blame integration
 
-At merged source `578217033cde4719581617d5e46da1e04f2f6052`, the runner
+At merged source `d59e2d52f719ef5b43ff501cadd8852119f2a61e`, the runner
 attempted all 154 unchanged scripts with separately hashed C and Rust-only
 application/graph binaries. C passed 152, failed none, and skipped two. Rust
-passed 134, failed 17, and skipped three: 545 actual assertions passed, 23
-failed, and four C assertions were not reached. Three further failed checks
-were runtime/setup checks rather than assertions. The [current paired
+passed 141, failed 10, and skipped three: 554 actual assertions passed, 16
+failed, and two C assertions were not reached. The [current paired
 receipt](migration/evidence/upstream-rust-only-current.json) contains each
-script's original output, route and hashes. This is 13 more passing Rust
-scripts than the preceding snapshot. The parity gate remains **BLOCKED**;
+script's original output, route and hashes. This is seven more passing Rust
+scripts than the [preceding source-bound snapshot](https://github.com/naikokodayo/tig/blob/d59e2d52f719ef5b43ff501cadd8852119f2a61e/migration/evidence/upstream-rust-only-current.json).
+`tree/file-name` exposes C's quoted-text directory stripping bug; the Rust
+path remains byte-preserving and its original assertion is still recorded as
+failed. `stage/split-chunk` is a display mismatch, not evidence of C index
+data loss in this script. The parity gate remains **BLOCKED**;
 the end-to-end C/Rust benchmark has not begun.
 
 ### Non-local `%s` follow-up
