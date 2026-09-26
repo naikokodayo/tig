@@ -3354,7 +3354,17 @@ fn run() -> Result<()> {
         if cli.view == "diff" {
             app.revision = cli.diff_revision().to_owned();
         }
-        app.view = app.load(&cli.view)?;
+        app.view = app.load(&cli.view).map_err(|error| {
+            if cli.view == "main"
+                && error
+                    .to_string()
+                    .contains("unknown revision or path not in the working tree")
+            {
+                "No revisions match the given arguments.".into()
+            } else {
+                error
+            }
+        })?;
         if cli.view == "grep" && app.view.rows.is_empty() {
             app.message = "No matches found".into();
         }

@@ -1,0 +1,264 @@
+{
+  "schema": 1,
+  "source_commit": "5f9ccc05c95f262b1a12864d267918010cce862a",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "PASS_SELECTED_SCRIPTS",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "        CC  src/tig.o\n        CC  src/types.o\n        CC  src/string.o\n        CC  src/util.o\n        CC  src/map.o\n        CC  src/argv.o\n        CC  src/io.o\n        CC  src/refdb.o\n       GEN  src/builtin-config.c\n        CC  src/builtin-config.o\n        CC  src/request.o\n        CC  src/line.o\n        CC  src/keys.o\n        CC  src/repo.o\n        CC  src/options.o\n        CC  src/draw.o\n        CC  src/prompt.o\n        CC  src/display.o\n        CC  src/view.o\n        CC  src/search.o\n        CC  src/parse.o\n        CC  src/watch.o\n        CC  src/pager.o\n        CC  src/log.o\n        CC  src/reflog.o\n        CC  src/diff.o\n        CC  src/help.o\n        CC  src/tree.o\n        CC  src/blob.o\n        CC  src/blame.o\n        CC  src/refs.o\n        CC  src/status.o\n        CC  src/stage.o\n        CC  src/main.o\n        CC  src/stash.o\n        CC  src/grep.o\n        CC  src/ui.o\n        CC  src/apps.o\n        CC  src/graph.o\n        CC  src/graph-v1.o\n        CC  src/graph-v2.o\n        CC  compat/hashtab.o\n        CC  compat/utf8proc.o\n      LINK  src/tig\n        CC  test/tools/test-graph.o\n      LINK  test/tools/test-graph\n",
+      "results": [
+        {
+          "script": "test/main/default-test",
+          "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-ref-format.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-remotes-hidden.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/default-test/.test-result",
+          "receipt": "  [OK] main-default.screen assertion\n  [OK] main-ref-format.screen assertion\n  [OK] main-remotes-hidden.screen assertion\n  [OK] main-no-refs.screen assertion\n  [OK] main-no-graph.screen assertion\n  [OK] main-with-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/no-matching-commmits-test",
+          "script_sha256": "e1bf5d04ecaf3a855b65548e2a6ebe1697bc787597cfa5b97927acec79ed7bfe",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "tig-did-not-exit-as-expected#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/no-matching-commmits-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n  [OK] tig-did-not-exit-as-expected does not exist\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/no-matching-revs/src/tig",
+          "sha256": "9d05afd5c9150ed1d9dd419f28b51b01f8f6e11c0f58083f8bb941b410122146"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/no-matching-revs/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 2
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/no-matching-revs/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/no-matching-revs/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/no-matching-revs/target/release/test-graph\"\n   Compiling libc v0.2.189\n   Compiling autocfg v1.5.1\n   Compiling signal-hook v0.3.18\n   Compiling parking_lot_core v0.9.12\n   Compiling rustix v0.38.44\n   Compiling smallvec v1.16.2\n   Compiling memchr v2.8.3\n   Compiling cfg-if v1.0.5\n   Compiling log v0.4.34\n   Compiling scopeguard v1.2.0\n   Compiling regex-syntax v0.8.11\n   Compiling lock_api v0.4.14\n   Compiling bitflags v2.13.2\n   Compiling unicode-width v0.2.0\n   Compiling num-traits v0.2.19\n   Compiling aho-corasick v1.1.5\n   Compiling regex-automata v0.4.18\n   Compiling chrono v0.4.45\n   Compiling errno v0.3.14\n   Compiling mio v1.2.3\n   Compiling signal-hook-registry v1.4.8\n   Compiling parking_lot v0.12.5\n   Compiling signal-hook-mio v0.2.5\n   Compiling crossterm v0.28.1\n   Compiling regex v1.13.1\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/no-matching-revs)\n    Finished `release` profile [optimized] target(s) in 54.49s\n",
+      "results": [
+        {
+          "script": "test/main/default-test",
+          "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-ref-format.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-remotes-hidden.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/default-test/.test-result",
+          "receipt": "  [OK] main-default.screen assertion\n  [OK] main-ref-format.screen assertion\n  [OK] main-remotes-hidden.screen assertion\n  [OK] main-no-refs.screen assertion\n  [OK] main-no-graph.screen assertion\n  [OK] main-with-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/no-matching-commmits-test",
+          "script_sha256": "e1bf5d04ecaf3a855b65548e2a6ebe1697bc787597cfa5b97927acec79ed7bfe",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "tig-did-not-exit-as-expected#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/no-matching-commmits-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n  [OK] tig-did-not-exit-as-expected does not exist\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/no-matching-revs/target/release/tig",
+          "sha256": "a203c9f9e01ff3c8b5d7c832b2d13965a3652e98b78f31abc4fde095bb98d987"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/no-matching-revs/target/release/test-graph",
+          "sha256": "a6ef9931a15d6ad838b43c660d18484e24bfcd8c5a70c96f8dbc4ad896f5f852"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 2
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/main/default-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-ref-format.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-remotes-hidden.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-no-refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-no-graph.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-diff.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/no-matching-commmits-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tig-did-not-exit-as-expected#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ]
+}
