@@ -20,6 +20,10 @@ pub struct PreparedCommand {
     pub echo: bool,
     pub quick: bool,
 }
+pub struct ExpansionInput<'a> {
+    pub args: &'a [String],
+    pub prompt_answers: &'a [String],
+}
 impl PreparedCommand {
     /// Quoted, escaped argv for display only; never execute this string through a shell.
     pub fn display(&self) -> String {
@@ -110,7 +114,18 @@ pub fn prepare(
     path: &Path,
     selected_ref: Option<&str>,
 ) -> Result<PreparedCommand> {
-    prepare_with_context(repo, command, revision, path, 0, selected_ref)
+    prepare_with_context(
+        repo,
+        command,
+        revision,
+        path,
+        0,
+        selected_ref,
+        ExpansionInput {
+            args: &[],
+            prompt_answers: &[],
+        },
+    )
 }
 
 /// `Some("")` supplies the refs heading's empty selection; `None` means the
@@ -122,6 +137,7 @@ pub fn prepare_with_context(
     path: &Path,
     line: usize,
     selected_ref: Option<&str>,
+    expansion: ExpansionInput<'_>,
 ) -> Result<PreparedCommand> {
     if let Some(reference) = selected_ref.filter(|name| !name.is_empty() && *name != "HEAD") {
         // Selection names are data, never Git options. Validate the full name
@@ -273,6 +289,19 @@ pub fn prepare_with_context(
         }
     }
     variables.insert("file", path.as_os_str().to_owned());
+    variables.insert(
+        "refname",
+        selected_ref
+            .map(|name| {
+                ["refs/heads/", "refs/tags/", "refs/remotes/"]
+                    .iter()
+                    .find_map(|prefix| name.strip_prefix(prefix))
+                    .unwrap_or(name)
+            })
+            .filter(|name| !name.is_empty())
+            .unwrap_or(&head)
+            .into(),
+    );
     variables.insert("lineno", line.to_string().into());
     variables.insert(
         "directory",
@@ -297,12 +326,79 @@ pub fn prepare_with_context(
         "repo:is-inside-work-tree",
         if repo.bare { "false" } else { "true" }.into(),
     );
+    let (revargs, fileargs, cmdlineargs) = if argv.iter().any(|arg| {
+        matches!(
+            arg.as_str(),
+            "%(revargs)" | "%(fileargs)" | "%(cmdlineargs)"
+        )
+    }) {
+        classify_args(repo, expansion.args)
+    } else {
+        (Vec::new(), Vec::new(), Vec::new())
+    };
+    let mut prompt_answers = expansion.prompt_answers.iter().map(String::as_str);
     for arg in argv {
-        result.argv.push(expand(&arg, &variables)?);
+        let list = match arg.as_str() {
+            "%(revargs)" => Some(&revargs),
+            "%(fileargs)" => Some(&fileargs),
+            "%(cmdlineargs)" => Some(&cmdlineargs),
+            _ => None,
+        };
+        if let Some(list) = list {
+            if list.is_empty() {
+                if result.argv.is_empty() {
+                    result.argv.push(OsString::new());
+                }
+            } else {
+                for value in list {
+                    if !value.is_empty() || result.argv.is_empty() {
+                        result.argv.push(OsString::from(*value));
+                    }
+                }
+            }
+        } else {
+            result
+                .argv
+                .push(expand(&arg, &variables, &mut prompt_answers)?);
+        }
     }
     Ok(result)
 }
-fn expand(arg: &str, variables: &BTreeMap<&str, OsString>) -> Result<OsString> {
+fn classify_args<'a>(
+    repo: &Repository,
+    args: &'a [String],
+) -> (Vec<&'a str>, Vec<&'a str>, Vec<&'a str>) {
+    let (mut revisions, mut files, mut options) = (Vec::new(), Vec::new(), Vec::new());
+    let mut after_separator = false;
+    for arg in args {
+        if after_separator {
+            files.push(arg.as_str());
+        } else if arg == "--" {
+            after_separator = true;
+        } else if !arg.starts_with('-')
+            && repo
+                .command(["rev-parse", "--no-revs", "--no-flags", arg])
+                .is_ok_and(|out| out == format!("{arg}\n").as_bytes())
+        {
+            files.push(arg.as_str());
+        } else if arg.starts_with('-')
+            && crate::git::HistoryOptions::parse(&[arg.clone()]).is_err()
+            && repo
+                .command(["rev-parse", "--flags", "--no-revs", arg])
+                .is_ok_and(|out| out == format!("{arg}\n").as_bytes())
+        {
+            options.push(arg.as_str());
+        } else {
+            revisions.push(arg.as_str());
+        }
+    }
+    (revisions, files, options)
+}
+fn expand<'a>(
+    arg: &str,
+    variables: &BTreeMap<&str, OsString>,
+    prompt_answers: &mut impl Iterator<Item = &'a str>,
+) -> Result<OsString> {
     let mut out = OsString::new();
     let mut rest = arg;
     while let Some(index) = rest.find('%') {
@@ -318,11 +414,19 @@ fn expand(arg: &str, variables: &BTreeMap<&str, OsString>) -> Result<OsString> {
                 .find(')')
                 .ok_or_else(|| GitError("Unclosed command variable".into()))?;
             let key = &next[..end];
-            out.push(
-                variables
-                    .get(key)
-                    .ok_or_else(|| GitError(format!("Unsupported command variable: {key}")))?,
-            );
+            if key == "prompt" || key.starts_with("prompt ") {
+                out.push(
+                    prompt_answers
+                        .next()
+                        .ok_or_else(|| GitError("Command prompt requires input".into()))?,
+                );
+            } else {
+                out.push(
+                    variables
+                        .get(key)
+                        .ok_or_else(|| GitError(format!("Unsupported command variable: {key}")))?,
+                );
+            }
             rest = &next[end + 1..];
         } else {
             out.push("%");
@@ -331,6 +435,27 @@ fn expand(arg: &str, variables: &BTreeMap<&str, OsString>) -> Result<OsString> {
     }
     out.push(rest);
     Ok(out)
+}
+
+pub fn prompt_labels(command: &str) -> Vec<&str> {
+    let mut rest = command;
+    let mut labels = Vec::new();
+    while let Some(index) = rest.find('%') {
+        rest = &rest[index..];
+        if let Some(next) = rest.strip_prefix("%%") {
+            rest = next;
+        } else if let Some(next) = rest.strip_prefix("%(") {
+            let Some(end) = next.find(')') else { break };
+            let key = &next[..end];
+            if key == "prompt" || key.starts_with("prompt ") {
+                labels.push(key.strip_prefix("prompt").unwrap().trim_start());
+            }
+            rest = &next[end + 1..];
+        } else {
+            rest = &rest[1..];
+        }
+    }
+    labels
 }
 #[cfg(test)]
 mod tests {
@@ -490,6 +615,10 @@ mod tests {
             Path::new("space name"),
             52,
             None,
+            ExpansionInput {
+                args: &[],
+                prompt_answers: &[],
+            },
         )
         .unwrap();
         assert_eq!(editor.argv, ["vim", "+52", "space name"]);
@@ -583,11 +712,11 @@ mod tests {
         let mut vars = BTreeMap::new();
         vars.insert("file", OsString::from("space name; echo no"));
         assert_eq!(
-            expand("[%(file)] %% %(file)", &vars).unwrap(),
+            expand("[%(file)] %% %(file)", &vars, &mut std::iter::empty()).unwrap(),
             OsString::from("[space name; echo no] % space name; echo no")
         );
-        assert!(expand("%(unknown)", &vars).is_err());
-        assert!(expand("%(file", &vars).is_err());
+        assert!(expand("%(unknown)", &vars, &mut std::iter::empty()).is_err());
+        assert!(expand("%(file", &vars, &mut std::iter::empty()).is_err());
         let request = PreparedCommand {
             argv: vec!["must-not-execute".into()],
             silent: false,
@@ -607,6 +736,131 @@ mod tests {
             .unwrap_err()
             .to_string()
             .contains("requires confirmation"));
+    }
+    #[test]
+    fn list_variables_keep_argv_boundaries_and_prompt_input_literal() {
+        let root = std::env::temp_dir().join(format!("tig-command-list-{}", std::process::id()));
+        std::fs::create_dir_all(&root).unwrap();
+        assert!(Command::new("git")
+            .args(["init", "-q"])
+            .arg(&root)
+            .status()
+            .unwrap()
+            .success());
+        std::fs::write(root.join("bare space;literal"), b"content").unwrap();
+        let repo = Repository {
+            git_dir: root.join(".git"),
+            invocation: root.clone(),
+            root: root.clone(),
+            bare: false,
+        };
+        let args = [
+            "--all",
+            "--boundary",
+            "--pretty=raw",
+            "bare space;literal",
+            "--",
+            "--",
+            "space name; echo unsafe",
+            "-literal",
+        ]
+        .map(String::from);
+        let answers = ["one".to_owned(), "two".to_owned()];
+        let command = prepare_with_context(
+            &repo,
+            r#"!echo %(revargs) %(fileargs) %(cmdlineargs) "%(prompt First: )" "%(prompt Second: )" "%%(prompt ignored)""#,
+            "HEAD",
+            Path::new(""),
+            0,
+            None,
+            ExpansionInput {
+                args: &args,
+                prompt_answers: &answers,
+            },
+        )
+        .unwrap();
+        assert_eq!(
+            command.argv,
+            [
+                "echo",
+                "--all",
+                "--boundary",
+                "bare space;literal",
+                "--",
+                "space name; echo unsafe",
+                "-literal",
+                "--pretty=raw",
+                "one",
+                "two",
+                "%(prompt ignored)",
+            ]
+        );
+        assert_eq!(
+            prompt_labels("%%(prompt no) %(prompt First: ) %(prompt Second: )"),
+            ["First: ", "Second: "]
+        );
+        let empty = ExpansionInput {
+            args: &[],
+            prompt_answers: &[],
+        };
+        assert_eq!(
+            prepare_with_context(
+                &repo,
+                "!echo first %(revargs) %(cmdlineargs) last",
+                "HEAD",
+                Path::new(""),
+                0,
+                None,
+                empty
+            )
+            .unwrap()
+            .argv,
+            ["echo", "first", "last"]
+        );
+        assert_eq!(
+            prepare_with_context(
+                &repo,
+                "!%(revargs)",
+                "HEAD",
+                Path::new(""),
+                0,
+                None,
+                ExpansionInput {
+                    args: &[],
+                    prompt_answers: &[]
+                }
+            )
+            .unwrap()
+            .argv,
+            [""]
+        );
+        assert!(prepare_with_context(
+            &repo,
+            "!echo %(unknown)",
+            "HEAD",
+            Path::new(""),
+            0,
+            None,
+            ExpansionInput {
+                args: &args,
+                prompt_answers: &[]
+            },
+        )
+        .is_err());
+        assert!(prepare_with_context(
+            &repo,
+            r#"!echo "%(prompt First: )" "%(prompt Second: )""#,
+            "HEAD",
+            Path::new(""),
+            0,
+            None,
+            ExpansionInput {
+                args: &[],
+                prompt_answers: &answers[..1]
+            },
+        )
+        .is_err());
+        std::fs::remove_dir_all(root).unwrap();
     }
     #[test]
     fn launched_nonzero_exit_is_distinct_from_spawn_failure() {

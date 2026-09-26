@@ -510,6 +510,7 @@ struct App {
     tree_initialized: bool,
     previous: Vec<View>,
     pending_command: Option<tig_rs::commands::PreparedCommand>,
+    prompt_answers: Vec<String>,
     other: Option<View>,
     split: bool,
     parent_focused: bool,
@@ -1637,12 +1638,30 @@ impl App {
         Ok(())
     }
     fn action(&mut self, action: &str) -> Result<bool> {
+        if let Some(text) = action
+            .strip_prefix(":echo ")
+            .or_else(|| action.strip_prefix("echo "))
+        {
+            self.action(&format!("exec !echo {text}"))?;
+            if let Some(command) = self.pending_command.take() {
+                self.message = command.argv[1..]
+                    .iter()
+                    .map(|arg| arg.to_string_lossy())
+                    .collect::<Vec<_>>()
+                    .join(" ");
+            }
+            return Ok(true);
+        }
         if let Some(command) = action.strip_prefix(":!") {
             self.action(&format!("exec !{command}"))?;
             if let Some(command) = self.pending_command.take() {
-                let mut output = command.run_allow_nonzero(self.repo()?, false, true)?;
-                // ponytail: stdout then stderr; preserve interleaving with future streaming loaders.
-                output.stdout.extend(output.stderr);
+                let mut stdout = Vec::new();
+                if command.argv.first().is_some_and(|arg| !arg.is_empty()) {
+                    let mut output = command.run_allow_nonzero(self.repo()?, false, true)?;
+                    // ponytail: stdout then stderr; preserve interleaving with future streaming loaders.
+                    output.stdout.extend(output.stderr);
+                    stdout = output.stdout;
+                }
                 if self.other.is_some() {
                     if !self.parent_focused {
                         self.swap_panes();
@@ -1652,7 +1671,7 @@ impl App {
                     self.parent_focused = false;
                 }
                 self.refresh_after_command()?;
-                let mut view = View::text("pager", &String::from_utf8_lossy(&output.stdout));
+                let mut view = View::text("pager", &String::from_utf8_lossy(&stdout));
                 view.command_title = command
                     .argv
                     .iter()
@@ -1706,6 +1725,7 @@ impl App {
                     0,
                 )
             });
+            let prompt_answers = std::mem::take(&mut self.prompt_answers);
             self.pending_command = Some(tig_rs::commands::prepare_with_context(
                 self.repo()?,
                 command,
@@ -1713,6 +1733,10 @@ impl App {
                 &file,
                 line,
                 selected_ref.as_deref(),
+                tig_rs::commands::ExpansionInput {
+                    args: &self.args,
+                    prompt_answers: &prompt_answers,
+                },
             )?);
             return Ok(true);
         }
@@ -2314,7 +2338,9 @@ impl App {
     }
     fn script(&mut self, path: &str) -> Result<()> {
         let mut grep_prompt = false;
-        for raw in fs::read_to_string(path)?.lines() {
+        let script = fs::read_to_string(path)?;
+        let mut lines = script.lines();
+        while let Some(raw) = lines.next() {
             let line = raw.trim();
             if line.is_empty() || line.starts_with('#') {
                 continue;
@@ -2343,6 +2369,19 @@ impl App {
                 } else {
                     self.binding(line)
                 };
+                self.prompt_answers.clear();
+                for _ in tig_rs::commands::prompt_labels(&action) {
+                    let answer = lines
+                        .next()
+                        .ok_or("Missing scripted command prompt answer")?
+                        .trim();
+                    self.prompt_answers.push(
+                        answer
+                            .strip_suffix("<Enter>")
+                            .ok_or("Invalid scripted command prompt answer")?
+                            .into(),
+                    );
+                }
                 if !self.action(&action)? {
                     break;
                 }
@@ -2365,7 +2404,9 @@ impl App {
         self.config
             .action(&self.view.name, key)
             .map(|a| {
-                if a.first().is_some_and(|arg| arg.starts_with(':')) {
+                if a.first().is_some_and(|arg| {
+                    arg.starts_with(':') && !arg.starts_with(":!") && arg != ":echo"
+                }) {
                     return a.join(" ");
                 }
                 a.iter()
@@ -2637,6 +2678,7 @@ mod editor_tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -2807,6 +2849,7 @@ mod editor_tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -3291,6 +3334,24 @@ impl Drop for Terminal {
         }
     }
 }
+fn read_command_prompts(terminal: &mut Terminal, app: &mut App, action: &str) -> Result<bool> {
+    app.prompt_answers.clear();
+    for label in tig_rs::commands::prompt_labels(action) {
+        let prefix = if label.is_empty() {
+            "Command argument: "
+        } else {
+            label
+        };
+        match terminal.prompt(app, prefix)? {
+            Some(answer) => app.prompt_answers.push(answer),
+            None => {
+                app.prompt_answers.clear();
+                return Ok(false);
+            }
+        }
+    }
+    Ok(true)
+}
 fn key_name(code: KeyCode, modifiers: KeyModifiers) -> String {
     if let KeyCode::Char(c) = code {
         if modifiers.contains(KeyModifiers::CONTROL) {
@@ -3354,6 +3415,7 @@ fn run() -> Result<()> {
         tree_initialized: false,
         previous: vec![],
         pending_command: None,
+        prompt_answers: vec![],
         other: None,
         split: false,
         parent_focused: false,
@@ -3535,6 +3597,9 @@ fn run() -> Result<()> {
                         .map_or(Ok(()), |query| app.grep_query(&query))
                         .map(|()| true)
                 } else {
+                    if !read_command_prompts(&mut terminal, &mut app, &s)? {
+                        continue;
+                    }
                     app.action(&format!(":{s}"))
                 };
                 match result {
@@ -3544,6 +3609,9 @@ fn run() -> Result<()> {
                 }
             }
         } else {
+            if !read_command_prompts(&mut terminal, &mut app, &action)? {
+                continue;
+            }
             match app.action(&action) {
                 Ok(false) => break,
                 Ok(true) => (),
@@ -3733,6 +3801,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -3993,6 +4062,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -4077,6 +4147,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -4119,6 +4190,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -4204,6 +4276,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -4255,6 +4328,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -4424,6 +4498,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
+            prompt_answers: vec![],
             other: Some(parent),
             split: true,
             parent_focused: false,
@@ -4500,6 +4575,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
+            prompt_answers: vec![],
             other: Some(View::text("main", "parent\nother commit")),
             split: true,
             parent_focused: false,
