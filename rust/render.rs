@@ -896,3 +896,191 @@ mod tests {
         );
     }
 }
+
+/// Diffstat cells follow Git's text boundaries, not filename bytes or display width.
+/// Keep the last pipe: filenames can themselves contain pipes, pluses and minuses.
+fn diff_stat_cells(text: &str) -> Option<Vec<&str>> {
+    let (name, stat) = text.rsplit_once('|')?;
+    if name.trim().is_empty()
+        || !(stat.ends_with(['+', '-'])
+            || stat.contains(" 0")
+            || stat.contains("Bin")
+            || stat.contains("Unmerged")
+            || (stat.ends_with('0')
+                && (name.contains("=>") || name.trim_start().starts_with("..."))))
+    {
+        return None;
+    }
+    let mut cells = vec![name];
+    let mut rest = &text[name.len()..];
+    let markers: &[char] = if rest.contains('B') {
+        &['B', ' ', '-', ' ', 'b']
+    } else {
+        &['+', '-']
+    };
+    for marker in markers {
+        if let Some(index) = rest.find(*marker) {
+            if index > 0 {
+                cells.push(&rest[..index]);
+            }
+            rest = &rest[index..];
+        }
+    }
+    if !rest.is_empty() {
+        cells.push(rest);
+    }
+    Some(cells)
+}
+
+/// Reuse the reference's enum order and literal built-in rules, as Config does
+/// for named color areas. New metadata prefixes need no second Rust table.
+fn builtin_line_type(row: &str) -> &'static str {
+    static RULES: std::sync::OnceLock<Vec<(String, String)>> = std::sync::OnceLock::new();
+    let rules = RULES.get_or_init(|| {
+        let named = include_str!("../include/tig/line.h")
+            .lines()
+            .filter_map(|line| {
+                let (name, rest) = line.trim().strip_prefix("_(")?.split_once(',')?;
+                let prefix = rest.split('"').nth(1)?.replace("\\\\", "\\");
+                (!prefix.is_empty()).then(|| (prefix, name.to_ascii_lowercase().replace('_', "-")))
+            });
+        let literals = include_str!("../tigrc").lines().filter_map(|line| {
+            let prefix = line.trim().strip_prefix("color \"")?.split('"').next()?;
+            (!prefix.is_empty()).then(|| (prefix.to_owned(), String::new()))
+        });
+        named.chain(literals).collect()
+    });
+    rules
+        .iter()
+        .find_map(|(prefix, kind)| {
+            row.get(..prefix.len())
+                .filter(|start| start.eq_ignore_ascii_case(prefix))
+                .map(|_| kind.as_str())
+        })
+        .unwrap_or("default")
+}
+
+/// Diagnostic text/cell export for ordinary diffs (the C save-view contract).
+pub fn diff_view_data(rows: &[String], selected: usize) -> String {
+    use std::fmt::Write;
+    let mut output = String::new();
+    let mut after_diff = false;
+    let mut in_chunk = false;
+    let mut combined = false;
+    let mut reading_stat = false;
+    for (index, row) in rows.iter().enumerate() {
+        if index == 0 || (!after_diff && row.starts_with(' ') && !row.starts_with("  ")) {
+            reading_stat = true;
+        }
+        let cells = reading_stat.then(|| diff_stat_cells(row)).flatten();
+        let kind = if cells.is_some() {
+            "diff-stat"
+        } else {
+            reading_stat = false;
+            let kind = builtin_line_type(row);
+            match kind {
+                "diff-header" => {
+                    after_diff = true;
+                    in_chunk = false;
+                    kind
+                }
+                "diff-chunk" => {
+                    in_chunk = true;
+                    combined = row.starts_with("@@@");
+                    kind
+                }
+                "commit" => {
+                    in_chunk = false;
+                    kind
+                }
+                "diff-add-file" if in_chunk => "diff-add",
+                "diff-del-file" | "diff-start" if in_chunk => "diff-del",
+                "diff-start" => {
+                    reading_stat = true;
+                    kind
+                }
+                "diff-add2" | "diff-del2" if !combined => "default",
+                _ => kind,
+            }
+        };
+        let cells = cells.unwrap_or_else(|| {
+            if kind == "diff-chunk" {
+                let marker = row.bytes().take_while(|byte| *byte == b'@').count();
+                if let Some(end) = row[marker..].find("@@") {
+                    let end = marker + end + marker;
+                    if let Some((header, context)) = row.get(..end).zip(row.get(end..)) {
+                        return vec![header, context];
+                    }
+                }
+            }
+            vec![row.as_str()]
+        });
+        writeln!(
+            output,
+            "line[{index:3}] type={kind} selected={}",
+            usize::from(index == selected)
+        )
+        .unwrap();
+        write!(output, "line[{index:3}] cells={} text=", cells.len()).unwrap();
+        for cell in cells {
+            write!(output, "[{cell}]").unwrap();
+        }
+        output.push('\n');
+    }
+    output
+}
+
+#[test]
+fn diff_stat_cells_preserve_paths_and_binary_boundaries() {
+    for prefix in [
+        "Author: ",
+        "Commit: ",
+        "Tagger: ",
+        "Date: ",
+        "AuthorDate: ",
+        "CommitDate: ",
+        "TaggerDate: ",
+    ] {
+        assert_eq!(builtin_line_type(&format!("{prefix}value")), "");
+    }
+    assert_eq!(builtin_line_type("commit abc"), "commit");
+    assert_eq!(builtin_line_type("--- a/file"), "diff-del-file");
+    assert_eq!(
+        builtin_line_type("\\ No newline at end of file"),
+        "diff-no-newline"
+    );
+    assert_eq!(builtin_line_type("中文行"), "default");
+    for (row, expected) in [
+        (" 名+称-|x | 2 +-", vec![" 名+称-|x ", "| 2 ", "+", "-"]),
+        (
+            " binary | Bin 0 -> 12 bytes",
+            vec![" binary ", "| ", "Bin", " 0 ", "->", " 12 ", "bytes"],
+        ),
+        (" copy | Bin", vec![" copy ", "| ", "Bin"]),
+        (" renamed => file | 0", vec![" renamed => file ", "| 0"]),
+        (" file | Unmerged", vec![" file ", "| Unmerged"]),
+    ] {
+        let cells = diff_stat_cells(row).unwrap();
+        assert_eq!(cells, expected);
+        assert_eq!(cells.concat(), row);
+    }
+    assert!(diff_stat_cells(" | 0").is_none());
+    let rows = [
+        "commit abc",
+        "",
+        "    message | 0",
+        "---",
+        " file | 1 +",
+        "",
+        "diff --git a/x b/x",
+        "@@ -1 +1 @@",
+        " context | 0",
+        "---deleted",
+    ];
+    let data = diff_view_data(&rows.map(str::to_owned), 4);
+    assert!(data.contains("line[  2] type=default"));
+    assert!(data.contains("line[  4] type=diff-stat selected=1"));
+    assert!(data.contains("line[  7] cells=2 text=[@@ -1 +1 @@][]"));
+    assert!(data.contains("line[  8] type=default"));
+    assert!(data.contains("line[  9] type=diff-del"));
+}

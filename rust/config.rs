@@ -17,6 +17,8 @@ pub struct Config {
     /// Successful bind assignments in parse order; help needs their order.
     pub binding_updates: Vec<(String, String)>,
     pub colors: BTreeMap<String, Vec<String>>,
+    /// Retain quoting/order so diagnostic export can reject unmodeled line rules.
+    pub color_commands: Vec<String>,
     pub diagnostics: Vec<String>,
 }
 
@@ -414,6 +416,7 @@ impl Config {
     }
     /// Column toggles apply to the active view; global toggles remain shared.
     pub fn apply_command_for_view(&mut self, view: &str, line: &str) -> Result<(), String> {
+        self.record_color_command(line);
         let args = words(line)?;
         if args.first().is_some_and(|s| s == "toggle") {
             self.toggle(view, &args[1..])
@@ -516,6 +519,11 @@ impl Config {
         }
         errors
     }
+    fn record_color_command(&mut self, line: &str) {
+        if line.split_whitespace().next() == Some("color") {
+            self.color_commands.push(line.trim().to_owned());
+        }
+    }
     fn parse_line(
         &mut self,
         line: &str,
@@ -525,6 +533,7 @@ impl Config {
     ) -> bool {
         // Upstream strips comments before splitting arguments, even inside quotes.
         let content = line.split('#').next().unwrap_or("").trim();
+        self.record_color_command(content);
         // A malformed quoted binding still reaches the bind validator in C.
         // Keep prompt/command parsing strict, and retain string-setting validation.
         let binding = content.split_whitespace().next() == Some("bind");
