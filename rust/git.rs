@@ -310,16 +310,34 @@ impl Repository {
     }
     /// Paths after -- are root-relative; implicit paths use the discovery directory.
     pub fn history(&self, revisions: &[String], limit: usize) -> Result<Vec<Commit>> {
+        self.history_ordered(revisions, limit, "topo")
+    }
+    pub fn history_ordered(
+        &self,
+        revisions: &[String],
+        limit: usize,
+        order: &str,
+    ) -> Result<Vec<Commit>> {
         let options = HistoryOptions::parse(revisions)?;
+        let order_arg = match order {
+            "auto" | "topo" => Some("--topo-order"),
+            "default" => None,
+            "date" => Some("--date-order"),
+            "author-date" => Some("--author-date-order"),
+            "reverse" => Some("--reverse"),
+            _ => return Err(GitError(format!("Invalid commit order: {order}"))),
+        };
         let mut args = vec![
             "log".to_owned(),
-            "--topo-order".into(),
             "--parents".into(),
             "--no-show-signature".into(),
             "--decorate=full".into(),
             "--format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI".into(),
             "-z".into(),
         ];
+        if let Some(order_arg) = order_arg {
+            args.push(order_arg.into());
+        }
         if options.merge {
             args.push("--boundary".into());
         }
@@ -1211,6 +1229,34 @@ mod tests {
         assert!(HistoryOptions::parse(&["--merge=oops".into()]).is_err());
         assert!(HistoryOptions::parse(&["--follow=yes".into()]).is_err());
         assert!(HistoryOptions::parse(&["--format=oops".into()]).is_err());
+    }
+    #[test]
+    fn configured_commit_order_changes_real_history() {
+        let fixture = Fixture::new();
+        assert!(Command::new("tar")
+            .args([
+                "-xzf",
+                concat!(
+                    env!("CARGO_MANIFEST_DIR"),
+                    "/test/main/commit-order-edge-case-test.tgz"
+                ),
+                "-C"
+            ])
+            .arg(&fixture.0)
+            .status()
+            .unwrap()
+            .success());
+        let repo = fixture.repo();
+        let subjects = |order| {
+            repo.history_ordered(&[], 0, order)
+                .unwrap()
+                .into_iter()
+                .map(|commit| commit.subject)
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(subjects("topo")[1..3], ["More featuresA", "More master"]);
+        assert_eq!(subjects("date")[1..3], ["More master", "More featuresA"]);
+        assert!(repo.history_ordered(&[], 0, "other").is_err());
     }
     #[test]
     fn blame_porcelain_keeps_dates_and_historical_path() {
