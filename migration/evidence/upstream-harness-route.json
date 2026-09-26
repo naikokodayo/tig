@@ -1,0 +1,79 @@
+{
+  "source_commit": "e5cc5b1954c326671e3a3176f9f05e72c8d3b9bb",
+  "command": [
+    "make",
+    "RUST_ONLY=1",
+    "test/graph/00-simple-test",
+    "test/help/default-test"
+  ],
+  "c_executables_absent_during_run": [
+    "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/harness-task-clone/src/tig",
+    "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/harness-task-clone/test/tools/test-graph"
+  ],
+  "c_executables_rebuilt": false,
+  "rust_binaries": {
+    "tig": {
+      "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/harness-task-clone/target/release/tig",
+      "sha256": "1f25c8306156888333cba749cefe4051e34e65ed96a0164dd390c82e243ef184"
+    },
+    "test-graph": {
+      "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/harness-task-clone/target/release/test-graph",
+      "sha256": "0ca50ecdcb2a288c706bbbda1a87101a639064141d24b2410633dcfd08a71d9e"
+    }
+  },
+  "exit_code": 0,
+  "results": [
+    {
+      "script": "test/graph/00-simple-test",
+      "script_sha256": "3749ecf4d4cdeb5b99ef9a2df4e88e1990e7bd350e0fd4cd9b1fb9dac287313e",
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "pass",
+      "reasons": [],
+      "checks": {
+        "OK": 1
+      },
+      "assertions": [
+        {
+          "id": "stdout#1",
+          "status": "OK"
+        }
+      ],
+      "receipt_path": "test/tmp/graph/00-simple-test/.test-result",
+      "receipt": "  [OK] stdout assertion\n",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/harness-task-clone/target\"\r\n    Finished `release` profile [optimized] target(s) in 0.07s\r\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/harness-task-clone/target/release/tig\"\r\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/harness-task-clone/target/release/test-graph\"\r\n      TEST  test/graph/00-simple-test\r\n      TEST  test/help/default-test\r\n"
+    },
+    {
+      "script": "test/help/default-test",
+      "script_sha256": "0044e01f0fa489d763cb5b1bee2a6d11fba5dbe5ed82d45b56cb31b7b72f0f11",
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "pass",
+      "reasons": [],
+      "checks": {
+        "OK": 3
+      },
+      "assertions": [
+        {
+          "id": "help-default.screen#1",
+          "status": "OK"
+        },
+        {
+          "id": "help-search.screen#1",
+          "status": "OK"
+        },
+        {
+          "id": "help-collapsed.screen#1",
+          "status": "OK"
+        }
+      ],
+      "receipt_path": "test/tmp/help/default-test/.test-result",
+      "receipt": "  [OK] help-default.screen assertion\n  [OK] help-search.screen assertion\n  [OK] help-collapsed.screen assertion\n",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/harness-task-clone/target\"\r\n    Finished `release` profile [optimized] target(s) in 0.07s\r\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/harness-task-clone/target/release/tig\"\r\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/harness-task-clone/target/release/test-graph\"\r\n      TEST  test/graph/00-simple-test\r\n      TEST  test/help/default-test\r\n"
+    }
+  ]
+}
