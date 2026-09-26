@@ -438,7 +438,20 @@ impl App {
             .ok_or_else(|| "Not in a Git repository".into())
     }
     fn load(&self, name: &str) -> Result<View> {
-        let mut view = self.load_content(name)?;
+        let (vertical, parent, child) = self.pane_sizes();
+        let width = if self.split && self.other.is_some() && vertical {
+            if self.parent_focused {
+                parent
+            } else {
+                child
+            }
+        } else {
+            self.width
+        };
+        self.load_width(name, width)
+    }
+    fn load_width(&self, name: &str, width: usize) -> Result<View> {
+        let mut view = self.load_content(name, width)?;
         if self.view.name == name {
             view.sort_field = self.view.sort_field.clone();
             view.sort_reverse = self.view.sort_reverse;
@@ -508,7 +521,7 @@ impl App {
         }
         Ok(v)
     }
-    fn load_content(&self, name: &str) -> Result<View> {
+    fn load_content(&self, name: &str, width: usize) -> Result<View> {
         let mut v = View::new(name);
         if name == "help" {
             let help = self
@@ -520,7 +533,10 @@ impl App {
             }
             return Ok(v);
         }
-        if name == "main" && self.view.from_stdin {
+        if name == "diff" && self.view.name == "diff" && self.view.from_stdin {
+            return Ok(self.view.clone());
+        }
+        if name == "main" && self.view.name == "main" && self.view.from_stdin {
             let mut view = self.view.clone();
             view.redraw_stdin(&self.config, self.width)?;
             return Ok(view);
@@ -646,6 +662,7 @@ impl App {
                         &oid,
                         self.config.usize_value("diff-context", 3),
                         self.config.bool_value("word-diff", false),
+                        width,
                     )?,
                 );
                 view.revision = oid.clone();
@@ -697,6 +714,8 @@ impl App {
                 if let Some(options) = self.config.settings.get("log-options") {
                     args.extend(options.clone());
                 }
+                // Width alone does not enable stats when log-options disables them.
+                args.push(format!("--stat-width={width}"));
                 args.extend(["--no-color".into(), "--decorate=full".into()]);
                 args.extend(self.args.clone());
                 let output = repo.command(&args)?;
@@ -840,11 +859,11 @@ impl App {
         }
         Ok(v)
     }
-    fn open(&mut self, name: &str) -> Result<()> {
+    fn open(&mut self, name: &str, width: usize) -> Result<()> {
         if name == "help" {
             self.help = Some(HelpView::new(&self.config, &self.view.name));
         }
-        let next = self.load(name)?;
+        let next = self.load_width(name, width)?;
         self.previous.push(std::mem::replace(&mut self.view, next));
         Ok(())
     }
@@ -1006,7 +1025,7 @@ impl App {
         }
         Ok(())
     }
-    fn enter(&mut self) -> Result<()> {
+    fn enter(&mut self, split: bool) -> Result<()> {
         if self.view.name == "help" {
             if let Some(help) = &mut self.help {
                 if help.toggle_section(self.view.selected, &self.config) {
@@ -1035,28 +1054,30 @@ impl App {
         }
         let parent = self.view.clone();
         let depth = self.previous.len();
+        let (vertical, _, child) = self.pane_sizes();
+        let child_width = if split && vertical { child } else { self.width };
         match self.selected() {
             Item::Commit(c) => {
                 self.revision = c.oid;
-                self.open("diff")?;
+                self.open("diff", child_width)?;
             }
             Item::Changes(kind) => self.open_changes(kind)?,
             Item::Ref(id, _) => {
                 self.revision = id.clone();
                 if self.view.name == "refs" {
                     self.args = vec![id];
-                    self.open("main")?;
+                    self.open("main", child_width)?;
                 } else {
-                    self.open("diff")?;
+                    self.open("diff", child_width)?;
                 }
             }
             Item::Blame(line) => {
                 self.revision = line.oid;
-                self.open("diff")?;
+                self.open("diff", child_width)?;
             }
             Item::Text if self.view.name == "refs" && self.view.selected == 0 => {
                 self.args = vec!["--all".into()];
-                self.open("main")?;
+                self.open("main", child_width)?;
             }
             Item::Tree(e) => {
                 if e.kind == "tree" && self.view.path.parent() == Some(e.path.as_path()) {
@@ -1064,7 +1085,7 @@ impl App {
                 }
                 self.path = e.path.clone();
                 if e.kind == "tree" {
-                    self.open("tree")?;
+                    self.open("tree", self.width)?;
                     return Ok(());
                 } else {
                     let bytes = self.repo()?.blob(&e.oid)?;
@@ -1140,7 +1161,7 @@ impl App {
             let from_grep = parent.name == "grep";
             self.previous.truncate(depth);
             self.other = Some(parent);
-            self.split = true;
+            self.split = split;
             self.parent_focused = false;
             if from_grep {
                 self.center_selection();
@@ -1509,7 +1530,7 @@ impl App {
                     self.message = "Can't close last remaining view".into();
                 }
             }
-            "enter" => self.enter()?,
+            "enter" => self.enter(true)?,
             "view-next" => {
                 if self.split {
                     self.swap_panes();
@@ -1524,7 +1545,7 @@ impl App {
                 let old = self.view.selected;
                 self.view.move_by(if action == "next" { 1 } else { -1 });
                 if self.view.selected != old {
-                    self.enter()?;
+                    self.enter(split)?;
                 }
                 if self.parent_focused {
                     self.swap_panes();
@@ -1739,12 +1760,19 @@ impl App {
             "show-version" => self.message = format!("tig-rs {}", env!("CARGO_PKG_VERSION")),
             "parent" if self.view.name == "tree" => self.tree_parent()?,
             "screen-redraw" => (),
+            "view-diff" if self.view.name == "diff" => {
+                if let Some(parent) = self.other.take() {
+                    self.previous.push(parent);
+                }
+                self.split = false;
+                self.parent_focused = false;
+            }
             "view-diff" if self.view.name == "stage" => self.split = false,
             "view-stage" if matches!(self.view.name.as_str(), "main" | "status") => {
                 if self.view.name == "main" && !matches!(self.selected(), Item::Changes(_)) {
                     return Err("No stage content; select working tree changes".into());
                 }
-                self.enter()?;
+                self.enter(true)?;
                 if self.view.name == "stage" {
                     if let Some(parent) = self.other.take() {
                         self.previous.push(parent);
@@ -1772,7 +1800,7 @@ impl App {
                     );
                 }
                 self.select_context();
-                self.open(&action[5..])?;
+                self.open(&action[5..], self.width)?;
             }
             _ => return Err(format!("Not implemented in Rust yet: {action}").into()),
         }
@@ -1792,7 +1820,7 @@ impl App {
             || (vertical == "auto"
                 && (self.width > 160 || self.width > self.height.saturating_sub(1) * 4));
         let total = if vertical {
-            self.width.saturating_sub(1)
+            self.width
         } else {
             self.height.saturating_sub(1)
         };
@@ -1815,7 +1843,11 @@ impl App {
         };
         let minimum = if vertical { 1 } else { 4.min(total / 2) };
         let child = child.max(minimum).min(total.saturating_sub(minimum));
-        (vertical, total - child, child)
+        (
+            vertical,
+            total - child,
+            child.saturating_sub(usize::from(vertical)),
+        )
     }
     fn screen(&mut self) -> Vec<String> {
         let mut lines = if self.split && self.other.is_some() {
@@ -1989,7 +2021,11 @@ fn stage_stat_header(rows: &[String], selected: usize) -> Option<usize> {
 }
 
 fn diff_stat_header(rows: &[String], selected: usize) -> Option<usize> {
-    let start = rows[..=selected].iter().rposition(|line| line == "---")? + 1;
+    let start = rows
+        .get(..=selected)?
+        .iter()
+        .rposition(|line| line == "---")?
+        + 1;
     stat_header_after(rows, selected, start)
 }
 
@@ -2264,14 +2300,14 @@ mod editor_tests {
             height: 20,
         };
         assert_eq!(app.edit_target(), Some((PathBuf::from("b"), 0)));
-        app.enter().unwrap();
+        app.enter(true).unwrap();
         assert_eq!(app.view.selected, 9);
         app.view = View::text(
             "diff",
             "commit abc\n---\n a | 1 +\n b | 1 +\ndiff --git a/a b/a\ndiff --git a/b b/b\n",
         );
         app.view.selected = 3;
-        app.enter().unwrap();
+        app.enter(true).unwrap();
         assert_eq!(app.view.selected, 5);
         let mixed = b"diff --cc conflict\n@@@ -1,1 -1,1 +1,1 @@@\n++x\ndiff --git a/other b/other\n--- a/other\n+++ b/other\n@@ -1 +1 @@\n-old\n+new\n";
         app.view = View::text("stage", &String::from_utf8_lossy(mixed));
@@ -2799,10 +2835,46 @@ fn run() -> Result<()> {
             }
         }
     }
-    if cli.view == "pager" {
+    // Script dimensions must be applied before Git generates width-dependent stats.
+    if env::var_os("TIG_SCRIPT").is_some() {
+        app.width = env::var("COLUMNS")
+            .ok()
+            .and_then(|s| s.parse().ok())
+            .unwrap_or(app.width)
+            .max(1);
+        app.height = env::var("LINES")
+            .ok()
+            .and_then(|s| s.parse().ok())
+            .unwrap_or(app.height)
+            .max(3);
+    }
+    if cli.view == "pager" || (cli.view == "diff" && !io::stdin().is_terminal()) {
         let mut text = String::new();
         io::Read::read_to_string(&mut io::stdin(), &mut text)?;
-        if cli
+        if cli.view == "diff" {
+            if cli
+                .git_args
+                .iter()
+                .take_while(|arg| !matches!(arg.as_str(), "--" | "--end-of-options"))
+                .any(|arg| arg == "--stdin")
+            {
+                return Err(
+                    "Forwarding revision input to git show --stdin is not supported yet".into(),
+                );
+            }
+            app.view = View::text("diff", &text);
+            app.view.from_stdin = true;
+            if let Some(oid) = text.lines().find_map(|line| {
+                line.strip_prefix("commit ")
+                    .and_then(|header| header.split_whitespace().next())
+                    .filter(|oid| {
+                        matches!(oid.len(), 40 | 64) && oid.bytes().all(|c| c.is_ascii_hexdigit())
+                    })
+            }) {
+                app.view.revision = oid.into();
+                app.revision = oid.into();
+            }
+        } else if cli
             .git_args
             .iter()
             .take_while(|arg| !matches!(arg.as_str(), "--" | "--end-of-options"))
@@ -2849,16 +2921,6 @@ fn run() -> Result<()> {
     }
     app.view.restore_status_selection();
     if let Ok(script) = env::var("TIG_SCRIPT") {
-        app.width = env::var("COLUMNS")
-            .ok()
-            .and_then(|s| s.parse().ok())
-            .unwrap_or(app.width)
-            .max(1);
-        app.height = env::var("LINES")
-            .ok()
-            .and_then(|s| s.parse().ok())
-            .unwrap_or(app.height)
-            .max(3);
         app.center_selection();
         return app.script(&script);
     }
@@ -3389,7 +3451,7 @@ mod tests {
             app.selected(),
             Item::Changes(ChangeKind::Untracked)
         ));
-        app.enter().unwrap();
+        app.enter(true).unwrap();
         assert_eq!(app.view.name, "status");
         app.view.selected = 2;
         app.action("status-update").unwrap();
@@ -3415,7 +3477,7 @@ mod tests {
         app.action("view-status").unwrap();
         app.view.selected = app.view.items.iter().position(|item|
             matches!(item, Item::Status(entry, false) if entry.path == PathBuf::from("tracked"))).unwrap();
-        app.enter().unwrap();
+        app.enter(true).unwrap();
         app.action("maximize").unwrap();
         app.view.selected = app
             .view
@@ -3558,6 +3620,39 @@ mod tests {
         app.parent_focused = true;
         assert!(app.action("back").unwrap());
         assert_eq!(app.view.rows, vec!["older"]);
+    }
+    #[test]
+    fn explicit_diff_detaches_parent_and_vertical_split_reserves_separator() {
+        let mut app = App {
+            repo: None,
+            config: Config::defaults(),
+            view: View::text("diff", "first\nsecond"),
+            help: None,
+            previous: vec![],
+            pending_command: None,
+            other: Some(View::text("main", "parent\nother commit")),
+            split: true,
+            parent_focused: false,
+            revision: "HEAD".into(),
+            path: PathBuf::new(),
+            args: vec![],
+            message: String::new(),
+            search: String::new(),
+            width: 181,
+            height: 30,
+        };
+        assert_eq!(app.pane_sizes(), (true, 91, 89));
+        for maximized in [false, true] {
+            app.split = !maximized;
+            app.other = Some(View::text("main", "parent\nother commit"));
+            app.view.selected = 0;
+            app.action("view-diff").unwrap();
+            assert!(!app.split);
+            assert!(app.other.is_none());
+            app.action("next").unwrap();
+            assert_eq!(app.view.rows, ["first", "second"]);
+            assert_eq!(app.view.selected, 1);
+        }
     }
     #[test]
     fn terminal_content_is_safe_and_cell_clipped() {
