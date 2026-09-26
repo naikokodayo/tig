@@ -109,6 +109,8 @@ pub fn prepare(
     prepare_with_context(repo, command, revision, path, 0, selected_ref)
 }
 
+/// `Some("")` supplies the refs heading's empty selection; `None` means the
+/// caller has no reference context and selection-only variables stay unsupported.
 pub fn prepare_with_context(
     repo: &Repository,
     command: &str,
@@ -217,7 +219,17 @@ pub fn prepare_with_context(
     // from a view that has not supplied reference context at all.
     if let Some(reference) = selected_ref {
         let branch = reference.strip_prefix("refs/heads/").unwrap_or("");
-        let tag = reference.strip_prefix("refs/tags/").unwrap_or("");
+        let mut tag = reference.strip_prefix("refs/tags/").unwrap_or("");
+        // A short tag that also names a local branch would checkout the branch.
+        if !tag.is_empty()
+            && repo
+                .refs()?
+                .iter()
+                .any(|r| r.name == format!("refs/heads/{tag}"))
+        {
+            tag = reference;
+            variables.insert("ref", reference.into());
+        }
         variables.insert("branch", branch.into());
         variables.insert("tag", tag.into());
     }
@@ -456,6 +468,42 @@ mod tests {
         assert_eq!(
             command.run(&repo, true, true).unwrap().stdout,
             b"two words\n"
+        );
+        repo.command([
+            "-c",
+            "user.name=Ref Fixture",
+            "-c",
+            "user.email=ref@example.invalid",
+            "commit",
+            "--allow-empty",
+            "-qm",
+            "fixture",
+        ])
+        .unwrap();
+        repo.command(["branch", "v1"]).unwrap();
+        repo.command(["tag", "v1"]).unwrap();
+        let checkout = prepare(
+            &repo,
+            "@git checkout -q %(tag)",
+            "HEAD",
+            Path::new(""),
+            Some("refs/tags/v1"),
+        )
+        .unwrap();
+        assert_eq!(checkout.argv[3], "refs/tags/v1");
+        checkout.run(&repo, true, true).unwrap();
+        assert!(repo.command(["symbolic-ref", "--quiet", "HEAD"]).is_err());
+        assert_eq!(
+            prepare(
+                &repo,
+                "!echo %(ref)",
+                "HEAD",
+                Path::new(""),
+                Some("refs/tags/v1"),
+            )
+            .unwrap()
+            .argv[1],
+            "refs/tags/v1"
         );
         std::fs::remove_dir_all(root).unwrap();
     }
