@@ -637,9 +637,10 @@ impl App {
             "main" => {
                 let options = tig_rs::git::HistoryOptions::parse(&self.args)?;
                 let mut config = self.config.clone();
-                let graph = options.with_graph && tig_rs::render::main_graph_enabled(&config);
+                let configured_graph = tig_rs::render::main_graph_enabled(&config);
+                let graph = options.with_graph && configured_graph;
                 let order = self.config.value("commit-order").unwrap_or("auto");
-                let order = if order == "auto" && !graph {
+                let order = if order == "auto" && !configured_graph {
                     "default"
                 } else {
                     order
