@@ -1,0 +1,17 @@
+{
+  "scope": "Last split hunk only; both Git applies use disposable copies of the original fixture index. Real index and worktree are unchanged.",
+  "checks": [
+    {
+      "case": "C original count",
+      "exit": 0,
+      "stderr": "",
+      "index_a": "a\n1\n2\n3\n4\n5\n6\n7\n"
+    },
+    {
+      "case": "Corrected count",
+      "exit": 0,
+      "stderr": "",
+      "index_a": "a\n1\n2\n3\n4\n5\n6\n7\n8"
+    }
+  ]
+}

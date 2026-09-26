@@ -1,0 +1,5 @@
+   Compiling autocfg v1.5.1
+   Compiling num-traits v0.2.19
+   Compiling chrono v0.4.45
+   Compiling tig-rs v0.1.0 (<clone>)
+    Finished `release` profile [optimized] target(s) in 42.31s
