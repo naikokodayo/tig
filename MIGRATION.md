@@ -468,3 +468,28 @@ include process errors, not only screen mismatches. This is focused evidence,
 not a full-suite rerun. See [`date-blame-sync.json`](migration/evidence/date-blame-sync.json)
 and its focused/check logs. The per-local/locale-value subprocess limitation
 also applies to blame lines; no performance improvement is claimed.
+
+
+### Date slice: nonlocal `%s` gate and PR #5 harness sync
+
+Merged main `03f6a29f` without rewriting pushed history; the additive migration
+record conflict preserves both slices. Review reproduced a silent discrepancy:
+C's nonlocal `%s` feeds wall time through libc `mktime` under the user's TZ with
+`tm_isdst=0`, whereas the Rust backend had formatted it under UTC. The shared
+formatter now explicitly rejects nonlocal `%s`; local `%s`, literal `%%s`, and
+zero-date blank display remain supported. **Exact nonlocal `%s` compatibility
+is an OPEN gate**, not a completed parity fix. No unsafe FFI or new dependency
+was introduced. Primary-source rationale and follow-up boundary are recorded in
+[`chrono-date-compatibility.md`](migration/chrono-date-compatibility.md).
+
+At `f22e363`, Rust 1.81 fmt, **67 unit tests**, Clippy with warnings denied,
+release build, **29 isolated date/argument checks**, and **108 PTY checks** pass.
+The new upstream adapter runs six unchanged main/date scripts against C and
+Rust-only binaries: **27/27 actual assertions pass on each side**, with no
+missing assertions or runtime failures. The adapter's negative self-checks
+also pass. See [`date-percent-s-checks.json`](migration/evidence/date-percent-s-checks.json),
+[`date-percent-s-upstream.json`](migration/evidence/date-percent-s-upstream.json),
+[`date-percent-s-pty.json`](migration/evidence/date-percent-s-pty.json), and
+[`date-percent-s-harness-selftest.json`](migration/evidence/date-percent-s-harness-selftest.json).
+The full suite was not rerun; earlier broader receipts remain historical.
+Original C sources and original tests are unchanged by this date slice.
