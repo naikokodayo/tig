@@ -77,6 +77,11 @@ with tempfile.TemporaryDirectory(prefix='tig-date-') as temporary:
         print('SKIP: fr_FR UTF-8 locale is not installed')
     for timestamp, setting, expected, overrides in cases:
         check(temporary, timestamp, setting, None if expected is None else expected + ' subject', **overrides)
+    for value, error in [
+        (-62135596801, 'Non-local %s supports wall-time years 1..9999 only'),
+        (253402300800, 'Invalid ISO 8601 commit date'),
+    ]:
+        check(temporary, f'{value} +0000', seconds_format, None, error=error)
     # Only an actual non-local %s requires Perl. Missing/broken tools fail closed.
     check(temporary, '1719792000 +0000', seconds_format, None, PATH='',
           error='Non-local %s requires system Perl with POSIX')
@@ -96,4 +101,4 @@ with tempfile.TemporaryDirectory(prefix='tig-date-') as temporary:
     for boundary in ['--', '--end-of-options']:
         check(temporary, '1440961292 +0900', '', 'commit ' + 'a' * 40,
               args=(boundary, '--pretty=raw'))
-    print(f'{len(cases) + 9} date compatibility checks passed')
+    print(f'{len(cases) + 11} date compatibility checks passed')

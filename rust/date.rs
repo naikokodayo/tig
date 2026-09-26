@@ -88,6 +88,11 @@ fn native_format(seconds: i64, format: &str, local: bool) -> Result<String, Stri
 // Perl's core POSIX module reaches the same host strftime without first-party FFI.
 // ponytail: one child per %s token; batch only if profiling warrants it.
 fn nonlocal_seconds(seconds: i64) -> Result<String, String> {
+    // Perl's mini_mktime does not guarantee years before AD 1. Keep this bridge
+    // within the verified four-digit year range, independently of Chrono's range.
+    if !(-62_135_596_800..=253_402_300_799).contains(&seconds) {
+        return Err("Non-local %s supports wall-time years 1..9999 only".into());
+    }
     if !cfg!(all(
         target_pointer_width = "64",
         any(

@@ -48,7 +48,7 @@ def main():
                     '2024-11-03T00:59:59', '2024-11-03T01:00:00',
                     '2024-11-03T01:30:00', '2024-11-03T02:00:00']:
         cases.append(('America/New_York', seconds(instant), '+0000', False, '%F %T s=%s z=%z'))
-    for value in [-2208988800, -1, 0, 1, 2147483647, 2147483648, 253402300799]:
+    for value in [-62135596800, -2208988800, -1, 0, 1, 2147483647, 2147483648, 253402300799]:
         cases.append(('America/New_York', value, '+0000', False, '%s'))
     for fmt in ['%%s', '%%%s', '%s/%s', '%%s %s %%', '%A %B %s']:
         cases.append(('America/New_York', seconds('2024-07-01'), '+0900', False, fmt))

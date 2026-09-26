@@ -99,7 +99,7 @@ PR #3 的边界改为明确拒绝非本地 `%s`，错误为 `Non-local %s date f
 
 版本/发布日期和 manifest 已通过 crates.io registry 内容核对；声明 MSRV 不是本项目接入编译的证明，未采用的 crate 没有被纳入构建。资料：[Jiff manifest](https://docs.rs/crate/jiff/0.2.37/source/Cargo.toml)、[Jiff 歧义 API](https://docs.rs/jiff/0.2.37/jiff/tz/enum.Disambiguation.html)、[tz-rs 0.7.0 源码](https://github.com/x-hgg-x/tz-rs/tree/v0.7.0)、[tz-rs 当前说明](https://github.com/x-hgg-x/tz-rs)、[localtime-rs 范围](https://github.com/infinityabundance/localtime-rs)、[Perl 官方发行](https://www.perl.org/get.html)、[Perl 许可](https://github.com/Perl/perl5/blob/v5.34.1/README)
 
-运行支持明确限定为 **64 位 macOS 或 GNU/Linux，PATH 中提供使用宿主 libc 的系统 Perl + 核心 POSIX**。macOS 本机已有 `/usr/bin/perl`；Linux 由 CI 实机验证。精简镜像不能假定自带 Perl。musl、Windows、其它 BSD、32 位构建明确拒绝该非本地指令；其它日期模式的既有边界不因此改变。核心模块缺失或工具无法执行亦明确失败。项目不嵌入或分发 Perl；分发者需另行提供系统运行依赖。第一方 `#![forbid(unsafe_code)]` 与 Cargo lint 保留，这不是“第三方实现全无 unsafe”或“自包含纯 Rust 二进制”的声明。
+运行支持明确限定为 **提交 wall time 的年份 1..9999，64 位 macOS 或 GNU/Linux，PATH 中提供使用宿主 libc 的系统 Perl + 核心 POSIX**。Perl `mini_mktime` 的源码明确不保证公元 1 年之前的归一化，故边界外在启动进程前明确拒绝；也不外推超过四位年份的支持。macOS 本机已有 `/usr/bin/perl`；Linux 由 CI 实机验证。精简镜像不能假定自带 Perl。musl、Windows、其它 BSD、32 位构建明确拒绝该非本地指令；其它日期模式的既有边界不因此改变。核心模块缺失或工具无法执行亦明确失败。项目不嵌入或分发 Perl；分发者需另行提供系统运行依赖。第一方 `#![forbid(unsafe_code)]` 与 Cargo lint 保留，这不是“第三方实现全无 unsafe”或“自包含纯 Rust 二进制”的声明。
 
 ### 可重复验证
 
@@ -119,7 +119,7 @@ python3 rust/tests/terminal-smoke.py
 最终本机检查和跨平台 CI 收据见下方记录；旧 `date-percent-s-*.json` 保留历史含义。**此门只在列明的平台和运行依赖范围内关闭；完整迁移、其它平台、自包含实现和大历史性能门仍开放。**
 
 
-本机最终源码 `cada44f7`（实现 `cb962b5b` + main `f294b279`）：Rust 1.81 fmt、69 个单元测试、Clippy `-D warnings`、release 均通过；36 个日期/错误路径检查、156/156 个 C/Rust 差分场景和 130 个控制 PTY 检查通过。收据：[`checks.json`](evidence/nonlocal-percent-s/checks.json)、[`environment.json`](evidence/nonlocal-percent-s/environment.json)、[`differential.json`](evidence/nonlocal-percent-s/differential.json)、[`pty.json`](evidence/nonlocal-percent-s/pty.json)。
+本机主体实现源码 `cada44f7`（实现 `cb962b5b` + main `f294b279`）：Rust 1.81 fmt、69 个单元测试、Clippy `-D warnings`、release 均通过；36 个日期/错误路径检查、156/156 个 C/Rust 差分场景和 130 个控制 PTY 检查通过。收据：[`checks.json`](evidence/nonlocal-percent-s/checks.json)、[`environment.json`](evidence/nonlocal-percent-s/environment.json)、[`differential.json`](evidence/nonlocal-percent-s/differential.json)、[`pty.json`](evidence/nonlocal-percent-s/pty.json)。
 
 扩大的八脚本原版检查诚实保留为 **BLOCKED**：C 8/8、Rust 7/8，失败仅为已有 `test/main/stdin-test` 把提交 ID 输入显示在 pager；历史 `upstream-rust-only.json` 亦记录该失败。该脚本没有调用新的非本地自定义 `%s`。未修改原版断言，也没有把失败改成通过；新增日期 CI 门仅选择六个日期相关脚本与 help。失败原始收据见 [`upstream.json`](evidence/nonlocal-percent-s/upstream.json)。这不是全套重跑，完整迁移门仍开放。
 
@@ -128,3 +128,6 @@ python3 rust/tests/terminal-smoke.py
 
 
 最后同步文档 main `2fb2a871`，保留其全套历史快照与本切片记录。相对已验证 `cada44f7` 的 Rust/Cargo/C 源码、测试和 `%s` probe 均无变化，摘要核对通过；因此未把文档合并伪称成新的全套测试结果。
+
+
+最后的范围审查补充了 wall time 年份 1..9999 的拒绝边界。`0000-12-31T23:59:59` 在桥接前报错，`0001-01-01T00:00:00` 纳入宿主 C/Rust 差分（本机 libc 输出 `-1`，不替换为 Chrono 算术结果），10000 年已被现有严格 RFC3339 入口拒绝。该补丁的 Rust 1.81 fmt / 69 测试 / Clippy / release 和 38 个日期检查收据为 [`boundary-checks.json`](evidence/nonlocal-percent-s/boundary-checks.json)，记录最终日期源码、测试和二进制摘要；此前 36 检查与 130 PTY 记录保留原有版本含义。
