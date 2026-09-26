@@ -661,3 +661,16 @@ and [original-script receipt](migration/evidence/diff-render-review-upstream.jso
 Reproduce the new paired check with `python3 rust/tests/diff-navigation.py`
 after building both C and Rust binaries. Original C/tests and dependencies are
 unchanged relative to the integrated main; first-party Rust still forbids unsafe.
+
+
+### Refs follow-up sync after PR #12
+
+Merged main `297e1787`; the only conflict was appended migration documentation,
+resolved by retaining both records. No refs change was needed in `rust/main.rs`.
+At merge source `e8fdc0f2`, fmt, **73 Rust tests**, Clippy, **130 PTY checks**,
+**6 diff-input checks**, and **8 paired diff-navigation checks** pass. The earlier
+12-script refs/main/width scope plus two diff-stat/navigation originals now passes
+**96/96 assertions on both C and Rust across 14 scripts**. No missing assertions
+or runtime failures occurred. The exact source/binary manifest and new receipts
+are in [`refs-filter-replace-sync/checks.json`](migration/evidence/refs-filter-replace-sync/checks.json).
+Earlier receipts remain unchanged; this does not close the full migration gate.
