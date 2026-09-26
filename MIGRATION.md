@@ -633,6 +633,20 @@ records every transcript and reason. This source predates merged PR #12, so
 these numbers are not current-main or final benchmark results. The parity gate
 remains **OPEN**.
 
+### Full strict paired snapshot after diff, refs, and tree integration
+
+At source `86ce768063fa1785eb224421c0edc56e31d351ea`, the fail-closed
+runner attempted all 154 unchanged original scripts with separately hashed C
+and Rust-only application/graph binaries. C passed 152 and skipped two. Rust
+passed 104, failed 47, and skipped three; 475 actual assertions passed, 82
+failed, and 15 C-side assertions were not reached. Another 19 failure checks
+concern setup or runtime behavior rather than assertions. This is nine more
+passing Rust scripts than the preceding `c097ffb8` snapshot. The [paired
+receipt](migration/evidence/upstream-rust-only-after-refs-tree-diff.json)
+records every transcript and reason. This source predates merged status/trace
+and config PRs #13 and #16; it is not a current-main or final benchmark result.
+The parity gate remains **OPEN**.
+
 ### Non-local `%s` follow-up
 
 The PR #3 blanket refusal is replaced by a host POSIX bridge on 64-bit macOS
@@ -687,10 +701,9 @@ The expanded blame/default test also fails its diff/navigation cases. These are
 failures, including missing output, not skipped assertions. The full suite was
 not rerun and the migration parity gate remains **OPEN**.
 
-`migration/evidence/config-render-before.json` and `config-render-after.json`
-retain strict C/Rust routes, raw transcripts, per-script verdicts and hashes.
-`config-render-checks.json`/`.log` and `config-render-pty.json` bind the scoped
-checks to the same tested source and Rust binary. The paired runner exits 1
+The branch-phase before/after transcripts, hashes and scoped checks are
+archived in [commit `aaedd5b7`](https://github.com/naikokodayo/tig/tree/aaedd5b7890dba99fad72752a366a83e1cf773a8/migration/evidence).
+The paired runner exits 1
 with `BLOCKED`, as required by the remaining failures. Reproduce the expanded
 pair with `python3 rust/tests/upstream-suite.py test/tigrc/*-test test/grep/*-test
 test/main/default-test test/tree/default-test test/tree/recurse-test
@@ -746,11 +759,11 @@ into the refs view; ordinary detached HEAD still has a shared reference record.
 At source `9cb10a19`, formatting, **72 Rust tests**, Clippy with warnings denied,
 and **130 real PTY checks** pass. All nine original refs scripts plus main default,
 main search and column width pass **90/90 actual assertions on each of C and Rust**,
-with no missing assertions or runtime failures. Before/after paired transcripts,
-binary hashes, exact source hashes and check logs are in
-[`refs-filter-replace/checks.json`](migration/evidence/refs-filter-replace/checks.json)
-and the linked receipts. The runner's commit field is the clean starting base;
-its tested dirty sources are explicitly bound to `9cb10a19` by that manifest.
+with no missing assertions or runtime failures. The branch-phase before/after
+transcripts and checks are archived in [commit `2c62bbf9`](https://github.com/naikokodayo/tig/tree/2c62bbf961196704c17adf236b1830239c2ca5ff/migration/evidence);
+the final integrated receipt is linked below. The archived runner's commit field
+is the clean starting base; its tested dirty sources are explicitly bound to
+`9cb10a19` by that manifest.
 C sources, original tests, dependencies, and `rust/main.rs` are unchanged.
 
 This is a focused slice, not a full-suite rerun or byte-for-byte terminal parity
@@ -869,17 +882,17 @@ The new runnable `python3 rust/tests/config-recovery.py` also compares C/Rust
 screens, diagnostics and saved color targets in **16 passing PTY cases**.
 At the source above, Rust 1.81 formatting, **76 unit tests**, Clippy with
 warnings denied, release build and **130 application PTY checks** all pass.
-Receipts are `migration/evidence/config-render-review-checks.json`/`.log`,
-`config-render-review-recovery.json`, and `config-render-review-pty.json`.
-Their source manifest and binary hashes agree with the paired original run.
+The review-phase checks, recovery comparison and PTY receipts are archived in
+[commit `a11e32b5`](https://github.com/naikokodayo/tig/tree/a11e32b5/migration/evidence).
+Their source manifest and binary hashes agreed with the paired original run.
 
 The original-script scope is the previous 25 plus main/date and main/emoji:
 C passes **27 scripts / 156 assertions**. Rust passes **23 scripts** with
 **146 passing / 10 failing assertions** and **3 runtime failure checks**;
 there are no skips. The same four scripts fail: command-value-long,
 escape-var, quote, and blame/default. All three originally fixed tigrc
-scripts still pass. `config-render-review-upstream.json` retains the raw
-results and remains `BLOCKED`; these scoped results do not close full parity.
+scripts still pass. The archived scoped raw result remains `BLOCKED`; these
+results do not close full parity.
 Earlier receipts remain tied to their earlier sources. The following commit
 changes only documentation and evidence. First-party unsafe remains forbidden;
 original C/test files and dependencies are unchanged.
@@ -981,9 +994,9 @@ Unicode filename snapshot mismatch recorded by PR #15's review-fix receipt.
 The obsolete diagnostic and truncation scripts still pass, as do both tree
 editor scripts. This is not a rerun of the earlier 36-script scope or full suite.
 
-`migration/evidence/config-render-tree-sync-{checks,recovery,pty,upstream}.json`
-and the checks log bind this latest source and binaries. Earlier wider receipts
-remain attributed to their own commits. The next commit is documentation and
+The tree-sync checks, recovery, PTY and original-script receipts are archived in
+[commit `4a6e13fd`](https://github.com/naikokodayo/tig/tree/4a6e13fd33144b9ff559df839ad99c254a8614b0/migration/evidence).
+The final main-sync receipts below remain in the current tree. The next commit is documentation and
 evidence only. The three P2 fixes are ready for re-review; full parity stays open.
 
 
