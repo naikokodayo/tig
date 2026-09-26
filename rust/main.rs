@@ -862,7 +862,7 @@ impl App {
                 if let Some(options) = self.config.settings.get("log-options") {
                     args.extend(options.clone());
                 }
-                // Width alone does not enable stats when log-options disables them.
+                // Width does not enable stats when log-options disables them.
                 args.push(format!("--stat-width={width}"));
                 args.extend(["--no-color".into(), "--decorate=full".into()]);
                 args.extend(self.args.clone());
@@ -1643,6 +1643,7 @@ impl App {
         Ok(())
     }
     fn action(&mut self, action: &str) -> Result<bool> {
+        let was_split = self.split && self.other.is_some();
         if let Some(text) = action
             .strip_prefix(":echo ")
             .or_else(|| action.strip_prefix("echo "))
@@ -1750,6 +1751,48 @@ impl App {
                     prompt_answers: &prompt_answers,
                 },
             )?);
+            return Ok(true);
+        }
+        if action.split_whitespace().next() == Some("save-view") {
+            let args = tig_rs::config::words(action)?;
+            let path = args.get(1).map_or("tig-view.txt", String::as_str);
+            // Export only the text model whose cell semantics are implemented.
+            if self.view.name != "diff" || self.config.bool_value("word-diff", false) {
+                return Err("save-view currently supports ordinary diff views only".into());
+            }
+            self.screen();
+            let (vertical, parent, child) = self.pane_sizes();
+            let (width, height) = if self.split && self.other.is_some() {
+                let size = if self.parent_focused { parent } else { child };
+                if vertical {
+                    (size, self.height.saturating_sub(2))
+                } else {
+                    (self.width, size.saturating_sub(1))
+                }
+            } else {
+                (self.width, self.height.saturating_sub(2))
+            };
+            let mut data = format!("View: {}\n", self.view.name);
+            if let Some(previous) = self.previous.last() {
+                data.push_str(&format!("Prev: {}\n", previous.name));
+            }
+            if !self.parent_focused {
+                if let Some(parent) = &self.other {
+                    data.push_str(&format!("Parent: {}\n", parent.name));
+                }
+            }
+            data.push_str(&format!(
+                "Ref: {}\nDimensions: height={height} width={width}\nPosition: offset={} column={} lineno={}\n",
+                self.view.revision, self.view.top, self.view.left, self.view.selected,
+            ));
+            data.push_str(&tig_rs::render::diff_view_data(
+                &self.view.rows,
+                self.view.selected,
+            ));
+            self.message = match fs::write(path, data) {
+                Ok(()) => format!("Saved view to {path}"),
+                Err(_) => format!("Failed to save view to {path}"),
+            };
             return Ok(true);
         }
         if action.split_whitespace().next() == Some("save-options") {
@@ -2244,6 +2287,18 @@ impl App {
                 self.open(&action[5..], self.width)?;
             }
             _ => return Err(format!("Not implemented in Rust yet: {action}").into()),
+        }
+        // C reloads flexible-width log rows when a vertical split opens/closes.
+        if was_split != (self.split && self.other.is_some()) && self.pane_sizes().0 {
+            if self.view.name == "log" {
+                self.action("refresh")?;
+            }
+            if self.split && self.other.as_ref().is_some_and(|view| view.name == "log") {
+                self.swap_panes();
+                let result = self.action("refresh");
+                self.swap_panes();
+                result?;
+            }
         }
         Ok(true)
     }
