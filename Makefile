@@ -276,7 +276,13 @@ else
 export MAKE_TEST_OPTS =
 endif
 
+ifeq ($(RUST_ONLY),1)
 ifeq ($(SYSTEM_TIG),1)
+$(error RUST_ONLY=1 cannot be combined with SYSTEM_TIG=1)
+endif
+$(TESTS): PATH := $(CURDIR)/target/release:$(CURDIR)/test/tools:$(PATH)
+$(TESTS): rust-test-binaries
+else ifeq ($(SYSTEM_TIG),1)
 $(TESTS): PATH := $(CURDIR)/test/tools:$(PATH)
 $(TESTS): test/tools/test-graph
 else
@@ -284,6 +290,13 @@ $(TESTS): PATH := $(CURDIR)/test/tools:$(CURDIR)/src:$(PATH)
 $(TESTS): $(EXE) test/tools/test-graph
 endif
 	$(QUIET_TEST)$(TEST_SHELL) $@
+
+# Build both executables together; a missing Rust helper must never fall back to C.
+.PHONY: rust-test-binaries
+rust-test-binaries:
+	cargo build --locked --release --bins --target-dir "$(CURDIR)/target"
+	test -x "$(CURDIR)/target/release/tig"
+	test -x "$(CURDIR)/target/release/test-graph"
 
 test-todo: MAKE_TEST_OPTS += todo
 test-todo: $(TESTS_TODO)

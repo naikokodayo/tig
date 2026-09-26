@@ -1,0 +1,88 @@
+[
+  {
+    "check": "physical-pty-size",
+    "rows": 30,
+    "columns": 80
+  },
+  {
+    "injection": "nonzero",
+    "helper_body": "exit 23",
+    "result": {
+      "script": "test/graph/00-simple-test",
+      "script_sha256": "3749ecf4d4cdeb5b99ef9a2df4e88e1990e7bd350e0fd4cd9b1fb9dac287313e",
+      "exit_code": 23,
+      "timed_out": false,
+      "status": "fail",
+      "reasons": [
+        "script_exit_nonzero",
+        "missing_receipt"
+      ],
+      "checks": {},
+      "assertions": [],
+      "receipt_path": "test/tmp/graph/00-simple-test/.test-result",
+      "receipt": "",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": "| No test results found\r\n"
+    }
+  },
+  {
+    "injection": "wrong-output",
+    "helper_body": "printf 'wrong output\\n'",
+    "result": {
+      "script": "test/graph/00-simple-test",
+      "script_sha256": "3749ecf4d4cdeb5b99ef9a2df4e88e1990e7bd350e0fd4cd9b1fb9dac287313e",
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "fail",
+      "reasons": [
+        "failed_checks"
+      ],
+      "checks": {
+        "FAIL": 1
+      },
+      "assertions": [
+        {
+          "id": "stdout#1",
+          "status": "FAIL"
+        }
+      ],
+      "receipt_path": "test/tmp/graph/00-simple-test/.test-result",
+      "receipt": "[FAIL] stdout != expected/stdout\n\u001b[1mdiff --git a/expected/stdout b/stdout\u001b[m\n\u001b[1mindex d18edaa..3aa3eb4 100644\u001b[m\n\u001b[1m--- a/expected/stdout\u001b[m\n\u001b[1m+++ b/stdout\u001b[m\n\u001b[36m@@ -1,6 +1 @@\u001b[m\n\u001b[31m-\u25cf\u2500\u256e Merge branch 'branch3'\u001b[m\n\u001b[31m-\u25cf\u2500\u2502\u2500\u256e Merge branch 'branch2'\u001b[m\n\u001b[31m-\u2502 \u2219 \u2502 branch3\u001b[m\n\u001b[31m-\u2502 \u2502 \u2219 branch2\u001b[m\n\u001b[31m-\u2219 \u2502 \u2502 branch1\u001b[m\n\u001b[31m-\u25ce\u2500\u2534\u2500\u256f init\u001b[m\n\u001b[32m+\u001b[m\u001b[32mwrong output\u001b[m\n",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] stdout != expected/stdout\r\n| \u001b[1mdiff --git a/expected/stdout b/stdout\u001b[m\r\n| \u001b[1mindex d18edaa..3aa3eb4 100644\u001b[m\r\n| \u001b[1m--- a/expected/stdout\u001b[m\r\n| \u001b[1m+++ b/stdout\u001b[m\r\n| \u001b[36m@@ -1,6 +1 @@\u001b[m\r\n| \u001b[31m-\u25cf\u2500\u256e Merge branch 'branch3'\u001b[m\r\n| \u001b[31m-\u25cf\u2500\u2502\u2500\u256e Merge branch 'branch2'\u001b[m\r\n| \u001b[31m-\u2502 \u2219 \u2502 branch3\u001b[m\r\n| \u001b[31m-\u2502 \u2502 \u2219 branch2\u001b[m\r\n| \u001b[31m-\u2219 \u2502 \u2502 branch1\u001b[m\r\n| \u001b[31m-\u25ce\u2500\u2534\u2500\u256f init\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mwrong output\u001b[m\r\n"
+    }
+  },
+  {
+    "injection": "timeout",
+    "helper_body": "exec sleep 30",
+    "result": {
+      "script": "test/graph/00-simple-test",
+      "script_sha256": "3749ecf4d4cdeb5b99ef9a2df4e88e1990e7bd350e0fd4cd9b1fb9dac287313e",
+      "exit_code": -9,
+      "timed_out": true,
+      "status": "fail",
+      "reasons": [
+        "script_timeout",
+        "script_exit_nonzero",
+        "missing_receipt"
+      ],
+      "checks": {},
+      "assertions": [],
+      "receipt_path": "test/tmp/graph/00-simple-test/.test-result",
+      "receipt": "",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": ""
+    }
+  },
+  {
+    "injection": "good-receipt-then-exit-or-timeout; missing-receipt-exit-zero",
+    "status": "all rejected"
+  },
+  {
+    "injection": "foreign-helper",
+    "status": "rejected"
+  }
+]
