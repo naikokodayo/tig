@@ -1294,11 +1294,22 @@ impl App {
     }
     fn action(&mut self, action: &str) -> Result<bool> {
         let action = action.strip_prefix(':').unwrap_or(action);
+        if action == "exec" {
+            return Ok(true);
+        }
         if let Some(command) = action.strip_prefix("exec ").or_else(|| {
             action
                 .starts_with(['!', '@', '?', '<', '+', '>'])
                 .then_some(action)
         }) {
+            if action.starts_with("exec ")
+                && command
+                    .trim()
+                    .chars()
+                    .all(|c| matches!(c, '!' | '@' | '?' | '<' | '+' | '>'))
+            {
+                return Ok(true);
+            }
             let selected_ref = match self.selected() {
                 Item::Ref(_, name) => name,
                 Item::Text if self.view.name == "refs" => Some(String::new()),
@@ -1434,7 +1445,7 @@ impl App {
         .max(1) as isize;
         match action {
             "quit" => return Ok(false),
-            "view-close" | "back" => {
+            "view-close" | "view-close-no-quit" | "back" => {
                 if self.other.is_some() {
                     if !self.parent_focused {
                         self.swap_panes();
@@ -1446,7 +1457,7 @@ impl App {
                     self.revision = v.revision.clone();
                     self.path = v.path.clone();
                     self.view = v;
-                } else {
+                } else if action != "view-close-no-quit" {
                     return Ok(false);
                 }
             }
