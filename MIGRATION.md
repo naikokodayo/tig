@@ -253,3 +253,12 @@ result receipt. See `migration/evidence/rust-upstream-sixth.json` and its raw
 log. The graph helper still routes through C under `SYSTEM_TIG=1`; early
 exits alter assertion totals. These counts are not a migration-completion
 percentage. Full parity and the end-to-end benchmark remain gated.
+
+## Seventh focused checkpoint
+
+The refs view now applies `maxwidth` to its inferred reference column while
+respecting explicit `width` and percentage limits. The unchanged original
+`test/tigrc/width-test` passes all 54 assertions on the Rust release binary;
+Rust formatting, unit tests and Clippy also pass. This focused check does not
+replace the sixth full-suite receipt; see
+`migration/evidence/refs-width-seventh.json`. The parity gate remains open.

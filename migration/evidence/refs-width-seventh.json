@@ -1,0 +1,10 @@
+{
+  "gate": "OPEN",
+  "binary_sha256": "7c44c1db7bb38fbd6bc607f411e3833cdf197fe928dd6c88e9d1d3ec9c0ded4b",
+  "environment": "Rust release binary first in PATH; command-scoped init.defaultBranch=master; macOS arm64",
+  "command": "make SYSTEM_TIG=1 test/tigrc/width-test",
+  "result": "54 of 54 original assertions passed",
+  "original_assertions_modified": false,
+  "full_suite_rerun": false,
+  "caveat": "The sixth full upstream run remains the latest full-suite receipt. SYSTEM_TIG=1 can route graph helpers through original C."
+}

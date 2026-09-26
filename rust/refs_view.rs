@@ -348,10 +348,33 @@ pub fn load(
                         .find_map(|s| s.strip_prefix("width=").and_then(|s| s.parse().ok()))
                 })
                 .unwrap_or(0);
+            let max = config
+                .value("refs-view-ref-maxwidth")
+                .or_else(|| spec.split(',').find_map(|s| s.strip_prefix("maxwidth=")));
+            let max = match max {
+                Some(value) if value.ends_with('%') => {
+                    let percent: usize = value[..value.len() - 1]
+                        .parse()
+                        .map_err(|_| GitError("Invalid ref maxwidth".into()))?;
+                    if percent > 100 {
+                        return Err(GitError("Ref maxwidth exceeds 100%".into()));
+                    }
+                    width.saturating_mul(percent) / 100
+                }
+                Some(value) => value
+                    .parse()
+                    .map_err(|_| GitError("Invalid ref maxwidth".into()))?,
+                None => 0,
+            };
             let size = if fixed > 0 {
                 fixed
             } else {
-                rows.iter().map(|r| r.name.width()).max().unwrap_or(0)
+                let inferred = rows.iter().map(|r| r.name.width()).max().unwrap_or(0);
+                if max > 0 {
+                    inferred.min(max)
+                } else {
+                    inferred
+                }
             }
             .min(width);
             for row in &mut rows {
@@ -452,6 +475,10 @@ mod tests {
             ["All tags", "v1", "v2"]
         );
         assert!(rows[1].text.starts_with("v1"));
+        config.parse("set refs-view = ref:yes,maxwidth=5 commit-title");
+        let rows = load(&repo, &config, &[], 120, "ref", false).unwrap();
+        assert!(rows[0].text.starts_with("All r "));
+        assert!(rows[1].text.starts_with("main  "));
         std::fs::remove_dir_all(dir).unwrap();
     }
     #[test]
