@@ -22,6 +22,7 @@ pub struct Repository {
     pub root: PathBuf,
     pub git_dir: PathBuf,
     pub bare: bool,
+    pub(crate) invocation: PathBuf,
 }
 fn text(bytes: &[u8]) -> String {
     String::from_utf8_lossy(bytes).into_owned()
@@ -98,6 +99,77 @@ fn valid_path(path: &Path) -> Result<()> {
     }
     Ok(())
 }
+/// Traversal flags shared by the history loader and main-view graph.
+#[derive(Debug)]
+pub struct HistoryOptions {
+    pub with_graph: bool,
+    first_parent: bool,
+    has_revision: bool,
+}
+impl HistoryOptions {
+    pub fn parse(revisions: &[String]) -> Result<Self> {
+        let split = revisions
+            .iter()
+            .position(|a| a == "--")
+            .unwrap_or(revisions.len());
+        let filters = &revisions[..split];
+        let mut options = Self {
+            with_graph: true,
+            first_parent: false,
+            has_revision: false,
+        };
+        let mut expects_value = false;
+        let mut end_options = false;
+        for arg in filters {
+            if expects_value {
+                expects_value = false;
+                continue;
+            }
+            if arg == "--end-of-options" {
+                end_options = true;
+                continue;
+            }
+            if end_options || !arg.starts_with('-') {
+                options.has_revision = true;
+                continue;
+            }
+            let (name, inline_value) = arg
+                .split_once('=')
+                .map_or((arg.as_str(), false), |(name, _)| (name, true));
+            if matches!(name, "--follow" | "--no-merges" | "--author" | "--grep") {
+                options.with_graph = false;
+            }
+            if name == "--first-parent" {
+                options.first_parent = true;
+            }
+            match name {
+                "--since" | "--after" | "--until" | "--before" | "--author" | "--committer" |
+                "--grep" | "--max-count" | "--skip" | "--min-parents" | "--max-parents" | "-n" => {
+                    expects_value = !inline_value;
+                }
+                "--all" | "--branches" | "--tags" | "--remotes" | "--glob" | "--exclude" => {
+                    if matches!(name, "--glob" | "--exclude") && !inline_value { expects_value = true; }
+                    options.has_revision = true;
+                }
+                "--follow" | "--first-parent" | "--no-merges" | "--merges" | "--reverse" | "--topo-order" |
+                "--date-order" | "--author-date-order" | "--ancestry-path" | "--full-history" |
+                "--simplify-merges" | "--simplify-by-decoration" | "--dense" | "--sparse" |
+                "--remove-empty" | "--all-match" | "--invert-grep" | "--regexp-ignore-case" |
+                "--extended-regexp" | "--fixed-strings" | "--perl-regexp" | "-i" | "-E" | "-F" => {
+                    if inline_value { return Err(GitError(format!("Unexpected value for history option {name}"))); }
+                }
+                _ if arg.strip_prefix("-n").or_else(|| arg.strip_prefix('-'))
+                    .is_some_and(|n| !n.is_empty() && n.bytes().all(|b| b.is_ascii_digit())) => {}
+                _ => return Err(GitError(format!("Unsupported history option {arg}: only revision, filtering, ordering and path options are allowed"))),
+            }
+        }
+        if expects_value {
+            return Err(GitError("Missing history option value".into()));
+        }
+        Ok(options)
+    }
+}
+
 impl Repository {
     pub fn discover(start: impl AsRef<Path>) -> Result<Self> {
         let start = start.as_ref();
@@ -112,6 +184,7 @@ impl Repository {
             root,
             git_dir,
             bare,
+            invocation: start.canonicalize().map_err(|e| GitError(e.to_string()))?,
         })
     }
     pub fn command<I, S>(&self, args: I) -> Result<Vec<u8>>
@@ -130,55 +203,9 @@ impl Repository {
             &spec,
         ])?)))
     }
+    /// Paths after -- are root-relative; implicit paths use the discovery directory.
     pub fn history(&self, revisions: &[String], limit: usize) -> Result<Vec<Commit>> {
-        let split = revisions
-            .iter()
-            .position(|a| a == "--")
-            .unwrap_or(revisions.len());
-        let filters = &revisions[..split];
-        let mut has_revision = false;
-        let mut expects_value = false;
-        let mut end_options = false;
-        for arg in filters {
-            if expects_value {
-                expects_value = false;
-                continue;
-            }
-            if arg == "--end-of-options" {
-                end_options = true;
-                continue;
-            }
-            if end_options || !arg.starts_with('-') {
-                has_revision = true;
-                continue;
-            }
-            let (name, inline_value) = arg
-                .split_once('=')
-                .map_or((arg.as_str(), false), |(name, _)| (name, true));
-            match name {
-                "--since" | "--after" | "--until" | "--before" | "--author" | "--committer" |
-                "--grep" | "--max-count" | "--skip" | "--min-parents" | "--max-parents" | "-n" => {
-                    expects_value = !inline_value;
-                }
-                "--all" | "--branches" | "--tags" | "--remotes" | "--glob" | "--exclude" => {
-                    if matches!(name, "--glob" | "--exclude") && !inline_value { expects_value = true; }
-                    has_revision = true;
-                }
-                "--first-parent" | "--no-merges" | "--merges" | "--reverse" | "--topo-order" |
-                "--date-order" | "--author-date-order" | "--ancestry-path" | "--full-history" |
-                "--simplify-merges" | "--simplify-by-decoration" | "--dense" | "--sparse" |
-                "--remove-empty" | "--all-match" | "--invert-grep" | "--regexp-ignore-case" |
-                "--extended-regexp" | "--fixed-strings" | "--perl-regexp" | "-i" | "-E" | "-F" => {
-                    if inline_value { return Err(GitError(format!("Unexpected value for history option {name}"))); }
-                }
-                _ if arg.strip_prefix("-n").or_else(|| arg.strip_prefix('-'))
-                    .is_some_and(|n| !n.is_empty() && n.bytes().all(|b| b.is_ascii_digit())) => {}
-                _ => return Err(GitError(format!("Unsupported history option {arg}: only revision, filtering, ordering and path options are allowed"))),
-            }
-        }
-        if expects_value {
-            return Err(GitError("Missing history option value".into()));
-        }
+        let options = HistoryOptions::parse(revisions)?;
         let mut args = vec![
             "log".to_owned(),
             "--topo-order".into(),
@@ -193,16 +220,23 @@ impl Repository {
         }
         // An unborn default HEAD has no history. Ask Git to validate filters
         // against all refs with zero results, rather than hide command errors.
-        let unborn = !has_revision && self.is_unborn()?;
+        let unborn = !options.has_revision && self.is_unborn()?;
         if unborn {
             args.extend(["--all".into(), "--max-count=0".into()]);
         }
-        args.extend(filters.iter().cloned());
-        args.push("--".into());
-        if split < revisions.len() {
-            args.extend(revisions[split + 1..].iter().cloned());
+        // Preserve Git's revision/path disambiguation when no -- was supplied.
+        args.extend(revisions.iter().cloned());
+        let directory = if revisions.iter().any(|arg| arg == "--") {
+            &self.root
+        } else {
+            &self.invocation
+        };
+        let mut result = parse_history(&run(directory, args)?)?;
+        if options.first_parent {
+            for commit in &mut result {
+                commit.parents.truncate(1);
+            }
         }
-        let result = parse_history(&self.command(args)?)?;
         Ok(if unborn { Vec::new() } else { result })
     }
     fn is_unborn(&self) -> Result<bool> {
@@ -894,6 +928,25 @@ mod tests {
     use std::fs;
     use std::sync::atomic::{AtomicU64, Ordering};
     static NEXT: AtomicU64 = AtomicU64::new(0);
+    #[test]
+    fn history_option_values_and_paths_do_not_become_graph_flags() {
+        for args in [
+            vec!["--committer", "--no-merges"],
+            vec!["--committer=--follow"],
+            vec!["--", "--follow", "--first-parent"],
+            vec!["--end-of-options", "--follow", "--first-parent"],
+        ] {
+            let args = args.into_iter().map(str::to_owned).collect::<Vec<_>>();
+            let options = HistoryOptions::parse(&args).unwrap();
+            assert!(options.with_graph, "{args:?}");
+            assert!(!options.first_parent, "{args:?}");
+        }
+        let options = HistoryOptions::parse(&["--grep".into(), "--first-parent".into()]).unwrap();
+        assert!(!options.with_graph);
+        assert!(!options.first_parent);
+        assert!(HistoryOptions::parse(&["--follow=yes".into()]).is_err());
+        assert!(HistoryOptions::parse(&["--format=oops".into()]).is_err());
+    }
     #[test]
     fn blame_porcelain_keeps_dates_and_historical_path() {
         let oid = "a".repeat(40);

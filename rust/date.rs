@@ -83,6 +83,45 @@ fn native_format(seconds: i64, format: &str, local: bool) -> Result<String, Stri
         .map_err(|error| format!("Invalid date output: {error}"))
 }
 
+// libc's non-local %s uses mktime(gmtime(wall_seconds)), with tm_isdst=0.
+// Perl's core POSIX module reaches the same host strftime without first-party FFI.
+// ponytail: one child per %s token; batch only if profiling warrants it.
+fn nonlocal_seconds(seconds: i64) -> Result<String, String> {
+    // Perl's mini_mktime does not guarantee years before AD 1. Keep this bridge
+    // within the verified four-digit year range, independently of Chrono's range.
+    if !(-62_135_596_800..=253_402_300_799).contains(&seconds) {
+        return Err("Non-local %s supports wall-time years 1..9999 only".into());
+    }
+    if !cfg!(all(
+        target_pointer_width = "64",
+        any(
+            target_os = "macos",
+            all(target_os = "linux", target_env = "gnu")
+        )
+    )) {
+        return Err("Non-local %s requires 64-bit macOS or GNU/Linux with system Perl".into());
+    }
+    let output = Command::new("perl")
+        // Ignore PERL5OPT/PERL5LIB and keep the constant program separate from data.
+        .args(["-T", "-MPOSIX", "-MConfig", "-e",
+            "$Config{ptrsize} == 8 && $Config{ivsize} >= 8 or die \"64-bit Perl required\\n\"; my @t = gmtime($ARGV[0]); @t == 9 or die \"gmtime failed\\n\"; print POSIX::strftime(\"%s\", @t);"])
+        .arg("--")
+        .arg(seconds.to_string())
+        .output()
+        .map_err(|error| format!("Non-local %s requires system Perl with POSIX: {error}"))?;
+    if !output.status.success() || !output.stderr.is_empty() {
+        return Err(format!(
+            "Non-local %s failed: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        ));
+    }
+    let value = std::str::from_utf8(&output.stdout)
+        .ok()
+        .and_then(|value| value.parse::<i64>().ok())
+        .ok_or("Invalid non-local %s output from system Perl")?;
+    Ok(value.to_string())
+}
+
 fn relative(timestamp: i64, now: i64, compact: bool) -> String {
     let seconds = now.abs_diff(timestamp);
     let units = [
@@ -153,10 +192,9 @@ fn format_date(date: DateTime<FixedOffset>, format: &str, local: bool) -> Result
             continue;
         }
         let spec = chars.next().ok_or("Trailing % in date format")?;
-        // C's non-local %s applies libc mktime with tm_isdst=0 in the user's TZ.
-        // ponytail: reject until the backend can reproduce that conversion safely.
         if spec == 's' && !local {
-            return Err("Non-local %s date format is not supported; use date-local".into());
+            normalized.push_str(&nonlocal_seconds(date.naive_local().and_utc().timestamp())?);
+            continue;
         }
         // Locale-sensitive directives must use strftime, not Chrono's English defaults.
         if !"%YymdHMSFRTzZ".contains(spec) {

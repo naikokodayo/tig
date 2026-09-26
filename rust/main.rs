@@ -518,7 +518,14 @@ impl App {
         let repo = self.repo()?;
         match name {
             "main" => {
+                let options = tig_rs::git::HistoryOptions::parse(&self.args)?;
                 let commits = repo.history(&self.args, 0)?;
+                let mut config = self.config.clone();
+                if !options.with_graph {
+                    config
+                        .settings
+                        .insert("main-view-commit-title-graph".into(), vec!["no".into()]);
+                }
                 let head = if self.config.bool_value("show-changes", true) && !repo.bare {
                     repo.revision("HEAD").ok()
                 } else {
@@ -561,7 +568,7 @@ impl App {
                     items.push(Item::Commit(commit.clone()));
                     display.push(commit);
                 }
-                let rows = tig_rs::render::render_commits(&self.config, &display, self.width)?;
+                let rows = tig_rs::render::render_commits(&config, &display, self.width)?;
                 for (row, item) in rows.into_iter().zip(items) {
                     v.push(row, item);
                 }
@@ -632,7 +639,7 @@ impl App {
                     )?,
                 );
                 view.revision = oid.clone();
-                if let Some(commit) = repo.history(&[oid], 1)?.first() {
+                if let Some(commit) = repo.history(&[oid, "--".into()], 1)?.first() {
                     let refs = tig_rs::render::refs(&self.config, &commit.decorations, ", ");
                     if !refs.is_empty() && !view.rows.is_empty() {
                         view.rows.insert(1, format!("Refs: {refs}"));
@@ -1311,11 +1318,29 @@ impl App {
     }
     fn action(&mut self, action: &str) -> Result<bool> {
         let action = action.strip_prefix(':').unwrap_or(action);
+        if action == "exec" {
+            self.message = "Failed to execute command: No arguments".into();
+            return Ok(true);
+        }
         if let Some(command) = action.strip_prefix("exec ").or_else(|| {
             action
                 .starts_with(['!', '@', '?', '<', '+', '>'])
                 .then_some(action)
         }) {
+            if action.starts_with("exec ")
+                && command
+                    .trim()
+                    .chars()
+                    .all(|c| matches!(c, '!' | '@' | '?' | '<' | '+' | '>'))
+            {
+                self.message = if command.trim().is_empty() {
+                    "Failed to execute command: No arguments"
+                } else {
+                    "Failed to format arguments"
+                }
+                .into();
+                return Ok(true);
+            }
             let selected_ref = match self.selected() {
                 Item::Ref(_, name) => name,
                 Item::Text if self.view.name == "refs" => Some(String::new()),
@@ -1451,8 +1476,22 @@ impl App {
         .max(1) as isize;
         match action {
             "quit" => return Ok(false),
-            "view-close" | "back" => {
-                if self.other.is_some() {
+            "view-close" | "view-close-no-quit" | "back" => {
+                if action != "back" && self.parent_focused && self.other.is_some() {
+                    if let Some(v) = self.previous.pop() {
+                        self.revision = v.revision.clone();
+                        self.path = v.path.clone();
+                        self.view = v;
+                    } else if action == "view-close-no-quit" {
+                        self.message = "Can't close last remaining view".into();
+                        return Ok(true);
+                    } else {
+                        return Ok(false);
+                    }
+                    self.other = None;
+                    self.split = false;
+                    self.parent_focused = false;
+                } else if self.other.is_some() {
                     if !self.parent_focused {
                         self.swap_panes();
                     }
@@ -1464,7 +1503,10 @@ impl App {
                     self.path = v.path.clone();
                     self.view = v;
                 } else {
-                    return Ok(false);
+                    if action != "view-close-no-quit" {
+                        return Ok(false);
+                    }
+                    self.message = "Can't close last remaining view".into();
                 }
             }
             "enter" => self.enter()?,
@@ -3032,6 +3074,122 @@ mod tests {
     }
 
     #[test]
+    fn main_graph_uses_history_traversal_options() {
+        let root = env::temp_dir().join(format!("tig-main-graph-{}", std::process::id()));
+        fs::create_dir_all(&root).unwrap();
+        assert!(Command::new("tar")
+            .args([
+                "-xzf",
+                concat!(
+                    env!("CARGO_MANIFEST_DIR"),
+                    "/test/files/scala-js-benchmarks.tgz"
+                ),
+                "-C"
+            ])
+            .arg(&root)
+            .status()
+            .unwrap()
+            .success());
+        let repo = Repository::discover(&root).unwrap();
+        repo.command(["reset", "--hard"]).unwrap();
+        let mut config = Config::defaults();
+        config.parse("set line-graphics = utf-8\nset show-changes = no\nset main-view = commit-title:yes,graph,refs=no");
+        let mut app = App {
+            repo: Some(repo),
+            config,
+            view: View::new("main"),
+            help: None,
+            previous: vec![],
+            pending_command: None,
+            other: None,
+            split: false,
+            parent_focused: false,
+            revision: "HEAD".into(),
+            path: PathBuf::new(),
+            args: vec!["--first-parent".into()],
+            message: String::new(),
+            search: String::new(),
+            width: 100,
+            height: 20,
+        };
+        for renderer in ["v1", "v2"] {
+            app.config
+                .apply_command(&format!("set main-view-commit-title-graph = {renderer}"))
+                .unwrap();
+            let view = app.load("main").unwrap();
+            assert_eq!(view.rows[5], "∙ Merge pull request #4 from phaller/patch-1");
+            assert!(view
+                .items
+                .iter()
+                .all(|item| matches!(item, Item::Commit(c) if c.parents.len() <= 1)));
+        }
+        app.args = vec!["--follow".into(), "project/Build.scala".into()];
+        let implicit_path = app.load("main").unwrap();
+        assert_eq!(implicit_path.rows.len(), 8);
+        assert_eq!(
+            implicit_path.rows[0],
+            "WIP: Upgrade to 0.4-SNAPSHOT and DCE"
+        );
+        app.args.insert(1, "--".into());
+        assert_eq!(app.load("main").unwrap().rows, implicit_path.rows);
+        app.args = vec!["--no-merges".into()];
+        assert_eq!(app.load("main").unwrap().rows[0], implicit_path.rows[0]);
+        app.args.clear();
+        assert!(app.load("main").unwrap().rows[5].starts_with("●"));
+        app.revision = app.repo().unwrap().revision("HEAD").unwrap();
+        fs::write(root.join(&app.revision), "revision-shaped filename").unwrap();
+        assert!(app.load("diff").is_ok());
+        fs::write(
+            root.join("Build.scala"),
+            "different file at repository root",
+        )
+        .unwrap();
+        app.repo().unwrap().command(["add", "Build.scala"]).unwrap();
+        app.repo()
+            .unwrap()
+            .command([
+                "-c",
+                "user.name=Test",
+                "-c",
+                "user.email=test@example.invalid",
+                "commit",
+                "-qm",
+                "unrelated root file",
+            ])
+            .unwrap();
+        app.repo = Some(Repository::discover(root.join("project")).unwrap());
+        app.args = vec!["--follow".into(), "Build.scala".into()];
+        assert_eq!(app.load("main").unwrap().rows, implicit_path.rows);
+        app.args = vec!["--follow".into(), "--".into(), "project/Build.scala".into()];
+        assert_eq!(app.load("main").unwrap().rows, implicit_path.rows);
+        let expected = app
+            .repo()
+            .unwrap()
+            .history(
+                &["HEAD".into(), "--".into(), "project/Build.scala".into()],
+                0,
+            )
+            .unwrap();
+        assert_eq!(
+            app.repo()
+                .unwrap()
+                .history(&["HEAD".into(), "Build.scala".into()], 0)
+                .unwrap(),
+            expected
+        );
+        app.repo()
+            .unwrap()
+            .command(["branch", "Build.scala"])
+            .unwrap();
+        assert!(app
+            .repo()
+            .unwrap()
+            .history(&["Build.scala".into()], 0)
+            .is_err());
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
     fn unclosed_binding_argument_cannot_become_a_valid_toggle() {
         let mut app = App {
             repo: None,
@@ -3063,6 +3221,13 @@ mod tests {
                 format!("{quote}author")
             );
         }
+        app.action("exec").unwrap();
+        assert_eq!(app.message, "Failed to execute command: No arguments");
+        app.action("exec ").unwrap();
+        assert_eq!(app.message, "Failed to execute command: No arguments");
+        app.action("exec !").unwrap();
+        assert_eq!(app.message, "Failed to format arguments");
+        assert!(app.pending_command.is_none());
     }
 
     #[test]
@@ -3360,6 +3525,9 @@ mod tests {
         app.action("view-next").unwrap();
         assert!(app.parent_focused);
         assert_eq!(app.path, PathBuf::from("parent.txt"));
+        app.action("view-close-no-quit").unwrap();
+        assert_eq!(app.message, "Can't close last remaining view");
+        assert!(app.split && app.other.is_some() && app.parent_focused);
         app.action("refresh").unwrap();
         assert_eq!(app.view.selected, 4);
         assert_eq!(app.view.top, 1);
@@ -3371,10 +3539,25 @@ mod tests {
         assert_eq!(app.view.revision, "parent");
         assert_eq!(app.view.selected, 4);
         assert!(app.other.is_none());
+        app.action("view-close-no-quit").unwrap();
+        assert_eq!(app.message, "Can't close last remaining view");
+        assert_eq!(app.view.revision, "parent");
         app.view.selected = 5;
         let lines = pane_screen(&mut app.view, &app.config, 30, 2);
         assert!(lines[2].ends_with("100%"));
         assert_eq!(cell_width(&lines[2]), 30);
+        app.other = Some(View::text("pager", "child"));
+        app.split = true;
+        app.parent_focused = true;
+        app.previous.push(View::text("pager", "older"));
+        app.action("view-close-no-quit").unwrap();
+        assert_eq!(app.view.rows, vec!["older"]);
+        assert!(app.other.is_none() && !app.split);
+        app.other = Some(View::text("pager", "child"));
+        app.split = true;
+        app.parent_focused = true;
+        assert!(app.action("back").unwrap());
+        assert_eq!(app.view.rows, vec!["older"]);
     }
     #[test]
     fn terminal_content_is_safe_and_cell_clipped() {

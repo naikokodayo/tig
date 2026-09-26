@@ -1,0 +1,127 @@
+{
+  "scope": "Actual C and Rust main views from a subdirectory with a same-named root file",
+  "source_commit": "d72a77a35fad2ca06cf3f9c6a89df34a87b738e3",
+  "cases": [
+    {
+      "name": "implicit",
+      "arguments": [
+        "Build.scala"
+      ],
+      "outputs": {
+        "c": {
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "WIP: Upgrade to 0.4-SNAPSHOT and DCE\nRename projects to be grouped together in Eclipse\nAdd initial version of sudoku benchmark\nUpdate for new groupId and package structure of Scala.js.\nAdd DeltaBlue benchmark\nAdd Richards benchmark\nSimplify creation of new benchmark projects\nInitial import of Tracer benchmark\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 8                                                     100%\n",
+          "transcript": ""
+        },
+        "rust": {
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "WIP: Upgrade to 0.4-SNAPSHOT and DCE\nRename projects to be grouped together in Eclipse\nAdd initial version of sudoku benchmark\nUpdate for new groupId and package structure of Scala.js.\nAdd DeltaBlue benchmark\nAdd Richards benchmark\nSimplify creation of new benchmark projects\nInitial import of Tracer benchmark\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 8                                                     100%\n",
+          "transcript": ""
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "follow",
+      "arguments": [
+        "--follow",
+        "Build.scala"
+      ],
+      "outputs": {
+        "c": {
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "WIP: Upgrade to 0.4-SNAPSHOT and DCE\nRename projects to be grouped together in Eclipse\nAdd initial version of sudoku benchmark\nUpdate for new groupId and package structure of Scala.js.\nAdd DeltaBlue benchmark\nAdd Richards benchmark\nSimplify creation of new benchmark projects\nInitial import of Tracer benchmark\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 8                                                     100%\n",
+          "transcript": ""
+        },
+        "rust": {
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "WIP: Upgrade to 0.4-SNAPSHOT and DCE\nRename projects to be grouped together in Eclipse\nAdd initial version of sudoku benchmark\nUpdate for new groupId and package structure of Scala.js.\nAdd DeltaBlue benchmark\nAdd Richards benchmark\nSimplify creation of new benchmark projects\nInitial import of Tracer benchmark\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 8                                                     100%\n",
+          "transcript": ""
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "revision-implicit",
+      "arguments": [
+        "HEAD",
+        "Build.scala"
+      ],
+      "outputs": {
+        "c": {
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "WIP: Upgrade to 0.4-SNAPSHOT and DCE\nRename projects to be grouped together in Eclipse\nAdd initial version of sudoku benchmark\nUpdate for new groupId and package structure of Scala.js.\nAdd DeltaBlue benchmark\nAdd Richards benchmark\nSimplify creation of new benchmark projects\nInitial import of Tracer benchmark\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 8                                                     100%\n",
+          "transcript": ""
+        },
+        "rust": {
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "WIP: Upgrade to 0.4-SNAPSHOT and DCE\nRename projects to be grouped together in Eclipse\nAdd initial version of sudoku benchmark\nUpdate for new groupId and package structure of Scala.js.\nAdd DeltaBlue benchmark\nAdd Richards benchmark\nSimplify creation of new benchmark projects\nInitial import of Tracer benchmark\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 8                                                     100%\n",
+          "transcript": ""
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "explicit",
+      "arguments": [
+        "--",
+        "Build.scala"
+      ],
+      "outputs": {
+        "c": {
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "WIP: Upgrade to 0.4-SNAPSHOT and DCE\nRename projects to be grouped together in Eclipse\nAdd initial version of sudoku benchmark\nUpdate for new groupId and package structure of Scala.js.\nAdd DeltaBlue benchmark\nAdd Richards benchmark\nSimplify creation of new benchmark projects\nInitial import of Tracer benchmark\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 8                                                     100%\n",
+          "transcript": ""
+        },
+        "rust": {
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "WIP: Upgrade to 0.4-SNAPSHOT and DCE\nRename projects to be grouped together in Eclipse\nAdd initial version of sudoku benchmark\nUpdate for new groupId and package structure of Scala.js.\nAdd DeltaBlue benchmark\nAdd Richards benchmark\nSimplify creation of new benchmark projects\nInitial import of Tracer benchmark\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 8                                                     100%\n",
+          "transcript": ""
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "follow-explicit",
+      "arguments": [
+        "--follow",
+        "--",
+        "Build.scala"
+      ],
+      "outputs": {
+        "c": {
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "WIP: Upgrade to 0.4-SNAPSHOT and DCE\nRename projects to be grouped together in Eclipse\nAdd initial version of sudoku benchmark\nUpdate for new groupId and package structure of Scala.js.\nAdd DeltaBlue benchmark\nAdd Richards benchmark\nSimplify creation of new benchmark projects\nInitial import of Tracer benchmark\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 8                                                     100%\n",
+          "transcript": ""
+        },
+        "rust": {
+          "exit_code": 0,
+          "timed_out": false,
+          "screen": "WIP: Upgrade to 0.4-SNAPSHOT and DCE\nRename projects to be grouped together in Eclipse\nAdd initial version of sudoku benchmark\nUpdate for new groupId and package structure of Scala.js.\nAdd DeltaBlue benchmark\nAdd Richards benchmark\nSimplify creation of new benchmark projects\nInitial import of Tracer benchmark\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 8                                                     100%\n",
+          "transcript": ""
+        }
+      },
+      "passed": true
+    }
+  ],
+  "binaries": {
+    "c": {
+      "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/main-graph-task-clone/src/tig",
+      "sha256": "e8e7da4044dbe09000d1393d47b46e1f554fe8df12c4880464da58eb02f603a9"
+    },
+    "rust": {
+      "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/main-graph-task-clone/target/release/tig",
+      "sha256": "f158954b30409659cfecc6b0a4afcc95202d296a533b38b47fcd75e5c7e965a2"
+    }
+  },
+  "passed": true
+}

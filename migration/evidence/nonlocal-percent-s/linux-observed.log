@@ -1,0 +1,67 @@
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	﻿2026-09-26T19:46:43.0264307Z ##[group]Run perl -T -MPOSIX -e 'print "$^V\n"'
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.0264571Z ^[[36;1mperl -T -MPOSIX -e 'print "$^V\n"'^[[0m
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.0264732Z ^[[36;1mmake -j2^[[0m
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.0264867Z ^[[36;1mpython3 rust/tests/date-percent-s.py^[[0m
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.0265250Z ^[[36;1mRUSTUP_TOOLCHAIN=1.81.0 python3 rust/tests/upstream-suite.py test/main/date-test test/main/default-test test/main/stdin-test test/help/default-test^[[0m
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.0319111Z shell: /usr/bin/bash -e {0}
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.0319276Z ##[endgroup]
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.0472259Z v5.38.2
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.1332811Z         CC  src/tig.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.1654621Z         CC  src/types.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.4404569Z         CC  src/string.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.5202478Z         CC  src/util.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.5826552Z         CC  src/map.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.6590099Z         CC  src/argv.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.6886596Z         CC  src/io.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.8092877Z         CC  src/refdb.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.8471518Z        GEN  src/builtin-config.c
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.9079085Z         CC  src/request.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.9606174Z         CC  src/line.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:43.9901549Z         CC  src/keys.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:44.0679296Z         CC  src/repo.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:44.1504376Z         CC  src/options.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:44.1800071Z         CC  src/draw.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:44.3658945Z         CC  src/prompt.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:44.4841314Z         CC  src/display.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:44.5443285Z         CC  src/view.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:44.6843791Z         CC  src/search.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:44.7879255Z         CC  src/parse.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:44.8954798Z         CC  src/watch.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:44.9322559Z         CC  src/pager.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.0081367Z         CC  src/log.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.0373959Z         CC  src/reflog.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.0929199Z         CC  src/diff.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.1221574Z         CC  src/help.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.2170759Z         CC  src/tree.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.3039817Z         CC  src/blob.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.3448142Z         CC  src/blame.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.3996501Z         CC  src/refs.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.4691573Z         CC  src/status.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.4979696Z         CC  src/stage.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.6339449Z         CC  src/main.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.6633801Z         CC  src/stash.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.7463569Z         CC  src/grep.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.7903276Z         CC  src/ui.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.8558276Z         CC  src/apps.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.9035988Z         CC  src/graph.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.9323418Z         CC  src/graph-v1.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:45.9630651Z         CC  src/graph-v2.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:46.0613992Z         CC  compat/hashtab.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:46.1832663Z         CC  compat/utf8proc.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:46.2133853Z         CC  test/tools/test-graph.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:46.2620082Z         CC  tools/doc-gen.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:46.3323501Z         CC  src/builtin-config.o
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:46.5685616Z       LINK  src/tig
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:46.5980298Z       LINK  test/tools/test-graph
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:46.6271902Z       LINK  tools/doc-gen
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:50.3596043Z 156/156 host C/Rust %s checks passed; /home/runner/work/tig/tig/target/date-percent-s.json
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:50.4711488Z c: pass    test/help/default-test
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:50.5357937Z c: pass    test/main/date-test
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:50.6141069Z c: pass    test/main/default-test
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:50.6619953Z c: pass    test/main/stdin-test
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:50.7611274Z rust: pass    test/help/default-test
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:50.8640203Z rust: pass    test/main/date-test
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:50.9661908Z rust: pass    test/main/default-test
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:51.0125105Z rust: fail    test/main/stdin-test
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:51.0165692Z BLOCKED: /home/runner/work/tig/tig/migration/evidence/upstream-rust-only.json
+rust (ubuntu-latest)	Compare non-local epoch formatting with host C Tig	2026-09-26T19:46:51.0251523Z ##[error]Process completed with exit code 1.

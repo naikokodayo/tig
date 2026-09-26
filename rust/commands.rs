@@ -356,6 +356,7 @@ mod tests {
             root: root.clone(),
             git_dir: root.join(".git"),
             bare: false,
+            invocation: root.clone(),
         };
         repo.command([
             "-c",
@@ -599,6 +600,7 @@ mod tests {
             root: std::env::temp_dir(),
             git_dir: std::env::temp_dir(),
             bare: false,
+            invocation: std::env::temp_dir(),
         };
         assert!(request
             .run(&repo, false, true)
@@ -612,6 +614,7 @@ mod tests {
             root: std::env::temp_dir(),
             git_dir: std::env::temp_dir(),
             bare: false,
+            invocation: std::env::temp_dir(),
         };
         let mut request = PreparedCommand {
             argv: vec!["git".into(), "--invalid-option-for-tig-test".into()],
