@@ -287,11 +287,21 @@ fn changes(entries: &[StatusEntry], show_untracked: bool) -> Vec<ChangeKind> {
     }
     if entries
         .iter()
-        .any(|entry| !matches!(entry.index, ' ' | '?' | 'U') && entry.worktree != 'U')
+        .any(|entry| entry.staged() && !entry.conflicted())
     {
         kinds.push(ChangeKind::Staged);
     }
     kinds
+}
+
+fn status_mark(entry: &StatusEntry, group: usize) -> Option<char> {
+    match group {
+        0 if entry.staged() && !entry.conflicted() => Some(entry.index),
+        1 if entry.conflicted() => Some('U'),
+        1 if !matches!(entry.worktree, ' ' | '?' | '!') => Some(entry.worktree),
+        2 if entry.index == '?' => Some('?'),
+        _ => None,
+    }
 }
 
 fn changes_date() -> Result<String> {
@@ -460,18 +470,9 @@ impl App {
             v.push(title.into(), Item::Text);
             let start = v.rows.len();
             for e in &entries {
-                let visible = match group {
-                    0 => e.staged(),
-                    1 => e.index != '?' && e.worktree != ' ' && e.worktree != '!',
-                    _ => e.index == '?',
-                };
-                if visible {
+                if let Some(mark) = status_mark(e, group) {
                     v.push(
-                        format!(
-                            "{} {}",
-                            if group == 0 { e.index } else { e.worktree },
-                            e.path.display()
-                        ),
+                        format!("{} {}", mark, e.path.display()),
                         Item::Status(e.clone(), group == 0),
                     );
                 }
@@ -1693,7 +1694,11 @@ impl App {
                     break;
                 }
                 if let Some(command) = self.pending_command.take() {
-                    command.run(self.repo()?, false, true)?;
+                    if command.silent && !command.echo {
+                        command.run_allow_nonzero(self.repo()?, false, true)?;
+                    } else {
+                        command.run(self.repo()?, false, true)?;
+                    }
                     if command.exit {
                         break;
                     }
@@ -2665,7 +2670,11 @@ fn run() -> Result<()> {
                 continue;
             }
             let result = if command.silent || command.echo {
-                command.run(app.repo()?, true, true)
+                if command.silent && !command.echo {
+                    command.run_allow_nonzero(app.repo()?, true, true)
+                } else {
+                    command.run(app.repo()?, true, true)
+                }
             } else {
                 drop(terminal);
                 let result = command.run(app.repo()?, true, false);
@@ -3008,6 +3017,19 @@ mod tests {
             vec![ChangeKind::Unstaged]
         );
         assert_eq!(changes(&[entry('?', '?')], false), Vec::<ChangeKind>::new());
+        for conflict in [
+            entry('U', 'D'),
+            entry('D', 'U'),
+            entry('A', 'A'),
+            entry('D', 'D'),
+        ] {
+            assert_eq!(status_mark(&conflict, 0), None);
+            assert_eq!(status_mark(&conflict, 1), Some('U'));
+            assert_eq!(changes(&[conflict], true), vec![ChangeKind::Unstaged]);
+        }
+        assert_eq!(status_mark(&entry('M', ' '), 0), Some('M'));
+        assert_eq!(status_mark(&entry(' ', 'M'), 1), Some('M'));
+        assert_eq!(status_mark(&entry('?', '?'), 2), Some('?'));
     }
     #[test]
     fn log_message_cannot_replace_selected_commit() {

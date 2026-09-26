@@ -298,3 +298,22 @@ in 150 tests, 3 skips and 1 recipe without a result receipt. The raw log is
 graph helper through C, and early exits change assertion denominators; these
 numbers are not a Rust completion percentage. Full parity and the application
 benchmark remain gated.
+
+## Ninth checkpoint verification
+
+Unmerged status entries now appear only under unstaged changes and use Tig's
+`U` marker, including `AA` and `DD` conflicts. A missing or empty
+`rebase-apply/head-name` falls back to the current branch while other I/O
+errors remain visible. Silent external commands can return a nonzero child
+status without stopping a script or interactive refresh; launch failures still
+fail. Echo takes precedence when both flags are present. The two unchanged
+original branch-status scripts pass **36 of 36 assertions**.
+
+The final binary passed formatting, **53 Rust unit tests**, Clippy with
+warnings denied, release build, and **108 real PTY checks**. The full
+upstream suite attempted all 154 recipes and reported **207 of 590
+assertions failed** in 150 tests, with 3 skips and 1 recipe without a result
+receipt. See `migration/evidence/rust-upstream-ninth.json` and its raw log for
+the exact binary hash and failures. The graph helper still routes through C
+under `SYSTEM_TIG=1`; early exits change assertion totals, so this is not a
+completion percentage. Full parity and the application benchmark remain gated.

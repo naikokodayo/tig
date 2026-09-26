@@ -344,11 +344,16 @@ impl Repository {
             }
             let mut name = branch.to_owned();
             if let Some(file) = name_file {
-                name = std::fs::read_to_string(self.git_dir.join(file))
-                    .map_err(|e| GitError(format!("Cannot read operation state: {e}")))?
-                    .trim()
-                    .trim_start_matches("refs/heads/")
-                    .to_owned();
+                match std::fs::read_to_string(self.git_dir.join(file)) {
+                    Ok(value) if !value.trim().is_empty() => {
+                        name = value.trim().trim_start_matches("refs/heads/").to_owned();
+                    }
+                    Ok(_) => (),
+                    Err(error) if error.kind() == std::io::ErrorKind::NotFound => (),
+                    Err(error) => {
+                        return Err(GitError(format!("Cannot read operation state: {error}")));
+                    }
+                }
             }
             if marker == "HEAD" && branch == "(detached)" {
                 let refs = self.refs()?;
@@ -669,6 +674,24 @@ mod tests {
         repo.command(["tag", "v1"]).unwrap();
         repo.command(["checkout", "--detach", "v1"]).unwrap();
         assert_eq!(repo.status_header().unwrap(), "HEAD detached at v1");
+    }
+    #[test]
+    fn applying_mailbox_without_head_name_uses_current_branch() {
+        let f = Fixture::new();
+        let repo = f.repo();
+        fs::write(f.0.join("file"), "base\n").unwrap();
+        repo.command(["add", "file"]).unwrap();
+        repo.command(["commit", "-qm", "base"]).unwrap();
+        repo.command(["branch", "-M", "main"]).unwrap();
+        let state = repo.git_dir.join("rebase-apply");
+        fs::create_dir(&state).unwrap();
+        fs::write(state.join("applying"), "").unwrap();
+        assert_eq!(repo.status_header().unwrap(), "Applying mailbox to main");
+        fs::write(state.join("head-name"), "refs/heads/topic\n").unwrap();
+        assert_eq!(repo.status_header().unwrap(), "Applying mailbox to topic");
+        fs::remove_file(state.join("head-name")).unwrap();
+        fs::create_dir(state.join("head-name")).unwrap();
+        assert!(repo.status_header().is_err());
     }
     #[test]
     fn worktree_diff_preserves_conflict_and_configured_prefixes_without_changing_index() {

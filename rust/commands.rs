@@ -33,6 +33,24 @@ impl PreparedCommand {
     /// Explicit confirmation must come from the UI; scripted '?' is not consent.
     /// The caller restores terminal mode before interactive, uncaptured commands.
     pub fn run(&self, repo: &Repository, confirmed: bool, capture: bool) -> Result<Output> {
+        let output = self.run_allow_nonzero(repo, confirmed, capture)?;
+        if !output.status.success() {
+            return Err(GitError(format!(
+                "Command exited with {}: {}",
+                output.status,
+                String::from_utf8_lossy(&output.stderr).trim()
+            )));
+        }
+        Ok(output)
+    }
+
+    /// Return a launched command's exit status while still reporting launch/I/O errors.
+    pub fn run_allow_nonzero(
+        &self,
+        repo: &Repository,
+        confirmed: bool,
+        capture: bool,
+    ) -> Result<Output> {
         if self.confirm && !confirmed {
             return Err(GitError("Command requires confirmation".into()));
         }
@@ -66,13 +84,6 @@ impl PreparedCommand {
         let output = command
             .output()
             .map_err(|e| GitError(format!("Could not execute command: {e}")))?;
-        if !output.status.success() {
-            return Err(GitError(format!(
-                "Command exited with {}: {}",
-                output.status,
-                String::from_utf8_lossy(&output.stderr).trim()
-            )));
-        }
         Ok(output)
     }
 }
@@ -416,5 +427,29 @@ mod tests {
             .unwrap_err()
             .to_string()
             .contains("requires confirmation"));
+    }
+    #[test]
+    fn launched_nonzero_exit_is_distinct_from_spawn_failure() {
+        let repo = Repository {
+            root: std::env::temp_dir(),
+            git_dir: std::env::temp_dir(),
+            bare: false,
+        };
+        let mut request = PreparedCommand {
+            argv: vec!["git".into(), "--invalid-option-for-tig-test".into()],
+            silent: true,
+            confirm: false,
+            exit: false,
+            echo: false,
+            quick: false,
+        };
+        assert!(!request
+            .run_allow_nonzero(&repo, false, true)
+            .unwrap()
+            .status
+            .success());
+        assert!(request.run(&repo, false, true).is_err());
+        request.argv = vec!["tig-command-that-does-not-exist".into()];
+        assert!(request.run_allow_nonzero(&repo, false, true).is_err());
     }
 }
