@@ -1,0 +1,62 @@
+test/main/date-test
+  [OK] default-date.screen assertion
+  [OK] local-date.screen assertion
+  [OK] relative-date.screen assertion
+  [OK] relative-compact-date.screen assertion
+  [OK] custom-short-date.screen assertion
+  [OK] custom-tz-date.screen assertion
+  [OK] no-date.screen assertion
+  [OK] custom-date.screen assertion
+
+test/main/pretty-raw-test
+  [OK] main-pretty-raw.screen assertion
+
+test/main/default-test
+  [OK] main-default.screen assertion
+  [OK] main-ref-format.screen assertion
+  [OK] main-remotes-hidden.screen assertion
+  [OK] main-no-refs.screen assertion
+  [OK] main-no-graph.screen assertion
+  [OK] main-with-diff.screen assertion
+
+test/main/show-changes-test
+  [OK] main-with-unstaged.screen assertion
+  [OK] main-with-unstaged-split.screen assertion
+  [OK] main-with-unstaged-and-staged-split.screen assertion
+  [OK] main-with-staged.screen assertion
+  [OK] main-with-staged-split.screen assertion
+  [OK] main-with-staged-and-unstaged.screen assertion
+  [OK] main-with-renamed.screen assertion
+  [OK] main-with-conflict.screen assertion
+  [OK] main-all-refs.screen assertion
+
+test/main/show-changes-after-rename-test
+  [OK] default.screen assertion
+
+test/main/update-unstaged-changes-test
+  [OK] start.screen assertion
+  [OK] result.screen assertion
+
+test/diff/diff-context-test
+  [OK] diff-default.screen assertion
+  [OK] diff-u4.screen assertion
+  [OK] diff-u5.screen assertion
+  [OK] diff-u10.screen assertion
+  [OK] diff-u8.screen assertion
+  [OK] diff-default-from-main.screen assertion
+  [OK] diff-u10-from-main.screen assertion
+  [OK] diff-u4-from-main.screen assertion
+  [OK] diff-u5-from-main.screen assertion
+  [OK] diff-u8-from-main.screen assertion
+
+test/diff/diff-wdiff-context-test
+  [OK] diff-default.screen assertion
+  [OK] diff-u4.screen assertion
+  [OK] diff-u5.screen assertion
+  [OK] diff-u10.screen assertion
+  [OK] diff-u8.screen assertion
+  [OK] diff-default-from-main.screen assertion
+  [OK] diff-u10-from-main.screen assertion
+  [OK] diff-u4-from-main.screen assertion
+  [OK] diff-u5-from-main.screen assertion
+  [OK] diff-u8-from-main.screen assertion

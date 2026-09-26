@@ -136,131 +136,21 @@ pub(crate) fn author(
 }
 
 pub(crate) fn date(iso: &str, column: &Column<'_>) -> Result<String, String> {
-    let normalized;
-    let iso = if let Some(prefix) = iso.strip_suffix('Z') {
-        normalized = format!("{prefix}+00:00");
-        normalized.as_str()
-    } else {
-        iso
-    };
-    if column.flag("local", false)? {
-        return Err("Local date conversion is not supported".into());
-    }
-    // The history loader supplies strict ISO 8601 (%aI or %cI), including offset.
-    let b = iso.as_bytes();
-    if b.len() != 25
-        || !iso.is_ascii()
-        || b[4] != b'-'
-        || b[7] != b'-'
-        || b[10] != b'T'
-        || b[13] != b':'
-        || b[16] != b':'
-        || b[22] != b':'
-        || !matches!(b[19], b'+' | b'-')
-        || [0..4, 5..7, 8..10, 11..13, 14..16, 17..19, 20..22, 23..25]
-            .iter()
-            .any(|r| !b[r.clone()].iter().all(u8::is_ascii_digit))
-    {
-        return Err(format!("Expected strict ISO 8601 commit date: {iso:?}"));
-    }
-    let number = |start, end| iso[start..end].parse::<u32>().unwrap_or(u32::MAX);
-    let year = number(0, 4);
-    let month = number(5, 7);
-    let leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
-    let days = match month {
-        2 => {
-            if leap {
-                29
-            } else {
-                28
-            }
-        }
-        4 | 6 | 9 | 11 => 30,
-        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
-        _ => 0,
-    };
-    if number(8, 10) == 0
-        || number(8, 10) > days
-        || number(11, 13) > 23
-        || number(14, 16) > 59
-        || number(17, 19) > 60
-        || number(20, 22) > 23
-        || number(23, 25) > 59
-    {
-        return Err(format!("Invalid ISO 8601 commit date: {iso:?}"));
-    }
-    let zone = format!("{}{}", &iso[19..22], &iso[23..25]);
-    let format = match column.display {
-        "default" | "yes" | "true" => "%Y-%m-%d %H:%M %z",
-        "custom" => column.options.get("format").copied().unwrap_or("%Y-%m-%d"),
-        other => return Err(format!("Unsupported date mode: {other}")),
-    };
-    let mut out = String::new();
-    let mut chars = format.chars();
-    while let Some(c) = chars.next() {
-        if c != '%' {
-            out.push(c);
-            continue;
-        }
-        let part = match chars.next().ok_or("Trailing % in date format")? {
-            '%' => "%",
-            'Y' => &iso[..4],
-            'y' => &iso[2..4],
-            'm' => &iso[5..7],
-            'd' => &iso[8..10],
-            'H' => &iso[11..13],
-            'M' => &iso[14..16],
-            'S' => &iso[17..19],
-            'z' | 'Z' => &zone,
-            'F' => &iso[..10],
-            'R' => &iso[11..16],
-            'T' => &iso[11..19],
-            spec => return Err(format!("Unsupported date format directive: %{spec}")),
-        };
-        out.push_str(part);
-    }
-    Ok(sanitize(&out))
+    crate::date::format(
+        iso,
+        column.display,
+        column.flag("local", false)?,
+        column.options.get("format").copied(),
+    )
+    .map(|value| sanitize(&value))
 }
 
 fn blame_date(seconds: i64, zone: &str) -> Result<String, String> {
-    let zone_bytes = zone.as_bytes();
-    if zone_bytes.len() != 5
-        || !matches!(zone_bytes[0], b'+' | b'-')
-        || !zone_bytes[1..].iter().all(u8::is_ascii_digit)
-    {
-        return Err("Invalid blame timezone".into());
-    }
-    let hours = (zone_bytes[1] - b'0') as i64 * 10 + (zone_bytes[2] - b'0') as i64;
-    let minutes = (zone_bytes[3] - b'0') as i64 * 10 + (zone_bytes[4] - b'0') as i64;
-    if hours > 23 || minutes > 59 {
-        return Err("Invalid blame timezone".into());
-    }
-    let offset = (hours * 60 + minutes) * 60 * if zone_bytes[0] == b'+' { 1 } else { -1 };
-    let local = seconds.checked_add(offset).ok_or("Blame date overflow")?;
-    let days = local.div_euclid(86_400);
-    let time = local.rem_euclid(86_400);
-    // Gregorian civil date from days since 1970-01-01.
-    let z = days.checked_add(719_468).ok_or("Blame date overflow")?;
-    let era = z.div_euclid(146_097);
-    let doe = z.rem_euclid(146_097);
-    let yoe = (doe - doe / 1_460 + doe / 36_524 - doe / 146_096) / 365;
-    let mut year = yoe + era * 400;
-    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
-    let mp = (5 * doy + 2) / 153;
-    let day = doy - (153 * mp + 2) / 5 + 1;
-    let month = mp + if mp < 10 { 3 } else { -9 };
-    year += i64::from(month <= 2);
-    if !(0..=9999).contains(&year) {
+    let date = crate::date::from_timestamp(seconds, zone)?;
+    if !(0..=9999).contains(&chrono::Datelike::year(&date)) {
         return Err("Blame date outside supported years".into());
     }
-    Ok(format!(
-        "{year:04}-{month:02}-{day:02}T{:02}:{:02}:{:02}{}:{}",
-        time / 3_600,
-        time / 60 % 60,
-        time % 60,
-        &zone[..3],
-        &zone[3..]
-    ))
+    Ok(date.to_rfc3339())
 }
 
 pub fn render_blame(
@@ -612,6 +502,10 @@ pub fn render_commits(
                 row.push_str(&" ".repeat(padding));
                 row.push_str(&value);
                 row.push_str(if ascii { "| " } else { "│ " });
+            } else if col.name == "date" && col.display == "relative" {
+                row.push_str(&" ".repeat(padding));
+                row.push_str(&value);
+                row.push(' ');
             } else {
                 row.push_str(&value);
                 row.push_str(&" ".repeat(padding));
@@ -664,6 +558,20 @@ mod tests {
         };
         let rows = render_blame(&config, &[first.clone()], 200).unwrap();
         assert_eq!(rows[0], "aaaaaaa Author 1969-12-31 22:00 -0200   1| first");
+        let mut zero = first.clone();
+        zero.author_tz = "+0000".into();
+        assert_eq!(
+            render_blame(&config, &[zero], 200).unwrap()[0],
+            "aaaaaaa Author    1| first"
+        );
+        assert_eq!(
+            blame_date(951782400, "+0000").unwrap(),
+            "2000-02-29T00:00:00+00:00"
+        );
+        assert!(blame_date(253402300800, "+0000").is_err());
+        assert!(blame_date(-62167219201, "+0000").is_err());
+        assert!(blame_date(i64::MAX, "+0000").is_err());
+        assert!(blame_date(0, "+2460").is_err());
         config.parse("set blame-view-date-use-author = no");
         assert_eq!(
             render_blame(&config, &[first.clone()], 200).unwrap()[0],
@@ -806,6 +714,30 @@ mod tests {
         assert_eq!(clip("a界b", 2), "a");
         assert_eq!(clip("e\u{301}界", 1), "e\u{301}");
     }
+    #[test]
+    fn zero_wall_time_is_blank_without_rejecting_unix_zero() {
+        let epoch = crate::date::raw("0 +0000").unwrap();
+        assert_eq!(epoch, "1970-01-01T00:00:00+00:00");
+        let shifted_epoch = crate::date::raw("-32400 +0900").unwrap();
+        for mode in ["default", "custom", "relative", "relative-compact"] {
+            for local in ["yes", "no"] {
+                let spec = format!("date:{mode},local={local},format=%F");
+                let column = Column::parse(&spec).unwrap();
+                assert_eq!(date(&epoch, &column).unwrap(), "", "{spec}");
+                assert_eq!(date(&shifted_epoch, &column).unwrap(), "", "{spec}");
+            }
+        }
+        let column = Column::parse("date:default").unwrap();
+        assert_eq!(
+            date(&crate::date::raw("0 +0900").unwrap(), &column).unwrap(),
+            "1970-01-01 09:00 +0900"
+        );
+        assert_eq!(
+            date(&crate::date::raw("-1 +0000").unwrap(), &column).unwrap(),
+            "1969-12-31 23:59 +0000"
+        );
+    }
+
     #[test]
     fn dates_email_and_overrides() {
         let mut config = Config::defaults();
