@@ -2,6 +2,7 @@
 #![forbid(unsafe_code)]
 
 mod line;
+mod request;
 
 pub mod config;
 pub mod date;
