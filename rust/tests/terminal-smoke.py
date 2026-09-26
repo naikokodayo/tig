@@ -289,10 +289,10 @@ def main():
             expect('+2 selects second row after working changes', [f'[main] {newest} - commit 1 of 2'])
             finish('+2 session quit')
             before, selector = start(('blame', '--', 'fixture.txt'))
-            expect('blame -- file', ['first line', 'second line', '[blame] fixture.txt - line 1 of 2'])
+            expect('blame -- file', ['first line', 'second line', f'[blame] {oldest}:fixture.txt - line 1 of 2'])
             finish('blame session quit')
             before, selector = start(('blame', '--', 'child.txt'), repo / 'nested')
-            expect('blame resolves subdirectory relative file', ['nested fixture line', '[blame] nested/child.txt - line 1 of 1'])
+            expect('blame resolves subdirectory relative file', ['nested fixture line', f'[blame] {oldest}:nested/child.txt - line 1 of 1'])
             finish('subdirectory blame session quit')
             for termination in (signal.SIGTERM, signal.SIGHUP, signal.SIGINT):
                 offset = len(transcript)

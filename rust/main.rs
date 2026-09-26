@@ -21,7 +21,7 @@ use tig_rs::{
     config::{Cli, Config},
     git::Repository,
     help_view::HelpView,
-    model::{Commit, StatusEntry, TreeEntry},
+    model::{BlameLine, Commit, StatusEntry, TreeEntry},
 };
 use unicode_width::UnicodeWidthChar;
 
@@ -36,6 +36,7 @@ enum Item {
     Tree(TreeEntry),
     Ref(String, Option<String>),
     Grep(GrepLine),
+    Blame(BlameLine),
     Text,
 }
 #[derive(Clone)]
@@ -595,17 +596,12 @@ impl App {
                 }
             }
             "blame" => {
-                for b in repo.blame(Some(&self.revision), &self.path)? {
-                    v.push(
-                        format!(
-                            "{} {:<18} {:>5} {}",
-                            b.oid.get(..8).unwrap_or(&b.oid),
-                            b.author,
-                            b.line,
-                            b.text
-                        ),
-                        Item::Ref(b.oid, None),
-                    );
+                let blame = repo.blame(Some(&self.revision), &self.path)?;
+                for (row, line) in tig_rs::render::render_blame(&self.config, &blame, self.width)?
+                    .into_iter()
+                    .zip(blame)
+                {
+                    v.push(row, Item::Blame(line));
                 }
             }
             "diff" => {
@@ -945,6 +941,7 @@ impl App {
                 self.path.clear();
             }
             Item::Ref(id, _) => self.revision = id,
+            Item::Blame(line) => self.revision = line.oid,
             Item::Tree(e) => self.path = e.path,
             Item::Status(e, _) => self.path = e.path,
             Item::Grep(hit) => {
@@ -1027,6 +1024,10 @@ impl App {
                 } else {
                     self.open("diff")?;
                 }
+            }
+            Item::Blame(line) => {
+                self.revision = line.oid;
+                self.open("diff")?;
             }
             Item::Text if self.view.name == "refs" && self.view.selected == 0 => {
                 self.args = vec!["--all".into()];
@@ -1220,7 +1221,13 @@ impl App {
                 }
                 _ => None,
             },
-            "blob" | "blame" => Some((self.view.path.clone(), self.view.selected + 1)),
+            "blob" => Some((self.view.path.clone(), self.view.selected + 1)),
+            "blame" => match self.selected() {
+                Item::Blame(line) if line.filename == self.view.path => {
+                    Some((self.view.path.clone(), self.view.selected + 1))
+                }
+                _ => None,
+            },
             "stage" if self.view.untracked => {
                 Some((self.view.path.clone(), self.view.selected + 1))
             }
@@ -1296,7 +1303,16 @@ impl App {
                 _ => None,
             };
             self.select_context();
-            let (file, line) = self.edit_target().unwrap_or_else(|| (self.path.clone(), 0));
+            let (file, line) = self.edit_target().unwrap_or_else(|| {
+                (
+                    if self.view.name == "blame" {
+                        PathBuf::new()
+                    } else {
+                        self.path.clone()
+                    },
+                    0,
+                )
+            });
             self.pending_command = Some(tig_rs::commands::prepare_with_context(
                 self.repo()?,
                 command,
@@ -2038,58 +2054,46 @@ fn diff_edit_target(rows: &[String], selected: usize) -> Option<(PathBuf, usize)
 }
 
 fn git_patch_path(raw: &str) -> Option<PathBuf> {
-    if !raw.starts_with('"') {
-        return Some(PathBuf::from(raw));
-    }
-    let quoted = raw.strip_prefix('"')?.strip_suffix('"')?.as_bytes();
-    let mut bytes = Vec::with_capacity(quoted.len());
-    let mut i = 0;
-    while i < quoted.len() {
-        if quoted[i] == b'\\' {
-            i += 1;
-            let escaped = *quoted.get(i)?;
-            match escaped {
-                b'\\' | b'"' => bytes.push(escaped),
-                b'a' => bytes.push(7),
-                b'b' => bytes.push(8),
-                b'f' => bytes.push(12),
-                b't' => bytes.push(b'\t'),
-                b'n' => bytes.push(b'\n'),
-                b'r' => bytes.push(b'\r'),
-                b'v' => bytes.push(11),
-                b'0'..=b'7' => {
-                    let octal = quoted.get(i..i + 3)?;
-                    if !octal.iter().all(|byte| (b'0'..=b'7').contains(byte)) {
-                        return None;
-                    }
-                    let value = (u16::from(octal[0] - b'0') * 64)
-                        + (u16::from(octal[1] - b'0') * 8)
-                        + u16::from(octal[2] - b'0');
-                    bytes.push(u8::try_from(value).ok()?);
-                    i += 2;
-                }
-                _ => return None,
-            }
-        } else {
-            bytes.push(quoted[i]);
-        }
-        i += 1;
-    }
-    #[cfg(unix)]
-    {
-        use std::os::unix::ffi::OsStringExt;
-        Some(PathBuf::from(std::ffi::OsString::from_vec(bytes)))
-    }
-    #[cfg(not(unix))]
-    {
-        Some(PathBuf::from(String::from_utf8(bytes).ok()?))
-    }
+    tig_rs::git::parse_git_path(raw.as_bytes()).ok()
 }
 
 #[cfg(test)]
 mod editor_tests {
     use super::{diff_edit_target, git_patch_path, stage_stat_header, App, Config, Item, View};
     use std::path::PathBuf;
+
+    #[test]
+    fn blame_history_path_is_not_a_worktree_edit_target() {
+        let raw = format!("{} 1 1\nfilename old/file\n\tcontent\n", "a".repeat(40));
+        let line = tig_rs::git::parse_blame(raw.as_bytes()).unwrap().remove(0);
+        let mut view = View::new("blame");
+        view.path = "new/file".into();
+        view.push("content".into(), Item::Blame(line.clone()));
+        let mut app = App {
+            repo: None,
+            config: Config::defaults(),
+            view,
+            help: None,
+            previous: vec![],
+            pending_command: None,
+            other: None,
+            split: false,
+            parent_focused: false,
+            revision: "HEAD".into(),
+            path: "new/file".into(),
+            args: vec![],
+            message: String::new(),
+            search: String::new(),
+            width: 80,
+            height: 20,
+        };
+        assert_eq!(app.edit_target(), None);
+        app.view.items[0] = Item::Blame(tig_rs::model::BlameLine {
+            filename: "new/file".into(),
+            ..line
+        });
+        assert_eq!(app.edit_target(), Some((PathBuf::from("new/file"), 1)));
+    }
 
     #[test]
     fn maps_stat_and_patch_rows_to_file_and_new_line() {
@@ -2351,6 +2355,13 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
         }
         Some(Item::Ref(id, _)) if matches!(view.name.as_str(), "log" | "refs") => id.clone(),
         Some(Item::Grep(hit)) => hit.label.clone(),
+        Some(Item::Blame(line)) if view.name == "blame" => {
+            if line.oid.bytes().all(|byte| byte == b'0') {
+                line.filename.display().to_string()
+            } else {
+                format!("{}:{}", line.oid, line.filename.display())
+            }
+        }
         _ if view.name == "refs" => "All references".into(),
         Some(Item::Status(e, staged)) => format!(
             "Press u to {} '{}'{}",
