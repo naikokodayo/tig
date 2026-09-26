@@ -510,7 +510,7 @@ struct App {
     tree_initialized: bool,
     previous: Vec<View>,
     pending_command: Option<tig_rs::commands::PreparedCommand>,
-    prompt_answer: Option<String>,
+    prompt_answers: Vec<String>,
     other: Option<View>,
     split: bool,
     parent_focused: bool,
@@ -1725,7 +1725,7 @@ impl App {
                     0,
                 )
             });
-            let prompt_answer = self.prompt_answer.take();
+            let prompt_answers = std::mem::take(&mut self.prompt_answers);
             self.pending_command = Some(tig_rs::commands::prepare_with_context(
                 self.repo()?,
                 command,
@@ -1735,7 +1735,7 @@ impl App {
                 selected_ref.as_deref(),
                 tig_rs::commands::ExpansionInput {
                     args: &self.args,
-                    prompt_answer: prompt_answer.as_deref(),
+                    prompt_answers: &prompt_answers,
                 },
             )?);
             return Ok(true);
@@ -2369,12 +2369,13 @@ impl App {
                 } else {
                     self.binding(line)
                 };
-                if tig_rs::commands::prompt_label(&action).is_some() {
+                self.prompt_answers.clear();
+                for _ in tig_rs::commands::prompt_labels(&action) {
                     let answer = lines
                         .next()
                         .ok_or("Missing scripted command prompt answer")?
                         .trim();
-                    self.prompt_answer = Some(
+                    self.prompt_answers.push(
                         answer
                             .strip_suffix("<Enter>")
                             .ok_or("Invalid scripted command prompt answer")?
@@ -2677,7 +2678,7 @@ mod editor_tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
-            prompt_answer: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -2848,7 +2849,7 @@ mod editor_tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
-            prompt_answer: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -3333,6 +3334,24 @@ impl Drop for Terminal {
         }
     }
 }
+fn read_command_prompts(terminal: &mut Terminal, app: &mut App, action: &str) -> Result<bool> {
+    app.prompt_answers.clear();
+    for label in tig_rs::commands::prompt_labels(action) {
+        let prefix = if label.is_empty() {
+            "Command argument: "
+        } else {
+            label
+        };
+        match terminal.prompt(app, prefix)? {
+            Some(answer) => app.prompt_answers.push(answer),
+            None => {
+                app.prompt_answers.clear();
+                return Ok(false);
+            }
+        }
+    }
+    Ok(true)
+}
 fn key_name(code: KeyCode, modifiers: KeyModifiers) -> String {
     if let KeyCode::Char(c) = code {
         if modifiers.contains(KeyModifiers::CONTROL) {
@@ -3396,7 +3415,7 @@ fn run() -> Result<()> {
         tree_initialized: false,
         previous: vec![],
         pending_command: None,
-        prompt_answer: None,
+        prompt_answers: vec![],
         other: None,
         split: false,
         parent_focused: false,
@@ -3578,18 +3597,8 @@ fn run() -> Result<()> {
                         .map_or(Ok(()), |query| app.grep_query(&query))
                         .map(|()| true)
                 } else {
-                    if let Some(label) = tig_rs::commands::prompt_label(&s) {
-                        app.prompt_answer = terminal.prompt(
-                            &mut app,
-                            if label.is_empty() {
-                                "Command argument: "
-                            } else {
-                                label
-                            },
-                        )?;
-                        if app.prompt_answer.is_none() {
-                            continue;
-                        }
+                    if !read_command_prompts(&mut terminal, &mut app, &s)? {
+                        continue;
                     }
                     app.action(&format!(":{s}"))
                 };
@@ -3600,18 +3609,8 @@ fn run() -> Result<()> {
                 }
             }
         } else {
-            if let Some(label) = tig_rs::commands::prompt_label(&action) {
-                app.prompt_answer = terminal.prompt(
-                    &mut app,
-                    if label.is_empty() {
-                        "Command argument: "
-                    } else {
-                        label
-                    },
-                )?;
-                if app.prompt_answer.is_none() {
-                    continue;
-                }
+            if !read_command_prompts(&mut terminal, &mut app, &action)? {
+                continue;
             }
             match app.action(&action) {
                 Ok(false) => break,
@@ -3802,7 +3801,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
-            prompt_answer: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -4063,7 +4062,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
-            prompt_answer: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -4148,7 +4147,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
-            prompt_answer: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -4191,7 +4190,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
-            prompt_answer: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -4277,7 +4276,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
-            prompt_answer: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -4329,7 +4328,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
-            prompt_answer: None,
+            prompt_answers: vec![],
             other: None,
             split: false,
             parent_focused: false,
@@ -4499,7 +4498,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
-            prompt_answer: None,
+            prompt_answers: vec![],
             other: Some(parent),
             split: true,
             parent_focused: false,
@@ -4576,7 +4575,7 @@ mod tests {
             tree_initialized: false,
             previous: vec![],
             pending_command: None,
-            prompt_answer: None,
+            prompt_answers: vec![],
             other: Some(View::text("main", "parent\nother commit")),
             split: true,
             parent_focused: false,

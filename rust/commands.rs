@@ -22,7 +22,7 @@ pub struct PreparedCommand {
 }
 pub struct ExpansionInput<'a> {
     pub args: &'a [String],
-    pub prompt_answer: Option<&'a str>,
+    pub prompt_answers: &'a [String],
 }
 impl PreparedCommand {
     /// Quoted, escaped argv for display only; never execute this string through a shell.
@@ -123,7 +123,7 @@ pub fn prepare(
         selected_ref,
         ExpansionInput {
             args: &[],
-            prompt_answer: None,
+            prompt_answers: &[],
         },
     )
 }
@@ -326,36 +326,73 @@ pub fn prepare_with_context(
         "repo:is-inside-work-tree",
         if repo.bare { "false" } else { "true" }.into(),
     );
-    let separator = expansion
-        .args
-        .iter()
-        .position(|arg| arg == "--")
-        .unwrap_or(expansion.args.len());
+    let (revargs, fileargs, cmdlineargs) = if argv.iter().any(|arg| {
+        matches!(
+            arg.as_str(),
+            "%(revargs)" | "%(fileargs)" | "%(cmdlineargs)"
+        )
+    }) {
+        classify_args(repo, expansion.args)
+    } else {
+        (Vec::new(), Vec::new(), Vec::new())
+    };
+    let mut prompt_answers = expansion.prompt_answers.iter().map(String::as_str);
     for arg in argv {
         let list = match arg.as_str() {
-            "%(revargs)" => Some(&expansion.args[..separator]),
-            "%(fileargs)" => Some(expansion.args.get(separator + 1..).unwrap_or(&[])),
-            "%(cmdlineargs)" => Some(&[][..]),
+            "%(revargs)" => Some(&revargs),
+            "%(fileargs)" => Some(&fileargs),
+            "%(cmdlineargs)" => Some(&cmdlineargs),
             _ => None,
         };
         if let Some(list) = list {
             if list.is_empty() {
                 result.argv.push(OsString::new());
             } else {
-                result.argv.extend(list.iter().map(OsString::from));
+                result
+                    .argv
+                    .extend(list.iter().map(|arg| OsString::from(*arg)));
             }
         } else {
             result
                 .argv
-                .push(expand(&arg, &variables, expansion.prompt_answer)?);
+                .push(expand(&arg, &variables, &mut prompt_answers)?);
         }
     }
     Ok(result)
 }
-fn expand(
+fn classify_args<'a>(
+    repo: &Repository,
+    args: &'a [String],
+) -> (Vec<&'a str>, Vec<&'a str>, Vec<&'a str>) {
+    let (mut revisions, mut files, mut options) = (Vec::new(), Vec::new(), Vec::new());
+    let mut after_separator = false;
+    for arg in args {
+        if arg == "--" {
+            after_separator = true;
+        } else if after_separator
+            || (!arg.starts_with('-')
+                && repo
+                    .command(["rev-parse", "--no-revs", "--no-flags", arg])
+                    .is_ok_and(|out| out == format!("{arg}\n").as_bytes()))
+        {
+            files.push(arg.as_str());
+        } else if arg.starts_with('-')
+            && crate::git::HistoryOptions::parse(&[arg.clone()]).is_err()
+            && repo
+                .command(["rev-parse", "--flags", "--no-revs", arg])
+                .is_ok_and(|out| out == format!("{arg}\n").as_bytes())
+        {
+            options.push(arg.as_str());
+        } else {
+            revisions.push(arg.as_str());
+        }
+    }
+    (revisions, files, options)
+}
+fn expand<'a>(
     arg: &str,
     variables: &BTreeMap<&str, OsString>,
-    prompt_answer: Option<&str>,
+    prompt_answers: &mut impl Iterator<Item = &'a str>,
 ) -> Result<OsString> {
     let mut out = OsString::new();
     let mut rest = arg;
@@ -374,7 +411,8 @@ fn expand(
             let key = &next[..end];
             if key == "prompt" || key.starts_with("prompt ") {
                 out.push(
-                    prompt_answer
+                    prompt_answers
+                        .next()
                         .ok_or_else(|| GitError("Command prompt requires input".into()))?,
                 );
             } else {
@@ -394,24 +432,25 @@ fn expand(
     Ok(out)
 }
 
-pub fn prompt_label(command: &str) -> Option<&str> {
+pub fn prompt_labels(command: &str) -> Vec<&str> {
     let mut rest = command;
+    let mut labels = Vec::new();
     while let Some(index) = rest.find('%') {
         rest = &rest[index..];
         if let Some(next) = rest.strip_prefix("%%") {
             rest = next;
         } else if let Some(next) = rest.strip_prefix("%(") {
-            let end = next.find(')')?;
+            let Some(end) = next.find(')') else { break };
             let key = &next[..end];
             if key == "prompt" || key.starts_with("prompt ") {
-                return Some(key.strip_prefix("prompt").unwrap().trim_start());
+                labels.push(key.strip_prefix("prompt").unwrap().trim_start());
             }
             rest = &next[end + 1..];
         } else {
             rest = &rest[1..];
         }
     }
-    None
+    labels
 }
 #[cfg(test)]
 mod tests {
@@ -573,7 +612,7 @@ mod tests {
             None,
             ExpansionInput {
                 args: &[],
-                prompt_answer: None,
+                prompt_answers: &[],
             },
         )
         .unwrap();
@@ -668,11 +707,11 @@ mod tests {
         let mut vars = BTreeMap::new();
         vars.insert("file", OsString::from("space name; echo no"));
         assert_eq!(
-            expand("[%(file)] %% %(file)", &vars, None).unwrap(),
+            expand("[%(file)] %% %(file)", &vars, &mut std::iter::empty()).unwrap(),
             OsString::from("[space name; echo no] % space name; echo no")
         );
-        assert!(expand("%(unknown)", &vars, None).is_err());
-        assert!(expand("%(file", &vars, None).is_err());
+        assert!(expand("%(unknown)", &vars, &mut std::iter::empty()).is_err());
+        assert!(expand("%(file", &vars, &mut std::iter::empty()).is_err());
         let request = PreparedCommand {
             argv: vec!["must-not-execute".into()],
             silent: false,
@@ -695,31 +734,42 @@ mod tests {
     }
     #[test]
     fn list_variables_keep_argv_boundaries_and_prompt_input_literal() {
-        let root = std::env::current_dir().unwrap();
+        let root = std::env::temp_dir().join(format!("tig-command-list-{}", std::process::id()));
+        std::fs::create_dir_all(&root).unwrap();
+        assert!(Command::new("git")
+            .args(["init", "-q"])
+            .arg(&root)
+            .status()
+            .unwrap()
+            .success());
+        std::fs::write(root.join("bare space;literal"), b"content").unwrap();
         let repo = Repository {
             git_dir: root.join(".git"),
             invocation: root.clone(),
-            root,
+            root: root.clone(),
             bare: false,
         };
         let args = [
             "--all",
             "--boundary",
+            "--pretty=raw",
+            "bare space;literal",
             "--",
             "space name; echo unsafe",
             "-literal",
         ]
         .map(String::from);
+        let answers = ["one".to_owned(), "two".to_owned()];
         let command = prepare_with_context(
             &repo,
-            r#"!echo %(revargs) %(fileargs) "%(prompt Prompt: )" "%%(prompt ignored)""#,
+            r#"!echo %(revargs) %(fileargs) %(cmdlineargs) "%(prompt First: )" "%(prompt Second: )" "%%(prompt ignored)""#,
             "HEAD",
             Path::new(""),
             0,
             None,
             ExpansionInput {
                 args: &args,
-                prompt_answer: Some("quoted 'prompt' input"),
+                prompt_answers: &answers,
             },
         )
         .unwrap();
@@ -729,15 +779,18 @@ mod tests {
                 "echo",
                 "--all",
                 "--boundary",
+                "bare space;literal",
                 "space name; echo unsafe",
                 "-literal",
-                "quoted 'prompt' input",
+                "--pretty=raw",
+                "one",
+                "two",
                 "%(prompt ignored)",
             ]
         );
         assert_eq!(
-            prompt_label("%%(prompt no) %(prompt Prompt: )"),
-            Some("Prompt: ")
+            prompt_labels("%%(prompt no) %(prompt First: ) %(prompt Second: )"),
+            ["First: ", "Second: "]
         );
         assert!(prepare_with_context(
             &repo,
@@ -748,10 +801,24 @@ mod tests {
             None,
             ExpansionInput {
                 args: &args,
-                prompt_answer: None
+                prompt_answers: &[]
             },
         )
         .is_err());
+        assert!(prepare_with_context(
+            &repo,
+            r#"!echo "%(prompt First: )" "%(prompt Second: )""#,
+            "HEAD",
+            Path::new(""),
+            0,
+            None,
+            ExpansionInput {
+                args: &[],
+                prompt_answers: &answers[..1]
+            },
+        )
+        .is_err());
+        std::fs::remove_dir_all(root).unwrap();
     }
     #[test]
     fn launched_nonzero_exit_is_distinct_from_spawn_failure() {
