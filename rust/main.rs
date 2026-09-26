@@ -36,6 +36,7 @@ struct View {
     name: String,
     rows: Vec<String>,
     items: Vec<Item>,
+    line_numbers: Vec<usize>,
     selected: usize,
     top: usize,
     left: usize,
@@ -44,6 +45,9 @@ struct View {
     staged: bool,
     untracked: bool,
     raw_patch: Vec<u8>,
+    sort_field: Option<String>,
+    sort_reverse: bool,
+    args: Vec<String>,
 }
 impl View {
     fn new(name: &str) -> Self {
@@ -51,6 +55,7 @@ impl View {
             name: name.into(),
             rows: vec![],
             items: vec![],
+            line_numbers: vec![],
             selected: 0,
             top: 0,
             left: 0,
@@ -59,9 +64,13 @@ impl View {
             staged: false,
             untracked: false,
             raw_patch: Vec::new(),
+            sort_field: None,
+            sort_reverse: false,
+            args: Vec::new(),
         }
     }
     fn push(&mut self, text: String, item: Item) {
+        self.line_numbers.push(self.rows.len() + 1);
         self.rows.push(text);
         self.items.push(item);
     }
@@ -118,6 +127,11 @@ impl App {
     }
     fn load(&self, name: &str) -> Result<View> {
         let mut view = self.load_content(name)?;
+        if self.view.name == name {
+            view.sort_field = self.view.sort_field.clone();
+            view.sort_reverse = self.view.sort_reverse;
+        }
+        view.args = self.args.clone();
         view.revision = self.revision.clone();
         view.path = self.path.clone();
         view.staged = self.view.staged && name == "stage";
@@ -172,24 +186,47 @@ impl App {
             }
 
             "tree" => {
-                for e in repo.tree(&self.revision, &self.path)? {
-                    v.push(
-                        format!("{} {} {}", e.mode, e.kind, e.path.display()),
-                        Item::Tree(e),
-                    );
+                let sort = if self.view.name == name {
+                    self.view.sort_field.as_deref()
+                } else {
+                    None
+                };
+                for row in tig_rs::tree_view::load(
+                    repo,
+                    &self.config,
+                    &self.revision,
+                    &self.path,
+                    self.width,
+                    sort,
+                    self.view.name == name && self.view.sort_reverse,
+                )? {
+                    v.push(row.text, row.entry.map(Item::Tree).unwrap_or(Item::Text));
                 }
+                let headers = 1 + usize::from(!self.path.as_os_str().is_empty());
+                v.line_numbers = (0..v.items.len())
+                    .map(|i| (i + 1).saturating_sub(headers))
+                    .collect();
+                v.selected = usize::from(v.items.len() > 1);
             }
             "refs" => {
-                for r in repo.refs()? {
-                    v.push(
-                        format!(
-                            "{} {} {}",
-                            if r.current { "*" } else { " " },
-                            r.oid.get(..8).unwrap_or(&r.oid),
-                            r.name
-                        ),
-                        Item::Ref(r.oid, Some(r.name)),
-                    );
+                let sort = if self.view.name == name {
+                    self.view.sort_field.as_deref()
+                } else {
+                    None
+                };
+                for row in tig_rs::refs_view::load(
+                    repo,
+                    &self.config,
+                    &self.args,
+                    self.width,
+                    sort.unwrap_or("ref"),
+                    self.view.name == name && self.view.sort_reverse,
+                )? {
+                    let item = row
+                        .reference
+                        .map(|r| Item::Ref(r.oid, Some(r.name)))
+                        .unwrap_or(Item::Text);
+                    v.push(row.text, item);
                 }
             }
             "blame" => {
@@ -214,6 +251,7 @@ impl App {
                     if !refs.is_empty() && !view.rows.is_empty() {
                         view.rows.insert(1, format!("Refs: {refs}"));
                         view.items.insert(1, Item::Text);
+                        view.line_numbers = (1..=view.rows.len()).collect();
                     }
                 }
                 return Ok(view);
@@ -247,7 +285,63 @@ impl App {
                 let bytes = repo.blob(&entry.oid)?;
                 return Ok(View::text(name, &String::from_utf8_lossy(&bytes)));
             }
-            "log" | "reflog" | "stash" | "grep" => {
+            "log" => {
+                let mut args = vec![
+                    "log".to_string(),
+                    "--no-ext-diff".into(),
+                    "--no-textconv".into(),
+                    "--no-show-signature".into(),
+                    "--pretty=medium".into(),
+                ];
+                if let Some(options) = self.config.settings.get("log-options") {
+                    args.extend(options.clone());
+                }
+                args.extend(["--no-color".into(), "--decorate=full".into()]);
+                args.extend(self.args.clone());
+                let output = repo.command(&args)?;
+                let text = String::from_utf8_lossy(&output);
+                let mut revision = String::new();
+                for line in text.lines() {
+                    let indent = log_header_offset(line);
+                    if let Some(indent) = indent {
+                        let header = &line[indent + 7..];
+                        let oid = header.split_whitespace().next().unwrap_or_default();
+                        if oid.len() >= 40 && oid.bytes().all(|c| c.is_ascii_hexdigit()) {
+                            revision = oid.into();
+                            v.push(
+                                format!("{}commit {oid}", &line[..indent]),
+                                Item::Ref(revision.clone(), None),
+                            );
+                            if indent == 0 {
+                                if let Some(decorations) = header
+                                    .strip_prefix(oid)
+                                    .and_then(|s| s.strip_prefix(" ("))
+                                    .and_then(|s| s.strip_suffix(')'))
+                                {
+                                    let refs =
+                                        tig_rs::render::refs(&self.config, decorations, ", ");
+                                    if !refs.is_empty() {
+                                        v.push(
+                                            format!("Refs: {refs}"),
+                                            Item::Ref(revision.clone(), None),
+                                        );
+                                    }
+                                }
+                            }
+                            continue;
+                        }
+                    }
+                    v.push(
+                        line.into(),
+                        if revision.is_empty() {
+                            Item::Text
+                        } else {
+                            Item::Ref(revision.clone(), None)
+                        },
+                    );
+                }
+            }
+            "reflog" | "stash" | "grep" => {
                 let mut args = vec![name.to_string()];
                 if name == "stash" {
                     args.push("list".into());
@@ -271,6 +365,7 @@ impl App {
         Ok(())
     }
     fn sync_context(&mut self) {
+        self.args = self.view.args.clone();
         self.revision = self.view.revision.clone();
         self.path = self.view.path.clone();
     }
@@ -297,6 +392,30 @@ impl App {
             Item::Text => (),
         }
     }
+    fn tree_parent(&mut self) -> Result<()> {
+        let old = self.view.path.clone();
+        if let Some(parent) = old.parent() {
+            self.path = parent.to_path_buf();
+            let saved = self
+                .previous
+                .iter()
+                .rposition(|v| v.name == "tree" && v.path == parent);
+            self.view = self.load("tree")?;
+            if let Some(index) = self
+                .view
+                .items
+                .iter()
+                .position(|item| matches!(item, Item::Tree(entry) if entry.path == old))
+            {
+                self.view.selected = index;
+            }
+            if let Some(index) = saved {
+                self.view.top = self.previous[index].top;
+                self.previous.truncate(index);
+            }
+        }
+        Ok(())
+    }
     fn enter(&mut self) -> Result<()> {
         let parent = self.view.clone();
         let depth = self.previous.len();
@@ -306,13 +425,26 @@ impl App {
                 self.open("diff")?;
             }
             Item::Ref(id, _) => {
-                self.revision = id;
-                self.open("diff")?;
+                self.revision = id.clone();
+                if self.view.name == "refs" {
+                    self.args = vec![id];
+                    self.open("main")?;
+                } else {
+                    self.open("diff")?;
+                }
+            }
+            Item::Text if self.view.name == "refs" && self.view.selected == 0 => {
+                self.args = vec!["--all".into()];
+                self.open("main")?;
             }
             Item::Tree(e) => {
+                if e.kind == "tree" && self.view.path.parent() == Some(e.path.as_path()) {
+                    return self.tree_parent();
+                }
                 self.path = e.path.clone();
                 if e.kind == "tree" {
                     self.open("tree")?;
+                    return Ok(());
                 } else {
                     let bytes = self.repo()?.blob(&e.oid)?;
                     let mut v = View::text("blob", &String::from_utf8_lossy(&bytes));
@@ -331,6 +463,7 @@ impl App {
                 self.path = e.path;
                 let mut view = View::text("stage", &text);
                 view.path = self.path.clone();
+                view.args = self.args.clone();
                 view.revision = self.revision.clone();
                 view.staged = staged;
                 view.untracked = e.index == '?';
@@ -416,6 +549,55 @@ impl App {
                 &self.path,
                 selected_ref.as_deref(),
             )?);
+            return Ok(true);
+        }
+        if matches!(action, "toggle sort-field" | "toggle sort-order") {
+            if !matches!(self.view.name.as_str(), "refs" | "tree") {
+                return Err("This view does not support sorting".into());
+            }
+            let old = self.view.clone();
+            if action == "toggle sort-order" {
+                self.view.sort_reverse = !self.view.sort_reverse;
+            } else {
+                let setting = format!("{}-view", self.view.name);
+                let columns: Vec<&str> = self
+                    .config
+                    .settings
+                    .get(&setting)
+                    .ok_or("Missing view columns")?
+                    .iter()
+                    .filter(|spec| !spec.starts_with("id:no"))
+                    .map(|spec| spec.split(':').next().unwrap_or(spec))
+                    .collect();
+                let current =
+                    self.view
+                        .sort_field
+                        .as_deref()
+                        .unwrap_or(if self.view.name == "refs" {
+                            "ref"
+                        } else {
+                            "line-number"
+                        });
+                let next = columns
+                    .iter()
+                    .position(|&c| c == current)
+                    .map_or(0, |i| (i + 1) % columns.len());
+                self.view.sort_field = columns.get(next).map(|s| s.to_string());
+            }
+            self.action("refresh")?;
+            for (index, item) in self.view.items.iter().enumerate() {
+                if let Some(previous) =
+                    old.items
+                        .iter()
+                        .position(|previous| match (previous, item) {
+                            (Item::Ref(a, an), Item::Ref(b, bn)) => a == b && an == bn,
+                            (Item::Tree(a), Item::Tree(b)) => a.path == b.path,
+                            _ => false,
+                        })
+                {
+                    self.view.line_numbers[index] = old.line_numbers[previous];
+                }
+            }
             return Ok(true);
         }
         if action.starts_with("toggle ")
@@ -580,6 +762,7 @@ impl App {
                 }
             }
             "show-version" => self.message = format!("tig-rs {}", env!("CARGO_PKG_VERSION")),
+            "parent" if self.view.name == "tree" => self.tree_parent()?,
             "screen-redraw" => (),
             _ if action.starts_with("view-") => {
                 self.select_context();
@@ -723,6 +906,16 @@ impl App {
 fn cell_width(text: &str) -> usize {
     text.chars().map(|c| c.width().unwrap_or(0)).sum()
 }
+fn log_header_offset(line: &str) -> Option<usize> {
+    line.find("commit ").filter(|&i| {
+        i == 0
+            || (line[..i].contains('*')
+                && line[..i]
+                    .chars()
+                    .all(|c| matches!(c, ' ' | '*' | '|' | '/' | '\\')))
+    })
+}
+
 fn pane_screen(view: &mut View, width: usize, visible: usize) -> Vec<String> {
     let visible = visible.max(1);
     if view.selected < view.top {
@@ -745,6 +938,17 @@ fn pane_screen(view: &mut View, width: usize, visible: usize) -> Vec<String> {
         .collect();
     let reference = match view.items.get(view.selected) {
         Some(Item::Commit(c)) => c.oid.clone(),
+        Some(Item::Tree(e)) if view.name == "tree" => {
+            if e.path == view.path.parent().unwrap_or(std::path::Path::new(""))
+                && !view.path.as_os_str().is_empty()
+            {
+                "Open parent directory".into()
+            } else {
+                e.oid.clone()
+            }
+        }
+        Some(Item::Ref(id, _)) if matches!(view.name.as_str(), "log" | "refs") => id.clone(),
+        _ if view.name == "refs" => "All references".into(),
         Some(Item::Status(e, staged)) => format!(
             "Press u to {} '{}'{}",
             if *staged { "unstage" } else { "stage" },
@@ -771,16 +975,29 @@ fn pane_screen(view: &mut View, width: usize, visible: usize) -> Vec<String> {
     if !reference.is_empty() {
         title.push_str(&format!(" {reference}"));
     }
-    if view.name != "status" && !view.rows.is_empty() {
+    if view.name != "status"
+        && !view.rows.is_empty()
+        && !(view.name == "refs" && view.selected == 0)
+        && reference != "Open parent directory"
+    {
         title.push_str(&format!(
             " - {} {} of {}",
-            if view.name == "main" {
-                "commit"
-            } else {
-                "line"
+            match view.name.as_str() {
+                "main" => "commit",
+                "refs" => "reference",
+                "tree" => "file",
+                _ => "line",
             },
-            view.selected + 1,
-            view.rows.len()
+            if view.name == "tree" {
+                view.line_numbers.get(view.selected).copied().unwrap_or(0)
+            } else {
+                view.selected + usize::from(view.name != "refs")
+            },
+            view.rows.len().saturating_sub(match view.name.as_str() {
+                "refs" => 1,
+                "tree" => 1 + usize::from(!view.path.as_os_str().is_empty()),
+                _ => 0,
+            })
         ));
     }
     let percent = if view.rows.is_empty() {
@@ -1073,7 +1290,7 @@ fn run() -> Result<()> {
         }
         app.view = app.load(&cli.view)?;
     }
-    if cli.line > 0 || app.view.name != "status" {
+    if cli.line > 0 {
         app.view.selected = cli.line.min(app.view.rows.len().saturating_sub(1));
     }
     app.view.restore_status_selection();
@@ -1200,6 +1417,14 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn log_message_cannot_replace_selected_commit() {
+        assert_eq!(log_header_offset("commit 0123456789"), Some(0));
+        assert_eq!(log_header_offset("| * commit 0123456789"), Some(4));
+        assert_eq!(log_header_offset("    commit 0123456789"), None);
+        assert_eq!(log_header_offset("|     commit 0123456789"), None);
+        assert_eq!(log_header_offset("+commit 0123456789"), None);
+    }
     #[test]
     fn titles_split_focus_close_and_refresh_keep_context() {
         let mut parent = View::text("pager", "one\ntwo\nthree\nfour\nfive\nsix");

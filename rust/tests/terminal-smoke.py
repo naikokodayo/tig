@@ -250,17 +250,19 @@ def main():
             expect('H preserves quoted argv and echoes result', [f'[main] {newest} - commit 1 of 2', 'quoted H value'], b'H',
                    raw_required=(b'\x1b[24;1Hquoted H value\x1b[0m',))
             evidence['checks'].append({'name': 'foreground canonical tty, resumed raw UI, echo and quoted argv verified', 'passed': True})
-            expect('tree opens', ['fixture.txt', '[tree] - line 1 of 2'], b't')
-            expect('select root blob', ['[tree] - line 2 of 2'], b'j')
+            tree_oid = git('rev-parse', 'HEAD:nested').strip()
+            blob_oid = git('rev-parse', 'HEAD:fixture.txt').strip()
+            expect('tree opens', ['fixture.txt', f'[tree] {tree_oid} - file 1 of 2'], b't')
+            expect('select root blob', [f'[tree] {blob_oid} - file 2 of 2'], b'j')
             expect('Enter opens blob', ['first line', 'second line', '[blob] fixture.txt - line 1 of 2'], b'\r')
-            expect('q returns to tree', ['[tree] - line 2 of 2'], b'q')
-            expect('select nested tree', ['[tree] - line 1 of 2'], b'k')
-            expect('open nested tree', ['nested/child.txt', '[tree] - line 1 of 1'], b'\r')
-            expect('back restores parent tree', ['fixture.txt', '[tree] - line 1 of 2'], b'q')
-            expect('R preserves parent tree', ['fixture.txt', 'nested', '[tree] - line 1 of 2'], b'R')
+            expect('q returns to tree', [f'[tree] {blob_oid} - file 2 of 2'], b'q')
+            expect('select nested tree', [f'[tree] {tree_oid} - file 1 of 2'], b'k')
+            expect('open nested tree', ['Directory path /nested/', 'child.txt', '[tree] Open parent directory'], b'\r')
+            expect('back restores parent tree', ['fixture.txt', f'[tree] {tree_oid} - file 1 of 2'], b'q')
+            expect('R preserves parent tree', ['fixture.txt', 'nested', f'[tree] {tree_oid} - file 1 of 2'], b'R')
             fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 12, 60, 0, 0))
             os.killpg(process.pid, signal.SIGWINCH)
-            expect('resize redraws status at row 11', ['[tree] - line 1 of 2'], raw_required=(b'\x1b[11;1H',))
+            expect('resize redraws clipped status at row 11', [f'[tree] {tree_oid} - file  100%'], raw_required=(b'\x1b[11;1H',))
             def finish(label, send=b'Q', expected_exit=0):
                 nonlocal process, master, slave, release_read, release_write
                 expect(label, [f'PTY_CHILD_EXIT={expected_exit}'], send,

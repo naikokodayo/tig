@@ -1,0 +1,26 @@
+{
+  "status": "IN PROGRESS; parity gate OPEN",
+  "source_sha256": {
+    "rust/main.rs": "ba978451947d2989cfe7abbe22e864bb2d55cf59a8f168b9d03ad82774fba7fb",
+    "rust/render.rs": "9b1997e8acef5476101ec7ada7c40eae94c420635b6c47215ea545318e713e3d",
+    "rust/refs_view.rs": "e1524be8091f4ff553d8c2d3bbfcca602f35e00d4e8b9390b2a24a9941993319",
+    "rust/tree_view.rs": "08603cb54ed832e40ef484d6e0968ab31471a3bd306eb412da1e535da4f85d97",
+    "rust/tests/terminal-smoke.py": "abd7405d2a43881c6cccff1fc6802b551e02c286a0568d8d9353708bb45f4947"
+  },
+  "binary_sha256": "293a60a62675c945956378b6e882f9fa11434f0e6e3526b7f439068dc12fa014",
+  "checks": {
+    "unit_tests_passed": 34,
+    "clippy": "passed -D warnings",
+    "rustfmt": "passed",
+    "pty_checks_passed": 103,
+    "upstream_focused": {
+      "assertions_passed": 43,
+      "scripts": 11,
+      "assertions_modified": false
+    },
+    "tree_unit_fixture_screen_bodies": 15
+  },
+  "full_suite": "rust-upstream-third.json: pre-final log-parser fix binary; 412/638 assertions failed; 154 recipes attempted; mixed C graph helper route. Final focused checks do not close full parity.",
+  "review": "third-review.md (parent inline final review; host exhausted fresh-agent dispatch capacity)",
+  "benchmark": "benchmark-second.json is historical v2 component measurement, not new UI or full migration performance."
+}

@@ -10,3 +10,7 @@ pub mod commands;
 pub mod graph_v1;
 pub mod patch;
 pub mod render;
+
+pub mod refs_view;
+
+pub mod tree_view;

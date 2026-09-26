@@ -1,0 +1,12 @@
+      TEST  test/main/default-test
+      TEST  test/status/start-on-line-test
+      TEST  test/status/refresh-test
+      TEST  test/tree/default-test
+      TEST  test/tree/chdir-test
+      TEST  test/tree/recurse-test
+      TEST  test/refs/default-test
+      TEST  test/refs/start-on-line-test
+      TEST  test/log/log-graph-test
+      TEST  test/log/pretty-format-test
+      TEST  test/log/start-on-line-test
+   SUMMARY  Passed 43 assertions in 11 tests

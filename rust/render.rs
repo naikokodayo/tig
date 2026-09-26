@@ -9,13 +9,13 @@ use crate::{config::Config, graph::Graph, graph_v1, model::Commit};
 use std::collections::BTreeMap;
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
-struct Column<'a> {
-    name: &'a str,
-    display: &'a str,
-    options: BTreeMap<&'a str, &'a str>,
+pub(crate) struct Column<'a> {
+    pub(crate) name: &'a str,
+    pub(crate) display: &'a str,
+    pub(crate) options: BTreeMap<&'a str, &'a str>,
 }
 impl<'a> Column<'a> {
-    fn parse(text: &'a str) -> Result<Self, String> {
+    pub(crate) fn parse(text: &'a str) -> Result<Self, String> {
         let (name, rest) = text.split_once(':').unwrap_or((text, "yes"));
         let mut parts = rest.split(',');
         let display = parts.next().unwrap_or("yes");
@@ -49,10 +49,10 @@ impl<'a> Column<'a> {
             options,
         })
     }
-    fn enabled(&self) -> bool {
+    pub(crate) fn enabled(&self) -> bool {
         !matches!(self.display, "no" | "false" | "0")
     }
-    fn number(&self, key: &str) -> Result<usize, String> {
+    pub(crate) fn number(&self, key: &str) -> Result<usize, String> {
         match self.options.get(key) {
             None => Ok(0),
             Some(s) => s
@@ -60,7 +60,7 @@ impl<'a> Column<'a> {
                 .map_err(|_| format!("Invalid {} {key}: {s}", self.name)),
         }
     }
-    fn flag(&self, key: &str, default: bool) -> Result<bool, String> {
+    pub(crate) fn flag(&self, key: &str, default: bool) -> Result<bool, String> {
         match self.options.get(key).copied() {
             None => Ok(default),
             Some("yes" | "true" | "1") => Ok(true),
@@ -95,7 +95,12 @@ pub fn clip(text: &str, width: usize) -> String {
         .collect()
 }
 
-fn author(name: &str, email: &str, display: &str, limit: usize) -> Result<String, String> {
+pub(crate) fn author(
+    name: &str,
+    email: &str,
+    display: &str,
+    limit: usize,
+) -> Result<String, String> {
     if display == "email" {
         return Ok(sanitize(email));
     }
@@ -125,7 +130,7 @@ fn author(name: &str, email: &str, display: &str, limit: usize) -> Result<String
     Ok(result)
 }
 
-fn date(iso: &str, column: &Column<'_>) -> Result<String, String> {
+pub(crate) fn date(iso: &str, column: &Column<'_>) -> Result<String, String> {
     let normalized;
     let iso = if let Some(prefix) = iso.strip_suffix('Z') {
         normalized = format!("{prefix}+00:00");

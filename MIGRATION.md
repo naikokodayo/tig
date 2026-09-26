@@ -31,6 +31,10 @@ License: GPL-2.0-or-later; original history, COPYING and copyright notices retai
   selected-reference validation, foreground controlling-terminal streams,
   output acknowledgement, quick commands and first-line stdout echo.
   Unknown or unavailable selection variables fail explicitly. No implicit shell.
+- `rust/refs_view.rs`, `rust/tree_view.rs`: reference and directory rows,
+  metadata, columns, filters, sorting, annotated tags and recursive trees.
+  Custom `TIG_LS_REMOTE` loading, exact reference sort ties and all mailmap/date
+  configuration effects still need compatibility work.
 - `rust/main.rs`: initial terminal application using Crossterm, with owned view
   state and terminal cleanup, split panes, parent/child focus/navigation,
   branch/tracking status headers and status position restoration.
@@ -133,3 +137,25 @@ the failing full-suite receipt above. The status restoration case involving
 only a horizontal scroll offset still needs upstream parity coverage.
 
 The refreshed component benchmark is in `migration/BENCHMARK.zh-CN.md`.
+
+## Third checkpoint verification
+
+The latest local source adds log graph/pretty formats with commit context,
+reference rows and browsing, directory metadata/columns/sorting, recursive trees,
+and directory-parent selection restoration. View history retains its arguments.
+
+34 unit tests and 103 PTY checks pass. Eleven unchanged original application
+scripts pass 43 assertions across main, status, tree, refs and log; the raw receipt
+is `migration/evidence/upstream-focused-third.log`. Tree fixture unit checks also
+compare 15 original screen bodies. These are scoped results, not complete parity.
+
+The original second-checkpoint component benchmark remains historical; it is
+not an end-to-end benchmark of this newer UI. Full-port performance remains gated
+on the unresolved compatibility requirements above.
+
+The third full upstream run attempted all 154 recipes and reported **412 of 638
+assertions failed**, 150 tests and 3 skips. See
+`migration/evidence/rust-upstream-third.json`; it uses the same mixed C graph
+helper route and predates the final log-header parser tightening. The final
+binary has a regression test for indented commit-message text plus the focused
+application/PTY checks. Do not infer a completion percentage from these counts.
