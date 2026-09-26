@@ -938,3 +938,21 @@ editor scripts. This is not a rerun of the earlier 36-script scope or full suite
 and the checks log bind this latest source and binaries. Earlier wider receipts
 remain attributed to their own commits. The next commit is documentation and
 evidence only. The three P2 fixes are ready for re-review; full parity stays open.
+
+
+### Blame final main synchronization (2026-09-27)
+
+Merged main `b951cd9e` once after PRs #13 and #16; tested source `90713600fee60a1a5a3448ce37505eafa590ccc7`.
+The documentation conflict retained both records; no new behavior was added.
+[Final checks](migration/evidence/blame-navigation-final-checks.json) record
+formatting, **83 unit tests**, Clippy, release build, **140 existing PTY checks**,
+six blame-navigation checks, twelve review probes, six diff-input checks and eight
+paired diff-navigation comparisons. The twelve review probes retain their scope:
+ten paired C/Rust checks and two Rust quoted-tab regressions.
+
+[Final original-script pairing](migration/evidence/blame-navigation-final-after.json)
+records **C 98/98, Rust 96/98 assertions across 17 scripts**,
+with no runtime failure or timeout. The six requested blame scripts remain
+**C 13/13, Rust 12/13**; the separator and stash-list format remain the only failures.
+Earlier receipts are unchanged and remain bound to their own source commits.
+Full migration parity remains gated.
