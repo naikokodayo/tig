@@ -1,0 +1,107 @@
+test/main/date-test
+  [OK] default-date.screen assertion
+  [OK] local-date.screen assertion
+  [OK] relative-date.screen assertion
+  [OK] relative-compact-date.screen assertion
+  [OK] custom-short-date.screen assertion
+  [OK] custom-tz-date.screen assertion
+  [OK] no-date.screen assertion
+  [OK] custom-date.screen assertion
+
+test/main/pretty-raw-test
+  [OK] main-pretty-raw.screen assertion
+
+test/main/default-test
+  [OK] main-default.screen assertion
+  [OK] main-ref-format.screen assertion
+  [OK] main-remotes-hidden.screen assertion
+  [OK] main-no-refs.screen assertion
+  [OK] main-no-graph.screen assertion
+  [OK] main-with-diff.screen assertion
+
+test/main/show-changes-test
+  [OK] main-with-unstaged.screen assertion
+  [OK] main-with-unstaged-split.screen assertion
+  [OK] main-with-unstaged-and-staged-split.screen assertion
+  [OK] main-with-staged.screen assertion
+  [OK] main-with-staged-split.screen assertion
+  [OK] main-with-staged-and-unstaged.screen assertion
+  [OK] main-with-renamed.screen assertion
+  [OK] main-with-conflict.screen assertion
+  [OK] main-all-refs.screen assertion
+
+test/main/show-changes-after-rename-test
+  [OK] default.screen assertion
+
+test/main/update-unstaged-changes-test
+  [OK] start.screen assertion
+  [OK] result.screen assertion
+
+test/diff/diff-context-test
+  [OK] diff-default.screen assertion
+  [OK] diff-u4.screen assertion
+  [OK] diff-u5.screen assertion
+  [OK] diff-u10.screen assertion
+  [OK] diff-u8.screen assertion
+  [OK] diff-default-from-main.screen assertion
+  [OK] diff-u10-from-main.screen assertion
+  [OK] diff-u4-from-main.screen assertion
+  [OK] diff-u5-from-main.screen assertion
+  [OK] diff-u8-from-main.screen assertion
+
+test/diff/diff-wdiff-context-test
+  [OK] diff-default.screen assertion
+  [OK] diff-u4.screen assertion
+  [OK] diff-u5.screen assertion
+  [OK] diff-u10.screen assertion
+  [OK] diff-u8.screen assertion
+  [OK] diff-default-from-main.screen assertion
+  [OK] diff-u10-from-main.screen assertion
+  [OK] diff-u4-from-main.screen assertion
+  [OK] diff-u5-from-main.screen assertion
+  [OK] diff-u8-from-main.screen assertion
+
+test/tigrc/source-test
+  [OK] source-file-plain.screen assertion
+  [OK] source-file-plain.stderr assertion
+  [OK] source-file-quietly.screen assertion
+  [OK] source-file-quietly.stderr assertion
+  [OK] source-nonexistent-file.screen assertion
+  [OK] source-nonexistent-file.stderr assertion
+  [OK] source-nonexistent-file-quietly.screen assertion
+  [OK] source-nonexistent-file-quietly.stderr assertion
+  [OK] source-tilde-path.screen assertion
+  [OK] source-tilde-path.stderr assertion
+
+test/tigrc/parse-test
+  [OK] stderr assertion
+  [OK] help.screen assertion
+
+test/tigrc/env-vars-test
+  [OK] stderr assertion
+  [OK] help.screen assertion
+
+test/tigrc/xdg-config-home-test
+  [OK] case-.tigrc.out assertion
+  [OK] case-.tigrc.stderr assertion
+  [OK] case-.config-tig-config.out assertion
+  [OK] case-.config-tig-config.stderr assertion
+  [OK] case-.config-tig-config.out assertion
+  [OK] case-.config-tig-config.stderr assertion
+  [OK] case-etc-tig-config.out assertion
+  [OK] case-etc-tig-config.stderr assertion
+
+test/tigrc/quote-test
+[FAIL] unexpected status code: 1 (should be 0)
+[FAIL] stderr != expected/stderr
+diff --git a/expected/stderr b/stderr
+index e69de29..32bcdac 100644
+--- a/expected/stderr
++++ b/stderr
+@@ -0,0 +1 @@
++tig: Unclosed command variable
+  [OK] shell-command.txt assertion
+[FAIL] quoted-prompt-with-spaces.screen not found
+[FAIL] mid-quoted-prompt-with-spaces.screen not found
+[FAIL] single-quoted-arg-with-escaped-chars.screen not found
+[FAIL] double-quoted-arg-with-escaped-chars.screen not found
