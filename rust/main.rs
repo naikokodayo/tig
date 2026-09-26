@@ -988,11 +988,18 @@ impl App {
         };
         let selected = old.items.get(old.selected).cloned();
         let top = old.top;
-        let mut next = if old.name == "status" {
-            self.status_view(old.untracked)?
+        let args = std::mem::replace(&mut self.args, old.args.clone());
+        let revision = std::mem::replace(&mut self.revision, old.revision.clone());
+        let path = std::mem::replace(&mut self.path, old.path.clone());
+        let next = if old.name == "status" {
+            self.status_view(old.untracked)
         } else {
-            self.load("main")?
+            self.load("main")
         };
+        self.args = args;
+        self.revision = revision;
+        self.path = path;
+        let mut next = next?;
         let target = if old.name == "status" && self.view.name == "stage" {
             next.items.iter().position(|item| matches!(item, Item::Status(entry, staged)
                 if *staged == self.view.staged && (self.view.path.as_os_str().is_empty() || entry.path == self.view.path)))
