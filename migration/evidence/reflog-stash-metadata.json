@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "72133541191c0b3d3e458fcb6075637a9ffe36ef",
+  "source_commit": "f32bfaa6bd85f7c62e6be8d2973245c3a26b20f7",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -94,7 +94,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig)\n    Finished `release` profile [optimized] target(s) in 25.39s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig)\n    Finished `release` profile [optimized] target(s) in 31.56s\n",
       "results": [
         {
           "script": "test/reflog/default-test",
@@ -144,7 +144,7 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/tig",
-          "sha256": "b3254b846eff577728232db63cb7fca68c067506f26352d06090d3c0dd210781"
+          "sha256": "deb4a578027ce7b6c3d33e4cc66beac84e23ab095e6f94e563d9c01220f5be0a"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-reflog-stash-views/work/tig/target/release/test-graph",
@@ -195,7 +195,7 @@
     "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
     "rust/help_view.rs": "029b06cf5c7c88523fe4fb4f3374f737f7fbffd7807169dcd8b8f207cf87b158",
     "rust/lib.rs": "81e3bdf035141234a178271b092b084f6e105bf159f1e2af4b21e8483d20a088",
-    "rust/main.rs": "63432262c276a2cf1d296f2a6e4a6adf8398ff0d2d70e6b3d65cdd50a64a27a3",
+    "rust/main.rs": "155065159e4e9132c42586ddb98c96c4032d33cb879ae79e1a30f7398115497d",
     "rust/model.rs": "f1131c9182b02c51a5e9307a194669cec4f835fbd0d5d26b24e1e977336e8dda",
     "rust/patch.rs": "11b9b2d0dd871b36462ad9ac371203cc9a53ee0539797dcbe698429291d2685c",
     "rust/refs_view.rs": "35e6d25a83bb9651b5b268b00c75a4c81468746a3158556e2d44bf1e12b11267",
@@ -211,7 +211,7 @@
     "rust/tests/graph-v1-differential.py": "9e144d33dd228875d5a90b8068871102139ce3989324d98e6ffc5ce7d8830ace",
     "rust/tests/main-command-refresh.py": "8516d8d98e1a0b483cd66d8b648cce1c51003617a37d7fcda9ac8fa3c43ce7aa",
     "rust/tests/reflog-stash-navigation.py": "9fe5d3f7992ac3a10ce3472429b08401ddccf9c4481c817362e8d84dc3f78d97",
-    "rust/tests/status-filter.py": "99dfb28d0d4719c7abd940a6a22d08bc73a03a27eac30cb1924f42e165963789",
+    "rust/tests/status-filter.py": "f59fae82a50882417f79c2d82f37275c23d1fabd1ca78a16dcd3d7d12ddf75c6",
     "rust/tests/terminal-smoke.py": "a09c21e70201587e58c116f2d9a9f7849c6472da6ebe3c0750dd56eb562173a4",
     "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
     "rust/trace.rs": "4fb87248de03495a20b7d4f3863c971c30000a07c1f688d55b2625b22bcf8c23",
@@ -230,6 +230,6 @@
     "cargo clippy --all-targets -- -D warnings": "pass",
     "python3 rust/tests/reflog-stash-navigation.py": "pass: reflog older entry opens main; stash older entry opens diff; both return and refresh",
     "git diff --check": "pass",
-    "latest_main": "72133541191c0b3d3e458fcb6075637a9ffe36ef"
+    "latest_main": "5f7ac639f23ee2d825d73c93619f7d7b01b4f556"
   }
 }
