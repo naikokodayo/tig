@@ -5,6 +5,8 @@
 保留 Jonas Fonseca 与其他贡献者的 Git 历史、版权和 GPL-2.0-or-later 许可。
 本仓库是独立迁移项目，不是上游官方 Rust 版本。迁移使用
 [code-migration-kit-with-codex](https://github.com/naikokodayo/code-migration-kit-with-codex)。
+Rust 迁移与兼容性验证由 [Codex](https://github.com/apps/chatgpt-codex-connector)
+协助完成，并保留原项目所有历史贡献者的署名。
 
 **当前为可运行的 Rust 迁移检查点，完整行为兼容尚未通过验收。不要将其作为完整 Tig 替代品。**
 原始 C 源码仍保留作为行为基准；Rust 可执行程序不调用 C Tig，也不链接其实现。
