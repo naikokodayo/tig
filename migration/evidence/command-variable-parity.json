@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "4d809b59cfb0ecc6e85059e1bcf9f992e988c571",
+  "source_commit": "89bc0cb1306af06fe031d91b5cffbaac5f0ce85f",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -360,11 +360,11 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target/release/tig",
-          "sha256": "649f4b38abb1db82b7df50ab4785d14311d691a8b8e142f972870ed460bd893b"
+          "sha256": "ae717c2da64fab1da1a423bae37c608acadbc2372ebfadb6318b56dec34640c4"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/command-variable-parity-task-clone/target/release/test-graph",
-          "sha256": "12800398bb09f9f5f9740bf8aa391cac23b7cae0d110a6d07ea0d90ed66ac9c7"
+          "sha256": "5e00a98675168f6a947ea3001e468f51841521774f9f703573dd06214222a972"
         }
       },
       "binaries_unchanged": true,
@@ -504,8 +504,9 @@
     }
   ],
   "source_sha256": {
-    "rust/commands.rs": "917ad335821d64b4cc90cb5671be92948e5ec36c14729b6886c3ace09638bfbf",
-    "rust/main.rs": "e8bed668f6694bfb80ca50254029cebecfc52960d2adb605907a85c11f52ca05"
+    "rust/commands.rs": "9210a46779e5c87bc39ba2384ab607a8e75aec3a141fdb4b00ff2e6cebcff3e2",
+    "rust/main.rs": "5c1e1222007865410fc1d3cd8c777152195f09a2b7f74208c9ebfa71f65dcd2c",
+    "rust/tests/command-variable.py": "072b9aaef897dd2596578cb229afa8894640be88c99c1e67a6f11ce6d2aa157b"
   },
   "baseline": {
     "source_commit": "ac78df21291964083a6cb13a08da5d127fdcc60e",
@@ -557,12 +558,21 @@
       }
     ]
   },
+  "review_failure": {
+    "source_commit": "4d809b59cfb0ecc6e85059e1bcf9f992e988c571",
+    "rust_binary_sha256": "649f4b38abb1db82b7df50ab4785d14311d691a8b8e142f972870ed460bd893b",
+    "raw_failure": "tig: Not implemented in Rust yet: two<Enter>",
+    "rust_exit_code": 1,
+    "c_exit_code": 0
+  },
   "validation": {
     "cargo_fmt_check": "pass",
     "cargo_test_all_targets": "60 library + 24 application passed",
     "cargo_clippy_all_targets_deny_warnings": "pass",
     "cargo_build_release": "pass",
     "terminal_smoke_pty_checks": 150,
-    "main_command_refresh_pty_cases": 2
+    "main_command_refresh_pty_cases": 2,
+    "command_variable_c_rust_pty_cases": 2,
+    "command_variable_pty_regression_sha256": "072b9aaef897dd2596578cb229afa8894640be88c99c1e67a6f11ce6d2aa157b"
   }
 }
