@@ -323,9 +323,19 @@ fn changes_commit(kind: ChangeKind, parent: String, date: &str, oid: &str) -> Co
     }
 }
 #[derive(Clone)]
+struct WrappedText {
+    width: usize,
+    tab_size: usize,
+    source: Vec<String>,
+    // Source row and continuation marker for each displayed row.
+    lines: Vec<(usize, bool)>,
+}
+
+#[derive(Clone)]
 struct View {
     name: String,
     rows: Vec<String>,
+    wrapping: Option<WrappedText>,
     items: Vec<Item>,
     line_numbers: Vec<usize>,
     selected: usize,
@@ -349,6 +359,7 @@ impl View {
         Self {
             name: name.into(),
             rows: vec![],
+            wrapping: None,
             items: vec![],
             line_numbers: vec![],
             selected: 0,
@@ -379,6 +390,79 @@ impl View {
             v.push(line.into(), Item::Text);
         }
         v
+    }
+    fn source_rows(&self) -> &[String] {
+        self.wrapping
+            .as_ref()
+            .map_or(&self.rows, |wrap| &wrap.source)
+    }
+    fn source_index(&self, index: usize) -> usize {
+        self.wrapping
+            .as_ref()
+            .and_then(|wrap| wrap.lines.get(index))
+            .map_or(index, |line| line.0)
+    }
+    fn display_index(&self, source: usize) -> usize {
+        self.wrapping
+            .as_ref()
+            .and_then(|wrap| wrap.lines.iter().position(|line| line.0 == source))
+            .unwrap_or(source)
+    }
+    fn wrap_text(&mut self, config: &Config, width: usize) {
+        if !matches!(self.name.as_str(), "blob" | "diff") {
+            return;
+        }
+        let enabled = config.bool_value("wrap-lines", false);
+        if !enabled && self.wrapping.is_none() {
+            return;
+        }
+        let tab_size = config.usize_value("tab-size", 8).max(1);
+        if self
+            .wrapping
+            .as_ref()
+            .is_some_and(|wrap| enabled && wrap.width == width && wrap.tab_size == tab_size)
+        {
+            return;
+        }
+        let selected = self.source_index(self.selected);
+        let top = self.source_index(self.top);
+        if let Some(wrap) = self.wrapping.take() {
+            self.rows = wrap.source;
+        }
+        self.selected = selected;
+        self.top = top;
+        self.line_numbers = (1..=self.rows.len()).collect();
+        if enabled {
+            let source = std::mem::take(&mut self.rows);
+            let mut lines = Vec::new();
+            self.line_numbers.clear();
+            let mut number = 0;
+            for (index, text) in source.iter().enumerate() {
+                let first = self.rows.len();
+                for (part, chunk) in tig_rs::render::wrap_line(text, width, tab_size, first != 0)
+                    .into_iter()
+                    .enumerate()
+                {
+                    let continued = first != 0 && part != 0;
+                    self.rows.push(chunk.into());
+                    lines.push((index, continued));
+                    // C's first row uses zero as the continuation sentinel.
+                    if !continued {
+                        number += 1;
+                    }
+                    self.line_numbers.push(number);
+                }
+            }
+            self.wrapping = Some(WrappedText {
+                width,
+                tab_size,
+                source,
+                lines,
+            });
+            self.selected = self.display_index(selected);
+            self.top = self.display_index(top);
+        }
+        self.items = vec![Item::Text; self.rows.len()];
     }
     fn redraw_stdin(&mut self, config: &Config, width: usize) -> Result<()> {
         let commits: Vec<_> = self
@@ -469,6 +553,7 @@ impl App {
         view.path = self.path.clone();
         view.staged = self.view.staged && name == "stage";
         view.untracked = self.view.untracked && matches!(name, "stage" | "status");
+        view.wrap_text(&self.config, width);
         Ok(view)
     }
     fn file_filter(&self) -> &[String] {
@@ -1156,22 +1241,18 @@ impl App {
         Ok(())
     }
     fn trace_blame(&mut self) -> Result<()> {
-        let selected = self.view.selected;
-        let row = self
-            .view
-            .rows
-            .get(selected)
-            .ok_or("No selected diff line")?;
-        let hunk = self.view.rows[..=selected].iter().rfind(|row| {
+        let selected = self.view.source_index(self.view.selected);
+        let rows = self.view.source_rows();
+        let row = rows.get(selected).ok_or("No selected diff line")?;
+        let hunk = rows[..=selected].iter().rfind(|row| {
             row.starts_with("@@") || row.starts_with("diff ") || row.starts_with("commit ")
         });
         if row.starts_with("@@") || !hunk.is_some_and(|row| row.starts_with("@@ ")) {
             return Err("The line to trace must be inside an ordinary diff chunk".into());
         }
         let old = row.starts_with('-');
-        let (path, number) =
-            diff_target(&self.view.rows, selected, old).ok_or("No file and line to blame")?;
-        let revision = self.view.rows[..=selected]
+        let (path, number) = diff_target(rows, selected, old).ok_or("No file and line to blame")?;
+        let revision = rows[..=selected]
             .iter()
             .rev()
             .find_map(|row| row.strip_prefix("commit "))
@@ -1235,12 +1316,15 @@ impl App {
         }
         if self.view.name == "diff" || (self.view.name == "stage" && !self.view.untracked) {
             let header = if self.view.name == "diff" {
-                diff_stat_header(&self.view.rows, self.view.selected)
+                diff_stat_header(
+                    self.view.source_rows(),
+                    self.view.source_index(self.view.selected),
+                )
             } else {
                 stage_stat_header(&self.view.rows, self.view.selected)
             };
             if let Some(header) = header {
-                self.view.selected = header;
+                self.view.selected = self.view.display_index(header);
                 self.center_selection();
                 return Ok(());
             }
@@ -1270,19 +1354,19 @@ impl App {
                 self.open("diff", child_width)?;
                 let start = self
                     .view
-                    .rows
+                    .source_rows()
                     .iter()
                     .enumerate()
                     .filter(|(_, row)| row.starts_with("diff --git "))
                     .find_map(|(index, _)| {
-                        (diff_edit_target(&self.view.rows, index)
+                        (diff_edit_target(self.view.source_rows(), index)
                             == Some((line.filename.clone(), 0)))
                         .then_some(index)
                     });
-                if let Some(selected) =
-                    start.and_then(|start| diff_line_at(&self.view.rows, start, line.original_line))
-                {
-                    self.view.selected = selected;
+                if let Some(selected) = start.and_then(|start| {
+                    diff_line_at(self.view.source_rows(), start, line.original_line)
+                }) {
+                    self.view.selected = self.view.display_index(selected);
                 }
             }
             Item::Text if self.view.name == "refs" && self.view.selected == 0 => {
@@ -1302,6 +1386,7 @@ impl App {
                     let mut v = View::text("blob", &String::from_utf8_lossy(&bytes));
                     v.path = self.path.clone();
                     v.revision = self.revision.clone();
+                    v.wrap_text(&self.config, child_width);
                     self.previous.push(std::mem::replace(&mut self.view, v));
                 }
             }
@@ -1353,6 +1438,7 @@ impl App {
                     .line
                     .saturating_sub(1)
                     .min(view.rows.len().saturating_sub(1));
+                view.wrap_text(&self.config, child_width);
                 self.previous.push(std::mem::replace(&mut self.view, view));
             }
             Item::Text if self.view.name == "status" => {
@@ -1492,7 +1578,10 @@ impl App {
                 stage_stat_header(&self.view.rows, self.view.selected)
                     .unwrap_or(self.view.selected),
             ),
-            "diff" | "log" | "pager" => diff_edit_target(&self.view.rows, self.view.selected),
+            "diff" | "log" | "pager" => diff_edit_target(
+                self.view.source_rows(),
+                self.view.source_index(self.view.selected),
+            ),
             _ => None,
         }
     }
@@ -1907,13 +1996,17 @@ impl App {
                 if old.name != "pager" {
                     self.view = self.load(&old.name)?;
                 }
-                self.view.selected = old.selected.min(self.view.rows.len().saturating_sub(1));
-                self.view.top = old.top;
+                self.view.selected = self
+                    .view
+                    .display_index(old.source_index(old.selected))
+                    .min(self.view.rows.len().saturating_sub(1));
+                self.view.top = self.view.display_index(old.source_index(old.top));
                 self.view.left = old.left;
                 self.view.history = old.history.clone();
                 self.view.restore_status_selection();
                 if old.name == "diff" {
-                    if let Some(selected) = diff_reloaded_line(&old, &self.view.rows) {
+                    if let Some(selected) = diff_reloaded_line(&old, self.view.source_rows()) {
+                        let selected = self.view.display_index(selected);
                         self.view.selected = selected;
                         self.view.top =
                             selected.saturating_sub(old.selected.saturating_sub(old.top));
@@ -2341,11 +2434,11 @@ fn diff_stat_header(rows: &[String], selected: usize) -> Option<usize> {
 }
 
 fn diff_reloaded_line(old: &View, rows: &[String]) -> Option<usize> {
-    let (_, target) = diff_edit_target(&old.rows, old.selected)?;
+    let (_, target) = diff_edit_target(old.source_rows(), old.source_index(old.selected))?;
     if target == 0 {
         return None;
     }
-    let header = old.rows[..=old.selected]
+    let header = old.source_rows()[..=old.source_index(old.selected)]
         .iter()
         .rfind(|row| row.starts_with("diff "))?;
     // ponytail: ordinary hunks only; extend alongside combined-diff navigation.
@@ -2861,6 +2954,7 @@ fn pager_line_numbers(config: &Config, view: &View) -> Option<(usize, usize)> {
 }
 
 fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -> Vec<String> {
+    view.wrap_text(config, width);
     let visible = visible.max(1);
     if view.selected < view.top {
         view.top = view.selected;
@@ -2878,6 +2972,21 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
         .map(|i| {
             let index = view.top + i;
             let row = view.rows.get(index).map(String::as_str).unwrap_or("");
+            let expanded;
+            let row = if let Some(wrap) = &view.wrapping {
+                expanded = format!(
+                    "{}{}",
+                    if wrap.lines.get(index).is_some_and(|line| line.1) {
+                        "+"
+                    } else {
+                        ""
+                    },
+                    tig_rs::render::expand_pager_text(row, wrap.tab_size)
+                );
+                expanded.as_str()
+            } else {
+                row
+            };
             if let Some((number_width, interval)) = line_numbers.filter(|_| index < view.rows.len())
             {
                 let number = view.line_numbers.get(index).copied().unwrap_or(0);
@@ -2926,12 +3035,16 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
             }
         ),
         _ if view.name == "status" => "Nothing to update".into(),
-        _ if view.name == "diff" && diff_stat_header(&view.rows, view.selected).is_some() => {
+        _ if view.name == "diff"
+            && diff_stat_header(view.source_rows(), view.source_index(view.selected)).is_some() =>
+        {
             "Press '<Enter>' to jump to file diff".into()
         }
-        _ if view.name == "diff" => diff_edit_target(&view.rows, view.selected)
-            .map(|(path, _)| format!("Changes to '{}'", path.display()))
-            .unwrap_or_else(|| view.revision.clone()),
+        _ if view.name == "diff" => {
+            diff_edit_target(view.source_rows(), view.source_index(view.selected))
+                .map(|(path, _)| format!("Changes to '{}'", path.display()))
+                .unwrap_or_else(|| view.revision.clone())
+        }
         _ if view.name == "stage"
             && !view.untracked
             && stage_stat_header(&view.rows, view.selected).is_some() =>
@@ -2944,7 +3057,7 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
         _ if view.name == "stage" => {
             let kind = if view.staged { "Staged" } else { "Unstaged" };
             if view.path.as_os_str().is_empty() {
-                diff_edit_target(&view.rows, view.selected)
+                diff_edit_target(view.source_rows(), view.source_index(view.selected))
                     .map(|(path, _)| format!("{kind} changes to '{}'", path.display()))
                     .unwrap_or_else(|| format!("{kind} changes"))
             } else {
@@ -2972,7 +3085,7 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
                 "tree" => "file",
                 _ => "line",
             },
-            if view.name == "tree" {
+            if view.name == "tree" || view.wrapping.is_some() {
                 view.line_numbers.get(view.selected).copied().unwrap_or(0)
             } else if view.name == "main" {
                 view.items[..=view.selected]
@@ -2990,7 +3103,9 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
                     .iter()
                     .filter(|item| matches!(item, Item::Changes(_)))
                     .count(),
-                _ => 0,
+                _ => view.wrapping.as_ref().map_or(0, |wrap| {
+                    wrap.lines.iter().filter(|line| line.1).count()
+                }),
             })
         ));
     }
@@ -3369,6 +3484,7 @@ fn run() -> Result<()> {
             app.message = "No matches found".into();
         }
     }
+    app.view.wrap_text(&app.config, app.width);
     if cli.line > 0 {
         app.view.selected = cli.line.min(app.view.rows.len().saturating_sub(1));
     }
@@ -4492,5 +4608,52 @@ mod tests {
         assert_eq!(diff_stat_header(&rows, 1), None);
         assert_eq!(diff_stat_header(&rows, 3), Some(5));
         assert_eq!(diff_stat_header(&rows, 4), Some(6));
+    }
+    #[test]
+    fn wrapped_pager_rows_preserve_source_and_navigation() {
+        use tig_rs::render::{expand_pager_text, wrap_line};
+        assert_eq!(
+            wrap_line("abcdefghijk", 5, 8, false),
+            ["abcde", "fghij", "k"]
+        );
+        assert_eq!(
+            wrap_line("abcdefghijk", 5, 8, true),
+            ["abcde", "fghi", "jk"]
+        );
+        assert_eq!(wrap_line("abcdé界z", 5, 8, true), ["abcdé", "界z"]);
+        assert_eq!(wrap_line("界x", 1, 8, true), ["界", "x"]);
+        assert_eq!(
+            wrap_line("a\u{301}bcdef", 2, 8, true).concat(),
+            "a\u{301}bcdef"
+        );
+        assert_eq!(wrap_line("\tX", 1, 8, true), ["\t", "X"]);
+        assert_eq!(wrap_line("", 0, 0, true), [""]);
+        assert_eq!(expand_pager_text("é\tx", 4), "é  x");
+
+        let mut config = Config::default();
+        config.parse("set wrap-lines = true");
+        let text = "commit 0123456789\n\n    long commit title\n---\n very-long-path | 1 +\n 1 file changed, 1 insertion(+)\n\ndiff --git a/very-long-path b/very-long-path\n--- a/very-long-path\n+++ b/very-long-path\n@@ -0,0 +1 @@\n+abcdefghijklmno";
+        let mut view = View::text("diff", text);
+        view.wrap_text(&config, 10);
+        assert_eq!(view.rows[0], "commit 012");
+        assert!(!view.wrapping.as_ref().unwrap().lines[1].1);
+        let title = view.display_index(2);
+        assert!(view.wrapping.as_ref().unwrap().lines[title + 1].1);
+        view.selected = view.display_index(11) + 1;
+        view.move_by(-1);
+        assert_eq!(view.source_index(view.selected), 11);
+        assert_eq!(
+            diff_edit_target(view.source_rows(), view.source_index(view.selected)),
+            Some((PathBuf::from("very-long-path"), 1))
+        );
+        assert_eq!(diff_stat_header(view.source_rows(), 4), Some(7));
+        view.wrap_text(&config, 15);
+        assert_eq!(view.source_index(view.selected), 11);
+        assert_eq!(view.source_rows().join("\n"), text);
+        config.parse("set wrap-lines = false");
+        view.wrap_text(&config, 15);
+        assert_eq!(view.rows.join("\n"), text);
+        assert_eq!(view.selected, 11);
+        assert!(view.wrapping.is_none());
     }
 }

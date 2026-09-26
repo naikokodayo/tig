@@ -87,6 +87,65 @@ pub fn cell_width(text: &str) -> usize {
     text.chars().map(|c| c.width().unwrap_or(0)).sum()
 }
 
+/// Split pager text using terminal cells. C reserves a marker cell only when a
+/// continuation overflows, and leaves continuations of its first row unmarked.
+pub fn wrap_line(text: &str, width: usize, tab_size: usize, mark: bool) -> Vec<&str> {
+    let width = width.max(1);
+    let tab_size = tab_size.max(1);
+    let mut rest = text;
+    let mut rows = Vec::new();
+    loop {
+        let mut cells = 0;
+        let mut end = rest.len();
+        let mut last = 0;
+        for (offset, c) in rest.char_indices() {
+            let size = if c == '\t' {
+                tab_size - cells % tab_size
+            } else {
+                c.width().unwrap_or(0)
+            };
+            if cells + size > width {
+                end = if mark && !rows.is_empty() && cells == width {
+                    last
+                } else {
+                    offset
+                };
+                // Narrow panes must always consume a complete UTF-8 character.
+                if end == 0 {
+                    end = offset.max(c.len_utf8());
+                }
+                break;
+            }
+            if size != 0 {
+                last = offset;
+            }
+            cells += size;
+        }
+        rows.push(&rest[..end]);
+        rest = &rest[end..];
+        if rest.is_empty() {
+            break;
+        }
+    }
+    rows
+}
+
+/// Upstream pager expansion counts UTF-8 bytes for tab stops, unlike wrapping.
+pub fn expand_pager_text(text: &str, tab_size: usize) -> String {
+    let mut out = String::new();
+    let tab_size = tab_size.max(1);
+    for c in text.chars() {
+        if c == '\t' {
+            out.extend(std::iter::repeat(' ').take(tab_size - out.len() % tab_size));
+        } else if c.is_ascii_control() {
+            out.push(' ');
+        } else {
+            out.push(c);
+        }
+    }
+    out
+}
+
 /// Clip without splitting UTF-8 or exceeding terminal-cell width. Combining
 /// characters stay attached to the preceding character; terminal width rules
 /// for complex emoji sequences may differ between terminal implementations.
