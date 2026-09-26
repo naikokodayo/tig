@@ -678,3 +678,43 @@ and [original-script receipt](migration/evidence/diff-render-review-upstream.jso
 Reproduce the new paired check with `python3 rust/tests/diff-navigation.py`
 after building both C and Rust binaries. Original C/tests and dependencies are
 unchanged relative to the integrated main; first-party Rust still forbids unsafe.
+
+### Configuration slice review fixes and main 297e1787 synchronization
+
+Merged main `297e1787` (including PR #12); the only conflict was the appended
+migration record, resolved by retaining both records. Source
+`0f1835c2a174051409789ffa3c15db0b3296bba8` fixes three review findings:
+
+- Setting an existing date column from `custom` to an invalid/removed display
+  now installs `default` before returning C's diagnostic. Both `*-view-date`
+  and `*-view-date-display` retain other column attributes. Whole-view
+  replacement still discards failed new columns, as C does. Tests cover file
+  and interactive entry points, local/short, uppercase and unknown modes.
+- Field width measurement now counts the same Unicode scalars as clipping.
+  ZWJ emoji cannot be partially clipped without the truncation marker because
+  of a grapheme-width/scalar-width mismatch. Main, tree, blame and grep use
+  this measurement for field limits and padding.
+- Legacy color lookup separates the explicit view prefix before mapping the
+  area, preserving that prefix over the replacement's default view.
+  `tree.tree-head` maps to `tree.header`, `diff.tree-head` to `diff.header`,
+  and `main.main-revgraph` is rejected with its obsolete diagnostic.
+
+The three regression assertions first failed on the previous implementation.
+The new runnable `python3 rust/tests/config-recovery.py` also compares C/Rust
+screens, diagnostics and saved color targets in **16 passing PTY cases**.
+At the source above, Rust 1.81 formatting, **76 unit tests**, Clippy with
+warnings denied, release build and **130 application PTY checks** all pass.
+Receipts are `migration/evidence/config-render-review-checks.json`/`.log`,
+`config-render-review-recovery.json`, and `config-render-review-pty.json`.
+Their source manifest and binary hashes agree with the paired original run.
+
+The original-script scope is the previous 25 plus main/date and main/emoji:
+C passes **27 scripts / 156 assertions**. Rust passes **23 scripts** with
+**146 passing / 10 failing assertions** and **3 runtime failure checks**;
+there are no skips. The same four scripts fail: command-value-long,
+escape-var, quote, and blame/default. All three originally fixed tigrc
+scripts still pass. `config-render-review-upstream.json` retains the raw
+results and remains `BLOCKED`; these scoped results do not close full parity.
+Earlier receipts remain tied to their earlier sources. The following commit
+changes only documentation and evidence. First-party unsafe remains forbidden;
+original C/test files and dependencies are unchanged.
