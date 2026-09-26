@@ -22,7 +22,7 @@ fn name(reference: &Reference) -> &str {
         .find_map(|prefix| reference.name.strip_prefix(prefix))
         .unwrap_or(&reference.name)
 }
-fn kind(reference: &Reference, upstream: &str) -> usize {
+pub(crate) fn kind(reference: &Reference, upstream: &str) -> usize {
     if reference.current {
         0
     } else if reference.name.starts_with("refs/heads/") {
@@ -50,7 +50,7 @@ fn kind(reference: &Reference, upstream: &str) -> usize {
     }
 }
 // Tig orders numeric suffixes newest first, but other characters alphabetically.
-fn numeric(a: &str, b: &str) -> Ordering {
+pub(crate) fn numeric(a: &str, b: &str) -> Ordering {
     let shared = a.bytes().zip(b.bytes()).take_while(|(a, b)| a == b).count();
     let start = a.as_bytes()[..shared]
         .iter()
@@ -165,17 +165,7 @@ pub fn load(
     let history = repo.history(&["--all".into(), "--simplify-by-decoration".into()], 0)?;
     let commits: HashMap<_, _> = history.into_iter().map(|c| (c.oid.clone(), c)).collect();
     let mut entries = Vec::new();
-    let mut references = repo.refs()?;
-    if !references.iter().any(|r| r.current) {
-        if let Ok(oid) = repo.revision("HEAD") {
-            references.push(Reference {
-                name: "HEAD".into(),
-                oid,
-                target: String::new(),
-                current: true,
-            });
-        }
-    }
+    let references = repo.refs()?;
     let replacements: Vec<String> = references
         .iter()
         .filter_map(|r| r.name.strip_prefix("refs/replace/").map(str::to_owned))
@@ -184,23 +174,12 @@ pub fn load(
         .iter()
         .filter_map(|r| r.name.strip_prefix("refs/heads/").map(str::to_owned))
         .collect();
-    let ordinary_ids: Vec<String> = references
-        .iter()
-        .filter(|r| !r.name.starts_with("refs/replace/"))
-        .map(|r| r.oid.clone())
-        .collect();
-    for mut reference in references {
-        let replacement = reference
-            .name
-            .strip_prefix("refs/replace/")
-            .map(str::to_owned);
-        if let Some(original) = replacement {
-            if ordinary_ids.contains(&original) {
-                continue;
-            }
-            reference.oid = original;
-            reference.target.clear();
+    for reference in references {
+        // Replacement-only records are decorations, not named refs-view rows.
+        if reference.name.starts_with("refs/replace/") {
+            continue;
         }
+        let mut reference = reference;
         let k = if replacements.contains(&reference.oid) {
             6
         } else {
