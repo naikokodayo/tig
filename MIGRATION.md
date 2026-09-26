@@ -647,6 +647,19 @@ records every transcript and reason. This source predates merged status/trace
 and config PRs #13 and #16; it is not a current-main or final benchmark result.
 The parity gate remains **OPEN**.
 
+### Full strict paired snapshot after navigation and configuration integration
+
+At source `ac78df21291964083a6cb13a08da5d127fdcc60e`, the fail-closed
+runner attempted all 154 unchanged original scripts with separately hashed C
+and Rust-only application/graph binaries. C passed 152 and skipped two. Rust
+passed 121, failed 30, and skipped three; 517 actual assertions passed, 47
+failed, and eight C-side assertions were not reached. Another 11 failure checks
+concern setup or runtime behavior rather than assertions. The [paired
+receipt](migration/evidence/upstream-rust-only-after-integration.json) contains
+the executable hashes and individual transcripts. This is 17 more passing
+Rust scripts than the preceding `86ce7680` snapshot. The parity gate remains
+**OPEN**; completed follow-up slices must be retested against their merged source.
+
 ### Non-local `%s` follow-up
 
 The PR #3 blanket refusal is replaced by a host POSIX bridge on 64-bit macOS
