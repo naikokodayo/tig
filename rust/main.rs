@@ -1302,6 +1302,7 @@ impl App {
     fn action(&mut self, action: &str) -> Result<bool> {
         let action = action.strip_prefix(':').unwrap_or(action);
         if action == "exec" {
+            self.message = "Failed to execute command: No arguments".into();
             return Ok(true);
         }
         if let Some(command) = action.strip_prefix("exec ").or_else(|| {
@@ -1315,6 +1316,7 @@ impl App {
                     .chars()
                     .all(|c| matches!(c, '!' | '@' | '?' | '<' | '+' | '>'))
             {
+                self.message = "Failed to format arguments".into();
                 return Ok(true);
             }
             let selected_ref = match self.selected() {
@@ -1453,6 +1455,11 @@ impl App {
         match action {
             "quit" => return Ok(false),
             "view-close" | "view-close-no-quit" | "back" => {
+                if action == "view-close-no-quit" && self.parent_focused && self.previous.is_empty()
+                {
+                    self.message = "Can't close last remaining view".into();
+                    return Ok(true);
+                }
                 if self.other.is_some() {
                     if !self.parent_focused {
                         self.swap_panes();
@@ -1464,8 +1471,11 @@ impl App {
                     self.revision = v.revision.clone();
                     self.path = v.path.clone();
                     self.view = v;
-                } else if action != "view-close-no-quit" {
-                    return Ok(false);
+                } else {
+                    if action != "view-close-no-quit" {
+                        return Ok(false);
+                    }
+                    self.message = "Can't close last remaining view".into();
                 }
             }
             "enter" => self.enter()?,
@@ -3155,6 +3165,11 @@ mod tests {
                 format!("{quote}author")
             );
         }
+        app.action("exec").unwrap();
+        assert_eq!(app.message, "Failed to execute command: No arguments");
+        app.action("exec !").unwrap();
+        assert_eq!(app.message, "Failed to format arguments");
+        assert!(app.pending_command.is_none());
     }
 
     #[test]
@@ -3452,6 +3467,9 @@ mod tests {
         app.action("view-next").unwrap();
         assert!(app.parent_focused);
         assert_eq!(app.path, PathBuf::from("parent.txt"));
+        app.action("view-close-no-quit").unwrap();
+        assert_eq!(app.message, "Can't close last remaining view");
+        assert!(app.split && app.other.is_some() && app.parent_focused);
         app.action("refresh").unwrap();
         assert_eq!(app.view.selected, 4);
         assert_eq!(app.view.top, 1);
@@ -3463,6 +3481,9 @@ mod tests {
         assert_eq!(app.view.revision, "parent");
         assert_eq!(app.view.selected, 4);
         assert!(app.other.is_none());
+        app.action("view-close-no-quit").unwrap();
+        assert_eq!(app.message, "Can't close last remaining view");
+        assert_eq!(app.view.revision, "parent");
         app.view.selected = 5;
         let lines = pane_screen(&mut app.view, &app.config, 30, 2);
         assert!(lines[2].ends_with("100%"));
