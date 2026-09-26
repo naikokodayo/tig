@@ -454,10 +454,22 @@ impl App {
     }
     fn status_view(&self, untracked_only: bool) -> Result<View> {
         let repo = self.repo()?;
-        let entries = repo.status()?;
+        let paths = if self.config.bool_value("file-filter", true) {
+            self.args
+                .iter()
+                .position(|arg| arg == "--")
+                .map_or(&[][..], |i| &self.args[i + 1..])
+        } else {
+            &[]
+        };
+        let show_untracked = self.config.bool_value("status-show-untracked-files", true);
+        let header = repo.status_header()?;
+        let entries = repo.status_filtered(paths, show_untracked)?;
         let mut v = View::new("status");
         v.untracked = untracked_only;
-        v.push(repo.status_header()?, Item::Text);
+        v.args = self.args.clone();
+        v.revision = self.revision.clone();
+        v.push(header, Item::Text);
         for (group, title) in [
             (0, "Changes to be committed:"),
             (1, "Changes not staged for commit:"),
@@ -467,6 +479,10 @@ impl App {
                 continue;
             }
             v.push(title.into(), Item::Text);
+            if group == 2 && !show_untracked {
+                v.push("  (not shown)".into(), Item::Text);
+                continue;
+            }
             let start = v.rows.len();
             for e in &entries {
                 if let Some(mark) = status_mark(e, group) {
@@ -728,15 +744,16 @@ impl App {
                     )
                     .into());
                 }
-                let output = Command::new("git")
+                let mut command = Command::new("git");
+                command
                     .current_dir(&repo.root)
                     .args(["--no-pager", "--literal-pathspecs", "-c", "color.ui=false"])
                     .args(["grep", "--no-color", "-n", "-z", "--full-name", "-I"])
                     .args(&self.args)
                     .env("GIT_TERMINAL_PROMPT", "0")
                     .env("LC_ALL", "C")
-                    .stdin(Stdio::null())
-                    .output()?;
+                    .stdin(Stdio::null());
+                let output = tig_rs::trace::output(&mut command)?;
                 if !output.status.success() && output.status.code() != Some(1) {
                     return Err(format!(
                         "git grep exited with {}: {}",
@@ -1538,6 +1555,9 @@ impl App {
                 if self.view.name == "stage" =>
             {
                 if self.view.untracked {
+                    if self.view.rows.is_empty() {
+                        return Ok(true);
+                    }
                     if action != "status-update" {
                         return Err("Select a tracked diff to stage individual lines".into());
                     }
@@ -1548,6 +1568,22 @@ impl App {
                         .find(|entry| entry.path == self.path)
                         .ok_or("File no longer in status")?;
                     self.repo()?.stage(&entry)?;
+                    self.refresh_parent()?;
+                    if self
+                        .other
+                        .as_ref()
+                        .is_some_and(|parent| parent.name == "status")
+                    {
+                        self.swap_panes();
+                        if matches!(self.selected(), Item::Status(_, false)) {
+                            self.enter()?;
+                        } else {
+                            self.other = None;
+                            self.split = false;
+                            self.parent_focused = false;
+                        }
+                        return Ok(true);
+                    }
                 } else {
                     let raw = &self.view.raw_patch;
                     let mut offset = 0;
@@ -2397,6 +2433,9 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
         {
             "Press '<Enter>' to jump to file diff".into()
         }
+        _ if view.name == "stage" && view.untracked => {
+            format!("Untracked file {}", view.path.display())
+        }
         _ if view.name == "stage" => {
             let kind = if view.staged { "Staged" } else { "Unstaged" };
             if view.path.as_os_str().is_empty() {
@@ -2680,6 +2719,9 @@ fn run() -> Result<()> {
     }
     for message in &config.diagnostics {
         eprintln!("tig warning: {message}");
+    }
+    if cli.view == "status" && !cli.git_args.iter().any(|arg| arg == "--") {
+        cli.git_args.insert(0, "--".into());
     }
     let invocation = env::current_dir()?;
     let repo = Repository::discover(&invocation).ok();

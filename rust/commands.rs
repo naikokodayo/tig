@@ -81,8 +81,7 @@ impl PreparedCommand {
                 .stdout(Stdio::inherit())
                 .stderr(Stdio::inherit());
         }
-        let output = command
-            .output()
+        let output = crate::trace::output(&mut command)
             .map_err(|e| GitError(format!("Could not execute command: {e}")))?;
         Ok(output)
     }
