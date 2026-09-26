@@ -71,10 +71,49 @@ Chrono `StrftimeItems::new` 对非法或未知规格产生 `Item::Error`，`new_
 PR #4 合入后，blame 时间戳也复用相同 Chrono 转换，删除第二套手写 Gregorian 换算，保留 blame 的 0..9999 年范围。共享入口在附加偏移前使用 `checked_add_offset` 校验本地日期范围；最小/最大时间戳边界回归先失败再通过。Unix 0 显示层兼容规则也通过 blame 渲染回归覆盖。本地/locale 子进程成本同样适用于 blame 每行，未声称大历史性能达标。
 
 
-## OPEN：非本地自定义 `%s`
+## PR #3 的历史 OPEN gate：非本地自定义 `%s`
 
 复查发现不能把非本地 `%s` 交给 `TZ=UTC date` 并声称等价：C 先取提交 wall time 的 `gmtime`（`tm_isdst=0`），libc `%s` 再按用户 TZ 调用 `mktime`。例如 `1719792000 +0000`、`TZ=America/New_York` 的 C 输出是 `1719810000`，此前 Rust 输出 `1719792000`。24 个修复前 C/Rust 本地与非本地 probe 及二进制摘要保存在 [`date-percent-s-before.json`](evidence/date-percent-s-before.json)。[Darwin strftime 实现](https://github.com/apple-oss-distributions/Libc/blob/main/stdtime/FreeBSD/strftime.c)
 
-当前边界改为明确拒绝非本地 `%s`，错误为 `Non-local %s date format is not supported; use date-local`。本地 `%s`、字面量 `%%s` 与零日期的空白显示保留。回归覆盖纽约冬季/夏季、提交偏移与 Kolkata；先在旧二进制复现错误成功返回，再验证新行为。`date-local` 会改变显示语义，是可选模式，不是精确兼容替代。
+PR #3 的边界改为明确拒绝非本地 `%s`，错误为 `Non-local %s date format is not supported; use date-local`。本地 `%s`、字面量 `%%s` 与零日期的空白显示保留。回归覆盖纽约冬季/夏季、提交偏移与 Kolkata；先在旧二进制复现错误成功返回，再验证新行为。`date-local` 会改变显示语义，是可选模式，不是精确兼容替代。
 
-精确非本地 `%s` 仍是 **OPEN gate**。BSD `date -j -f` 默认 `tm_isdst=-1`，`%Z` 需要已知且能被解析的标准时区名；GNU 也通过本地缩写影响 DST 判断，没有找到可对任意 TZ 强制 `tm_isdst=0` 的通用 CLI 接口。本次不加入 unsafe FFI、新运行时依赖或冬夏偏移启发式；后续需安全复现 libc/TZ 行为并建立跨平台对照后才能关闭此门。[Apple date.c](https://github.com/apple-oss-distributions/shell_cmds/blob/main/date/date.c)、[Apple strptime.c](https://github.com/apple-oss-distributions/Libc/blob/main/stdtime/FreeBSD/strptime.c)、[GNU parse-datetime.y](https://github.com/coreutils/gnulib/blob/master/lib/parse-datetime.y)
+在 PR #3 中，精确非本地 `%s` 仍是 **OPEN gate**。BSD `date -j -f` 默认 `tm_isdst=-1`，`%Z` 需要已知且能被解析的标准时区名；GNU 也通过本地缩写影响 DST 判断，没有找到可对任意 TZ 强制 `tm_isdst=0` 的通用 CLI 接口。PR #3 没有加入 unsafe FFI、新运行时依赖或冬夏偏移启发式；后续需安全复现 libc/TZ 行为并建立跨平台对照后才能关闭此门。[Apple date.c](https://github.com/apple-oss-distributions/shell_cmds/blob/main/date/date.c)、[Apple strptime.c](https://github.com/apple-oss-distributions/Libc/blob/main/stdtime/FreeBSD/strptime.c)、[GNU parse-datetime.y](https://github.com/coreutils/gnulib/blob/master/lib/parse-datetime.y)
+
+
+## 非本地 `%s`：系统 POSIX 桥接
+
+2026-09-27 的后续实现从 `e1cf5eeb` 开始，最终同步 main `ffcb9310`（stage PR #9）。采用系统 Perl 的核心 `POSIX::strftime("%s", gmtime(wall_seconds))`，只把结果插回已经按 token 解析的格式。提交偏移只用于得到 wall time；宿主 TZ 保留。`%%s`、本地 `%s`、零 wall time 空白和其它日期指令走既有路径。
+
+这与 C 的关键调用链一致：`gmtime` 产生 `tm_isdst=0`，Darwin 与 glibc 的 `%s` 再对结构副本调用本机 `mktime`。Perl POSIX 包装保留该标志；它补充的 `tm_gmtoff`/`tm_zone` 不参与这两个 libc 的 `mktime` 转换。保留宿主库及其时区数据库也保留了非一小时 DST、负 DST、历史偏移与 POSIX TZ 规则，避免从冬夏样本猜测标准偏移。[Darwin strftime](https://github.com/apple-oss-distributions/Libc/blob/main/stdtime/FreeBSD/strftime.c)、[glibc strftime](https://github.com/bminor/glibc/blob/master/time/strftime_l.c)、[Perl POSIX 包装](https://github.com/Perl/perl5/blob/v5.34.1/ext/POSIX/POSIX.xs)、[Perl my_strftime](https://github.com/Perl/perl5/blob/v5.34.1/util.c)
+
+调用使用 `Command` 的独立 argv、固定程序文本、`--` 后的已校验整数；没有 shell、动态 eval 或拼接用户代码。`-T` 禁用 `PERL5OPT`/`PERL5LIB` 注入。退出失败、诊断输出、无效 UTF-8、非 i64 输出都明确报错，不回退为 UTC 或自动 DST。每个非本地 `%s` token 启动一个进程；没有新增缓存或后台服务。[Perl 启动选项](https://perldoc.perl.org/perlrun)
+
+### 依赖选择与边界
+
+| 候选 | 维护 / MSRV / 许可核对 | 本任务结论 |
+| --- | --- | --- |
+| Jiff 0.2.37 | 2026-09-12 发布，声明 Rust 1.70，Unlicense OR MIT | 成熟的时区/歧义 API，但 Temporal disambiguation 不等于强制 `tm_isdst=0`，不能直接替代 libc |
+| tz-rs 0.7.0 / 0.7.3 | 0.7.0 声明 Rust 1.81；2026-01-29 的 0.7.3 需 1.85；MIT OR Apache-2.0 | 可读取系统 TZif/POSIX TZ，但 `DateTime::find` 返回真实 wall-time 候选，不能直接给出夏季强制标准时的 libc 归一化结果 |
+| localtime-rs 0.2.0 | 2026-06-06 发布，声明 Rust 1.74，BSD-3-Clause；较短维护历史 | 有 `Tm.tm_isdst` 和 mktime；它复刻 tzcode，不承诺替代各宿主 libc，且 bare POSIX TZ / right-zone mktime 仍在其 deferred 范围 |
+| 系统 Perl + 核心 POSIX | 活跃上游，核实日稳定版 5.44.0；本机系统版 5.34.1；Artistic 或 GPL 许可；不受 Rust MSRV 约束 | 直接复用目标平台的 libc，没有 Cargo 新依赖或 CPAN 模块，选用 |
+
+版本/发布日期和 manifest 已通过 crates.io registry 内容核对；声明 MSRV 不是本项目接入编译的证明，未采用的 crate 没有被纳入构建。资料：[Jiff manifest](https://docs.rs/crate/jiff/0.2.37/source/Cargo.toml)、[Jiff 歧义 API](https://docs.rs/jiff/0.2.37/jiff/tz/enum.Disambiguation.html)、[tz-rs 0.7.0 源码](https://github.com/x-hgg-x/tz-rs/tree/v0.7.0)、[tz-rs 当前说明](https://github.com/x-hgg-x/tz-rs)、[localtime-rs 范围](https://github.com/infinityabundance/localtime-rs)、[Perl 官方发行](https://www.perl.org/get.html)、[Perl 许可](https://github.com/Perl/perl5/blob/v5.34.1/README)
+
+运行支持明确限定为 **64 位 macOS 或 GNU/Linux，PATH 中提供使用宿主 libc 的系统 Perl + 核心 POSIX**。macOS 本机已有 `/usr/bin/perl`；Linux 由 CI 实机验证。精简镜像不能假定自带 Perl。musl、Windows、其它 BSD、32 位构建明确拒绝该非本地指令；其它日期模式的既有边界不因此改变。核心模块缺失或工具无法执行亦明确失败。项目不嵌入或分发 Perl；分发者需另行提供系统运行依赖。第一方 `#![forbid(unsafe_code)]` 与 Cargo lint 保留，这不是“第三方实现全无 unsafe”或“自包含纯 Rust 二进制”的声明。
+
+### 可重复验证
+
+```sh
+cargo +1.81.0 fmt --all -- --check
+cargo +1.81.0 test --locked --all-targets
+cargo +1.81.0 clippy --locked --all-targets -- -D warnings
+cargo +1.81.0 build --locked --release
+make -j2
+python3 rust/tests/date-compatibility.py
+python3 rust/tests/date-percent-s.py
+python3 rust/tests/terminal-smoke.py
+```
+
+`date-percent-s.py` 复用已有控制 PTY 工具，对未修改 C Tig 与 Rust 二进制逐例比较行输出、退出码、超时状态，并记录两端摘要。矩阵覆盖纽约冬夏、提交正负偏移、Kolkata、Lord Howe 半小时 DST、Dublin 负 DST、Casablanca、Apia、显式 POSIX TZ、空/未设置 TZ、时区文件、纽约 gap/fold 的墙上时间边界、负时间、2038 边界、9999 年、重复 `%s`、`%%s`、`%%%s` 和 locale 混合格式。修复前 156 个场景中 87 个明确被旧拒绝逻辑挡住，69 个既有路径通过；这不是全仓迁移完成率。
+
+最终本机检查和跨平台 CI 收据见下方记录；旧 `date-percent-s-*.json` 保留历史含义。**此门只在列明的平台和运行依赖范围内关闭；完整迁移、其它平台、自包含实现和大历史性能门仍开放。**

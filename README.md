@@ -22,6 +22,8 @@ cargo build --locked --release
 ./target/release/tig blame -- path/to/file
 ```
 
+本地/locale 日期还需要系统 GNU/BSD `date`。非本地自定义 `%s` 需要 64 位 macOS 或 GNU/Linux，以及 PATH 中使用宿主 libc 的 64 位系统 Perl（核心 POSIX 模块，无 CPAN 依赖）；工具不可用时明确报错。此路径启动子进程，性能门仍未关闭。
+
 `make` 仍构建原版 C Tig；`cargo` 构建 Rust。原始说明见 [README.adoc](README.adoc)。
 
 已实现并检查的部分包括 v2 提交图、Git 数据解析、基本提交/差异/状态/目录浏览、
