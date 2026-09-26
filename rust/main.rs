@@ -1316,7 +1316,12 @@ impl App {
                     .chars()
                     .all(|c| matches!(c, '!' | '@' | '?' | '<' | '+' | '>'))
             {
-                self.message = "Failed to format arguments".into();
+                self.message = if command.trim().is_empty() {
+                    "Failed to execute command: No arguments"
+                } else {
+                    "Failed to format arguments"
+                }
+                .into();
                 return Ok(true);
             }
             let selected_ref = match self.selected() {
@@ -1455,15 +1460,22 @@ impl App {
         match action {
             "quit" => return Ok(false),
             "view-close" | "view-close-no-quit" | "back" => {
-                if action == "view-close-no-quit" && self.parent_focused && self.previous.is_empty()
-                {
-                    self.message = "Can't close last remaining view".into();
-                    return Ok(true);
-                }
-                if self.other.is_some() {
-                    if !self.parent_focused {
-                        self.swap_panes();
+                if self.parent_focused && self.other.is_some() {
+                    if let Some(v) = self.previous.pop() {
+                        self.revision = v.revision.clone();
+                        self.path = v.path.clone();
+                        self.view = v;
+                    } else if action == "view-close-no-quit" {
+                        self.message = "Can't close last remaining view".into();
+                        return Ok(true);
+                    } else {
+                        return Ok(false);
                     }
+                    self.other = None;
+                    self.split = false;
+                    self.parent_focused = false;
+                } else if self.other.is_some() {
+                    self.swap_panes();
                     self.other = None;
                     self.split = false;
                     self.parent_focused = false;
@@ -3167,6 +3179,8 @@ mod tests {
         }
         app.action("exec").unwrap();
         assert_eq!(app.message, "Failed to execute command: No arguments");
+        app.action("exec ").unwrap();
+        assert_eq!(app.message, "Failed to execute command: No arguments");
         app.action("exec !").unwrap();
         assert_eq!(app.message, "Failed to format arguments");
         assert!(app.pending_command.is_none());
@@ -3488,6 +3502,13 @@ mod tests {
         let lines = pane_screen(&mut app.view, &app.config, 30, 2);
         assert!(lines[2].ends_with("100%"));
         assert_eq!(cell_width(&lines[2]), 30);
+        app.other = Some(View::text("pager", "child"));
+        app.split = true;
+        app.parent_focused = true;
+        app.previous.push(View::text("pager", "older"));
+        app.action("view-close-no-quit").unwrap();
+        assert_eq!(app.view.rows, vec!["older"]);
+        assert!(app.other.is_none() && !app.split);
     }
     #[test]
     fn terminal_content_is_safe_and_cell_clipped() {
