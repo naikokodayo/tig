@@ -1764,13 +1764,7 @@ impl App {
             if self.config.bool_value("wrap-lines", false) || self.view.wrapping.is_some() {
                 return Err("save-view does not support wrapped diff views yet".into());
             }
-            let builtin_colors = Config::defaults().colors;
-            if self
-                .config
-                .colors
-                .keys()
-                .any(|rule| !builtin_colors.contains_key(rule))
-            {
+            if self.config.color_commands != Config::defaults().color_commands {
                 return Err("save-view does not support custom color rules yet".into());
             }
             self.screen();
