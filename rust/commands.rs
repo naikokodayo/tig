@@ -95,6 +95,17 @@ pub fn prepare(
     path: &Path,
     selected_ref: Option<&str>,
 ) -> Result<PreparedCommand> {
+    prepare_with_context(repo, command, revision, path, 0, selected_ref)
+}
+
+pub fn prepare_with_context(
+    repo: &Repository,
+    command: &str,
+    revision: &str,
+    path: &Path,
+    line: usize,
+    selected_ref: Option<&str>,
+) -> Result<PreparedCommand> {
     let mut argv = config::words(command).map_err(GitError)?;
     if argv.is_empty() {
         return Err(GitError("No command arguments".into()));
@@ -198,6 +209,7 @@ pub fn prepare(
         }
     }
     variables.insert("file", path.as_os_str().to_owned());
+    variables.insert("lineno", line.to_string().into());
     variables.insert(
         "directory",
         path.parent()
@@ -360,6 +372,16 @@ mod tests {
         assert!(remote_command(None).is_err());
         let command = prepare(&repo, "!echo 'two words'", "HEAD", Path::new(""), None).unwrap();
         assert_eq!(command.display(), "\"echo\" \"two words\"");
+        let editor = prepare_with_context(
+            &repo,
+            "!vim +%(lineno) %(file)",
+            "HEAD",
+            Path::new("space name"),
+            52,
+            None,
+        )
+        .unwrap();
+        assert_eq!(editor.argv, ["vim", "+52", "space name"]);
         assert_eq!(
             command.run(&repo, true, true).unwrap().stdout,
             b"two words\n"

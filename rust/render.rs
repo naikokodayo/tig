@@ -257,13 +257,7 @@ pub fn refs(config: &Config, decorations: &str, separator: &str) -> String {
     result.join(separator)
 }
 
-/// Render a complete main-view commit list, so autosized columns see all rows.
-/// The plain string result cannot represent Tig color/overflow attributes.
-pub fn render_commits(
-    config: &Config,
-    commits: &[Commit],
-    width: usize,
-) -> Result<Vec<String>, String> {
+fn main_columns(config: &Config) -> Result<Vec<Column<'_>>, String> {
     let specs = config
         .settings
         .get("main-view")
@@ -284,7 +278,25 @@ pub fn render_commits(
             }
         }
     }
-    let columns: Vec<_> = columns.into_iter().filter(Column::enabled).collect();
+    Ok(columns.into_iter().filter(Column::enabled).collect())
+}
+
+pub fn main_refs_searchable(config: &Config) -> bool {
+    main_columns(config).is_ok_and(|columns| {
+        columns
+            .iter()
+            .any(|column| column.name == "commit-title" && column.flag("refs", false) == Ok(true))
+    })
+}
+
+/// Render a complete main-view commit list, so autosized columns see all rows.
+/// The plain string result cannot represent Tig color/overflow attributes.
+pub fn render_commits(
+    config: &Config,
+    commits: &[Commit],
+    width: usize,
+) -> Result<Vec<String>, String> {
+    let columns = main_columns(config)?;
     let mut graph = Graph::new();
     let ascii = config.value("line-graphics") == Some("ascii");
     let mut canvases = Vec::with_capacity(commits.len());
@@ -521,6 +533,7 @@ mod tests {
     fn reference_formats_and_graph_switches() {
         let mut config = Config::defaults();
         config.parse("set line-graphics = ascii\nset main-view = commit-title:yes,graph,refs\nset reference-format = (branch) [tag] hide:remote");
+        assert!(main_refs_searchable(&config));
         let mut c = commit();
         c.decorations =
             "HEAD -> refs/heads/master, tag: refs/tags/v1.0, refs/remotes/origin/master".into();
@@ -529,6 +542,7 @@ mod tests {
             "* (master) [v1.0] WIP: Upgrade"
         );
         config.parse("set main-view = commit-title:yes,graph=no,refs=no");
+        assert!(!main_refs_searchable(&config));
         assert_eq!(
             render_commits(&config, &[c], 100).unwrap()[0],
             "WIP: Upgrade"

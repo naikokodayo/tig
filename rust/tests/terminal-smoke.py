@@ -156,7 +156,7 @@ def main():
             evidence['checks'].append({'name': 'unstage verified against Git index', 'passed': True})
             expect('open two-line unstaged patch', ['+unstaged fixture', '+second added fixture', '[stage]'], b'\r')
             expect('line staging search prompt', ['/'], b'/')
-            expect('select added line A', ['[stage]'], b'+unstaged fixture\r',
+            expect('select added line A', ['[stage]'], b'\\+unstaged fixture\r',
                    raw_required=(b'\x1b[7m+unstaged fixture',))
             expect('1 stages only selected line', ['+second added fixture', '[stage]'], b'1')
             cached = git('diff', '--cached', '--', 'fixture.txt')
@@ -170,7 +170,7 @@ def main():
             expect('select cached partial file', ["[status] Press u to unstage 'fixture.txt'"], b'kk')
             expect('open cached partial patch', ['+unstaged fixture', '[stage]'], b'\r')
             expect('line unstage search prompt', ['/'], b'/')
-            expect('select cached added line A', ['[stage]'], b'+unstaged fixture\r',
+            expect('select cached added line A', ['[stage]'], b'\\+unstaged fixture\r',
                    raw_required=(b'\x1b[7m+unstaged fixture',))
             expect('1 unstages only selected line', ["[stage] Staged changes to 'fixture.txt'", ' 0%'], b'1')
             assert git('diff', '--cached') == ''
@@ -180,7 +180,7 @@ def main():
             expect('refresh fully unstaged status', ["[status] Press u to stage 'fixture.txt' for commit"], b'R')
             expect('open hunk for staging', ['+unstaged fixture', '+second added fixture', '[stage]'], b'\r')
             expect('hunk staging search prompt', ['/'], b'/')
-            expect('select line within hunk', ['[stage]'], b'+unstaged fixture\r',
+            expect('select line within hunk', ['[stage]'], b'\\+unstaged fixture\r',
                    raw_required=(b'\x1b[7m+unstaged fixture',))
             expect('u stages complete hunk', ["[stage] Unstaged changes to 'fixture.txt'", ' 0%'], b'u')
             cached = git('diff', '--cached')
@@ -193,7 +193,7 @@ def main():
             expect('refresh fully staged status', ["[status] Press u to unstage 'fixture.txt'"], b'R')
             expect('open cached hunk', ['+unstaged fixture', '+second added fixture', '[stage]'], b'\r')
             expect('hunk unstaging search prompt', ['/'], b'/')
-            expect('select cached hunk line', ['[stage]'], b'+unstaged fixture\r',
+            expect('select cached hunk line', ['[stage]'], b'\\+unstaged fixture\r',
                    raw_required=(b'\x1b[7m+unstaged fixture',))
             expect('cached u unstages complete hunk', ["[stage] Staged changes to 'fixture.txt'", ' 0%'], b'u')
             assert git('diff', '--cached') == ''

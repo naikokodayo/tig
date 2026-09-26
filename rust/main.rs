@@ -8,6 +8,7 @@ use crossterm::{
     style::{Attribute, SetAttribute},
     terminal::{self, Clear, ClearType},
 };
+use regex::RegexBuilder;
 use std::{
     env, fs,
     io::{self, IsTerminal, Write},
@@ -484,21 +485,52 @@ impl App {
     }
     fn find(&mut self, backwards: bool) {
         let count = self.view.rows.len();
-        if count == 0 || self.search.is_empty() {
+        if self.search.is_empty() {
+            self.message = "No previous search".into();
             return;
         }
+        if count == 0 {
+            return;
+        }
+        let ignore_case = match self.config.value("ignore-case") {
+            Some("yes") => true,
+            Some("smart-case") => !self.search.chars().any(char::is_uppercase),
+            _ => false,
+        };
+        let regex = match RegexBuilder::new(&self.search)
+            .case_insensitive(ignore_case)
+            .build()
+        {
+            Ok(regex) => regex,
+            Err(error) => {
+                self.message = format!("Search failed: {error}");
+                return;
+            }
+        };
+        let wrap = self.config.bool_value("wrap-search", true);
+        let search_full_refs =
+            self.view.name == "main" && tig_rs::render::main_refs_searchable(&self.config);
         for offset in 1..=count {
             let i = if backwards {
                 (self.view.selected + count - offset) % count
             } else {
                 (self.view.selected + offset) % count
             };
-            if self.view.rows[i].contains(&self.search) {
+            if !wrap
+                && ((backwards && i >= self.view.selected)
+                    || (!backwards && i <= self.view.selected))
+            {
+                break;
+            }
+            let ref_match = search_full_refs
+                && matches!(self.view.items.get(i), Some(Item::Commit(commit)) if regex.is_match(&commit.decorations));
+            if regex.is_match(&self.view.rows[i]) || ref_match {
                 self.view.selected = i;
+                self.center_selection();
                 return;
             }
         }
-        self.message = format!("No match: {}", self.search);
+        self.message = format!("No match found for '{}'", self.search);
     }
     fn goto_commit(&mut self, target: &str) -> Result<()> {
         let target = self.repo()?.revision(target)?;
@@ -530,6 +562,77 @@ impl App {
             self.view.top = self.view.selected.saturating_sub(visible / 2);
         }
     }
+    fn edit_target(&self) -> Option<(PathBuf, usize)> {
+        match self.view.name.as_str() {
+            "status" => match self.selected() {
+                Item::Status(entry, _) => Some((entry.path, 0)),
+                _ => None,
+            },
+            "tree" => match self.selected() {
+                Item::Tree(entry) if entry.kind != "tree" => Some((entry.path, 0)),
+                _ => None,
+            },
+            "blob" | "blame" => Some((self.view.path.clone(), self.view.selected + 1)),
+            "stage" if self.view.untracked => {
+                Some((self.view.path.clone(), self.view.selected + 1))
+            }
+            "stage" => diff_edit_target(&self.view.rows, self.view.selected)
+                .map(|(_, line)| (self.view.path.clone(), line)),
+            "diff" | "log" | "pager" => diff_edit_target(&self.view.rows, self.view.selected),
+            _ => None,
+        }
+    }
+    fn edit(&mut self) -> Result<()> {
+        let target = self.edit_target();
+        let Some((path, line)) = target else {
+            self.message = "Nothing to edit".into();
+            return Ok(());
+        };
+        if !path
+            .components()
+            .all(|part| matches!(part, std::path::Component::Normal(_)))
+            || !self.repo()?.root.join(&path).is_file()
+        {
+            self.message = format!("Failed to open file: {}", path.display());
+            return Ok(());
+        }
+        let configured_editor = self
+            .repo()?
+            .command(["config", "--get", "core.editor"])
+            .ok()
+            .map(|bytes| String::from_utf8_lossy(&bytes).trim().to_owned());
+        let editor = env::var("TIG_EDITOR")
+            .ok()
+            .or_else(|| env::var("GIT_EDITOR").ok())
+            .or(configured_editor)
+            .or_else(|| env::var("VISUAL").ok())
+            .or_else(|| env::var("EDITOR").ok())
+            .unwrap_or_else(|| "vi".into());
+        let mut argv = vec![
+            "sh".into(),
+            "-c".into(),
+            format!("{editor} \"$@\"").into(),
+            "tig-editor".into(),
+        ];
+        if line != 0 && self.config.bool_value("editor-line-number", true) {
+            argv.push(format!("+{line}").into());
+        }
+        let editor_path = if path.to_string_lossy().starts_with('-') {
+            PathBuf::from(".").join(path)
+        } else {
+            path
+        };
+        argv.push(editor_path.into_os_string());
+        self.pending_command = Some(tig_rs::commands::PreparedCommand {
+            argv,
+            silent: false,
+            confirm: false,
+            exit: false,
+            echo: false,
+            quick: true,
+        });
+        Ok(())
+    }
     fn action(&mut self, action: &str) -> Result<bool> {
         let action = action.strip_prefix(':').unwrap_or(action);
         if let Some(command) = action.strip_prefix("exec ").or_else(|| {
@@ -542,11 +645,13 @@ impl App {
                 _ => None,
             };
             self.select_context();
-            self.pending_command = Some(tig_rs::commands::prepare(
+            let (file, line) = self.edit_target().unwrap_or_else(|| (self.path.clone(), 0));
+            self.pending_command = Some(tig_rs::commands::prepare_with_context(
                 self.repo()?,
                 command,
                 &self.revision,
-                &self.path,
+                &file,
+                line,
                 selected_ref.as_deref(),
             )?);
             return Ok(true);
@@ -700,6 +805,32 @@ impl App {
             "scroll-left" => self.view.left = self.view.left.saturating_sub(8),
             "scroll-right" => self.view.left = self.view.left.saturating_add(8),
             "scroll-first-col" => self.view.left = 0,
+            "scroll-line-down" | "scroll-line-up" => {
+                let max_top = self.view.rows.len().saturating_sub(page as usize);
+                let next = if action == "scroll-line-down" {
+                    self.view.top.saturating_add(1).min(max_top)
+                } else {
+                    self.view.top.saturating_sub(1)
+                };
+                if next == self.view.top {
+                    self.message = format!(
+                        "Cannot scroll beyond the {} line",
+                        if action == "scroll-line-down" {
+                            "last"
+                        } else {
+                            "first"
+                        }
+                    );
+                } else {
+                    self.view.selected = self
+                        .view
+                        .selected
+                        .saturating_add_signed(if action == "scroll-line-down" { 1 } else { -1 })
+                        .min(self.view.rows.len().saturating_sub(1));
+                    self.view.top = next;
+                }
+            }
+            "edit" => self.edit()?,
             "find-next" => self.find(false),
             "find-prev" => self.find(true),
             "refresh" => {
@@ -855,9 +986,13 @@ impl App {
                 let mut screen = self.screen();
                 screen.pop();
                 fs::write(path, format!("{}\n", screen.join("\n")))?;
-            } else if let Some(pattern) = line.strip_prefix('/') {
-                self.search = pattern.into();
-                self.find(false);
+            } else if let Some(pattern) = line.strip_prefix('/').or_else(|| line.strip_prefix('?'))
+            {
+                let pattern = pattern.strip_suffix("<Enter>").unwrap_or(pattern);
+                if !pattern.is_empty() {
+                    self.search = pattern.into();
+                }
+                self.find(line.starts_with('?'));
             } else if let Some(n) = line.strip_prefix(":goto ") {
                 self.action(&format!("goto {n}"))?;
             } else {
@@ -914,6 +1049,286 @@ fn log_header_offset(line: &str) -> Option<usize> {
                     .chars()
                     .all(|c| matches!(c, ' ' | '*' | '|' | '/' | '\\')))
     })
+}
+
+fn diff_edit_target(rows: &[String], selected: usize) -> Option<(PathBuf, usize)> {
+    rows.get(selected)?;
+    let is_header = |line: &str| {
+        line.starts_with("diff --git ")
+            || line.starts_with("diff --cc ")
+            || line.starts_with("diff --combined ")
+    };
+    let stats_start = rows[..=selected]
+        .iter()
+        .rposition(|line| line == "---")
+        .map(|index| index + 1);
+    let stat = stats_start.is_some_and(|start| {
+        start <= selected
+            && rows[selected].contains(" | ")
+            && !rows[start..=selected].iter().any(|line| is_header(line))
+    });
+    let header = if stat {
+        let stats_start = stats_start?;
+        let stat_index = rows[stats_start..=selected]
+            .iter()
+            .filter(|line| line.contains(" | "))
+            .count()
+            .checked_sub(1)?;
+        let next_commit = rows[selected + 1..]
+            .iter()
+            .position(|line| line.starts_with("commit "))
+            .map_or(rows.len(), |index| selected + 1 + index);
+        rows[selected + 1..next_commit]
+            .iter()
+            .enumerate()
+            .filter(|(_, line)| is_header(line))
+            .nth(stat_index)
+            .map(|(index, _)| selected + 1 + index)?
+    } else {
+        let section = rows[..=selected]
+            .iter()
+            .rposition(|line| line.starts_with("commit "))
+            .unwrap_or(0);
+        rows[section..=selected]
+            .iter()
+            .rposition(|line| is_header(line))
+            .map(|index| section + index)?
+    };
+    let end = rows[header + 1..]
+        .iter()
+        .position(|line| is_header(line))
+        .map_or(rows.len(), |index| header + 1 + index);
+    let patch = &rows[header + 1..end];
+    let path = if let Some(file) = patch
+        .iter()
+        .find_map(|line| line.strip_prefix("rename to "))
+    {
+        git_patch_path(file)?
+    } else {
+        let file = patch.iter().find_map(|line| line.strip_prefix("+++ "))?;
+        if file == "/dev/null" {
+            return None;
+        }
+        let path = git_patch_path(file)?;
+        let old = &rows[header];
+        let prefix = if (old.starts_with("diff --git a/") || old.starts_with("diff --git \"a/"))
+            && path.starts_with("b/")
+        {
+            Some("b")
+        } else if (old.starts_with("diff --git i/") || old.starts_with("diff --git \"i/"))
+            && path.starts_with("w/")
+        {
+            Some("w")
+        } else if old
+            .strip_prefix("diff --cc ")
+            .or_else(|| old.strip_prefix("diff --combined "))
+            .and_then(git_patch_path)
+            .is_some_and(|name| path.strip_prefix("b").is_ok_and(|target| name == target))
+        {
+            Some("b")
+        } else {
+            None
+        };
+        if let Some(prefix) = prefix {
+            path.strip_prefix(prefix).ok()?.to_path_buf()
+        } else {
+            path
+        }
+    };
+    if stat {
+        return Some((path, 0));
+    }
+    if selected <= header || end == header + 1 {
+        return Some((path, 0));
+    }
+    let hunk = rows[header + 1..=selected.min(end - 1)]
+        .iter()
+        .rposition(|line| line.starts_with("@@"))
+        .map(|index| header + 1 + index);
+    let Some(hunk) = hunk else {
+        return Some((path, 0));
+    };
+    let start = rows[hunk]
+        .split_whitespace()
+        .find(|field| field.starts_with('+'))?
+        .trim_start_matches('+')
+        .split(',')
+        .next()?
+        .parse::<usize>()
+        .ok()?;
+    let preceding = rows
+        .get(hunk + 1..selected)
+        .unwrap_or(&[])
+        .iter()
+        .filter(|line| !line.starts_with('-') && !line.starts_with('\\'))
+        .count();
+    Some((path, start + preceding))
+}
+
+fn git_patch_path(raw: &str) -> Option<PathBuf> {
+    if !raw.starts_with('"') {
+        return Some(PathBuf::from(raw));
+    }
+    let quoted = raw.strip_prefix('"')?.strip_suffix('"')?.as_bytes();
+    let mut bytes = Vec::with_capacity(quoted.len());
+    let mut i = 0;
+    while i < quoted.len() {
+        if quoted[i] == b'\\' {
+            i += 1;
+            let escaped = *quoted.get(i)?;
+            match escaped {
+                b'\\' | b'"' => bytes.push(escaped),
+                b'a' => bytes.push(7),
+                b'b' => bytes.push(8),
+                b'f' => bytes.push(12),
+                b't' => bytes.push(b'\t'),
+                b'n' => bytes.push(b'\n'),
+                b'r' => bytes.push(b'\r'),
+                b'v' => bytes.push(11),
+                b'0'..=b'7' => {
+                    let octal = quoted.get(i..i + 3)?;
+                    if !octal.iter().all(|byte| (b'0'..=b'7').contains(byte)) {
+                        return None;
+                    }
+                    let value = (u16::from(octal[0] - b'0') * 64)
+                        + (u16::from(octal[1] - b'0') * 8)
+                        + u16::from(octal[2] - b'0');
+                    bytes.push(u8::try_from(value).ok()?);
+                    i += 2;
+                }
+                _ => return None,
+            }
+        } else {
+            bytes.push(quoted[i]);
+        }
+        i += 1;
+    }
+    #[cfg(unix)]
+    {
+        use std::os::unix::ffi::OsStringExt;
+        Some(PathBuf::from(std::ffi::OsString::from_vec(bytes)))
+    }
+    #[cfg(not(unix))]
+    {
+        Some(PathBuf::from(String::from_utf8(bytes).ok()?))
+    }
+}
+
+#[cfg(test)]
+mod editor_tests {
+    use super::{diff_edit_target, git_patch_path};
+    use std::path::PathBuf;
+
+    #[test]
+    fn maps_stat_and_patch_rows_to_file_and_new_line() {
+        let rows: Vec<String> = [
+            "commit abc",
+            "---",
+            " a | 2 +-",
+            " b | 1 +",
+            "diff --git a/a b/a",
+            "--- a/a",
+            "+++ b/a",
+            "@@ -9,2 +9,2 @@",
+            " unchanged",
+            "-old",
+            "+new",
+            "diff --git a/b b/b",
+            "--- a/b",
+            "+++ b/b",
+            "@@ -1 +1 @@",
+            "+text",
+        ]
+        .into_iter()
+        .map(str::to_owned)
+        .collect();
+        assert_eq!(diff_edit_target(&rows, 2), Some((PathBuf::from("a"), 0)));
+        assert_eq!(diff_edit_target(&rows, 3), Some((PathBuf::from("b"), 0)));
+        assert_eq!(diff_edit_target(&rows, 4), Some((PathBuf::from("a"), 0)));
+        assert_eq!(diff_edit_target(&rows, 7), Some((PathBuf::from("a"), 9)));
+        assert_eq!(diff_edit_target(&rows, 10), Some((PathBuf::from("a"), 10)));
+        assert_eq!(diff_edit_target(&rows, 15), Some((PathBuf::from("b"), 1)));
+    }
+
+    #[test]
+    fn preserves_literal_prefixes_and_ignores_commit_body() {
+        let rows: Vec<String> = [
+            "commit abc",
+            "foo | bar",
+            "---",
+            " w/foo | 1 +",
+            " other | 1 +",
+            "diff --git w/foo w/foo",
+            "--- w/foo",
+            "+++ w/foo",
+            "@@ -1 +1,2 @@",
+            "+new",
+            "diff --git other other",
+            "--- other",
+            "+++ other",
+        ]
+        .into_iter()
+        .map(str::to_owned)
+        .collect();
+        assert_eq!(diff_edit_target(&rows, 1), None);
+        assert_eq!(
+            diff_edit_target(&rows, 3),
+            Some((PathBuf::from("w/foo"), 0))
+        );
+        assert_eq!(
+            diff_edit_target(&rows, 7),
+            Some((PathBuf::from("w/foo"), 0))
+        );
+        assert_eq!(
+            diff_edit_target(&rows, 4),
+            Some((PathBuf::from("other"), 0))
+        );
+
+        let mut following = rows.clone();
+        following.extend(
+            [
+                "commit def",
+                "---",
+                " next | 1 +",
+                "diff --git a/next b/next",
+                "+++ b/next",
+            ]
+            .into_iter()
+            .map(str::to_owned),
+        );
+        assert_eq!(
+            diff_edit_target(&following, 15),
+            Some((PathBuf::from("next"), 0))
+        );
+        assert_eq!(diff_edit_target(&following, 13), None);
+
+        let rename: Vec<String> = [
+            "diff --git a/old b/new",
+            "similarity index 100%",
+            "rename from old",
+            "rename to new",
+        ]
+        .into_iter()
+        .map(str::to_owned)
+        .collect();
+        assert_eq!(
+            diff_edit_target(&rename, 3),
+            Some((PathBuf::from("new"), 0))
+        );
+        let combined: Vec<String> = ["diff --cc path", "--- a/path", "+++ b/path"]
+            .into_iter()
+            .map(str::to_owned)
+            .collect();
+        assert_eq!(
+            diff_edit_target(&combined, 2),
+            Some((PathBuf::from("path"), 0))
+        );
+        assert_eq!(
+            git_patch_path("\"b/name\\twithtab\""),
+            Some(PathBuf::from("b/name\twithtab"))
+        );
+        assert_eq!(git_patch_path("\"bad\\777\""), None);
+    }
 }
 
 fn pane_screen(view: &mut View, width: usize, visible: usize) -> Vec<String> {
@@ -1331,7 +1746,9 @@ fn run() -> Result<()> {
             if let Some(s) =
                 terminal.prompt(&mut app, if action == "search" { "/" } else { "?" })?
             {
-                app.search = s;
+                if !s.is_empty() {
+                    app.search = s;
+                }
                 app.find(action == "search-back");
             }
         } else if action == "prompt" {

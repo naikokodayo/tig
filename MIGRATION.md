@@ -39,6 +39,9 @@ License: GPL-2.0-or-later; original history, COPYING and copyright notices retai
   state and terminal cleanup, split panes, parent/child focus/navigation,
   branch/tracking status headers and status position restoration.
   It does not call the original Tig binary.
+- Search now uses the maintained `regex` crate for pattern matching, case
+  options and optional wraparound. This is not yet a POSIX ERE compatibility
+  claim; syntax and which hidden fields are searchable still need comparison.
 
 First-party Rust uses `forbid(unsafe_code)` through the crate and Cargo lint.
 This does **not** mean dependencies, the OS or Git are unsafe-free. Crossterm,
@@ -46,6 +49,23 @@ signal-hook and their platform dependencies encapsulate system interactions.
 The terminal implementation is now Crossterm, rather than the feasibility
 report's initial proposal to retain curses; this avoids handwritten unsafe FFI
 but creates a larger terminal-compatibility verification obligation.
+
+## Reuse decisions
+
+- [rust-lang/regex](https://github.com/rust-lang/regex) is reused for search
+  instead of writing a regex engine. Version 1.13.1 supports Rust 1.81 and is
+  MIT/Apache-2.0 licensed. Original Tig uses POSIX extended expressions, so
+  upstream search tests remain the compatibility gate.
+- [GitUI](https://github.com/gitui-org/gitui) and
+  [gitu](https://github.com/altsem/gitu) are useful Rust UI references, but
+  their navigation and Git models are not Tig-compatible. GitUI still lists
+  commit graph structure on its roadmap and requires a newer compiler; a
+  wholesale fork would discard already tested Tig graph behavior.
+- [gitoxide](https://github.com/GitoxideLabs/gitoxide) offers reusable pure
+  Rust Git crates. Its current `gix` MSRV exceeds this project's Rust 1.81
+  floor, and [blame status](https://github.com/GitoxideLabs/gitoxide/blob/main/crate-status.md)
+  is incomplete. We will evaluate individual crates against a specific failing
+  Tig behavior instead of replacing the existing Git subprocess backend at once.
 
 ## Evidence and verification
 
@@ -93,9 +113,9 @@ The following work is required before calling the migration complete:
    context, including selected-commit browsing variables. Unsupported actions fail explicitly instead of executing
    a different operation. Whole-file and ordinary text hunk/line staging are
    implemented; individual-line added/deleted-file patches are rejected.
-4. Complete configuration effects, colors, columns, regex search,
-   key sequences, mouse behavior and TIG_SCRIPT/TRACE semantics. Current search
-   is literal, script support is a subset, and screen snapshots differ.
+4. Complete configuration effects, colors, columns, search parity,
+   key sequences, mouse behavior and TIG_SCRIPT/TRACE semantics. Search and
+   script support remain subsets, and screen snapshots differ.
 5. Full CLI semantics and path filtering. Non-UTF-8 command-line arguments are
    rejected with a diagnostic (tree/status model paths are lossless). Commands
    such as `show` do not yet honor every upstream option; no equivalence claim.
@@ -159,3 +179,22 @@ assertions failed**, 150 tests and 3 skips. See
 helper route and predates the final log-header parser tightening. The final
 binary has a regression test for indented commit-message text plus the focused
 application/PTY checks. Do not infer a completion percentage from these counts.
+
+## Fourth checkpoint verification
+
+Search now uses `regex`, including Tig's case and wrap options and scripted
+`/pattern<Enter>` input. The unchanged original `test/main/search-test` passes
+all 8 assertions. Editor invocation, `%(lineno)` command context, scroll-line
+actions and patch-row file/line selection are implemented with argv-safe file
+paths. Three original editor scripts now pass 18 of 35 assertions; the remaining
+screens still expose diff/stage and synthetic main-state differences.
+
+The fourth full upstream run attempted all 154 recipes and reported **345 of
+610 assertions failed**, 150 tests, 3 skips and 1 recipe with no result receipt.
+See `migration/evidence/rust-upstream-fourth.json` and its raw log. Different
+assertion totals reflect early exits, not a completion percentage. This remains
+a mixed route with the C graph helper. This full run predates a final guard
+against editing the prior commit's file from a later commit header; that guard
+has a focused unit regression. 36 Rust unit tests and 103 real PTY checks pass
+on the rebuilt binary. Rust full parity and end-to-end benchmarks remain gated
+on the remaining failures.
