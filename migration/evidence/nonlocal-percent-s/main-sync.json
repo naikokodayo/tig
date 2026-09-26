@@ -1,0 +1,90 @@
+{
+  "source_commit": "e2262168ff87754536fb2276ce1de56769c01c44",
+  "main": "9a691ee1",
+  "reviewed_date_head": "49bad93d",
+  "resolution": "MIGRATION.md append-only conflict: retain both sections; ROADMAP and incoming Rust exactly as main; date source and tests unchanged",
+  "checks": [
+    {
+      "name": "fmt",
+      "command": [
+        "rustup",
+        "run",
+        "1.81.0",
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "summary": []
+    },
+    {
+      "name": "test",
+      "command": [
+        "rustup",
+        "run",
+        "1.81.0",
+        "cargo",
+        "test",
+        "--locked",
+        "--all-targets"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.94s",
+        "test result: ok. 52 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.58s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.34s"
+      ]
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "rustup",
+        "run",
+        "1.81.0",
+        "cargo",
+        "clippy",
+        "--locked",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.17s"
+      ]
+    },
+    {
+      "name": "release",
+      "command": [
+        "rustup",
+        "run",
+        "1.81.0",
+        "cargo",
+        "build",
+        "--locked",
+        "--release"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "    Finished `release` profile [optimized] target(s) in 23.13s"
+      ]
+    },
+    {
+      "name": "date",
+      "command": [
+        "python3",
+        "rust/tests/date-compatibility.py"
+      ],
+      "exit_code": 0,
+      "summary": [
+        "38 date compatibility checks passed"
+      ]
+    }
+  ],
+  "binary_sha256": "d51c8c30889592e6529a0e9f3e0ea4c1da8d8773a1e9d01ca13beeb66838cccc",
+  "date_source_sha256": "1efe556b4746b2c220949673a40add71ce8bda44aaa68ae0b04f49d9c4f371c7"
+}

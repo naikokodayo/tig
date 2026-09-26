@@ -1,0 +1,75 @@
+{
+  "changes": "Reject wall-time years outside 1..9999; two rejection checks, AD 1 tested against host C in differential",
+  "checks": [
+    {
+      "name": "fmt",
+      "command": [
+        "rustup",
+        "run",
+        "1.81.0",
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "test",
+      "command": [
+        "rustup",
+        "run",
+        "1.81.0",
+        "cargo",
+        "test",
+        "--locked",
+        "--all-targets"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "rustup",
+        "run",
+        "1.81.0",
+        "cargo",
+        "clippy",
+        "--locked",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "release",
+      "command": [
+        "rustup",
+        "run",
+        "1.81.0",
+        "cargo",
+        "build",
+        "--locked",
+        "--release"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "date",
+      "command": [
+        "python3",
+        "rust/tests/date-compatibility.py"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "binary_sha256": "29e381ef895ac2841028f1381f475e6a849f33914f77c39650d1c14ea98f23db",
+  "source_sha256": {
+    "rust/date.rs": "1efe556b4746b2c220949673a40add71ce8bda44aaa68ae0b04f49d9c4f371c7",
+    "rust/tests/date-compatibility.py": "730fb29be21cd0eab61e97d7789116505227d4d58fe70640af4d9acff2c205fa",
+    "rust/tests/date-percent-s.py": "3a837e0703587ba8f9909d630d700bd17f14bfc34b1e1fe105201e7600df6c4c"
+  }
+}

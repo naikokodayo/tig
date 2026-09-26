@@ -1,0 +1,136 @@
+[
+  {
+    "name": "fmt",
+    "command": [
+      "rustup",
+      "run",
+      "1.81.0",
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "test",
+    "command": [
+      "rustup",
+      "run",
+      "1.81.0",
+      "cargo",
+      "test",
+      "--locked",
+      "--all-targets"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "rustup",
+      "run",
+      "1.81.0",
+      "cargo",
+      "clippy",
+      "--locked",
+      "--all-targets",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "release",
+    "command": [
+      "rustup",
+      "run",
+      "1.81.0",
+      "cargo",
+      "build",
+      "--locked",
+      "--release"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "c-build",
+    "command": [
+      "make",
+      "-j4"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "date",
+    "command": [
+      "python3",
+      "rust/tests/date-compatibility.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "percent-s",
+    "command": [
+      "python3",
+      "rust/tests/date-percent-s.py",
+      "--output",
+      "migration/evidence/nonlocal-percent-s/differential.json"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "pty",
+    "command": [
+      "python3",
+      "rust/tests/terminal-smoke.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "harness",
+    "command": [
+      "python3",
+      "rust/tests/upstream-suite.py",
+      "--self-test"
+    ],
+    "exit_code": 0
+  },
+  {
+    "name": "upstream",
+    "command": [
+      "python3",
+      "rust/tests/upstream-suite.py",
+      "test/main/date-test",
+      "test/main/default-test",
+      "test/main/pretty-raw-test",
+      "test/main/show-changes-after-rename-test",
+      "test/main/show-changes-test",
+      "test/main/update-unstaged-changes-test",
+      "test/main/stdin-test",
+      "test/help/default-test",
+      "--output",
+      "migration/evidence/nonlocal-percent-s/upstream.json"
+    ],
+    "exit_code": 1
+  },
+  {
+    "name": "upstream-focused",
+    "command": [
+      "python3",
+      "rust/tests/upstream-suite.py",
+      "test/main/date-test",
+      "test/main/default-test",
+      "test/main/pretty-raw-test",
+      "test/main/show-changes-after-rename-test",
+      "test/main/show-changes-test",
+      "test/main/update-unstaged-changes-test",
+      "test/help/default-test"
+    ],
+    "exit_code": 0,
+    "receipt": "upstream-focused.json",
+    "scope": "Related scripts only; expanded upstream.json remains BLOCKED"
+  }
+]
