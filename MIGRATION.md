@@ -493,3 +493,16 @@ also pass. See [`date-percent-s-checks.json`](migration/evidence/date-percent-s-
 [`date-percent-s-harness-selftest.json`](migration/evidence/date-percent-s-harness-selftest.json).
 The full suite was not rerun; earlier broader receipts remain historical.
 Original C sources and original tests are unchanged by this date slice.
+
+### Full strict C/Rust paired snapshot after date integration
+
+The strict runner attempted all 154 unchanged original scripts against both
+C and Rust-only application/graph binaries at source `e1cf5eeb96166b4971df2f84a2c93127edbd1549`.
+C passed 152 scripts, failed none, and skipped two. Rust passed 82, failed 69,
+and skipped three. Rust reached 416 passing and 139 failing real assertions;
+17 assertions reached by C were not reached by Rust. Another 34 failure
+records concern setup or runtime behavior and are not assertion failures.
+The [paired receipt](migration/evidence/upstream-rust-only-after-date.json)
+includes binary hashes, raw transcripts, and per-script outcomes. The parity
+gate remains **OPEN**. This source snapshot predates the later stage,
+save-options, and refs merges; these numbers are not a result for current main.
