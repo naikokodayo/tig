@@ -1,0 +1,126 @@
+{
+  "scope": "Ten paired C/Rust probes and two Rust quoted-tab regressions; replacement Enter preserves C semantics. C quoted-tab tracing stays in diff and is not a parity pass.",
+  "source_commit": "736b925ec2a8146ac0f52e2afe6e506f972ddde9",
+  "checks": [
+    {
+      "name": "c: replacement Enter round trip",
+      "binary": "src/tig",
+      "binary_sha256": "885b62190fbd4ace86c499fca0a722a8fb2404e482a66871c2553de6c67a341e",
+      "expected_revision": "0fbbc4b395d366c2bad54bf5e5cc2d193720836f",
+      "exit_code": 0,
+      "timed_out": false,
+      "passed": true,
+      "screen": "  1| first\n  2| old\n  3| last\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blame] 0fbbc4b395d366c2bad54bf5e5cc2d193720836f:file - line 2 of 3                                                                                                                                 100%\n"
+    },
+    {
+      "name": "rust: replacement Enter round trip",
+      "binary": "target/release/tig",
+      "binary_sha256": "b420f54b468596b826e1684fb0d6f820b90bc9a2c0303a4c27617ad0ab048c97",
+      "expected_revision": "0fbbc4b395d366c2bad54bf5e5cc2d193720836f",
+      "exit_code": 0,
+      "timed_out": false,
+      "passed": true,
+      "screen": "  1| first\n  2| new\n  3| last\n\n\n\n\n\n\n[blame] 18445daaa8f316a04f4888b9079560a62aaca5e4:file - line 2 of 3                                                                                                                                 100%\n  1| first\n  2| old\n  3| last\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[blame] 0fbbc4b395d366c2bad54bf5e5cc2d193720836f:file - line 2 of 3                                                                                                                                 100%\n"
+    },
+    {
+      "name": "c: deleted line in 'deletion'",
+      "binary": "src/tig",
+      "binary_sha256": "885b62190fbd4ace86c499fca0a722a8fb2404e482a66871c2553de6c67a341e",
+      "expected_revision": "152c925718e574edbf4b7d3ef9a3029276409bb3",
+      "exit_code": 0,
+      "timed_out": false,
+      "passed": true,
+      "screen": "  1| first\n  2| -- deleted text\n  3| last\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blame] 152c925718e574edbf4b7d3ef9a3029276409bb3:deletion - line 2 of 3                                                                                                                             100%\n"
+    },
+    {
+      "name": "c: added line in 'deletion'",
+      "binary": "src/tig",
+      "binary_sha256": "885b62190fbd4ace86c499fca0a722a8fb2404e482a66871c2553de6c67a341e",
+      "expected_revision": "5597b5c8d31286e55449cfa084e0655fa961119a",
+      "exit_code": 0,
+      "timed_out": false,
+      "passed": true,
+      "screen": "  1| first\n  2| new\n  3| last\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blame] 5597b5c8d31286e55449cfa084e0655fa961119a:deletion - line 2 of 3                                                                                                                             100%\n"
+    },
+    {
+      "name": "rust: deleted line in 'deletion'",
+      "binary": "target/release/tig",
+      "binary_sha256": "b420f54b468596b826e1684fb0d6f820b90bc9a2c0303a4c27617ad0ab048c97",
+      "expected_revision": "152c925718e574edbf4b7d3ef9a3029276409bb3",
+      "exit_code": 0,
+      "timed_out": false,
+      "passed": true,
+      "screen": "  1| first\n  2| -- deleted text\n  3| last\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[blame] 152c925718e574edbf4b7d3ef9a3029276409bb3:deletion - line 2 of 3                                                                                                                             100%\n"
+    },
+    {
+      "name": "rust: added line in 'deletion'",
+      "binary": "target/release/tig",
+      "binary_sha256": "b420f54b468596b826e1684fb0d6f820b90bc9a2c0303a4c27617ad0ab048c97",
+      "expected_revision": "5597b5c8d31286e55449cfa084e0655fa961119a",
+      "exit_code": 0,
+      "timed_out": false,
+      "passed": true,
+      "screen": "  1| first\n  2| new\n  3| last\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[blame] 5597b5c8d31286e55449cfa084e0655fa961119a:deletion - line 2 of 3                                                                                                                             100%\n"
+    },
+    {
+      "name": "c: deleted line in 'space name'",
+      "binary": "src/tig",
+      "binary_sha256": "885b62190fbd4ace86c499fca0a722a8fb2404e482a66871c2553de6c67a341e",
+      "expected_revision": "ebb6dc844546f16d2eb9648d994e6552f1b7af47",
+      "exit_code": 0,
+      "timed_out": false,
+      "passed": true,
+      "screen": "  1| first\n  2| a\n  3| last\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blame] ebb6dc844546f16d2eb9648d994e6552f1b7af47:space name - line 2 of 3                                                                                                                           100%\n"
+    },
+    {
+      "name": "c: added line in 'space name'",
+      "binary": "src/tig",
+      "binary_sha256": "885b62190fbd4ace86c499fca0a722a8fb2404e482a66871c2553de6c67a341e",
+      "expected_revision": "e134905c6d3aea5bcaa5b1c8309c4fcfc72d206c",
+      "exit_code": 0,
+      "timed_out": false,
+      "passed": true,
+      "screen": "  1| first\n  2| new\n  3| last\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blame] e134905c6d3aea5bcaa5b1c8309c4fcfc72d206c:space name - line 2 of 3                                                                                                                           100%\n"
+    },
+    {
+      "name": "rust: deleted line in 'space name'",
+      "binary": "target/release/tig",
+      "binary_sha256": "b420f54b468596b826e1684fb0d6f820b90bc9a2c0303a4c27617ad0ab048c97",
+      "expected_revision": "ebb6dc844546f16d2eb9648d994e6552f1b7af47",
+      "exit_code": 0,
+      "timed_out": false,
+      "passed": true,
+      "screen": "  1| first\n  2| a\n  3| last\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[blame] ebb6dc844546f16d2eb9648d994e6552f1b7af47:space name - line 2 of 3                                                                                                                           100%\n"
+    },
+    {
+      "name": "rust: added line in 'space name'",
+      "binary": "target/release/tig",
+      "binary_sha256": "b420f54b468596b826e1684fb0d6f820b90bc9a2c0303a4c27617ad0ab048c97",
+      "expected_revision": "e134905c6d3aea5bcaa5b1c8309c4fcfc72d206c",
+      "exit_code": 0,
+      "timed_out": false,
+      "passed": true,
+      "screen": "  1| first\n  2| new\n  3| last\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[blame] e134905c6d3aea5bcaa5b1c8309c4fcfc72d206c:space name - line 2 of 3                                                                                                                           100%\n"
+    },
+    {
+      "name": "rust: deleted line in 'tab\\tname'",
+      "binary": "target/release/tig",
+      "binary_sha256": "b420f54b468596b826e1684fb0d6f820b90bc9a2c0303a4c27617ad0ab048c97",
+      "expected_revision": "7820d1db67b881f87b6318e3fd57c9fa98f67b4c",
+      "exit_code": 0,
+      "timed_out": false,
+      "passed": true,
+      "screen": "  1| first\n  2| a\n  3| last\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[blame] 7820d1db67b881f87b6318e3fd57c9fa98f67b4c:tab    name - line 2 of 3                                                                                                                          100%\n"
+    },
+    {
+      "name": "rust: added line in 'tab\\tname'",
+      "binary": "target/release/tig",
+      "binary_sha256": "b420f54b468596b826e1684fb0d6f820b90bc9a2c0303a4c27617ad0ab048c97",
+      "expected_revision": "802c13f1e875168183ae3a8770b94b004fe4ad3d",
+      "exit_code": 0,
+      "timed_out": false,
+      "passed": true,
+      "screen": "  1| first\n  2| new\n  3| last\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[blame] 802c13f1e875168183ae3a8770b94b004fe4ad3d:tab    name - line 2 of 3                                                                                                                          100%\n"
+    }
+  ]
+}

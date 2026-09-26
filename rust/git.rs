@@ -431,10 +431,11 @@ impl Repository {
         revision: &str,
         context: usize,
         word_diff: bool,
+        file: Option<&Path>,
         width: usize,
     ) -> Result<String> {
         let oid = self.revision(revision)?;
-        Ok(text(&self.command([
+        let mut args: Vec<OsString> = [
             "show",
             "--no-ext-diff",
             "--no-textconv",
@@ -450,7 +451,15 @@ impl Repository {
             },
             &oid,
             "--",
-        ])?))
+        ]
+        .into_iter()
+        .map(OsString::from)
+        .collect();
+        if let Some(file) = file {
+            valid_path(file)?;
+            args.push(file.into());
+        }
+        Ok(text(&self.command(args)?))
     }
     pub fn diff(&self, staged: bool, file: Option<&Path>) -> Result<String> {
         Ok(text(&self.diff_bytes(staged, file)?))
@@ -697,11 +706,19 @@ impl Repository {
         }
         self.command(["cat-file", "blob", oid])
     }
-    pub fn blame(&self, revision: Option<&str>, file: &Path) -> Result<Vec<BlameLine>> {
+    pub fn blame(
+        &self,
+        revision: Option<&str>,
+        file: &Path,
+        lower_bound: Option<&str>,
+    ) -> Result<Vec<BlameLine>> {
         valid_path(file)?;
         let mut args: Vec<OsString> = vec!["blame".into(), "--line-porcelain".into()];
         if let Some(revision) = revision {
             args.push(self.revision(revision)?.into());
+        }
+        if let Some(lower_bound) = lower_bound {
+            args.push(format!("^{}", self.revision(lower_bound)?).into());
         }
         args.push("--".into());
         args.push(file.into());
@@ -1062,6 +1079,19 @@ pub fn parse_blame(bytes: &[u8]) -> Result<Vec<BlameLine>> {
                     .map_err(|_| GitError("Invalid committer time".into()))?;
             } else if let Some(value) = row.strip_prefix("committer-tz ") {
                 line.committer_tz = value.into();
+            } else if let Some(value) = raw.strip_prefix(b"previous ") {
+                let split = value
+                    .iter()
+                    .position(|b| *b == b' ')
+                    .ok_or_else(|| GitError("Malformed blame previous record".into()))?;
+                let oid = std::str::from_utf8(&value[..split])
+                    .map_err(|_| GitError("Invalid blame parent ID".into()))?;
+                if !matches!(oid.len(), 40 | 64) || !oid.bytes().all(|b| b.is_ascii_hexdigit()) {
+                    return Err(GitError("Invalid blame parent ID".into()));
+                }
+                let filename = parse_git_path(&value[split + 1..])?;
+                valid_path(&filename)?;
+                line.previous = Some((oid.into(), filename));
             } else if let Some(value) = raw.strip_prefix(b"filename ") {
                 line.filename = parse_git_path(value)?;
             }
@@ -1093,6 +1123,7 @@ pub fn parse_blame(bytes: &[u8]) -> Result<Vec<BlameLine>> {
                 committer_time: 0,
                 committer_tz: String::new(),
                 filename: PathBuf::new(),
+                previous: None,
                 summary: String::new(),
                 text: String::new(),
             });
@@ -1184,7 +1215,7 @@ mod tests {
     #[test]
     fn blame_porcelain_keeps_dates_and_historical_path() {
         let oid = "a".repeat(40);
-        let raw = format!("{oid} 2 1 1\nauthor A\nauthor-mail <a@example.test>\nauthor-time 0\nauthor-tz -0200\ncommitter C\ncommitter-mail <c@example.test>\ncommitter-time 3600\ncommitter-tz +0100\nsummary Subject\nfilename \"old\\tname\"\n\tcontent\n");
+        let raw = format!("{oid} 2 1 1\nauthor A\nauthor-mail <a@example.test>\nauthor-time 0\nauthor-tz -0200\ncommitter C\ncommitter-mail <c@example.test>\ncommitter-time 3600\ncommitter-tz +0100\nsummary Subject\nprevious {oid} \"parent\\tname\"\nfilename \"old\\tname\"\n\tcontent\n");
         let lines = parse_blame(raw.as_bytes()).unwrap();
         assert_eq!(lines[0].author_email, "a@example.test");
         assert_eq!(lines[0].author_time, 0);
@@ -1193,6 +1224,20 @@ mod tests {
         assert_eq!(lines[0].committer_time, 3600);
         assert_eq!(lines[0].committer_tz, "+0100");
         assert_eq!(lines[0].filename, Path::new("old\tname"));
+        assert_eq!(
+            lines[0].previous,
+            Some((oid.clone(), PathBuf::from("parent\tname")))
+        );
+        for previous in [
+            "not-an-id file".to_owned(),
+            format!("{oid} ../outside"),
+            format!("{oid} "),
+        ] {
+            assert!(parse_blame(
+                format!("{oid} 1 1\nprevious {previous}\nfilename file\n\tcontent\n").as_bytes()
+            )
+            .is_err());
+        }
         assert!(parse_git_path(b"\"bad\\777\"").is_err());
         assert!(parse_blame(format!("{oid} 1 1\n\tmissing path\n").as_bytes()).is_err());
     }
@@ -1438,7 +1483,7 @@ mod tests {
         repo.command(["commit", "-qam", "change"]).unwrap();
         for context in [0, 3, 4, 5, 8] {
             for word in [false, true] {
-                let show = repo.show("HEAD", context, word, 80).unwrap();
+                let show = repo.show("HEAD", context, word, None, 80).unwrap();
                 let span = if context == 0 {
                     "10".into()
                 } else {
@@ -1507,10 +1552,15 @@ mod tests {
         assert!(!repo.refs().unwrap().is_empty());
         let tree = repo.tree("HEAD", Path::new("")).unwrap();
         assert_eq!(repo.blob(&tree[0].oid).unwrap(), b"first\nsecond\n");
-        let blame = repo.blame(Some("HEAD"), Path::new(":(glob)*")).unwrap();
+        let blame = repo
+            .blame(Some("HEAD"), Path::new(":(glob)*"), None)
+            .unwrap();
         assert_eq!(blame.len(), 2);
         assert_eq!(blame[1].line, 2);
-        assert!(repo.show("HEAD", 3, false, 80).unwrap().contains("initial"));
+        assert!(repo
+            .show("HEAD", 3, false, None, 80)
+            .unwrap()
+            .contains("initial"));
         fs::rename(f.0.join(":(glob)*"), f.0.join("renamed")).unwrap();
         repo.command(["add", "--all", "--", ":(glob)*", "renamed"])
             .unwrap();
@@ -1532,7 +1582,7 @@ mod tests {
                 original_path: None
             })
             .is_err());
-        assert!(repo.show("--output=oops", 3, false, 80).is_err());
+        assert!(repo.show("--output=oops", 3, false, None, 80).is_err());
         assert!(repo.history(&["--format=oops".into()], 1).is_err());
     }
 }
