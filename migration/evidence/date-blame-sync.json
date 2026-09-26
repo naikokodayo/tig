@@ -1,0 +1,149 @@
+{
+  "merged_main": "34684f799a5b44e7074aa4967c53c10608119f10",
+  "merge_commit": "24c9312e90b67315d10b22c5064ff6e94307f9b8",
+  "binary_sha256": "f8868b628b2c6fd2452ec57cf916aaebc1c4919a89c62a15a44df362e2bbaa05",
+  "tests": [
+    {
+      "script": "test/main/date-test",
+      "passed": 8,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/pretty-raw-test",
+      "passed": 1,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/default-test",
+      "passed": 6,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/show-changes-test",
+      "passed": 9,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/show-changes-after-rename-test",
+      "passed": 1,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/update-unstaged-changes-test",
+      "passed": 2,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/diff/diff-context-test",
+      "passed": 10,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/diff/diff-wdiff-context-test",
+      "passed": 10,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/tigrc/source-test",
+      "passed": 10,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/tigrc/parse-test",
+      "passed": 2,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/tigrc/env-vars-test",
+      "passed": 2,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/tigrc/xdg-config-home-test",
+      "passed": 8,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/blame/blob-blame-test",
+      "passed": 0,
+      "failed": 1,
+      "exit_code": 0
+    },
+    {
+      "script": "test/blame/default-test",
+      "passed": 1,
+      "failed": 4,
+      "exit_code": 0
+    },
+    {
+      "script": "test/blame/initial-diff-test",
+      "passed": 1,
+      "failed": 2,
+      "exit_code": 0
+    },
+    {
+      "script": "test/blame/navigation-parent-test",
+      "passed": 0,
+      "failed": 2,
+      "exit_code": 0
+    },
+    {
+      "script": "test/blame/revargs-test",
+      "passed": 0,
+      "failed": 3,
+      "exit_code": 0
+    },
+    {
+      "script": "test/blame/start-on-line-test",
+      "passed": 1,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/blame/stash-test",
+      "passed": 0,
+      "failed": 4,
+      "exit_code": 0
+    },
+    {
+      "script": "test/tigrc/quote-test",
+      "passed": 1,
+      "failed": 6,
+      "exit_code": 0
+    }
+  ],
+  "tested_source_commit": "fa5c822710054036d487a7ba3eeb70a7b854c092",
+  "environment": "macOS arm64; Rust 1.81.0",
+  "verification": {
+    "fmt": true,
+    "unit_tests_passed": 67,
+    "unit_tests_failed": 0,
+    "clippy_warnings_denied": true,
+    "release_build": true,
+    "date_subprocess_checks_passed": 20,
+    "date_subprocess_checks_skipped": 0,
+    "terminal_checks_passed": 108
+  },
+  "integration": "Preserved raw-history and Git-path parsers; blame reuses validated Chrono timestamp/offset conversion with its original 0..9999 year limit. Epoch-zero display regression retained and covered through blame. Offset overflow checks prevent out-of-range local dates.",
+  "original_records": {
+    "OK": 73,
+    "FAIL": 22,
+    "recipes": 20,
+    "note": "FAIL records include process errors, not only screen assertions. Twelve main/diff/config scripts pass 69/69. Blame remains 3 OK / 16 FAIL as reported by merged PR #4. Quote remains 1 OK / 6 FAIL; exact receipt matches merged PR #2."
+  },
+  "full_suite_rerun": false,
+  "original_tests_unchanged": true,
+  "performance_limit": "One native date process per local/locale rendered value, including blame lines and repeated redraws; no caching/batching or large-history performance claim."
+}

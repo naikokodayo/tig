@@ -22,3 +22,4 @@ jobs:
         run: |
           cargo +1.81.0 build --locked --release
           python3 rust/tests/terminal-smoke.py
+          python3 rust/tests/date-compatibility.py
