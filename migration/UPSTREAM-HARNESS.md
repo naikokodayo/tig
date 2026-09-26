@@ -152,3 +152,9 @@ all **64 Rust unit tests** (46 library + 18 application), Clippy with warnings
 denied, and the release build pass. No original assertion or harness library
 was edited. All substantive commits made after the attribution instruction
 use the requested Codex author and retain the user's committer identity.
+
+Finally synchronized documentation-only main **34684f79**. The historical
+ninth/tenth/eleventh mixed-helper JSON and logs are untouched. The new runner
+supersedes their *routing and verdict method* for future checkpoints; the
+fixed-version numbers above do not replace a newer implementation's full
+count. No full-suite run on post-PR #4 main is claimed here.
