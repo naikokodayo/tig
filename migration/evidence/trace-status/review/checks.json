@@ -1,0 +1,50 @@
+{
+  "source_commit": "b21df5669259b90b6f785273c42117678f36b357",
+  "checks": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--check"
+      ],
+      "log": "fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked"
+      ],
+      "log": "unit.log",
+      "sha256": "04c49417b4f7dd85ef9eb2f8492bd3496c1dfffef4a1dbfd1ebbf04208dd3cae",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "log": "clippy.log",
+      "sha256": "6fe03ad4a1a8192498d251849c0d1c9c93da3c46e7485a1ad29b8e7493ef6730",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "rust/tests/status-filter.py",
+        "--output",
+        "migration/evidence/trace-status/review/status-filter.json"
+      ],
+      "log": "status-filter.log",
+      "sha256": "87f607c475583f9dcfa5776440bfe32b5b9ad028ff9d821eaa33d860ccfe7040",
+      "exit_code": 0
+    }
+  ]
+}

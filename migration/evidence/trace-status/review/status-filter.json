@@ -1,0 +1,196 @@
+{
+  "source_commit": "b21df5669259b90b6f785273c42117678f36b357",
+  "scope": "Real Git index/worktree boundary checks, not original suite receipts",
+  "checks": [
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-trace-status/src/tig",
+      "binary_sha256": "885b62190fbd4ace86c499fca0a722a8fb2404e482a66871c2553de6c67a341e",
+      "case": "stage",
+      "exit_code": 0,
+      "timed_out": false,
+      "cached_paths": [
+        "sub/file",
+        "sub/more space"
+      ],
+      "expected_cached_paths": [
+        "sub/file",
+        "sub/more space"
+      ],
+      "outside_index_preserved": true,
+      "worktree_preserved": true,
+      "passed": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-trace-status/src/tig",
+      "binary_sha256": "885b62190fbd4ace86c499fca0a722a8fb2404e482a66871c2553de6c67a341e",
+      "case": "stage-refresh",
+      "exit_code": 0,
+      "timed_out": false,
+      "cached_paths": [
+        "sub/file",
+        "sub/more space"
+      ],
+      "expected_cached_paths": [
+        "sub/file",
+        "sub/more space"
+      ],
+      "outside_index_preserved": true,
+      "worktree_preserved": true,
+      "passed": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-trace-status/src/tig",
+      "binary_sha256": "885b62190fbd4ace86c499fca0a722a8fb2404e482a66871c2553de6c67a341e",
+      "case": "unstage-refresh",
+      "exit_code": 0,
+      "timed_out": false,
+      "cached_paths": [
+        "outside"
+      ],
+      "expected_cached_paths": [
+        "outside"
+      ],
+      "outside_index_preserved": true,
+      "worktree_preserved": true,
+      "passed": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-trace-status/src/tig",
+      "binary_sha256": "885b62190fbd4ace86c499fca0a722a8fb2404e482a66871c2553de6c67a341e",
+      "case": "multiple-paths",
+      "exit_code": 0,
+      "timed_out": false,
+      "cached_paths": [
+        "sub/file",
+        "sub/more space"
+      ],
+      "expected_cached_paths": [
+        "sub/file",
+        "sub/more space"
+      ],
+      "outside_index_preserved": true,
+      "worktree_preserved": true,
+      "passed": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-trace-status/src/tig",
+      "binary_sha256": "885b62190fbd4ace86c499fca0a722a8fb2404e482a66871c2553de6c67a341e",
+      "case": "filter-off",
+      "exit_code": 0,
+      "timed_out": false,
+      "cached_paths": [
+        "outside",
+        "sub/file",
+        "sub/more space"
+      ],
+      "expected_cached_paths": [
+        "outside",
+        "sub/file",
+        "sub/more space"
+      ],
+      "outside_index_preserved": true,
+      "worktree_preserved": true,
+      "passed": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-trace-status/target/release/tig",
+      "binary_sha256": "342a36b2a2b792bcbb4650f48fc9f15e2571e6adee2b45b71c6dc1ea6bf3d301",
+      "case": "stage",
+      "exit_code": 0,
+      "timed_out": false,
+      "cached_paths": [
+        "sub/file",
+        "sub/more space"
+      ],
+      "expected_cached_paths": [
+        "sub/file",
+        "sub/more space"
+      ],
+      "outside_index_preserved": true,
+      "worktree_preserved": true,
+      "passed": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-trace-status/target/release/tig",
+      "binary_sha256": "342a36b2a2b792bcbb4650f48fc9f15e2571e6adee2b45b71c6dc1ea6bf3d301",
+      "case": "stage-refresh",
+      "exit_code": 0,
+      "timed_out": false,
+      "cached_paths": [
+        "sub/file",
+        "sub/more space"
+      ],
+      "expected_cached_paths": [
+        "sub/file",
+        "sub/more space"
+      ],
+      "outside_index_preserved": true,
+      "worktree_preserved": true,
+      "passed": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-trace-status/target/release/tig",
+      "binary_sha256": "342a36b2a2b792bcbb4650f48fc9f15e2571e6adee2b45b71c6dc1ea6bf3d301",
+      "case": "unstage-refresh",
+      "exit_code": 0,
+      "timed_out": false,
+      "cached_paths": [
+        "outside"
+      ],
+      "expected_cached_paths": [
+        "outside"
+      ],
+      "outside_index_preserved": true,
+      "worktree_preserved": true,
+      "passed": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-trace-status/target/release/tig",
+      "binary_sha256": "342a36b2a2b792bcbb4650f48fc9f15e2571e6adee2b45b71c6dc1ea6bf3d301",
+      "case": "multiple-paths",
+      "exit_code": 0,
+      "timed_out": false,
+      "cached_paths": [
+        "sub/file",
+        "sub/more space"
+      ],
+      "expected_cached_paths": [
+        "sub/file",
+        "sub/more space"
+      ],
+      "outside_index_preserved": true,
+      "worktree_preserved": true,
+      "passed": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-trace-status/target/release/tig",
+      "binary_sha256": "342a36b2a2b792bcbb4650f48fc9f15e2571e6adee2b45b71c6dc1ea6bf3d301",
+      "case": "filter-off",
+      "exit_code": 0,
+      "timed_out": false,
+      "cached_paths": [
+        "outside",
+        "sub/file",
+        "sub/more space"
+      ],
+      "expected_cached_paths": [
+        "outside",
+        "sub/file",
+        "sub/more space"
+      ],
+      "outside_index_preserved": true,
+      "worktree_preserved": true,
+      "passed": true,
+      "transcript": ""
+    }
+  ]
+}

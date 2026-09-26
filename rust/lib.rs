@@ -7,6 +7,7 @@ pub mod git;
 pub mod graph;
 pub mod help_view;
 pub mod model;
+pub mod trace;
 
 pub mod commands;
 pub mod graph_v1;
