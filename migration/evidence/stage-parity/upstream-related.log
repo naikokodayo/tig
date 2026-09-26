@@ -1,0 +1,128 @@
+      TEST  test/stage/default-test
+      TEST  test/stage/gh-410-test
+      TEST  test/stage/maximized-unstaged-changes-test
+      TEST  test/stage/split-chunk-test
+            | Failed 1 out of 2 test(s)
+            |   [OK] default-diff.screen assertion
+            | [FAIL] split-diff.screen != expected/split-diff.screen
+            | diff --git a/expected/split-diff.screen b/split-diff.screen
+            | index 775edde..7736b0f 100644
+            | --- a/expected/split-diff.screen
+            | +++ b/split-diff.screen
+            | @@ -23,7 +23,7 @@ index 12d1d9e..931fee6 100644
+            |  -6
+            |  +edited-too
+            |   7
+            | -@@ -8,4 +8,1 @@
+            | +@@ -8,4 +8,2 @@
+            |   7
+            |  -8
+            |  -9
+      TEST  test/stage/update-part-test
+      TEST  test/status/file-filter-test
+      CASE  test/status/file-filter-test:status-path-filter
+test/status/file-filter-test: line 54: <clone>/test/tmp/status/file-filter-test/trace: No such file or directory
+            | Failed 1 out of 2 test(s)
+            | [FAIL] status-path-filter.screen != expected/status-path-filter.screen
+            | diff --git a/expected/status-path-filter.screen b/status-path-filter.screen
+            | index 5c643ad..d8b07d7 100644
+            | --- a/expected/status-path-filter.screen
+            | +++ b/status-path-filter.screen
+            | @@ -2,13 +2,13 @@ On branch master
+            |  Changes to be committed:
+            |    (no files)
+            |  Changes not staged for commit:
+            | +M other/staged
+            |  M subdir/staged
+            |  Untracked files:
+            | +? other/untracked
+            |  ? subdir/untracked
+            |  
+            |  
+            |  
+            |  
+            | -
+            | -
+            |  [status] Nothing to update                                                                                          100%
+            |   [OK] status-path-filter.stderr assertion
+make: *** [test/status/file-filter-test] Error 1
+      TEST  test/status/file-name-test
+            | Failed 4 out of 5 test(s)
+            |   [OK] status-with-untracked.screen assertion
+            | [FAIL] status-with-file-0.screen != expected/status-with-file-0.screen
+            | diff --git a/expected/status-with-file-0.screen b/status-with-file-0.screen
+            | index 8adabe8..7140f90 100644
+            | --- a/expected/status-with-file-0.screen
+            | +++ b/status-with-file-0.screen
+            | @@ -11,4 +11,4 @@ Untracked files:                                            |
+            |  ? 可愛いコー特集                                            |
+            |                                                              |
+            |                                                              |
+            | -[status] Press u to stage '0' for addition              100%|[stage] Untracked file 0                                 0%
+            | +[status] Press u to stage '0' for addition              100%|[stage] Unstaged changes to '0'                          0%
+            | [FAIL] status-with-file-1.screen not found
+            | [FAIL] status-with-file-2.screen not found
+            | [FAIL] status-with-file-3.screen not found
+      TEST  test/status/file-var-test
+      TEST  test/status/on-branch-test
+      CASE  test/status/on-branch-test:on-branch-master
+      CASE  test/status/on-branch-test:bisecting-master
+      CASE  test/status/on-branch-test:on-detached-head
+      CASE  test/status/on-branch-test:on-detached-tag
+      CASE  test/status/on-branch-test:merging-master
+      CASE  test/status/on-branch-test:rebasing-master
+      CASE  test/status/on-branch-test:applying-mailbox-to-master
+      CASE  test/status/on-branch-test:interactive-rebase-of-branch
+      TEST  test/status/on-branch-tracking-info-test
+      CASE  test/status/on-branch-tracking-info-test:up-to-date-with-remote-master
+      CASE  test/status/on-branch-tracking-info-test:behind-remote-master
+      CASE  test/status/on-branch-tracking-info-test:ahead-of-remote-master
+      CASE  test/status/on-branch-tracking-info-test:diverged-from-remote-master
+      TEST  test/status/refresh-test
+      TEST  test/status/repo-var-test
+      TEST  test/status/start-on-line-test
+      TEST  test/status/submodule-editor-test
+      TEST  test/status/untracked-files-test
+      CASE  test/status/untracked-files-test:initial
+      CASE  test/status/untracked-files-test:inside-dir-a
+      CASE  test/status/untracked-files-test:status-show-untracked-files-option-off
+            | Failed 1 out of 6 test(s)
+            |   [OK] initial.screen assertion
+            |   [OK] initial.stderr assertion
+            |   [OK] inside-dir-a.screen assertion
+            |   [OK] inside-dir-a.stderr assertion
+            | [FAIL] status-show-untracked-files-option-off.screen != expected/status-show-untracked-files-option-off.screen
+            | diff --git a/expected/status-show-untracked-files-option-off.screen b/status-show-untracked-files-option-off.screen
+            | index 29861d3..c17d2b6 100644
+            | --- a/expected/status-show-untracked-files-option-off.screen
+            | +++ b/status-show-untracked-files-option-off.screen
+            | @@ -8,14 +8,14 @@ M b.c
+            |  M e/f
+            |  M g h
+            |  Untracked files:
+            | -  (not shown)
+            | -
+            | -
+            | -
+            | -
+            | -
+            | -
+            | -
+            | -
+            | +? dir-a/aa.1
+            | +? dir-a/aa.2
+            | +? dir-a/aa.3
+            | +? dir-b/bb.1
+            | +? root.1
+            | +? root.2
+            | +? root.3
+            | +? root.4
+            | +? root.5
+            |  
+            |  [status] Nothing to update                                                  100%
+            |   [OK] status-show-untracked-files-option-off.stderr assertion
+      TEST  test/status/worktree-editor-test
+      TEST  test/status/worktree-test
+      TEST  test/main/update-unstaged-changes-test
+      TEST  test/main/untracked-test
+make: Target `test' not remade because of errors.

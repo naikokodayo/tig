@@ -1,0 +1,45 @@
+   Compiling libc v0.2.189
+   Compiling parking_lot_core v0.9.12
+   Compiling signal-hook v0.3.18
+   Compiling memchr v2.8.3
+   Compiling log v0.4.34
+   Compiling rustix v0.38.44
+   Compiling scopeguard v1.2.0
+   Compiling cfg-if v1.0.5
+   Compiling smallvec v1.16.2
+   Compiling regex-syntax v0.8.11
+   Compiling lock_api v0.4.14
+   Compiling bitflags v2.13.2
+   Compiling unicode-width v0.2.0
+   Compiling aho-corasick v1.1.5
+   Compiling errno v0.3.14
+   Compiling mio v1.2.3
+   Compiling signal-hook-registry v1.4.8
+   Compiling parking_lot v0.12.5
+   Compiling regex-automata v0.4.18
+   Compiling signal-hook-mio v0.2.5
+   Compiling crossterm v0.28.1
+   Compiling regex v1.13.1
+   Compiling tig-rs v0.1.0 (<clone>)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.62s
+     Running unittests rust/main.rs (target/debug/deps/tig-8ec11809a9535be6)
+
+running 1 test
+test tests::staging_last_untracked_file_refreshes_synthetic_main_parent ... FAILED
+
+failures:
+
+---- tests::staging_last_untracked_file_refreshes_synthetic_main_parent stdout ----
+thread 'tests::staging_last_untracked_file_refreshes_synthetic_main_parent' panicked at rust/main.rs:3088:9:
+assertion failed: app.view.items.iter().any(|item|
+        matches!(item, Item::Status(entry, true) if entry.path ==
+            PathBuf::from("tracked")))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    tests::staging_last_untracked_file_refreshes_synthetic_main_parent
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 16 filtered out; finished in 1.36s
+
+error: test failed, to rerun pass `--bin tig`

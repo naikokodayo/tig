@@ -1,0 +1,323 @@
+{
+  "scope": "Stage partial patch slice and related originals; full parity OPEN",
+  "initial_base": "3e8f4b8e93ce3603a2c71dc92f1f576365eff84f",
+  "integrated_main": "34684f799a5b44e7074aa4967c53c10608119f10",
+  "implementation_commit": "cf6fda4089691d07a83aea4a136c1db8a95b6f57",
+  "toolchain": "rustc 1.81.0 (eeb90cda1 2024-09-04)",
+  "git": "git version 2.50.1 (Apple Git-155)",
+  "platform": "macOS-26.6-arm64-arm-64bit",
+  "binary_sha256": "fbb415637ec62e3fa5524b5351d35d92448b362c5569d82d07935bdfffdb6ef4",
+  "source_sha256": {
+    "rust/main.rs": "1b6bfe577d2d0193be068ba047cd70a21828d5ffb18c19b6aea455f31409bb4c",
+    "rust/patch.rs": "c2219dd3a28d15d811f1f1de2ca1c5d3b20162d32d48f53e1778ff9639040152",
+    "rust/tests/terminal-smoke.py": "0b910ed578edd4eb1a847794d57ad4c7b86f46096c50ed7c6330503474db1ef7"
+  },
+  "checks": {
+    "fmt": 0,
+    "unit": {
+      "exit": 0,
+      "passed": 65
+    },
+    "clippy_deny_warnings": 0,
+    "release": 0,
+    "pty": {
+      "exit": 0,
+      "passed": 126
+    },
+    "original_c_stage": {
+      "scripts": 5,
+      "passed": 26
+    },
+    "rust_stage": {
+      "scripts": 5,
+      "assertions": 26,
+      "failures": 1
+    }
+  },
+  "original_tests_modified": false,
+  "related_harness": {
+    "exit": 2,
+    "scripts": 19,
+    "assertions": 105,
+    "failures": 7,
+    "note": "Make summary suppressed by existing file-filter recipe error; counts are actual .test-result records, not an exit-code pass."
+  },
+  "ledger": [
+    {
+      "test": "test/main/untracked-test",
+      "assertions": 2,
+      "failures": 0,
+      "prior_checkpoint_failures": 0,
+      "source_sha256": "1903b8792865653883d9590fcd7f876a94823fa89e350b7e1d81c32d365ea13f",
+      "outcomes": [
+        "[OK] start.screen assertion",
+        "[OK] result.screen assertion"
+      ]
+    },
+    {
+      "test": "test/main/update-unstaged-changes-test",
+      "assertions": 2,
+      "failures": 0,
+      "prior_checkpoint_failures": 0,
+      "source_sha256": "241f169bbd0c507256bb23b2a56963cd1dafd3325a642693d7f21c5ef871ce8c",
+      "outcomes": [
+        "[OK] start.screen assertion",
+        "[OK] result.screen assertion"
+      ]
+    },
+    {
+      "test": "test/stage/default-test",
+      "assertions": 14,
+      "failures": 0,
+      "prior_checkpoint_failures": 13,
+      "source_sha256": "d58bba43a0248c8c2bea7551e41f8c8dec4dfd993dd8dbb156f8325d895d7493",
+      "outcomes": [
+        "[OK] status.screen assertion",
+        "[OK] staged-changes.screen assertion",
+        "[OK] unstaged-changes.screen assertion",
+        "[OK] staged-changes.screen assertion",
+        "[OK] unstaged-changes.screen assertion",
+        "[OK] staged-changes-for-a-shortcut.screen assertion",
+        "[OK] staged-changes.screen assertion",
+        "[OK] staged-changes-for-a.screen assertion",
+        "[OK] unstaged-changes.screen assertion",
+        "[OK] unstaged-changes-default-title.screen assertion",
+        "[OK] unstaged-changes-staged-bc-line.screen assertion",
+        "[OK] unstaged-changes-staged-bc-chunk.screen assertion",
+        "[OK] unstaged-changes-staged-bc-last-chunk.screen assertion",
+        "[OK] unstaged-changes-staged-all.screen assertion"
+      ]
+    },
+    {
+      "test": "test/stage/gh-410-test",
+      "assertions": 3,
+      "failures": 0,
+      "prior_checkpoint_failures": 2,
+      "source_sha256": "6cace115203d853e9db07dc5abb28ce2adb5ba897227da1d0966ac16e0dd4334",
+      "outcomes": [
+        "[OK] status-before.screen assertion",
+        "[OK] unstaged-changes.screen assertion",
+        "[OK] status-after.screen assertion"
+      ]
+    },
+    {
+      "test": "test/stage/maximized-unstaged-changes-test",
+      "assertions": 2,
+      "failures": 0,
+      "prior_checkpoint_failures": 1,
+      "source_sha256": "c99eda695fff484318792ca50fcb135d4a05d4c0754c1d696d998116ee3e509e",
+      "outcomes": [
+        "[OK] split.screen assertion",
+        "[OK] maximized.screen assertion"
+      ]
+    },
+    {
+      "test": "test/stage/split-chunk-test",
+      "assertions": 2,
+      "failures": 1,
+      "prior_checkpoint_failures": 3,
+      "source_sha256": "0aa8614f911de18145b25164645805cc89b7eba159349bdb8181a7284c8c6969",
+      "outcomes": [
+        "[OK] default-diff.screen assertion",
+        "[FAIL] split-diff.screen != expected/split-diff.screen"
+      ]
+    },
+    {
+      "test": "test/stage/update-part-test",
+      "assertions": 5,
+      "failures": 0,
+      "prior_checkpoint_failures": 6,
+      "source_sha256": "57949ae5596c712dcfeedf32d7535b805177823814b0a648e9ecf72354723bbb",
+      "outcomes": [
+        "[OK] default-diff.screen assertion",
+        "[OK] update-part-any.screen assertion",
+        "[OK] update-part-first.screen assertion",
+        "[OK] update-part-last.screen assertion",
+        "[OK] update-part-single.screen assertion"
+      ]
+    },
+    {
+      "test": "test/status/file-filter-test",
+      "assertions": 2,
+      "failures": 1,
+      "prior_checkpoint_failures": 1,
+      "source_sha256": "ada6618b55d4a2c054e4858f336bf67b389b17b98a11cb5404bd93ac9d818c80",
+      "outcomes": [
+        "[FAIL] status-path-filter.screen != expected/status-path-filter.screen",
+        "[OK] status-path-filter.stderr assertion"
+      ]
+    },
+    {
+      "test": "test/status/file-name-test",
+      "assertions": 5,
+      "failures": 4,
+      "prior_checkpoint_failures": 4,
+      "source_sha256": "2f1f9fea59a3a08f7bdf5d2fa6b767c72c94e922bc51167ab73bc84e28ee70c1",
+      "outcomes": [
+        "[OK] status-with-untracked.screen assertion",
+        "[FAIL] status-with-file-0.screen != expected/status-with-file-0.screen",
+        "[FAIL] status-with-file-1.screen not found",
+        "[FAIL] status-with-file-2.screen not found",
+        "[FAIL] status-with-file-3.screen not found"
+      ]
+    },
+    {
+      "test": "test/status/file-var-test",
+      "assertions": 2,
+      "failures": 0,
+      "prior_checkpoint_failures": 0,
+      "source_sha256": "2e23ee40b15e443f4953a3e3319a886cd7912cc64c488476d5a76b9e7471a960",
+      "outcomes": [
+        "[OK] before-rm-file.screen assertion",
+        "[OK] after-rm-file.screen assertion"
+      ]
+    },
+    {
+      "test": "test/status/on-branch-test",
+      "assertions": 24,
+      "failures": 0,
+      "prior_checkpoint_failures": 0,
+      "source_sha256": "775b495bf60d2e373109c6fc8d194b3f84ecb2b2db9d1ac8fc9d54c8402d4508",
+      "outcomes": [
+        "[OK] on-branch-master.screen assertion",
+        "[OK] on-branch-master.stderr assertion",
+        "[OK] bisecting-master.screen assertion",
+        "[OK] bisecting-master.stderr assertion",
+        "[OK] on-detached-head.screen assertion",
+        "[OK] on-detached-head.stderr assertion",
+        "[OK] on-detached-tag.screen assertion",
+        "[OK] on-detached-tag.stderr assertion",
+        "[OK] merging-master.screen assertion",
+        "[OK] merging-master.stderr assertion",
+        "[OK] rebasing-master.screen assertion",
+        "[OK] rebasing-master.stderr assertion",
+        "[OK] applying-mailbox-to-master.screen assertion",
+        "[OK] applying-mailbox-to-master.stderr assertion",
+        "[OK] interactive-rebase-of-branch.screen assertion",
+        "[OK] interactive-rebase-of-branch.stderr assertion",
+        "[OK] all-on-branch-master.screen assertion",
+        "[OK] all-bisecting-master.screen assertion",
+        "[OK] all-on-detached-head.screen assertion",
+        "[OK] all-on-detached-tag.screen assertion",
+        "[OK] all-merging-master.screen assertion",
+        "[OK] all-rebasing-master.screen assertion",
+        "[OK] all-applying-mailbox-to-master.screen assertion",
+        "[OK] all-interactive-rebase-of-branch.screen assertion"
+      ]
+    },
+    {
+      "test": "test/status/on-branch-tracking-info-test",
+      "assertions": 12,
+      "failures": 0,
+      "prior_checkpoint_failures": 0,
+      "source_sha256": "9ad1fafc5b022748b11d2382663d330f0715dfefa92c413d9324c36e86dd5efe",
+      "outcomes": [
+        "[OK] up-to-date-with-remote-master.screen assertion",
+        "[OK] up-to-date-with-remote-master.stderr assertion",
+        "[OK] behind-remote-master.screen assertion",
+        "[OK] behind-remote-master.stderr assertion",
+        "[OK] ahead-of-remote-master.screen assertion",
+        "[OK] ahead-of-remote-master.stderr assertion",
+        "[OK] diverged-from-remote-master.screen assertion",
+        "[OK] diverged-from-remote-master.stderr assertion",
+        "[OK] all-up-to-date-with-remote-master.screen assertion",
+        "[OK] all-behind-remote-master.screen assertion",
+        "[OK] all-ahead-of-remote-master.screen assertion",
+        "[OK] all-diverged-from-remote-master.screen assertion"
+      ]
+    },
+    {
+      "test": "test/status/refresh-test",
+      "assertions": 11,
+      "failures": 0,
+      "prior_checkpoint_failures": 0,
+      "source_sha256": "8da82f46fb86373992e5546fadbff84a17eaef025b7d0f39966dd005025dd6a5",
+      "outcomes": [
+        "[OK] status-with-unstaged.screen assertion",
+        "[OK] status-after-add-a.screen assertion",
+        "[OK] status-after-add-all.screen assertion",
+        "[OK] status-after-commit.screen assertion",
+        "[OK] status-after-reset-soft.screen assertion",
+        "[OK] status-after-reset-a-and-bc.screen assertion",
+        "[OK] status-after-checkout-bc.screen assertion",
+        "[OK] status-after-reset-hard.screen assertion",
+        "[OK] status-after-touch-new-file.screen assertion",
+        "[OK] status-after-rm-a.screen assertion",
+        "[OK] status-after-checkout-a.screen assertion"
+      ]
+    },
+    {
+      "test": "test/status/repo-var-test",
+      "assertions": 3,
+      "failures": 0,
+      "prior_checkpoint_failures": 0,
+      "source_sha256": "6163b10a7e99c242c60f2a08ed1b7022ea19784d286ad28eb8599b79a8b5566d",
+      "outcomes": [
+        "[OK] status.screen assertion",
+        "[OK] vars_assert_count assertion",
+        "[OK] vars assertion"
+      ]
+    },
+    {
+      "test": "test/status/start-on-line-test",
+      "assertions": 1,
+      "failures": 0,
+      "prior_checkpoint_failures": 0,
+      "source_sha256": "ad71655911fcedb5f33ee3de20c0ac945fdcc5ca210ee8c47651fdc90ad837dc",
+      "outcomes": [
+        "[OK] position.screen assertion"
+      ]
+    },
+    {
+      "test": "test/status/submodule-editor-test",
+      "assertions": 4,
+      "failures": 0,
+      "prior_checkpoint_failures": 0,
+      "source_sha256": "037dcd5a7c53d40da6126ec07c5ac7d6f3307526168f664900687ae5c9f3b4a6",
+      "outcomes": [
+        "[OK] vars_assert_count assertion",
+        "[OK] vars assertion",
+        "[OK] status.screen assertion",
+        "[OK] editor.log assertion"
+      ]
+    },
+    {
+      "test": "test/status/untracked-files-test",
+      "assertions": 6,
+      "failures": 1,
+      "prior_checkpoint_failures": 1,
+      "source_sha256": "b3c1c5362794ea95ee0a476662eb534b411a12e52aa4409c659f480a1a585aba",
+      "outcomes": [
+        "[OK] initial.screen assertion",
+        "[OK] initial.stderr assertion",
+        "[OK] inside-dir-a.screen assertion",
+        "[OK] inside-dir-a.stderr assertion",
+        "[FAIL] status-show-untracked-files-option-off.screen != expected/status-show-untracked-files-option-off.screen",
+        "[OK] status-show-untracked-files-option-off.stderr assertion"
+      ]
+    },
+    {
+      "test": "test/status/worktree-editor-test",
+      "assertions": 4,
+      "failures": 0,
+      "prior_checkpoint_failures": 0,
+      "source_sha256": "65959faa68b69b6ff2dadb4437ab1f12d9ca83241e4d02d102529baa05257f71",
+      "outcomes": [
+        "[OK] vars_assert_count assertion",
+        "[OK] vars assertion",
+        "[OK] status.screen assertion",
+        "[OK] editor.log assertion"
+      ]
+    },
+    {
+      "test": "test/status/worktree-test",
+      "assertions": 1,
+      "failures": 0,
+      "prior_checkpoint_failures": 0,
+      "source_sha256": "f80c49d8bf02d02b5b75438bb5551592949214f0fb09444c68e3db031a1c9f19",
+      "outcomes": [
+        "[OK] worktree.screen assertion"
+      ]
+    }
+  ]
+}

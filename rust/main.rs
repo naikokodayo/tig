@@ -865,25 +865,54 @@ impl App {
         }
         Ok(())
     }
-    fn refresh_main_parent(&mut self) -> Result<()> {
-        let Some(old) = self.other.as_ref().filter(|view| view.name == "main") else {
+    fn refresh_parent(&mut self) -> Result<()> {
+        let Some(old) = self
+            .other
+            .as_ref()
+            .or_else(|| self.previous.last())
+            .filter(|view| matches!(view.name.as_str(), "main" | "status"))
+        else {
             return Ok(());
         };
         let selected = old.items.get(old.selected).cloned();
         let top = old.top;
-        let mut next = self.load("main")?;
-        next.selected = selected
-            .as_ref()
-            .and_then(|selected| {
+        let mut next = if old.name == "status" {
+            self.status_view(old.untracked)?
+        } else {
+            self.load("main")?
+        };
+        let target = if old.name == "status" && self.view.name == "stage" {
+            next.items.iter().position(|item| matches!(item, Item::Status(entry, staged)
+                if *staged == self.view.staged && (self.view.path.as_os_str().is_empty() || entry.path == self.view.path)))
+                .and_then(|index| {
+                    if self.view.path.as_os_str().is_empty() {
+                        let title = if self.view.staged { "Changes to be committed:" } else { "Changes not staged for commit:" };
+                        next.rows.iter().position(|row| row == title)
+                    } else { Some(index) }
+                })
+        } else {
+            selected.as_ref().and_then(|selected| {
                 next.items.iter().position(|item| match (selected, item) {
                     (Item::Changes(a), Item::Changes(b)) => a == b,
                     (Item::Commit(a), Item::Commit(b)) => a.oid == b.oid,
                     _ => false,
                 })
             })
-            .unwrap_or(0);
+        };
+        next.selected = target.unwrap_or(if old.name == "status" {
+            old.selected.min(next.rows.len().saturating_sub(1))
+        } else {
+            0
+        });
         next.top = top;
-        self.other = Some(next);
+        if target.is_none() {
+            next.restore_status_selection();
+        }
+        if self.other.is_some() {
+            self.other = Some(next);
+        } else if let Some(previous) = self.previous.last_mut() {
+            *previous = next;
+        }
         Ok(())
     }
     fn sync_context(&mut self) {
@@ -968,9 +997,7 @@ impl App {
             }
             return Ok(());
         }
-        if self.view.name == "diff"
-            || (self.view.name == "stage" && self.view.path.as_os_str().is_empty())
-        {
+        if self.view.name == "diff" || (self.view.name == "stage" && !self.view.untracked) {
             let header = if self.view.name == "diff" {
                 diff_stat_header(&self.view.rows, self.view.selected)
             } else {
@@ -1072,6 +1099,16 @@ impl App {
                     .saturating_sub(1)
                     .min(view.rows.len().saturating_sub(1));
                 self.previous.push(std::mem::replace(&mut self.view, view));
+            }
+            Item::Text if self.view.name == "status" => {
+                let kind = match self.view.rows.get(self.view.selected).map(String::as_str) {
+                    Some("Changes to be committed:") => Some(ChangeKind::Staged),
+                    Some("Changes not staged for commit:") => Some(ChangeKind::Unstaged),
+                    _ => None,
+                };
+                if let Some(kind) = kind {
+                    self.open_changes(kind)?;
+                }
             }
             Item::Text => (),
         }
@@ -1488,7 +1525,9 @@ impl App {
                     }
                 }
             }
-            "status-update" | "stage-update-line" if self.view.name == "stage" => {
+            "status-update" | "stage-update-line" | "stage-update-part" | "stage-split-chunk"
+                if self.view.name == "stage" =>
+            {
                 if self.view.untracked {
                     if action != "status-update" {
                         return Err("Select a tracked diff to stage individual lines".into());
@@ -1530,18 +1569,60 @@ impl App {
                         let patch = tig_rs::patch::Patch::parse(&raw[offset..])?;
                         let (file, hunk, line) =
                             patch.locate(self.view.selected.saturating_sub(prefix_rows))?;
-                        let line = if action == "stage-update-line" {
-                            Some(line.ok_or("Select an added or removed line")?)
+                        if action == "stage-split-chunk" {
+                            if line.is_none()
+                                && !self.view.rows[self.view.selected].starts_with("@@ ")
+                            {
+                                return Err("No chunks to split in sight".into());
+                            }
+                            let (range, replacement) = patch.split_hunk(file, hunk)?;
+                            let boundaries: Vec<usize> = std::iter::once(0)
+                                .chain(raw.split_inclusive(|b| *b == b'\n').scan(
+                                    0,
+                                    |offset, row| {
+                                        *offset += row.len();
+                                        Some(*offset)
+                                    },
+                                ))
+                                .collect();
+                            let mut raw = raw.clone();
+                            raw.splice(
+                                boundaries[prefix_rows + range.start]
+                                    ..boundaries[prefix_rows + range.end],
+                                replacement,
+                            );
+                            let rows: Vec<String> = String::from_utf8_lossy(&raw)
+                                .lines()
+                                .map(str::to_owned)
+                                .collect();
+                            self.view.items = vec![Item::Text; rows.len()];
+                            self.view.line_numbers = (1..=rows.len()).collect();
+                            self.view.rows = rows;
+                            self.view.raw_patch = raw;
+                            return Ok(true);
+                        }
+                        let selected = if action == "stage-update-part" {
+                            patch.select_part(
+                                file,
+                                hunk,
+                                line.ok_or("Select an added or removed line")?,
+                                self.view.staged,
+                            )?
                         } else {
-                            None
+                            let line = if action == "stage-update-line" {
+                                Some(line.ok_or("Select an added or removed line")?)
+                            } else {
+                                None
+                            };
+                            patch.select(file, hunk, line, self.view.staged)?
                         };
-                        let selected = patch.select(file, hunk, line, self.view.staged)?;
                         tig_rs::patch::apply_cached(self.repo()?, &selected, self.view.staged)?;
                     }
                 }
-                self.refresh_main_parent()?;
+                self.refresh_parent()?;
                 self.action("refresh")?;
-                if self.view.rows.is_empty() && self.other.is_some() {
+                if self.view.rows.is_empty() && (self.other.is_some() || !self.previous.is_empty())
+                {
                     self.action("view-close")?;
                 }
                 return Ok(true);
@@ -1553,7 +1634,7 @@ impl App {
                     } else {
                         self.repo()?.stage(&e)?;
                     }
-                    self.refresh_main_parent()?;
+                    self.refresh_parent()?;
                     self.action("refresh")?;
                     if self.view.untracked
                         && self.other.is_some()
@@ -1571,6 +1652,20 @@ impl App {
             "show-version" => self.message = format!("tig-rs {}", env!("CARGO_PKG_VERSION")),
             "parent" if self.view.name == "tree" => self.tree_parent()?,
             "screen-redraw" => (),
+            "view-diff" if self.view.name == "stage" => self.split = false,
+            "view-stage" if matches!(self.view.name.as_str(), "main" | "status") => {
+                if self.view.name == "main" && !matches!(self.selected(), Item::Changes(_)) {
+                    return Err("No stage content; select working tree changes".into());
+                }
+                self.enter()?;
+                if self.view.name == "stage" {
+                    if let Some(parent) = self.other.take() {
+                        self.previous.push(parent);
+                    }
+                    self.split = false;
+                    self.parent_focused = false;
+                }
+            }
             _ if action.starts_with("view-") => {
                 if action == "view-diff" {
                     if let Item::Changes(kind) = self.selected() {
@@ -2274,9 +2369,7 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
             "Press u to {} '{}'{}",
             if *staged { "unstage" } else { "stage" },
             e.path.display(),
-            if *staged {
-                ""
-            } else if e.index == '?' {
+            if e.index == '?' {
                 " for addition"
             } else {
                 " for commit"
@@ -2290,7 +2383,7 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
             .map(|(path, _)| format!("Changes to '{}'", path.display()))
             .unwrap_or_else(|| view.revision.clone()),
         _ if view.name == "stage"
-            && view.path.as_os_str().is_empty()
+            && !view.untracked
             && stage_stat_header(&view.rows, view.selected).is_some() =>
         {
             "Press '<Enter>' to jump to file diff".into()
@@ -3103,6 +3196,29 @@ mod tests {
             .any(|part| part == b"+working"));
         assert!(!app.split);
         assert!(app.other.is_none());
+        app.action("view-status").unwrap();
+        app.view.selected = app.view.items.iter().position(|item|
+            matches!(item, Item::Status(entry, false) if entry.path == PathBuf::from("tracked"))).unwrap();
+        app.enter().unwrap();
+        app.action("maximize").unwrap();
+        app.view.selected = app
+            .view
+            .rows
+            .iter()
+            .position(|row| row == "+working")
+            .unwrap();
+        app.action("stage-update-line").unwrap();
+        app.view.selected = app.view.rows.iter().position(|row| row == "-base").unwrap();
+        app.action("stage-update-line").unwrap();
+        assert_eq!(app.view.name, "status");
+        assert!(app.view.items.iter().any(|item|
+            matches!(item, Item::Status(entry, true) if entry.path == PathBuf::from("tracked"))));
+        assert!(!app.view.items.iter().any(|item|
+            matches!(item, Item::Status(entry, false) if entry.path == PathBuf::from("tracked"))));
+        assert_eq!(
+            app.repo().unwrap().command(["show", ":tracked"]).unwrap(),
+            b"working\n"
+        );
         fs::remove_dir_all(root).unwrap();
     }
     #[test]

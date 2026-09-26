@@ -1,0 +1,45 @@
+{
+  "source_commit": "b9da8c7c6fd764bab3dc294f692b886a8274632d",
+  "integrated_main": "e1cf5eeb96166b4971df2f84a2c93127edbd1549",
+  "binary_sha256": "e072c6ae1bbb326b8c5a51be67bd7940aecdd0455cd3640c371082a6e96b2194",
+  "rust_version": "rustc 1.81.0 (eeb90cda1 2024-09-04)",
+  "checks": {
+    "fmt": "pass",
+    "unit_passed": 68,
+    "clippy_D_warnings": "pass",
+    "release": "pass",
+    "pty_passed": 126,
+    "date_checks_passed": 29
+  },
+  "paired": {
+    "c": {
+      "scripts": {
+        "pass": 19
+      },
+      "assertions": {
+        "OK": 109
+      }
+    },
+    "rust": {
+      "scripts": {
+        "pass": 15,
+        "fail": 4
+      },
+      "assertions": {
+        "OK": 98,
+        "FAIL": 7
+      }
+    }
+  },
+  "not_reached": 4,
+  "parity_gate": "BLOCKED",
+  "original_tests_modified": false,
+  "source_sha256": {
+    "rust/main.rs": "a03ba20235ddc9334fcc7a10804be14129f1a7374c2aa69c323530216b17b702",
+    "rust/patch.rs": "c2219dd3a28d15d811f1f1de2ca1c5d3b20162d32d48f53e1778ff9639040152",
+    "rust/tests/terminal-smoke.py": "0b910ed578edd4eb1a847794d57ad4c7b86f46096c50ed7c6330503474db1ef7",
+    "rust/date.rs": "44b2f589686e80368370ce97d3143654a3557604d107f42ebdfb4cf135388ac3",
+    "Cargo.toml": "9c0a27f7f353f722308d07664ba1645e9dc6dfe35a94201839f7b4cd93752c69",
+    "Cargo.lock": "4dff74ef4ccdb94d739984c33d6b06c217c12144f4095dde5e16bf10902ebbb5"
+  }
+}
