@@ -22,10 +22,12 @@ for binary in (ROOT / 'src/tig', ROOT / 'target/release/tig'):
         for key, value in [('user.name', 'Test'), ('user.email', 'test@example.invalid')]:
             subprocess.run(['git', '-C', str(repo), 'config', key, value], env=env, check=True)
         (repo / 'file space;literal').write_text('content\n')
+        (repo / '--').write_text('literal dash file\n')
         subprocess.run(['git', '-C', str(repo), 'add', '.'], env=env, check=True)
         subprocess.run(['git', '-C', str(repo), 'commit', '-qm', 'base'], env=env, check=True)
         (home / 'tigrc').write_text(
-            'bind generic 2 :!echo "%(prompt First: )" "%(prompt Second: )"\n')
+            'bind generic 2 :!echo "%(prompt First: )" "%(prompt Second: )"\n'
+            'bind generic 3 :!printf "%s|" first %(revargs) %(cmdlineargs) last\n')
         (home / 'steps').write_text(
             ':!echo %(fileargs)\n'
             f':save-display {home / "fileargs"}\n'
@@ -38,4 +40,17 @@ for binary in (ROOT / 'src/tig', ROOT / 'target/release/tig'):
             screen = (home / name).read_text()
             assert screen.splitlines()[0] == expected, (binary, name, screen)
         assert not (repo / 'literal').exists(), binary
-        print(f'PASS: {binary.parent.name}/tig classifies literal filename and consumes both prompts')
+        (home / 'steps').write_text(f'3\n:save-display {home / "empty"}\n:quit\n')
+        code, timed_out, transcript = upstream.terminal(
+            [str(binary), '-C', str(repo), 'status'], env, 15)
+        assert code == 0 and not timed_out, (binary, code, transcript)
+        empty = (home / 'empty').read_text().splitlines()[0]
+        assert empty == 'first|last|', (binary, empty)
+        (home / 'steps').write_text(
+            f':!echo %(fileargs)\n:save-display {home / "dash"}\n:quit\n')
+        code, timed_out, transcript = upstream.terminal(
+            [str(binary), '-C', str(repo), '--', '--'], env, 15)
+        assert code == 0 and not timed_out, (binary, code, transcript)
+        dash = (home / 'dash').read_text().splitlines()[0]
+        assert dash == '--', (binary, dash)
+        print(f'PASS: {binary.parent.name}/tig literal filenames, empty lists, and two prompts')

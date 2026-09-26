@@ -346,11 +346,15 @@ pub fn prepare_with_context(
         };
         if let Some(list) = list {
             if list.is_empty() {
-                result.argv.push(OsString::new());
+                if result.argv.is_empty() {
+                    result.argv.push(OsString::new());
+                }
             } else {
-                result
-                    .argv
-                    .extend(list.iter().map(|arg| OsString::from(*arg)));
+                for value in list {
+                    if !value.is_empty() || result.argv.is_empty() {
+                        result.argv.push(OsString::from(*value));
+                    }
+                }
             }
         } else {
             result
@@ -367,13 +371,14 @@ fn classify_args<'a>(
     let (mut revisions, mut files, mut options) = (Vec::new(), Vec::new(), Vec::new());
     let mut after_separator = false;
     for arg in args {
-        if arg == "--" {
+        if after_separator {
+            files.push(arg.as_str());
+        } else if arg == "--" {
             after_separator = true;
-        } else if after_separator
-            || (!arg.starts_with('-')
-                && repo
-                    .command(["rev-parse", "--no-revs", "--no-flags", arg])
-                    .is_ok_and(|out| out == format!("{arg}\n").as_bytes()))
+        } else if !arg.starts_with('-')
+            && repo
+                .command(["rev-parse", "--no-revs", "--no-flags", arg])
+                .is_ok_and(|out| out == format!("{arg}\n").as_bytes())
         {
             files.push(arg.as_str());
         } else if arg.starts_with('-')
@@ -755,6 +760,7 @@ mod tests {
             "--pretty=raw",
             "bare space;literal",
             "--",
+            "--",
             "space name; echo unsafe",
             "-literal",
         ]
@@ -780,6 +786,7 @@ mod tests {
                 "--all",
                 "--boundary",
                 "bare space;literal",
+                "--",
                 "space name; echo unsafe",
                 "-literal",
                 "--pretty=raw",
@@ -791,6 +798,41 @@ mod tests {
         assert_eq!(
             prompt_labels("%%(prompt no) %(prompt First: ) %(prompt Second: )"),
             ["First: ", "Second: "]
+        );
+        let empty = ExpansionInput {
+            args: &[],
+            prompt_answers: &[],
+        };
+        assert_eq!(
+            prepare_with_context(
+                &repo,
+                "!echo first %(revargs) %(cmdlineargs) last",
+                "HEAD",
+                Path::new(""),
+                0,
+                None,
+                empty
+            )
+            .unwrap()
+            .argv,
+            ["echo", "first", "last"]
+        );
+        assert_eq!(
+            prepare_with_context(
+                &repo,
+                "!%(revargs)",
+                "HEAD",
+                Path::new(""),
+                0,
+                None,
+                ExpansionInput {
+                    args: &[],
+                    prompt_answers: &[]
+                }
+            )
+            .unwrap()
+            .argv,
+            [""]
         );
         assert!(prepare_with_context(
             &repo,
