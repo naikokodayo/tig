@@ -22,8 +22,7 @@ pub struct Repository {
     pub root: PathBuf,
     pub git_dir: PathBuf,
     pub bare: bool,
-    /// Canonical directory in which the repository was discovered.
-    pub invocation: PathBuf,
+    pub(crate) invocation: PathBuf,
 }
 fn text(bytes: &[u8]) -> String {
     String::from_utf8_lossy(bytes).into_owned()
@@ -170,6 +169,17 @@ impl Repository {
             bare,
             invocation: start.canonicalize().map_err(|e| GitError(e.to_string()))?,
         })
+    }
+    /// Git returns an empty prefix when an explicit worktree is outside the cwd.
+    pub fn prefix(&self) -> Result<PathBuf> {
+        let prefix = path(trim_lf(&run(
+            &self.invocation,
+            ["rev-parse", "--show-prefix"],
+        )?))?;
+        if !prefix.as_os_str().is_empty() {
+            valid_path(&prefix)?;
+        }
+        Ok(prefix)
     }
     pub fn command<I, S>(&self, args: I) -> Result<Vec<u8>>
     where

@@ -827,14 +827,7 @@ impl App {
         // C tree_open applies repo.prefix only to the first tree view.
         let old_path = self.path.clone();
         if name == "tree" && !self.tree_initialized {
-            let repo = self.repo()?;
-            self.path = if repo.bare {
-                PathBuf::new()
-            } else {
-                repo.invocation
-                    .strip_prefix(repo.root.canonicalize()?)?
-                    .into()
-            };
+            self.path = self.repo()?.prefix()?;
         }
         let next = match self.load(name) {
             Ok(next) => next,

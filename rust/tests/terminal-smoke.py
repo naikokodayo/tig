@@ -310,6 +310,15 @@ def main():
             expect('first tree uses startup directory', ['Directory path /nested/', 'child.txt', '[tree] Open parent directory'], b't')
             expect('startup tree parent reaches worktree root', ['Directory path /', 'fixture.txt', f'[tree] {tree_oid} - file 1 of 2'], b'\r')
             finish('subdirectory tree session quit')
+            environment.update(GIT_DIR=str(repo / '.git'), GIT_WORK_TREE=str(repo))
+            assert subprocess.check_output(['git', 'rev-parse', '--show-prefix'], cwd=home,
+                                           env=environment) == b'\n'
+            before, selector = start(cwd=home)
+            expect('external cwd with explicit Git environment opens main', ['[main]'])
+            expect('external cwd opens root tree', ['Directory path /', 'fixture.txt', f'[tree] {tree_oid} - file 1 of 2'], b't')
+            finish('external cwd tree session quit')
+            environment.pop('GIT_DIR')
+            environment.pop('GIT_WORK_TREE')
             before, selector = start(('blame', '--', 'child.txt'), repo / 'nested')
             expect('blame resolves subdirectory relative file', ['nested fixture line', f'[blame] {oldest}:nested/child.txt - line 1 of 1'])
             finish('subdirectory blame session quit')
