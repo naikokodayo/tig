@@ -17,6 +17,7 @@ jobs:
           cargo +1.81.0 fmt --all -- --check
           cargo +1.81.0 test --locked --all-targets
           cargo +1.81.0 clippy --locked --all-targets -- -D warnings
+          python3 rust/tests/upstream-suite.py --self-test
       - name: Build and test real terminal workflows
         run: |
           cargo +1.81.0 build --locked --release

@@ -72,3 +72,33 @@ timeout=<int>::
 	Set the default timeout for each invocation of tig under the
 	test harness. The default is 10 if unset. 0 means "no
 	timeout". Individual tests may override the value.
+
+Rust migration evidence
+-----------------------
+
+`make RUST_ONLY=1 test` builds both `tig` and `test-graph` with Cargo and
+puts `target/release` before the C helper directory. It rejects
+`SYSTEM_TIG=1`; that legacy option selects only the application and still
+uses the C graph helper. A failed Cargo build or missing Rust executable
+stops the Rust-only route.
+
+For reproducible evidence, use the paired runner from the repository root:
+--------------------------------------------------------------------------------
+python3 rust/tests/upstream-suite.py --self-test
+python3 rust/tests/upstream-suite.py
+# Or select unchanged original scripts:
+python3 rust/tests/upstream-suite.py test/graph/00-simple-test test/main/filter-args-test
+--------------------------------------------------------------------------------
+
+The runner builds and runs C first, then Rust, using a controlling terminal
+for each script. Its JSON receipt includes executable paths and hashes,
+script exits, timeouts, original assertion receipts and C-to-Rust assertion
+mapping. Missing receipts and unreached assertions never count as passes.
+Skipped tests or cases keep the parity gate blocked. Exit status 0 means
+only that all selected scripts and their observed assertions passed on both
+implementations; it does not certify migration completion.
+
+Run only one upstream suite per checkout: the original harness owns
+`test/tmp`. See `migration/UPSTREAM-HARNESS.md` for recorded evidence and
+remaining semantic gaps. Original scripts, expected outputs and
+`test/tools/libtest.sh` are unchanged.
