@@ -1,0 +1,1626 @@
+{
+  "schema": 1,
+  "slice": "Git shell alias invocation directory",
+  "verdict": "PASS_ALIAS_SLICE_WITH_UNCHANGED_ADJACENT_GAPS",
+  "full_parity": false,
+  "source_commit": "35a8f218585b61ee606da48af85eb87f03bba9ea",
+  "base_commit": "26674406c6e3977f5b6c78dd8d1f750cd0749f2a",
+  "source_sha256": {
+    "Cargo.lock": "4dff74ef4ccdb94d739984c33d6b06c217c12144f4095dde5e16bf10902ebbb5",
+    "Cargo.toml": "9c0a27f7f353f722308d07664ba1645e9dc6dfe35a94201839f7b4cd93752c69",
+    "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
+    "rust/commands.rs": "4ccff24976180c3cab67a33b5834911360b7fc60b4ed8d8ed34ebb04b5d45ed2",
+    "rust/config.rs": "19be291ed85d3a82de4c1f0c4adf4eeeadcc0d70ee06f5d9bcf7c575bce68690",
+    "rust/date.rs": "51d16041689246691bcfacc8a2f2654e39ae2a123c5aec770c449bfc6ced24f4",
+    "rust/git.rs": "06658031bfd2d0ead89c7342f7dc87e04cc6bd08ea18b3be8316380a9cc9bd0b",
+    "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
+    "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+    "rust/help_view.rs": "029b06cf5c7c88523fe4fb4f3374f737f7fbffd7807169dcd8b8f207cf87b158",
+    "rust/lib.rs": "81e3bdf035141234a178271b092b084f6e105bf159f1e2af4b21e8483d20a088",
+    "rust/main.rs": "4d3a9d72d8e1bf7b98d565c97f7134656578191a53b0cd8e2e5542ac24e68e41",
+    "rust/model.rs": "f1131c9182b02c51a5e9307a194669cec4f835fbd0d5d26b24e1e977336e8dda",
+    "rust/patch.rs": "11b9b2d0dd871b36462ad9ac371203cc9a53ee0539797dcbe698429291d2685c",
+    "rust/refs_view.rs": "35e6d25a83bb9651b5b268b00c75a4c81468746a3158556e2d44bf1e12b11267",
+    "rust/render.rs": "6915b853f948c748d72a90a7eb07311e1faa4142245ad5f52e4a7d5401777097",
+    "rust/tests/blame-navigation.py": "bc7b60c9821929dca18484ccc5e912f34e10bb817807fe760641e9360b365eb7",
+    "rust/tests/blame-review.py": "12d94d23c4a2466e4150fee7c30f38534c5c7dfdda680ff8b15492f8d734a973",
+    "rust/tests/command-variable.py": "af96d1c3ad5f02a9402ce76d5cec3f2443858aa247b19b3fe25225854a0ba3b5",
+    "rust/tests/commit-order-filter.py": "6ef83a18283dcfa477c15af9d158e67360c0d255d17b26dd35feaa28ca97033d",
+    "rust/tests/config-recovery.py": "0bd908d544c7ea3cb94a9a4e109b9b81dfdaf626e25e795ceed0eb87c829851a",
+    "rust/tests/date-compatibility.py": "730fb29be21cd0eab61e97d7789116505227d4d58fe70640af4d9acff2c205fa",
+    "rust/tests/date-percent-s.py": "3a837e0703587ba8f9909d630d700bd17f14bfc34b1e1fe105201e7600df6c4c",
+    "rust/tests/diff-input.py": "a3b5c4ab386484e78f959b469c76a16e53ebbaa69983ad7f157104fa0f3474c3",
+    "rust/tests/diff-navigation.py": "ac38d3cb56fc1bad1b628465cc85d67446e0439e6317d25a3e723c621b99e639",
+    "rust/tests/diff-view-export.py": "0587037d0580f1072f460b769e6da6a1c4a451054bffbd7f91650b1f7baed52f",
+    "rust/tests/git-alias.py": "6efffb7a05e0c2d05ef2e2114e5300df2b58e07a6644dfc4a1492e46d29fd465",
+    "rust/tests/graph-differential.py": "666efeca9ee6cd79cb8bd70cf5639f00438a6b6dff7135ad03f98e53de8d7c8e",
+    "rust/tests/graph-v1-differential.py": "9e144d33dd228875d5a90b8068871102139ce3989324d98e6ffc5ce7d8830ace",
+    "rust/tests/key-bindings.py": "5f5db624a034e053169d928cd4f9f33e7a5f020d82633fed8903a81fbde5f5ec",
+    "rust/tests/main-command-refresh.py": "8516d8d98e1a0b483cd66d8b648cce1c51003617a37d7fcda9ac8fa3c43ce7aa",
+    "rust/tests/reflog-stash-navigation.py": "abe6f6cd6e132afae752fc5612b6fbfb5ed97476fb53b0c1dbd996db50591c9a",
+    "rust/tests/selected-branch.py": "4b9f76077670b19194666dcce1de4c30a4ba55b98cf4434b29b3eceb015ae359",
+    "rust/tests/status-filter.py": "f59fae82a50882417f79c2d82f37275c23d1fabd1ca78a16dcd3d7d12ddf75c6",
+    "rust/tests/stdin-history.py": "c3c62d87506edc45539c4161381add43c7ce1da288a40c7e18a5cac3c41449bf",
+    "rust/tests/terminal-smoke.py": "a09c21e70201587e58c116f2d9a9f7849c6472da6ebe3c0750dd56eb562173a4",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "rust/tests/wrap-rendering.py": "551b8200fea5d62e92a676b1b28c428ef57854449c83fb5bd5459497daaaec5e",
+    "rust/trace.rs": "4fb87248de03495a20b7d4f3863c971c30000a07c1f688d55b2625b22bcf8c23",
+    "rust/tree_view.rs": "c2292d0afab8e20f08579f536bedd00cb9926f099021f9c6d2c56bd56db9ac4a"
+  },
+  "source_manifest_sha256": "8951b258871611146718529e83e62f00693e52b7cf5add18892c99657edb160d",
+  "baseline_source_sha256": {
+    "Cargo.lock": "4dff74ef4ccdb94d739984c33d6b06c217c12144f4095dde5e16bf10902ebbb5",
+    "Cargo.toml": "9c0a27f7f353f722308d07664ba1645e9dc6dfe35a94201839f7b4cd93752c69",
+    "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
+    "rust/commands.rs": "4ccff24976180c3cab67a33b5834911360b7fc60b4ed8d8ed34ebb04b5d45ed2",
+    "rust/config.rs": "19be291ed85d3a82de4c1f0c4adf4eeeadcc0d70ee06f5d9bcf7c575bce68690",
+    "rust/date.rs": "51d16041689246691bcfacc8a2f2654e39ae2a123c5aec770c449bfc6ced24f4",
+    "rust/git.rs": "06658031bfd2d0ead89c7342f7dc87e04cc6bd08ea18b3be8316380a9cc9bd0b",
+    "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
+    "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+    "rust/help_view.rs": "029b06cf5c7c88523fe4fb4f3374f737f7fbffd7807169dcd8b8f207cf87b158",
+    "rust/lib.rs": "81e3bdf035141234a178271b092b084f6e105bf159f1e2af4b21e8483d20a088",
+    "rust/main.rs": "35120b147d9dd7cefbb51a27728c80e1477bd163bdaa40b3a2cc709927829664",
+    "rust/model.rs": "f1131c9182b02c51a5e9307a194669cec4f835fbd0d5d26b24e1e977336e8dda",
+    "rust/patch.rs": "11b9b2d0dd871b36462ad9ac371203cc9a53ee0539797dcbe698429291d2685c",
+    "rust/refs_view.rs": "35e6d25a83bb9651b5b268b00c75a4c81468746a3158556e2d44bf1e12b11267",
+    "rust/render.rs": "6915b853f948c748d72a90a7eb07311e1faa4142245ad5f52e4a7d5401777097",
+    "rust/tests/blame-navigation.py": "bc7b60c9821929dca18484ccc5e912f34e10bb817807fe760641e9360b365eb7",
+    "rust/tests/blame-review.py": "12d94d23c4a2466e4150fee7c30f38534c5c7dfdda680ff8b15492f8d734a973",
+    "rust/tests/command-variable.py": "af96d1c3ad5f02a9402ce76d5cec3f2443858aa247b19b3fe25225854a0ba3b5",
+    "rust/tests/commit-order-filter.py": "6ef83a18283dcfa477c15af9d158e67360c0d255d17b26dd35feaa28ca97033d",
+    "rust/tests/config-recovery.py": "0bd908d544c7ea3cb94a9a4e109b9b81dfdaf626e25e795ceed0eb87c829851a",
+    "rust/tests/date-compatibility.py": "730fb29be21cd0eab61e97d7789116505227d4d58fe70640af4d9acff2c205fa",
+    "rust/tests/date-percent-s.py": "3a837e0703587ba8f9909d630d700bd17f14bfc34b1e1fe105201e7600df6c4c",
+    "rust/tests/diff-input.py": "a3b5c4ab386484e78f959b469c76a16e53ebbaa69983ad7f157104fa0f3474c3",
+    "rust/tests/diff-navigation.py": "ac38d3cb56fc1bad1b628465cc85d67446e0439e6317d25a3e723c621b99e639",
+    "rust/tests/diff-view-export.py": "0587037d0580f1072f460b769e6da6a1c4a451054bffbd7f91650b1f7baed52f",
+    "rust/tests/graph-differential.py": "666efeca9ee6cd79cb8bd70cf5639f00438a6b6dff7135ad03f98e53de8d7c8e",
+    "rust/tests/graph-v1-differential.py": "9e144d33dd228875d5a90b8068871102139ce3989324d98e6ffc5ce7d8830ace",
+    "rust/tests/key-bindings.py": "5f5db624a034e053169d928cd4f9f33e7a5f020d82633fed8903a81fbde5f5ec",
+    "rust/tests/main-command-refresh.py": "8516d8d98e1a0b483cd66d8b648cce1c51003617a37d7fcda9ac8fa3c43ce7aa",
+    "rust/tests/reflog-stash-navigation.py": "abe6f6cd6e132afae752fc5612b6fbfb5ed97476fb53b0c1dbd996db50591c9a",
+    "rust/tests/selected-branch.py": "4b9f76077670b19194666dcce1de4c30a4ba55b98cf4434b29b3eceb015ae359",
+    "rust/tests/status-filter.py": "f59fae82a50882417f79c2d82f37275c23d1fabd1ca78a16dcd3d7d12ddf75c6",
+    "rust/tests/stdin-history.py": "c3c62d87506edc45539c4161381add43c7ce1da288a40c7e18a5cac3c41449bf",
+    "rust/tests/terminal-smoke.py": "a09c21e70201587e58c116f2d9a9f7849c6472da6ebe3c0750dd56eb562173a4",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "rust/tests/wrap-rendering.py": "551b8200fea5d62e92a676b1b28c428ef57854449c83fb5bd5459497daaaec5e",
+    "rust/trace.rs": "4fb87248de03495a20b7d4f3863c971c30000a07c1f688d55b2625b22bcf8c23",
+    "rust/tree_view.rs": "c2292d0afab8e20f08579f536bedd00cb9926f099021f9c6d2c56bd56db9ac4a"
+  },
+  "chain": "CLI -C -> validated GIT_PREFIX cwd restoration and GIT_WORK_TREE -> Config/Repository discovery -> explicit -- paths prefixed from restored cwd, implicit paths resolved by Git at Repository.invocation -> git log",
+  "original_scripts_before": {
+    "schema": 1,
+    "source_commit": "35a8f218585b61ee606da48af85eb87f03bba9ea",
+    "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+    "harness_sha256": {
+      "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+      "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+      "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+    },
+    "rust_complete": false,
+    "parity_gate": "BLOCKED",
+    "script_timeout_seconds": 120,
+    "environment": {
+      "platform": "Darwin arm64",
+      "git": "git version 2.50.1 (Apple Git-155)",
+      "init.defaultBranch": "master",
+      "TEST_OPTS": "",
+      "pty_rows": 30,
+      "pty_columns": 80
+    },
+    "runs": {
+      "c": {
+        "build_command": [
+          "make",
+          "src/tig",
+          "test/tools/test-graph"
+        ],
+        "build_exit_code": 0,
+        "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+        "results": [
+          {
+            "script": "test/main/filter-args-test",
+            "script_sha256": "71a55ff435f3cd25168a004233b7ea6c34e71137c9483a91e921aaae49e3c9c4",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 3
+            },
+            "assertions": [
+              {
+                "id": "rev-parse.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "log.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "filtered.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/main/filter-args-test/.test-result",
+            "receipt": "  [OK] rev-parse.trace assertion\n  [OK] log.trace assertion\n  [OK] filtered.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/main/git-alias-test",
+            "script_sha256": "6376a028dd925590fdb854ef9b7b979e032c7a05e2d265b2c30c53f0105b3155",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 2
+            },
+            "assertions": [
+              {
+                "id": "alias-vars#1",
+                "status": "OK"
+              },
+              {
+                "id": "main.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/main/git-alias-test/.test-result",
+            "receipt": "  [OK] alias-vars assertion\n  [OK] main.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/status/file-filter-test",
+            "script_sha256": "ada6618b55d4a2c054e4858f336bf67b389b17b98a11cb5404bd93ac9d818c80",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 6
+            },
+            "assertions": [
+              {
+                "id": "status-path-filter.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-path-filter.stderr#1",
+                "status": "OK"
+              },
+              {
+                "id": "rev-parse.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-index.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-files.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "ls-files.trace#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/status/file-filter-test/.test-result",
+            "receipt": "  [OK] status-path-filter.screen assertion\n  [OK] status-path-filter.stderr assertion\n  [OK] rev-parse.trace assertion\n  [OK] diff-index.trace assertion\n  [OK] diff-files.trace assertion\n  [OK] ls-files.trace assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/tree/file-name-test",
+            "script_sha256": "92f13ad7be65e397e220fd1ceb9aa8effbcb873d7697b42a552d411506a18e35",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 4
+            },
+            "assertions": [
+              {
+                "id": "root-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "first-child-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "second-child-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "second-child-dir-first-file.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/tree/file-name-test/.test-result",
+            "receipt": "  [OK] root-dir.screen assertion\n  [OK] first-child-dir.screen assertion\n  [OK] second-child-dir.screen assertion\n  [OK] second-child-dir-first-file.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          }
+        ],
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/src/tig",
+            "sha256": "1e17da10f6e7073465b261b016364529796c9131c8adeb4011a031ef82181436"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/test/tools/test-graph",
+            "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+          }
+        },
+        "binaries_unchanged": true,
+        "summary": {
+          "pass": 4
+        }
+      },
+      "rust": {
+        "build_command": [
+          "make",
+          "rust-test-binaries"
+        ],
+        "build_exit_code": 0,
+        "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo)\n    Finished `release` profile [optimized] target(s) in 32.76s\n",
+        "results": [
+          {
+            "script": "test/main/filter-args-test",
+            "script_sha256": "71a55ff435f3cd25168a004233b7ea6c34e71137c9483a91e921aaae49e3c9c4",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "fail",
+            "reasons": [
+              "failed_checks"
+            ],
+            "checks": {
+              "FAIL": 2,
+              "OK": 1
+            },
+            "assertions": [
+              {
+                "id": "rev-parse.trace#1",
+                "status": "FAIL"
+              },
+              {
+                "id": "log.trace#1",
+                "status": "FAIL"
+              },
+              {
+                "id": "filtered.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/main/filter-args-test/.test-result",
+            "receipt": "[FAIL] rev-parse.trace != expected/rev-parse.trace\n\u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\n\u001b[1mindex c6d0c82..aba1ee8 100644\u001b[m\n\u001b[1m--- a/expected/rev-parse.trace\u001b[m\n\u001b[1m+++ b/rev-parse.trace\u001b[m\n\u001b[36m@@ -1,4 +1,5 @@\u001b[m\n\u001b[31m-git rev-parse --no-revs --no-flags -- common tracer\u001b[m\n\u001b[31m-git rev-parse --flags --no-revs -- common tracer\u001b[m\n\u001b[31m-git rev-parse --symbolic --revs-only -- common tracer\u001b[m\n\u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --symbolic-full-name @{upstream}\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\n[FAIL] log.trace != expected/log.trace\n\u001b[1mdiff --git a/expected/log.trace b/log.trace\u001b[m\n\u001b[1mindex a9795ce..aba12a6 100644\u001b[m\n\u001b[1m--- a/expected/log.trace\u001b[m\n\u001b[1m+++ b/log.trace\u001b[m\n\u001b[36m@@ -1 +1 @@\u001b[m\n\u001b[31m-git log --encoding=UTF-8 --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all --date=raw --parents --no-color --show-notes --pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s%x00%N%x03 -- common tracer\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit log --parents --no-show-signature --decorate=full --format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI -z --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all -- common tracer\u001b[m\u001b[41m \u001b[m\n  [OK] filtered.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": "| Failed 2 out of 3 test(s)\r\n| [FAIL] rev-parse.trace != expected/rev-parse.trace\r\n| \u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\r\n| \u001b[1mindex c6d0c82..aba1ee8 100644\u001b[m\r\n| \u001b[1m--- a/expected/rev-parse.trace\u001b[m\r\n| \u001b[1m+++ b/rev-parse.trace\u001b[m\r\n| \u001b[36m@@ -1,4 +1,5 @@\u001b[m\r\n| \u001b[31m-git rev-parse --no-revs --no-flags -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --flags --no-revs -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --symbolic --revs-only -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --symbolic-full-name @{upstream}\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\r\n| [FAIL] log.trace != expected/log.trace\r\n| \u001b[1mdiff --git a/expected/log.trace b/log.trace\u001b[m\r\n| \u001b[1mindex a9795ce..aba12a6 100644\u001b[m\r\n| \u001b[1m--- a/expected/log.trace\u001b[m\r\n| \u001b[1m+++ b/log.trace\u001b[m\r\n| \u001b[36m@@ -1 +1 @@\u001b[m\r\n| \u001b[31m-git log --encoding=UTF-8 --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all --date=raw --parents --no-color --show-notes --pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s%x00%N%x03 -- common tracer\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit log --parents --no-show-signature --decorate=full --format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI -z --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all -- common tracer\u001b[m\u001b[41m \u001b[m\r\n|   [OK] filtered.screen assertion\r\n"
+          },
+          {
+            "script": "test/main/git-alias-test",
+            "script_sha256": "6376a028dd925590fdb854ef9b7b979e032c7a05e2d265b2c30c53f0105b3155",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "fail",
+            "reasons": [
+              "failed_checks"
+            ],
+            "checks": {
+              "OK": 1,
+              "FAIL": 1
+            },
+            "assertions": [
+              {
+                "id": "alias-vars#1",
+                "status": "OK"
+              },
+              {
+                "id": "main.screen#1",
+                "status": "FAIL"
+              }
+            ],
+            "receipt_path": "test/tmp/main/git-alias-test/.test-result",
+            "receipt": "  [OK] alias-vars assertion\n[FAIL] main.screen != expected/main.screen\n\u001b[1mdiff --git a/expected/main.screen b/main.screen\u001b[m\n\u001b[1mindex b69b6bd..f25c10e 100644\u001b[m\n\u001b[1m--- a/expected/main.screen\u001b[m\n\u001b[1m+++ b/main.screen\u001b[m\n\u001b[36m@@ -1,4 +1,4 @@\u001b[m\n\u001b[31m-2014-03-01 17:26 -0500 Jonas Fonseca * [work-branch] [master] WIP: Upgrade to 0.\u001b[m\n\u001b[31m-2014-01-16 22:51 -0500 Jonas Fonseca I Move classes under org.scalajs.benchmark\u001b[m\n \u001b[m\n\u001b[31m-[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 2             100%\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[main]                                                                        0%\u001b[m\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": "| Failed 1 out of 2 test(s)\r\n|   [OK] alias-vars assertion\r\n| [FAIL] main.screen != expected/main.screen\r\n| \u001b[1mdiff --git a/expected/main.screen b/main.screen\u001b[m\r\n| \u001b[1mindex b69b6bd..f25c10e 100644\u001b[m\r\n| \u001b[1m--- a/expected/main.screen\u001b[m\r\n| \u001b[1m+++ b/main.screen\u001b[m\r\n| \u001b[36m@@ -1,4 +1,4 @@\u001b[m\r\n| \u001b[31m-2014-03-01 17:26 -0500 Jonas Fonseca * [work-branch] [master] WIP: Upgrade to 0.\u001b[m\r\n| \u001b[31m-2014-01-16 22:51 -0500 Jonas Fonseca I Move classes under org.scalajs.benchmark\u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-[main] ee912870202200a0b9cf4fd86ba57243212d341e - commit 1 of 2             100%\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[main]                                                                        0%\u001b[m\r\n"
+          },
+          {
+            "script": "test/status/file-filter-test",
+            "script_sha256": "ada6618b55d4a2c054e4858f336bf67b389b17b98a11cb5404bd93ac9d818c80",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "fail",
+            "reasons": [
+              "failed_checks"
+            ],
+            "checks": {
+              "OK": 5,
+              "FAIL": 1
+            },
+            "assertions": [
+              {
+                "id": "status-path-filter.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-path-filter.stderr#1",
+                "status": "OK"
+              },
+              {
+                "id": "rev-parse.trace#1",
+                "status": "FAIL"
+              },
+              {
+                "id": "diff-index.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-files.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "ls-files.trace#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/status/file-filter-test/.test-result",
+            "receipt": "  [OK] status-path-filter.screen assertion\n  [OK] status-path-filter.stderr assertion\n[FAIL] rev-parse.trace != expected/rev-parse.trace\n\u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\n\u001b[1mindex 1d9a7db..7f44c12 100644\u001b[m\n\u001b[1m--- a/expected/rev-parse.trace\u001b[m\n\u001b[1m+++ b/rev-parse.trace\u001b[m\n\u001b[36m@@ -1,4 +1,4 @@\u001b[m\n\u001b[31m-git rev-parse --no-revs --no-flags subdir\u001b[m\n\u001b[31m-git rev-parse --flags --no-revs subdir\u001b[m\n\u001b[31m-git rev-parse --symbolic --revs-only subdir\u001b[m\n\u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\n  [OK] diff-index.trace assertion\n  [OK] diff-files.trace assertion\n  [OK] ls-files.trace assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": "| Failed 1 out of 6 test(s)\r\n|   [OK] status-path-filter.screen assertion\r\n|   [OK] status-path-filter.stderr assertion\r\n| [FAIL] rev-parse.trace != expected/rev-parse.trace\r\n| \u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\r\n| \u001b[1mindex 1d9a7db..7f44c12 100644\u001b[m\r\n| \u001b[1m--- a/expected/rev-parse.trace\u001b[m\r\n| \u001b[1m+++ b/rev-parse.trace\u001b[m\r\n| \u001b[36m@@ -1,4 +1,4 @@\u001b[m\r\n| \u001b[31m-git rev-parse --no-revs --no-flags subdir\u001b[m\r\n| \u001b[31m-git rev-parse --flags --no-revs subdir\u001b[m\r\n| \u001b[31m-git rev-parse --symbolic --revs-only subdir\u001b[m\r\n| \u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\r\n|   [OK] diff-index.trace assertion\r\n|   [OK] diff-files.trace assertion\r\n|   [OK] ls-files.trace assertion\r\n"
+          },
+          {
+            "script": "test/tree/file-name-test",
+            "script_sha256": "92f13ad7be65e397e220fd1ceb9aa8effbcb873d7697b42a552d411506a18e35",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "fail",
+            "reasons": [
+              "failed_checks"
+            ],
+            "checks": {
+              "OK": 3,
+              "FAIL": 1
+            },
+            "assertions": [
+              {
+                "id": "root-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "first-child-dir.screen#1",
+                "status": "FAIL"
+              },
+              {
+                "id": "second-child-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "second-child-dir-first-file.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/tree/file-name-test/.test-result",
+            "receipt": "  [OK] root-dir.screen assertion\n[FAIL] first-child-dir.screen != expected/first-child-dir.screen\n\u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\n\u001b[1mindex 0a482af..53d6b42 100644\u001b[m\n\u001b[1m--- a/expected/first-child-dir.screen\u001b[m\n\u001b[1m+++ b/first-child-dir.screen\u001b[m\n\u001b[36m@@ -1,7 +1,7 @@\u001b[m\n Directory path /-- foo bar/\u001b[m\n drwxr-xr-x                                    ..\u001b[m\n -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\n\u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n  [OK] second-child-dir.screen assertion\n  [OK] second-child-dir-first-file.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": "| Failed 1 out of 4 test(s)\r\n|   [OK] root-dir.screen assertion\r\n| [FAIL] first-child-dir.screen != expected/first-child-dir.screen\r\n| \u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\r\n| \u001b[1mindex 0a482af..53d6b42 100644\u001b[m\r\n| \u001b[1m--- a/expected/first-child-dir.screen\u001b[m\r\n| \u001b[1m+++ b/first-child-dir.screen\u001b[m\r\n| \u001b[36m@@ -1,7 +1,7 @@\u001b[m\r\n|  Directory path /-- foo bar/\u001b[m\r\n|  drwxr-xr-x                                    ..\u001b[m\r\n|  -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\r\n| \u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|   [OK] second-child-dir.screen assertion\r\n|   [OK] second-child-dir-first-file.screen assertion\r\n"
+          }
+        ],
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/target/release/tig",
+            "sha256": "a9963befb667e0e5d071ad037c96ad2eef7807b52976d303faef939c6fafb64c"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/target/release/test-graph",
+            "sha256": "cef42b529157a36aeaa22dfa939b47b5f10cf800da2ff5155f386f01d718ec79"
+          }
+        },
+        "binaries_unchanged": true,
+        "summary": {
+          "fail": 4
+        }
+      }
+    },
+    "mapping": [
+      {
+        "script": "test/main/filter-args-test",
+        "c_status": "pass",
+        "rust_status": "fail",
+        "assertions": [
+          {
+            "id": "rev-parse.trace#1",
+            "c": "OK",
+            "rust": "FAIL"
+          },
+          {
+            "id": "log.trace#1",
+            "c": "OK",
+            "rust": "FAIL"
+          },
+          {
+            "id": "filtered.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      },
+      {
+        "script": "test/main/git-alias-test",
+        "c_status": "pass",
+        "rust_status": "fail",
+        "assertions": [
+          {
+            "id": "alias-vars#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "main.screen#1",
+            "c": "OK",
+            "rust": "FAIL"
+          }
+        ]
+      },
+      {
+        "script": "test/status/file-filter-test",
+        "c_status": "pass",
+        "rust_status": "fail",
+        "assertions": [
+          {
+            "id": "status-path-filter.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "status-path-filter.stderr#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "rev-parse.trace#1",
+            "c": "OK",
+            "rust": "FAIL"
+          },
+          {
+            "id": "diff-index.trace#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "diff-files.trace#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "ls-files.trace#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      },
+      {
+        "script": "test/tree/file-name-test",
+        "c_status": "pass",
+        "rust_status": "fail",
+        "assertions": [
+          {
+            "id": "root-dir.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "first-child-dir.screen#1",
+            "c": "OK",
+            "rust": "FAIL"
+          },
+          {
+            "id": "second-child-dir.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "second-child-dir-first-file.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      }
+    ]
+  },
+  "original_scripts_after": {
+    "schema": 1,
+    "source_commit": "35a8f218585b61ee606da48af85eb87f03bba9ea",
+    "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+    "harness_sha256": {
+      "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+      "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+      "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+    },
+    "rust_complete": false,
+    "parity_gate": "BLOCKED",
+    "script_timeout_seconds": 120,
+    "environment": {
+      "platform": "Darwin arm64",
+      "git": "git version 2.50.1 (Apple Git-155)",
+      "init.defaultBranch": "master",
+      "TEST_OPTS": "",
+      "pty_rows": 30,
+      "pty_columns": 80
+    },
+    "runs": {
+      "c": {
+        "build_command": [
+          "make",
+          "src/tig",
+          "test/tools/test-graph"
+        ],
+        "build_exit_code": 0,
+        "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+        "results": [
+          {
+            "script": "test/diff/diff-stat-split-test",
+            "script_sha256": "a1fb6dcee04518578a18ae1f5b6ec160aca21960093d970afeeb09433a1adea8",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 1
+            },
+            "assertions": [
+              {
+                "id": "diff-stat.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/diff/diff-stat-split-test/.test-result",
+            "receipt": "  [OK] diff-stat.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/diff/diff-stat-test",
+            "script_sha256": "2e3504a253b87cb00c42babbf7014ca384fbe2951bba56232a10ef5a688e151d",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 1
+            },
+            "assertions": [
+              {
+                "id": "view.data#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/diff/diff-stat-test/.test-result",
+            "receipt": "  [OK] view.data assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/main/default-test",
+            "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 6
+            },
+            "assertions": [
+              {
+                "id": "main-default.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-ref-format.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-remotes-hidden.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-no-refs.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-no-graph.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-diff.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/main/default-test/.test-result",
+            "receipt": "  [OK] main-default.screen assertion\n  [OK] main-ref-format.screen assertion\n  [OK] main-remotes-hidden.screen assertion\n  [OK] main-no-refs.screen assertion\n  [OK] main-no-graph.screen assertion\n  [OK] main-with-diff.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/main/filter-args-test",
+            "script_sha256": "71a55ff435f3cd25168a004233b7ea6c34e71137c9483a91e921aaae49e3c9c4",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 3
+            },
+            "assertions": [
+              {
+                "id": "rev-parse.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "log.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "filtered.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/main/filter-args-test/.test-result",
+            "receipt": "  [OK] rev-parse.trace assertion\n  [OK] log.trace assertion\n  [OK] filtered.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/main/git-alias-test",
+            "script_sha256": "6376a028dd925590fdb854ef9b7b979e032c7a05e2d265b2c30c53f0105b3155",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 2
+            },
+            "assertions": [
+              {
+                "id": "alias-vars#1",
+                "status": "OK"
+              },
+              {
+                "id": "main.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/main/git-alias-test/.test-result",
+            "receipt": "  [OK] alias-vars assertion\n  [OK] main.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/main/no-matching-commmits-test",
+            "script_sha256": "e1bf5d04ecaf3a855b65548e2a6ebe1697bc787597cfa5b97927acec79ed7bfe",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 2
+            },
+            "assertions": [
+              {
+                "id": "stderr#1",
+                "status": "OK"
+              },
+              {
+                "id": "tig-did-not-exit-as-expected#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/main/no-matching-commmits-test/.test-result",
+            "receipt": "  [OK] stderr assertion\n  [OK] tig-did-not-exit-as-expected does not exist\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/status/file-filter-test",
+            "script_sha256": "ada6618b55d4a2c054e4858f336bf67b389b17b98a11cb5404bd93ac9d818c80",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 6
+            },
+            "assertions": [
+              {
+                "id": "status-path-filter.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-path-filter.stderr#1",
+                "status": "OK"
+              },
+              {
+                "id": "rev-parse.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-index.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-files.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "ls-files.trace#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/status/file-filter-test/.test-result",
+            "receipt": "  [OK] status-path-filter.screen assertion\n  [OK] status-path-filter.stderr assertion\n  [OK] rev-parse.trace assertion\n  [OK] diff-index.trace assertion\n  [OK] diff-files.trace assertion\n  [OK] ls-files.trace assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/tree/chdir-test",
+            "script_sha256": "168a6399b9f4b02774f284993da4e389a3af6fce8313b61975ef94eab47ad475",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 8
+            },
+            "assertions": [
+              {
+                "id": "tree-top.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "tree-cd-depth-one.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "tree-cd-depth-two.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "tree-cd-depth-three.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "tree-cd-depth-seven.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "tree-cdup-depth-six.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "tree-cdup-depth-five.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "tree-cdup-depth-four.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/tree/chdir-test/.test-result",
+            "receipt": "  [OK] tree-top.screen assertion\n  [OK] tree-cd-depth-one.screen assertion\n  [OK] tree-cd-depth-two.screen assertion\n  [OK] tree-cd-depth-three.screen assertion\n  [OK] tree-cd-depth-seven.screen assertion\n  [OK] tree-cdup-depth-six.screen assertion\n  [OK] tree-cdup-depth-five.screen assertion\n  [OK] tree-cdup-depth-four.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/tree/file-name-test",
+            "script_sha256": "92f13ad7be65e397e220fd1ceb9aa8effbcb873d7697b42a552d411506a18e35",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 4
+            },
+            "assertions": [
+              {
+                "id": "root-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "first-child-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "second-child-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "second-child-dir-first-file.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/tree/file-name-test/.test-result",
+            "receipt": "  [OK] root-dir.screen assertion\n  [OK] first-child-dir.screen assertion\n  [OK] second-child-dir.screen assertion\n  [OK] second-child-dir-first-file.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/tree/worktree-editor-test",
+            "script_sha256": "28bb4386d315ee6b2940ab8660152d21e66de48a909a986a4eb4f2ebc2951393",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 6
+            },
+            "assertions": [
+              {
+                "id": "vars_assert_count#1",
+                "status": "OK"
+              },
+              {
+                "id": "vars#1",
+                "status": "OK"
+              },
+              {
+                "id": "bench-common-src.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "bench.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "editor.log#1",
+                "status": "OK"
+              },
+              {
+                "id": "exec-env#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/tree/worktree-editor-test/.test-result",
+            "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] bench-common-src.screen assertion\n  [OK] bench.screen assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          }
+        ],
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/src/tig",
+            "sha256": "1e17da10f6e7073465b261b016364529796c9131c8adeb4011a031ef82181436"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/test/tools/test-graph",
+            "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+          }
+        },
+        "binaries_unchanged": true,
+        "summary": {
+          "pass": 10
+        }
+      },
+      "rust": {
+        "build_command": [
+          "make",
+          "rust-test-binaries"
+        ],
+        "build_exit_code": 0,
+        "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo)\n    Finished `release` profile [optimized] target(s) in 16.81s\n",
+        "results": [
+          {
+            "script": "test/diff/diff-stat-split-test",
+            "script_sha256": "a1fb6dcee04518578a18ae1f5b6ec160aca21960093d970afeeb09433a1adea8",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 1
+            },
+            "assertions": [
+              {
+                "id": "diff-stat.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/diff/diff-stat-split-test/.test-result",
+            "receipt": "  [OK] diff-stat.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/diff/diff-stat-test",
+            "script_sha256": "2e3504a253b87cb00c42babbf7014ca384fbe2951bba56232a10ef5a688e151d",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 1
+            },
+            "assertions": [
+              {
+                "id": "view.data#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/diff/diff-stat-test/.test-result",
+            "receipt": "  [OK] view.data assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/main/default-test",
+            "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 6
+            },
+            "assertions": [
+              {
+                "id": "main-default.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-ref-format.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-remotes-hidden.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-no-refs.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-no-graph.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-diff.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/main/default-test/.test-result",
+            "receipt": "  [OK] main-default.screen assertion\n  [OK] main-ref-format.screen assertion\n  [OK] main-remotes-hidden.screen assertion\n  [OK] main-no-refs.screen assertion\n  [OK] main-no-graph.screen assertion\n  [OK] main-with-diff.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/main/filter-args-test",
+            "script_sha256": "71a55ff435f3cd25168a004233b7ea6c34e71137c9483a91e921aaae49e3c9c4",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "fail",
+            "reasons": [
+              "failed_checks"
+            ],
+            "checks": {
+              "FAIL": 2,
+              "OK": 1
+            },
+            "assertions": [
+              {
+                "id": "rev-parse.trace#1",
+                "status": "FAIL"
+              },
+              {
+                "id": "log.trace#1",
+                "status": "FAIL"
+              },
+              {
+                "id": "filtered.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/main/filter-args-test/.test-result",
+            "receipt": "[FAIL] rev-parse.trace != expected/rev-parse.trace\n\u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\n\u001b[1mindex c6d0c82..aba1ee8 100644\u001b[m\n\u001b[1m--- a/expected/rev-parse.trace\u001b[m\n\u001b[1m+++ b/rev-parse.trace\u001b[m\n\u001b[36m@@ -1,4 +1,5 @@\u001b[m\n\u001b[31m-git rev-parse --no-revs --no-flags -- common tracer\u001b[m\n\u001b[31m-git rev-parse --flags --no-revs -- common tracer\u001b[m\n\u001b[31m-git rev-parse --symbolic --revs-only -- common tracer\u001b[m\n\u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --symbolic-full-name @{upstream}\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\n[FAIL] log.trace != expected/log.trace\n\u001b[1mdiff --git a/expected/log.trace b/log.trace\u001b[m\n\u001b[1mindex a9795ce..aba12a6 100644\u001b[m\n\u001b[1m--- a/expected/log.trace\u001b[m\n\u001b[1m+++ b/log.trace\u001b[m\n\u001b[36m@@ -1 +1 @@\u001b[m\n\u001b[31m-git log --encoding=UTF-8 --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all --date=raw --parents --no-color --show-notes --pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s%x00%N%x03 -- common tracer\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit log --parents --no-show-signature --decorate=full --format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI -z --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all -- common tracer\u001b[m\u001b[41m \u001b[m\n  [OK] filtered.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": "| Failed 2 out of 3 test(s)\r\n| [FAIL] rev-parse.trace != expected/rev-parse.trace\r\n| \u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\r\n| \u001b[1mindex c6d0c82..aba1ee8 100644\u001b[m\r\n| \u001b[1m--- a/expected/rev-parse.trace\u001b[m\r\n| \u001b[1m+++ b/rev-parse.trace\u001b[m\r\n| \u001b[36m@@ -1,4 +1,5 @@\u001b[m\r\n| \u001b[31m-git rev-parse --no-revs --no-flags -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --flags --no-revs -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --symbolic --revs-only -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --symbolic-full-name @{upstream}\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\r\n| [FAIL] log.trace != expected/log.trace\r\n| \u001b[1mdiff --git a/expected/log.trace b/log.trace\u001b[m\r\n| \u001b[1mindex a9795ce..aba12a6 100644\u001b[m\r\n| \u001b[1m--- a/expected/log.trace\u001b[m\r\n| \u001b[1m+++ b/log.trace\u001b[m\r\n| \u001b[36m@@ -1 +1 @@\u001b[m\r\n| \u001b[31m-git log --encoding=UTF-8 --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all --date=raw --parents --no-color --show-notes --pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s%x00%N%x03 -- common tracer\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit log --parents --no-show-signature --decorate=full --format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI -z --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all -- common tracer\u001b[m\u001b[41m \u001b[m\r\n|   [OK] filtered.screen assertion\r\n"
+          },
+          {
+            "script": "test/main/git-alias-test",
+            "script_sha256": "6376a028dd925590fdb854ef9b7b979e032c7a05e2d265b2c30c53f0105b3155",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 2
+            },
+            "assertions": [
+              {
+                "id": "alias-vars#1",
+                "status": "OK"
+              },
+              {
+                "id": "main.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/main/git-alias-test/.test-result",
+            "receipt": "  [OK] alias-vars assertion\n  [OK] main.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/main/no-matching-commmits-test",
+            "script_sha256": "e1bf5d04ecaf3a855b65548e2a6ebe1697bc787597cfa5b97927acec79ed7bfe",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 2
+            },
+            "assertions": [
+              {
+                "id": "stderr#1",
+                "status": "OK"
+              },
+              {
+                "id": "tig-did-not-exit-as-expected#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/main/no-matching-commmits-test/.test-result",
+            "receipt": "  [OK] stderr assertion\n  [OK] tig-did-not-exit-as-expected does not exist\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/status/file-filter-test",
+            "script_sha256": "ada6618b55d4a2c054e4858f336bf67b389b17b98a11cb5404bd93ac9d818c80",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "fail",
+            "reasons": [
+              "failed_checks"
+            ],
+            "checks": {
+              "OK": 5,
+              "FAIL": 1
+            },
+            "assertions": [
+              {
+                "id": "status-path-filter.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-path-filter.stderr#1",
+                "status": "OK"
+              },
+              {
+                "id": "rev-parse.trace#1",
+                "status": "FAIL"
+              },
+              {
+                "id": "diff-index.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-files.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "ls-files.trace#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/status/file-filter-test/.test-result",
+            "receipt": "  [OK] status-path-filter.screen assertion\n  [OK] status-path-filter.stderr assertion\n[FAIL] rev-parse.trace != expected/rev-parse.trace\n\u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\n\u001b[1mindex 1d9a7db..7f44c12 100644\u001b[m\n\u001b[1m--- a/expected/rev-parse.trace\u001b[m\n\u001b[1m+++ b/rev-parse.trace\u001b[m\n\u001b[36m@@ -1,4 +1,4 @@\u001b[m\n\u001b[31m-git rev-parse --no-revs --no-flags subdir\u001b[m\n\u001b[31m-git rev-parse --flags --no-revs subdir\u001b[m\n\u001b[31m-git rev-parse --symbolic --revs-only subdir\u001b[m\n\u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\n  [OK] diff-index.trace assertion\n  [OK] diff-files.trace assertion\n  [OK] ls-files.trace assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": "| Failed 1 out of 6 test(s)\r\n|   [OK] status-path-filter.screen assertion\r\n|   [OK] status-path-filter.stderr assertion\r\n| [FAIL] rev-parse.trace != expected/rev-parse.trace\r\n| \u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\r\n| \u001b[1mindex 1d9a7db..7f44c12 100644\u001b[m\r\n| \u001b[1m--- a/expected/rev-parse.trace\u001b[m\r\n| \u001b[1m+++ b/rev-parse.trace\u001b[m\r\n| \u001b[36m@@ -1,4 +1,4 @@\u001b[m\r\n| \u001b[31m-git rev-parse --no-revs --no-flags subdir\u001b[m\r\n| \u001b[31m-git rev-parse --flags --no-revs subdir\u001b[m\r\n| \u001b[31m-git rev-parse --symbolic --revs-only subdir\u001b[m\r\n| \u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\r\n|   [OK] diff-index.trace assertion\r\n|   [OK] diff-files.trace assertion\r\n|   [OK] ls-files.trace assertion\r\n"
+          },
+          {
+            "script": "test/tree/chdir-test",
+            "script_sha256": "168a6399b9f4b02774f284993da4e389a3af6fce8313b61975ef94eab47ad475",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 8
+            },
+            "assertions": [
+              {
+                "id": "tree-top.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "tree-cd-depth-one.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "tree-cd-depth-two.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "tree-cd-depth-three.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "tree-cd-depth-seven.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "tree-cdup-depth-six.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "tree-cdup-depth-five.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "tree-cdup-depth-four.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/tree/chdir-test/.test-result",
+            "receipt": "  [OK] tree-top.screen assertion\n  [OK] tree-cd-depth-one.screen assertion\n  [OK] tree-cd-depth-two.screen assertion\n  [OK] tree-cd-depth-three.screen assertion\n  [OK] tree-cd-depth-seven.screen assertion\n  [OK] tree-cdup-depth-six.screen assertion\n  [OK] tree-cdup-depth-five.screen assertion\n  [OK] tree-cdup-depth-four.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/tree/file-name-test",
+            "script_sha256": "92f13ad7be65e397e220fd1ceb9aa8effbcb873d7697b42a552d411506a18e35",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "fail",
+            "reasons": [
+              "failed_checks"
+            ],
+            "checks": {
+              "OK": 3,
+              "FAIL": 1
+            },
+            "assertions": [
+              {
+                "id": "root-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "first-child-dir.screen#1",
+                "status": "FAIL"
+              },
+              {
+                "id": "second-child-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "second-child-dir-first-file.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/tree/file-name-test/.test-result",
+            "receipt": "  [OK] root-dir.screen assertion\n[FAIL] first-child-dir.screen != expected/first-child-dir.screen\n\u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\n\u001b[1mindex 0a482af..53d6b42 100644\u001b[m\n\u001b[1m--- a/expected/first-child-dir.screen\u001b[m\n\u001b[1m+++ b/first-child-dir.screen\u001b[m\n\u001b[36m@@ -1,7 +1,7 @@\u001b[m\n Directory path /-- foo bar/\u001b[m\n drwxr-xr-x                                    ..\u001b[m\n -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\n\u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n  [OK] second-child-dir.screen assertion\n  [OK] second-child-dir-first-file.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": "| Failed 1 out of 4 test(s)\r\n|   [OK] root-dir.screen assertion\r\n| [FAIL] first-child-dir.screen != expected/first-child-dir.screen\r\n| \u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\r\n| \u001b[1mindex 0a482af..53d6b42 100644\u001b[m\r\n| \u001b[1m--- a/expected/first-child-dir.screen\u001b[m\r\n| \u001b[1m+++ b/first-child-dir.screen\u001b[m\r\n| \u001b[36m@@ -1,7 +1,7 @@\u001b[m\r\n|  Directory path /-- foo bar/\u001b[m\r\n|  drwxr-xr-x                                    ..\u001b[m\r\n|  -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\r\n| \u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|   [OK] second-child-dir.screen assertion\r\n|   [OK] second-child-dir-first-file.screen assertion\r\n"
+          },
+          {
+            "script": "test/tree/worktree-editor-test",
+            "script_sha256": "28bb4386d315ee6b2940ab8660152d21e66de48a909a986a4eb4f2ebc2951393",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 6
+            },
+            "assertions": [
+              {
+                "id": "vars_assert_count#1",
+                "status": "OK"
+              },
+              {
+                "id": "vars#1",
+                "status": "OK"
+              },
+              {
+                "id": "bench-common-src.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "bench.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "editor.log#1",
+                "status": "OK"
+              },
+              {
+                "id": "exec-env#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/tree/worktree-editor-test/.test-result",
+            "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] bench-common-src.screen assertion\n  [OK] bench.screen assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          }
+        ],
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/target/release/tig",
+            "sha256": "4fe01c9a758aaa5906e67f3ef4ca7c56fe3a96423d1c5a9f78228be83848fb23"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/target/release/test-graph",
+            "sha256": "cef42b529157a36aeaa22dfa939b47b5f10cf800da2ff5155f386f01d718ec79"
+          }
+        },
+        "binaries_unchanged": true,
+        "summary": {
+          "pass": 7,
+          "fail": 3
+        }
+      }
+    },
+    "mapping": [
+      {
+        "script": "test/diff/diff-stat-split-test",
+        "c_status": "pass",
+        "rust_status": "pass",
+        "assertions": [
+          {
+            "id": "diff-stat.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      },
+      {
+        "script": "test/diff/diff-stat-test",
+        "c_status": "pass",
+        "rust_status": "pass",
+        "assertions": [
+          {
+            "id": "view.data#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      },
+      {
+        "script": "test/main/default-test",
+        "c_status": "pass",
+        "rust_status": "pass",
+        "assertions": [
+          {
+            "id": "main-default.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "main-ref-format.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "main-remotes-hidden.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "main-no-refs.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "main-no-graph.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "main-with-diff.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      },
+      {
+        "script": "test/main/filter-args-test",
+        "c_status": "pass",
+        "rust_status": "fail",
+        "assertions": [
+          {
+            "id": "rev-parse.trace#1",
+            "c": "OK",
+            "rust": "FAIL"
+          },
+          {
+            "id": "log.trace#1",
+            "c": "OK",
+            "rust": "FAIL"
+          },
+          {
+            "id": "filtered.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      },
+      {
+        "script": "test/main/git-alias-test",
+        "c_status": "pass",
+        "rust_status": "pass",
+        "assertions": [
+          {
+            "id": "alias-vars#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "main.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      },
+      {
+        "script": "test/main/no-matching-commmits-test",
+        "c_status": "pass",
+        "rust_status": "pass",
+        "assertions": [
+          {
+            "id": "stderr#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "tig-did-not-exit-as-expected#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      },
+      {
+        "script": "test/status/file-filter-test",
+        "c_status": "pass",
+        "rust_status": "fail",
+        "assertions": [
+          {
+            "id": "status-path-filter.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "status-path-filter.stderr#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "rev-parse.trace#1",
+            "c": "OK",
+            "rust": "FAIL"
+          },
+          {
+            "id": "diff-index.trace#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "diff-files.trace#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "ls-files.trace#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      },
+      {
+        "script": "test/tree/chdir-test",
+        "c_status": "pass",
+        "rust_status": "pass",
+        "assertions": [
+          {
+            "id": "tree-top.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "tree-cd-depth-one.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "tree-cd-depth-two.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "tree-cd-depth-three.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "tree-cd-depth-seven.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "tree-cdup-depth-six.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "tree-cdup-depth-five.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "tree-cdup-depth-four.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      },
+      {
+        "script": "test/tree/file-name-test",
+        "c_status": "pass",
+        "rust_status": "fail",
+        "assertions": [
+          {
+            "id": "root-dir.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "first-child-dir.screen#1",
+            "c": "OK",
+            "rust": "FAIL"
+          },
+          {
+            "id": "second-child-dir.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "second-child-dir-first-file.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      },
+      {
+        "script": "test/tree/worktree-editor-test",
+        "c_status": "pass",
+        "rust_status": "pass",
+        "assertions": [
+          {
+            "id": "vars_assert_count#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "vars#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "bench-common-src.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "bench.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "editor.log#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "exec-env#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      }
+    ]
+  },
+  "baseline_effective_source_commit": "26674406c6e3977f5b6c78dd8d1f750cd0749f2a",
+  "baseline_note": "main.rs temporarily restored from origin/main; baseline_source_sha256 records the actual Rust sources compiled. Runner source_commit records branch HEAD, not the temporary source snapshot.",
+  "unchanged_adjacent_failures": [
+    {
+      "script": "test/main/filter-args-test",
+      "identical_before_after_receipt": true
+    },
+    {
+      "script": "test/status/file-filter-test",
+      "identical_before_after_receipt": true
+    },
+    {
+      "script": "test/tree/file-name-test",
+      "identical_before_after_receipt": true
+    }
+  ],
+  "checks": {
+    "cargo fmt --check": {
+      "exit_code": 0
+    },
+    "git diff --check": {
+      "exit_code": 0
+    },
+    "cargo test --quiet": {
+      "exit_code": 0,
+      "log": "\nrunning 63 tests\n...............................................................\ntest result: ok. 63 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.44s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 25 tests\n.........................\ntest result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.71s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n",
+      "tests_passed": 88
+    },
+    "cargo clippy --all-targets -- -D warnings": {
+      "exit_code": 0,
+      "log": "    Checking tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.77s\n"
+    },
+    "make rust-test-binaries": {
+      "exit_code": 0,
+      "binary_hashes_verified_after_boundary_run": true
+    },
+    "python3 rust/tests/git-alias.py": {
+      "exit_code": 0,
+      "log": "C LIMITATION: implicit alias path rejected: sub dir base\nC LIMITATION: implicit alias path rejected: 子目录 base\nC LIMITATION: implicit alias path rejected: -leading base\nC LIMITATION: implicit alias path rejected: sub dir worktree\nC LIMITATION: implicit alias path rejected: 子目录 worktree\nC LIMITATION: implicit alias path rejected: -leading worktree\nPASS /Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/src/tig: normal/linked worktree, direct/alias, spaces/Unicode/options/parent paths\nPASS /Users/liuxu/Documents/Codex/2026-09-27/tig-rust-git-alias/repo/target/release/tig: normal/linked worktree, direct/alias, spaces/Unicode/options/parent paths\nPASS 142 real-PTY cases; invalid prefixes rejected before display\n",
+      "passing_cases": 142,
+      "expected_C_implicit_alias_path_rejections": 6
+    }
+  },
+  "integration": {
+    "latest_main": "26674406c6e3977f5b6c78dd8d1f750cd0749f2a",
+    "main_merge_tree": "4e03b83580d64f3cc1b6ac2888e7ce0e323de029",
+    "pr27": "Merged upstream; rebased onto main 26674406 and reran Rust checks, ten paired original scripts and boundary suite."
+  },
+  "review": {
+    "independent_read_only_reviews": 3,
+    "final_findings": [],
+    "rebased_main_followup": "No material findings; same 19 startup lines relative to main 26674406."
+  },
+  "limits": [
+    "Not the full 154-script parity checkpoint; the selected runner stays BLOCKED for three unchanged adjacent failures.",
+    "C rejects six implicit alias file-path cases before display; these are recorded as limitations, not parity passes. Rust supports them.",
+    "Rust intentionally rejects absolute, parent-component and symlink-escaping GIT_PREFIX values rather than following C unchecked chdir.",
+    "Existing non-UTF-8 CLI argument and explicit-filter prefix rejection remains unchanged; Unicode and spaces are covered."
+  ]
+}
