@@ -131,3 +131,5 @@ python3 rust/tests/terminal-smoke.py
 
 
 最后的范围审查补充了 wall time 年份 1..9999 的拒绝边界。`0000-12-31T23:59:59` 在桥接前报错，`0001-01-01T00:00:00` 纳入宿主 C/Rust 差分（本机 libc 输出 `-1`，不替换为 Chrono 算术结果），10000 年已被现有严格 RFC3339 入口拒绝。该补丁的 Rust 1.81 fmt / 69 测试 / Clippy / release 和 38 个日期检查收据为 [`boundary-checks.json`](evidence/nonlocal-percent-s/boundary-checks.json)，记录最终日期源码、测试和二进制摘要；此前 36 检查与 130 PTY 记录保留原有版本含义。
+
+年份边界补丁 `b7060b8c` 的最终宿主差分为 **157/157**，包含 AD 1；二进制稳定性与源码版本见 [`boundary-differential.json`](evidence/nonlocal-percent-s/boundary-differential.json)。Linux 的 156 场景收据针对边界补丁前的桥接实现；没有把新增 AD 1 场景冒称为已在 Linux 运行。
