@@ -25,7 +25,8 @@ License: GPL-2.0-or-later; original history, COPYING and copyright notices retai
   reference formats and common date formats. Local/relative dates remain
   unsupported.
 - `rust/config.rs`: configuration/CLI parsing, include diagnostics, bindings,
-  validated scoped column/global toggles and argument-list updates.
+  binding assignment order, validated scoped column/global toggles and
+  argument-list updates.
   Retaining a setting is not equivalent to implementing its visual effect.
 - `rust/commands.rs`: argv-based external commands, explicit confirmation,
   selected-reference validation, foreground controlling-terminal streams,
@@ -35,11 +36,16 @@ License: GPL-2.0-or-later; original history, COPYING and copyright notices retai
   metadata, columns, filters, sorting, annotated tags and recursive trees.
   Custom `TIG_LS_REMOTE` loading, exact reference sort ties and all mailmap/date
   configuration effects still need compatibility work.
+- `rust/help_view.rs`: live help rows from active bindings and upstream request
+  descriptions, including section collapse and help search.
 - `rust/main.rs`: initial terminal application using Crossterm, with owned view
   state and terminal cleanup, split panes, parent/child focus/navigation,
   branch/tracking status headers, status position restoration, and synthetic
   untracked/unstaged/staged rows before HEAD. Aggregate stage diffs and
   untracked-only status can be opened from those rows.
+  Pager-family line-number columns and selected diff file titles now render
+  without modifying raw patch rows. `:view-diff` on a synthetic change row
+  reads the worktree conflict diff and refreshes it with its Git prefix setting.
   It does not call the original Tig binary.
 - Search now uses the maintained `regex` crate for pattern matching, case
   options and optional wraparound. This is not yet a POSIX ERE compatibility
@@ -262,3 +268,33 @@ respecting explicit `width` and percentage limits. The unchanged original
 Rust formatting, unit tests and Clippy also pass. This focused check does not
 replace the sixth full-suite receipt; see
 `migration/evidence/refs-width-seventh.json`. The parity gate remains open.
+
+## Eighth checkpoint verification
+
+Pager-family line-number columns, diffstat jumps and selected-file titles now
+match the focused original editor cases. The help view is generated from active
+bindings and supports the original section-collapse and search interactions.
+Main-view `:view-diff` on working changes opens the worktree patch, including
+unmerged conflict output, and refresh keeps Git's configured prefix. The five
+unchanged original diff/status editor scripts pass **55 of 55 assertions**;
+the two original help scripts and user-command script also pass, while the
+config parse/source scripts now fail only on diagnostics, not help screens.
+
+A safety review found two wrong-file staging routes while enabling conflict
+diffs. Cached patch application now accepts only matching, repository-relative
+canonical `a/` and `b/` paths; configured no-prefix patches fail closed before
+`git apply`. Stage updates also reject a combined conflict patch even if an
+ordinary file patch follows it. Real-repository and mixed-patch regressions
+cover both cases. The independent P1 review found no remaining wrong-file
+route in this slice. This intentionally leaves staging from a no-prefix patch
+unsupported until path-stripping semantics can be implemented and verified.
+
+Formatting, all **51 Rust unit tests**, Clippy with warnings denied, release
+build and **108 real PTY checks** pass. The final binary SHA-256 is recorded in
+`migration/evidence/rust-upstream-eighth.json`. The unchanged full upstream
+suite attempted all 154 recipes and reported **220 of 593 assertions failed**
+in 150 tests, 3 skips and 1 recipe without a result receipt. The raw log is
+`migration/evidence/rust-upstream-eighth.log`. `SYSTEM_TIG=1` still routes the
+graph helper through C, and early exits change assertion denominators; these
+numbers are not a Rust completion percentage. Full parity and the application
+benchmark remain gated.

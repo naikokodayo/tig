@@ -4,6 +4,7 @@
 pub mod config;
 pub mod git;
 pub mod graph;
+pub mod help_view;
 pub mod model;
 
 pub mod commands;

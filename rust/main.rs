@@ -20,6 +20,7 @@ use std::{
 use tig_rs::{
     config::{Cli, Config},
     git::Repository,
+    help_view::HelpView,
     model::{Commit, StatusEntry, TreeEntry},
 };
 use unicode_width::UnicodeWidthChar;
@@ -409,6 +410,7 @@ struct App {
     repo: Option<Repository>,
     config: Config,
     view: View,
+    help: Option<HelpView>,
     previous: Vec<View>,
     pending_command: Option<tig_rs::commands::PreparedCommand>,
     other: Option<View>,
@@ -483,7 +485,14 @@ impl App {
     fn load_content(&self, name: &str) -> Result<View> {
         let mut v = View::new(name);
         if name == "help" {
-            return Ok(View::text(name, HELP));
+            let help = self
+                .help
+                .clone()
+                .unwrap_or_else(|| HelpView::new(&self.config, &self.view.name));
+            for row in help.rows {
+                v.push(row.text, Item::Text);
+            }
+            return Ok(v);
         }
         let repo = self.repo()?;
         match name {
@@ -616,14 +625,18 @@ impl App {
                         &String::from_utf8_lossy(&fs::read(repo.root.join(&self.path))?),
                     ));
                 }
-                let raw = repo.diff_bytes(
-                    self.view.staged,
-                    if self.path.as_os_str().is_empty() {
-                        None
-                    } else {
-                        Some(&self.path)
-                    },
-                )?;
+                let raw = if !self.view.staged && self.path.as_os_str().is_empty() {
+                    repo.worktree_diff_bytes(None)?
+                } else {
+                    repo.diff_bytes(
+                        self.view.staged,
+                        if self.path.as_os_str().is_empty() {
+                            None
+                        } else {
+                            Some(&self.path)
+                        },
+                    )?
+                };
                 let mut view = View::text(name, &String::from_utf8_lossy(&raw));
                 view.raw_patch = raw;
                 return Ok(view);
@@ -792,8 +805,33 @@ impl App {
         Ok(v)
     }
     fn open(&mut self, name: &str) -> Result<()> {
+        if name == "help" {
+            self.help = Some(HelpView::new(&self.config, &self.view.name));
+        }
         let next = self.load(name)?;
         self.previous.push(std::mem::replace(&mut self.view, next));
+        Ok(())
+    }
+    fn open_changes(&mut self, kind: ChangeKind) -> Result<()> {
+        self.revision = "HEAD".into();
+        self.path.clear();
+        let mut view = if kind == ChangeKind::Untracked {
+            self.status_view(true)?
+        } else {
+            let staged = kind == ChangeKind::Staged;
+            let raw = if staged {
+                self.repo()?.diff_bytes(true, None)?
+            } else {
+                self.repo()?.worktree_diff_bytes(None)?
+            };
+            let mut view = View::text("stage", &String::from_utf8_lossy(&raw));
+            view.staged = staged;
+            view.raw_patch = raw;
+            view
+        };
+        view.args = self.args.clone();
+        view.revision = self.revision.clone();
+        self.previous.push(std::mem::replace(&mut self.view, view));
         Ok(())
     }
     fn grep_query(&mut self, query: &str) -> Result<()> {
@@ -907,8 +945,29 @@ impl App {
         Ok(())
     }
     fn enter(&mut self) -> Result<()> {
-        if self.view.name == "stage" && self.view.path.as_os_str().is_empty() {
-            if let Some(header) = stage_stat_header(&self.view.rows, self.view.selected) {
+        if self.view.name == "help" {
+            if let Some(help) = &mut self.help {
+                if help.toggle_section(self.view.selected, &self.config) {
+                    self.view.rows = help.rows.iter().map(|row| row.text.clone()).collect();
+                    self.view.items = vec![Item::Text; self.view.rows.len()];
+                    self.view.line_numbers = (1..=self.view.rows.len()).collect();
+                    self.view.selected = self
+                        .view
+                        .selected
+                        .min(self.view.rows.len().saturating_sub(1));
+                }
+            }
+            return Ok(());
+        }
+        if self.view.name == "diff"
+            || (self.view.name == "stage" && self.view.path.as_os_str().is_empty())
+        {
+            let header = if self.view.name == "diff" {
+                diff_stat_header(&self.view.rows, self.view.selected)
+            } else {
+                stage_stat_header(&self.view.rows, self.view.selected)
+            };
+            if let Some(header) = header {
                 self.view.selected = header;
                 self.center_selection();
                 return Ok(());
@@ -921,25 +980,7 @@ impl App {
                 self.revision = c.oid;
                 self.open("diff")?;
             }
-            Item::Changes(kind) => {
-                self.revision = "HEAD".into();
-                self.path.clear();
-                if kind == ChangeKind::Untracked {
-                    let mut view = self.status_view(true)?;
-                    view.args = self.args.clone();
-                    view.revision = self.revision.clone();
-                    self.previous.push(std::mem::replace(&mut self.view, view));
-                } else {
-                    let staged = kind == ChangeKind::Staged;
-                    let raw = self.repo()?.diff_bytes(staged, None)?;
-                    let mut view = View::text("stage", &String::from_utf8_lossy(&raw));
-                    view.args = self.args.clone();
-                    view.revision = self.revision.clone();
-                    view.staged = staged;
-                    view.raw_patch = raw;
-                    self.previous.push(std::mem::replace(&mut self.view, view));
-                }
-            }
+            Item::Changes(kind) => self.open_changes(kind)?,
             Item::Ref(id, _) => {
                 self.revision = id.clone();
                 if self.view.name == "refs" {
@@ -1398,6 +1439,11 @@ impl App {
             "refresh" => {
                 self.sync_context();
                 let old = self.view.clone();
+                if old.name == "help" {
+                    if let Some(help) = &mut self.help {
+                        help.refresh(&self.config);
+                    }
+                }
                 if old.name != "pager" {
                     self.view = self.load(&old.name)?;
                 }
@@ -1422,6 +1468,10 @@ impl App {
                     let raw = &self.view.raw_patch;
                     let mut offset = 0;
                     for line in raw.split_inclusive(|byte| *byte == b'\n') {
+                        if line.starts_with(b"diff --cc ") || line.starts_with(b"diff --combined ")
+                        {
+                            return Err("Staging a combined merge patch is unsupported".into());
+                        }
                         if line.starts_with(b"diff --git ") {
                             break;
                         }
@@ -1486,6 +1536,15 @@ impl App {
             "parent" if self.view.name == "tree" => self.tree_parent()?,
             "screen-redraw" => (),
             _ if action.starts_with("view-") => {
+                if action == "view-diff" {
+                    if let Item::Changes(kind) = self.selected() {
+                        self.open_changes(kind)?;
+                        self.other = None;
+                        self.split = false;
+                        self.parent_focused = false;
+                        return Ok(true);
+                    }
+                }
                 if action == "view-tree"
                     && (self.revision.contains(':')
                         || matches!(self.selected(), Item::Grep(hit) if hit.revision.as_deref().is_some_and(|rev| rev.contains(':'))))
@@ -1550,8 +1609,18 @@ impl App {
                 (other, &mut self.view)
             };
             if vertical {
-                let left = pane_screen(parent, parent_size, self.height.saturating_sub(2));
-                let right = pane_screen(child, child_size, self.height.saturating_sub(2));
+                let left = pane_screen(
+                    parent,
+                    &self.config,
+                    parent_size,
+                    self.height.saturating_sub(2),
+                );
+                let right = pane_screen(
+                    child,
+                    &self.config,
+                    child_size,
+                    self.height.saturating_sub(2),
+                );
                 left.into_iter()
                     .zip(right)
                     .map(|(a, b)| {
@@ -1564,12 +1633,27 @@ impl App {
                     })
                     .collect()
             } else {
-                let mut lines = pane_screen(parent, self.width, parent_size.saturating_sub(1));
-                lines.extend(pane_screen(child, self.width, child_size.saturating_sub(1)));
+                let mut lines = pane_screen(
+                    parent,
+                    &self.config,
+                    self.width,
+                    parent_size.saturating_sub(1),
+                );
+                lines.extend(pane_screen(
+                    child,
+                    &self.config,
+                    self.width,
+                    child_size.saturating_sub(1),
+                ));
                 lines
             }
         } else {
-            pane_screen(&mut self.view, self.width, self.height.saturating_sub(2))
+            pane_screen(
+                &mut self.view,
+                &self.config,
+                self.width,
+                self.height.saturating_sub(2),
+            )
         };
         lines.push(clip(&self.message, 0, self.width));
         lines
@@ -1655,17 +1739,17 @@ fn log_header_offset(line: &str) -> Option<usize> {
     })
 }
 
-fn stage_stat_header(rows: &[String], selected: usize) -> Option<usize> {
+fn stat_header_after(rows: &[String], selected: usize, start: usize) -> Option<usize> {
     let is_header = |line: &str| {
         line.starts_with("diff --git ")
             || line.starts_with("diff --cc ")
             || line.starts_with("diff --combined ")
     };
     let first_patch = rows.iter().position(|row| is_header(row))?;
-    if selected >= first_patch || !rows.get(selected)?.contains(" | ") {
+    if selected < start || selected >= first_patch || !rows.get(selected)?.contains(" | ") {
         return None;
     }
-    let stat_index = rows[..=selected]
+    let stat_index = rows[start..=selected]
         .iter()
         .filter(|row| row.contains(" | "))
         .count()
@@ -1676,6 +1760,15 @@ fn stage_stat_header(rows: &[String], selected: usize) -> Option<usize> {
         .filter(|(_, row)| is_header(row))
         .nth(stat_index)
         .map(|(index, _)| index)
+}
+
+fn stage_stat_header(rows: &[String], selected: usize) -> Option<usize> {
+    stat_header_after(rows, selected, 0)
+}
+
+fn diff_stat_header(rows: &[String], selected: usize) -> Option<usize> {
+    let start = rows[..=selected].iter().rposition(|line| line == "---")? + 1;
+    stat_header_after(rows, selected, start)
 }
 
 fn diff_edit_target(rows: &[String], selected: usize) -> Option<(PathBuf, usize)> {
@@ -1911,6 +2004,7 @@ mod editor_tests {
             repo: None,
             config: Config::default(),
             view,
+            help: None,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -1927,6 +2021,22 @@ mod editor_tests {
         assert_eq!(app.edit_target(), Some((PathBuf::from("b"), 0)));
         app.enter().unwrap();
         assert_eq!(app.view.selected, 9);
+        app.view = View::text(
+            "diff",
+            "commit abc\n---\n a | 1 +\n b | 1 +\ndiff --git a/a b/a\ndiff --git a/b b/b\n",
+        );
+        app.view.selected = 3;
+        app.enter().unwrap();
+        assert_eq!(app.view.selected, 5);
+        let mixed = b"diff --cc conflict\n@@@ -1,1 -1,1 +1,1 @@@\n++x\ndiff --git a/other b/other\n--- a/other\n+++ b/other\n@@ -1 +1 @@\n-old\n+new\n";
+        app.view = View::text("stage", &String::from_utf8_lossy(mixed));
+        app.view.raw_patch = mixed.to_vec();
+        app.view.selected = 2;
+        assert!(app
+            .action("status-update")
+            .unwrap_err()
+            .to_string()
+            .contains("combined merge patch"));
     }
 
     #[test]
@@ -2010,7 +2120,40 @@ mod editor_tests {
     }
 }
 
-fn pane_screen(view: &mut View, width: usize, visible: usize) -> Vec<String> {
+fn pager_line_numbers(config: &Config, view: &View) -> Option<(usize, usize)> {
+    if !matches!(
+        view.name.as_str(),
+        "pager" | "stage" | "log" | "blob" | "diff"
+    ) {
+        return None;
+    }
+    let columns = config.settings.get(&format!("{}-view", view.name))?;
+    let spec = columns
+        .iter()
+        .find(|spec| spec.split(':').next() == Some("line-number"))?;
+    let mut parts = spec.split([':', ',']).skip(1);
+    if matches!(parts.next(), Some("no" | "false" | "0")) {
+        return None;
+    }
+    let mut interval = 5;
+    let mut width = view.rows.len().to_string().len().clamp(3, 9);
+    for part in parts {
+        if let Some(value) = part
+            .strip_prefix("interval=")
+            .and_then(|s| s.parse::<usize>().ok())
+        {
+            interval = if value == 0 { 5 } else { value };
+        } else if let Some(value) = part
+            .strip_prefix("width=")
+            .and_then(|s| s.parse::<usize>().ok())
+        {
+            width = value.clamp(3, 9);
+        }
+    }
+    Some((width, interval))
+}
+
+fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -> Vec<String> {
     let visible = visible.max(1);
     if view.selected < view.top {
         view.top = view.selected;
@@ -2018,16 +2161,28 @@ fn pane_screen(view: &mut View, width: usize, visible: usize) -> Vec<String> {
     if view.selected >= view.top + visible {
         view.top = view.selected + 1 - visible;
     }
+    let line_numbers = pager_line_numbers(config, view);
+    let separator = if config.value("line-graphics") == Some("utf-8") {
+        "│ "
+    } else {
+        "| "
+    };
     let mut lines: Vec<String> = (0..visible)
         .map(|i| {
-            clip(
-                view.rows
-                    .get(view.top + i)
-                    .map(String::as_str)
-                    .unwrap_or(""),
-                view.left,
-                width,
-            )
+            let index = view.top + i;
+            let row = view.rows.get(index).map(String::as_str).unwrap_or("");
+            if let Some((number_width, interval)) = line_numbers.filter(|_| index < view.rows.len())
+            {
+                let number = view.line_numbers.get(index).copied().unwrap_or(0);
+                let prefix = if number != 0 && (number == 1 || number % interval == 0) {
+                    format!("{number:>number_width$}{separator}")
+                } else {
+                    format!("{}{separator}", " ".repeat(number_width))
+                };
+                clip(&format!("{prefix}{row}"), view.left, width)
+            } else {
+                clip(row, view.left, width)
+            }
         })
         .collect();
     let reference = match view.items.get(view.selected) {
@@ -2058,7 +2213,12 @@ fn pane_screen(view: &mut View, width: usize, visible: usize) -> Vec<String> {
             }
         ),
         _ if view.name == "status" => "Nothing to update".into(),
-        _ if view.name == "diff" => view.revision.clone(),
+        _ if view.name == "diff" && diff_stat_header(&view.rows, view.selected).is_some() => {
+            "Press '<Enter>' to jump to file diff".into()
+        }
+        _ if view.name == "diff" => diff_edit_target(&view.rows, view.selected)
+            .map(|(path, _)| format!("Changes to '{}'", path.display()))
+            .unwrap_or_else(|| view.revision.clone()),
         _ if view.name == "stage"
             && view.path.as_os_str().is_empty()
             && stage_stat_header(&view.rows, view.selected).is_some() =>
@@ -2068,7 +2228,9 @@ fn pane_screen(view: &mut View, width: usize, visible: usize) -> Vec<String> {
         _ if view.name == "stage" => {
             let kind = if view.staged { "Staged" } else { "Unstaged" };
             if view.path.as_os_str().is_empty() {
-                format!("{kind} changes")
+                diff_edit_target(&view.rows, view.selected)
+                    .map(|(path, _)| format!("{kind} changes to '{}'", path.display()))
+                    .unwrap_or_else(|| format!("{kind} changes"))
             } else {
                 format!("{kind} changes to '{}'", view.path.display())
             }
@@ -2351,6 +2513,7 @@ fn run() -> Result<()> {
         repo,
         config,
         view: View::new(&cli.view),
+        help: None,
         previous: vec![],
         pending_command: None,
         other: None,
@@ -2640,6 +2803,7 @@ mod tests {
             repo: None,
             config: Config::defaults(),
             view: View::new("grep"),
+            help: None,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -2723,6 +2887,7 @@ mod tests {
             repo: None,
             config: Config::defaults(),
             view,
+            help: None,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -2772,6 +2937,7 @@ mod tests {
             repo: Some(repo),
             config: Config::defaults(),
             view: View::new("main"),
+            help: None,
             previous: vec![],
             pending_command: None,
             other: None,
@@ -2796,6 +2962,23 @@ mod tests {
         app.action("status-update").unwrap();
         assert_eq!(app.view.name, "main");
         assert!(matches!(app.selected(), Item::Changes(ChangeKind::Staged)));
+        fs::write(root.join("tracked"), "working\n").unwrap();
+        app.action("refresh").unwrap();
+        app.view.selected = app
+            .view
+            .items
+            .iter()
+            .position(|item| matches!(item, Item::Changes(ChangeKind::Unstaged)))
+            .unwrap();
+        app.action("view-diff").unwrap();
+        assert_eq!(app.view.name, "stage");
+        assert!(app
+            .view
+            .raw_patch
+            .windows(b"+working".len())
+            .any(|part| part == b"+working"));
+        assert!(!app.split);
+        assert!(app.other.is_none());
         fs::remove_dir_all(root).unwrap();
     }
     #[test]
@@ -2848,6 +3031,7 @@ mod tests {
             repo: None,
             config: Config::default(),
             view: child,
+            help: None,
             previous: vec![],
             pending_command: None,
             other: Some(parent),
@@ -2884,7 +3068,7 @@ mod tests {
         assert_eq!(app.view.selected, 4);
         assert!(app.other.is_none());
         app.view.selected = 5;
-        let lines = pane_screen(&mut app.view, 30, 2);
+        let lines = pane_screen(&mut app.view, &app.config, 30, 2);
         assert!(lines[2].ends_with("100%"));
         assert_eq!(cell_width(&lines[2]), 30);
     }
@@ -2894,5 +3078,59 @@ mod tests {
         assert_eq!(clip("é界b", 1, 3), "界b");
         assert_eq!(clip("\x1b[31m", 0, 20), "\\x1b[31m");
         assert_eq!(clip("x\ty", 0, 20), "x       y");
+    }
+
+    #[test]
+    fn diff_line_column_and_title_leave_patch_rows_intact() {
+        let mut config = Config::default();
+        config.settings.insert(
+            "diff-view".into(),
+            vec!["line-number:yes,interval=5".into(), "text".into()],
+        );
+        config
+            .settings
+            .insert("line-graphics".into(), vec!["ascii".into()]);
+        let mut view = View::text(
+            "diff",
+            "commit abc\n---\n file | 1 +\ndiff --git a/file b/file\n+++ b/file\n+text\n",
+        );
+        view.selected = 5;
+        let original = view.rows.clone();
+        let lines = pane_screen(&mut view, &config, 90, 6);
+        assert_eq!(lines[0], "  1| commit abc");
+        assert_eq!(lines[1], "   | ---");
+        assert_eq!(lines[4], "  5| +++ b/file");
+        assert!(lines[6].starts_with("[diff] Changes to 'file' - line 6 of 6"));
+        assert_eq!(view.rows, original);
+        assert_eq!(pane_screen(&mut view, &config, 90, 8)[6], "");
+        view.left = 5;
+        assert_eq!(pane_screen(&mut view, &config, 90, 6)[0], "commit abc");
+        view.left = 0;
+        assert_eq!(
+            diff_edit_target(&view.rows, 5),
+            Some((PathBuf::from("file"), 0))
+        );
+        view.selected = 2;
+        assert!(pane_screen(&mut view, &config, 90, 6)[6]
+            .starts_with("[diff] Press '<Enter>' to jump to file diff"));
+    }
+
+    #[test]
+    fn diff_stat_jump_ignores_commit_message_bars() {
+        let rows: Vec<String> = [
+            "commit abc",
+            "    message a | b",
+            "---",
+            " first | 1 +",
+            " second | 1 +",
+            "diff --git a/first b/first",
+            "diff --git a/second b/second",
+        ]
+        .into_iter()
+        .map(str::to_owned)
+        .collect();
+        assert_eq!(diff_stat_header(&rows, 1), None);
+        assert_eq!(diff_stat_header(&rows, 3), Some(5));
+        assert_eq!(diff_stat_header(&rows, 4), Some(6));
     }
 }

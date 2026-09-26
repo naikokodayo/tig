@@ -264,6 +264,35 @@ impl Repository {
         }
         self.command(args)
     }
+    /// Read the worktree/index diff without overriding Git's configured prefixes.
+    pub fn worktree_diff_bytes(&self, file: Option<&Path>) -> Result<Vec<u8>> {
+        if let Some(file) = file {
+            valid_path(file)?;
+        }
+        let mut args: Vec<OsString> = [
+            "diff-files",
+            "--patch-with-stat",
+            "-C",
+            "--no-color",
+            "--no-ext-diff",
+            "--no-textconv",
+        ]
+        .iter()
+        .map(OsString::from)
+        .collect();
+        // `diff-files` does not apply diff.noprefix by itself; Tig passes it explicitly.
+        if self
+            .command(["config", "--bool", "--get", "diff.noprefix"])
+            .is_ok_and(|value| trim_lf(&value) == b"true")
+        {
+            args.push("--no-prefix".into());
+        }
+        args.push("--".into());
+        if let Some(file) = file {
+            args.push(file.into());
+        }
+        self.command(args)
+    }
     /// Human-readable branch state, matching Tig's status header.
     pub fn status_header(&self) -> Result<String> {
         let output = self.command([
@@ -640,6 +669,43 @@ mod tests {
         repo.command(["tag", "v1"]).unwrap();
         repo.command(["checkout", "--detach", "v1"]).unwrap();
         assert_eq!(repo.status_header().unwrap(), "HEAD detached at v1");
+    }
+    #[test]
+    fn worktree_diff_preserves_conflict_and_configured_prefixes_without_changing_index() {
+        let f = Fixture::new();
+        let repo = f.repo();
+        fs::write(f.0.join("file"), "base\n").unwrap();
+        repo.command(["add", "file"]).unwrap();
+        repo.command(["commit", "-qm", "base"]).unwrap();
+        repo.command(["branch", "-M", "main"]).unwrap();
+        repo.command(["branch", "side"]).unwrap();
+        fs::write(f.0.join("file"), "ours\n").unwrap();
+        repo.command(["commit", "-qam", "ours"]).unwrap();
+        repo.command(["checkout", "-q", "side"]).unwrap();
+        fs::write(f.0.join("file"), "theirs\n").unwrap();
+        repo.command(["commit", "-qam", "theirs"]).unwrap();
+        repo.command(["checkout", "-q", "main"]).unwrap();
+        assert!(repo.command(["merge", "side"]).is_err());
+        assert!(repo.status().unwrap()[0].conflicted());
+        let default = repo.worktree_diff_bytes(Some(Path::new("file"))).unwrap();
+        assert!(default
+            .windows(b"+++ b/file".len())
+            .any(|part| part == b"+++ b/file"));
+        repo.command(["config", "diff.noprefix", "true"]).unwrap();
+        let index = repo.command(["ls-files", "-s", "-z"]).unwrap();
+        let diff = repo.worktree_diff_bytes(Some(Path::new("file"))).unwrap();
+        assert_eq!(repo.worktree_diff_bytes(None).unwrap(), diff);
+        assert!(diff.starts_with(b"diff --cc file\n"));
+        assert!(diff
+            .windows(b"+++ file".len())
+            .any(|part| part == b"+++ file"));
+        assert!(diff
+            .windows(b"+<<<<<<< HEAD".len())
+            .any(|part| part == b"+<<<<<<< HEAD"));
+        assert_eq!(repo.command(["ls-files", "-s", "-z"]).unwrap(), index);
+        assert!(repo
+            .worktree_diff_bytes(Some(Path::new("../file")))
+            .is_err());
     }
     #[test]
     fn real_repository_roundtrip_and_literal_staging() {

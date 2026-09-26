@@ -13,6 +13,8 @@ use std::{
 pub struct Config {
     pub settings: BTreeMap<String, Vec<String>>,
     pub bindings: BTreeMap<(String, String), Vec<String>>,
+    /// Successful bind assignments in parse order; help needs their order.
+    pub binding_updates: Vec<(String, String)>,
     pub colors: BTreeMap<String, Vec<String>>,
     pub diagnostics: Vec<String>,
 }
@@ -400,8 +402,10 @@ impl Config {
                         return Err(format!("No keybinding found for {key}"));
                     }
                 } else {
+                    let binding = (view.to_owned(), key);
+                    self.binding_updates.push(binding.clone());
                     self.bindings.insert(
-                        (view.into(), key),
+                        binding,
                         if request {
                             vec![action]
                         } else {

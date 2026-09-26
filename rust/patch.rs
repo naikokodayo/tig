@@ -26,6 +26,82 @@ pub struct Hunk {
 fn error(message: &str) -> GitError {
     GitError(message.into())
 }
+fn canonical_path<'a>(
+    line: &'a [u8],
+    marker: &[u8],
+    prefix: &[u8],
+) -> Result<Option<(&'a [u8], bool)>> {
+    let value = line
+        .strip_prefix(marker)
+        .ok_or_else(|| error("Missing patch file header"))?;
+    let value = value.strip_suffix(b"\t").unwrap_or(value);
+    if value == b"/dev/null" {
+        return Ok(None);
+    }
+    let quoted = value.starts_with(b"\"");
+    let value = if quoted {
+        value
+            .strip_prefix(b"\"")
+            .and_then(|value| value.strip_suffix(b"\""))
+            .ok_or_else(|| error("Malformed quoted patch path"))?
+    } else {
+        value
+    };
+    let path = value
+        .strip_prefix(prefix)
+        .ok_or_else(|| error("Patch has a noncanonical path prefix"))?;
+    if path.is_empty()
+        || path
+            .split(|byte| *byte == b'/')
+            .any(|part| part.is_empty() || part == b"." || part == b"..")
+        || path
+            .iter()
+            .any(|byte| *byte < b' ' || *byte == 0x7f || *byte == b'\\' || *byte == b'"')
+    {
+        return Err(error("Patch path is not repository-relative"));
+    }
+    Ok(Some((path, quoted)))
+}
+fn validate_apply_paths(patch: &Patch) -> Result<()> {
+    for file in &patch.files {
+        let old = canonical_path(
+            file.headers
+                .iter()
+                .find(|line| line.starts_with(b"--- "))
+                .ok_or_else(|| error("Missing old file header"))?,
+            b"--- ",
+            b"a/",
+        )?;
+        let new = canonical_path(
+            file.headers
+                .iter()
+                .find(|line| line.starts_with(b"+++ "))
+                .ok_or_else(|| error("Missing new file header"))?,
+            b"+++ ",
+            b"b/",
+        )?;
+        let (path, quoted) = match (old, new) {
+            (Some(old), Some(new)) if old == new => old,
+            (Some(old), None) | (None, Some(old)) => old,
+            _ => return Err(error("Renamed or missing patch paths are unsupported")),
+        };
+        let mut expected = if quoted {
+            b"diff --git \"a/".to_vec()
+        } else {
+            b"diff --git a/".to_vec()
+        };
+        expected.extend_from_slice(path);
+        expected.extend_from_slice(if quoted { b"\" \"b/" } else { b" b/" });
+        expected.extend_from_slice(path);
+        if quoted {
+            expected.push(b'"');
+        }
+        if file.headers.first() != Some(&expected) {
+            return Err(error("Patch file header does not match its path"));
+        }
+    }
+    Ok(())
+}
 fn range(value: &str, prefix: char) -> Result<(usize, usize)> {
     let value = value
         .strip_prefix(prefix)
@@ -339,7 +415,8 @@ fn apply_once(repo: &Repository, patch: &[u8], reverse: bool, check: bool) -> Re
 /// Git applies the index patch atomically; no --reject, worktree writes or force.
 /// The second invocation independently revalidates after the preflight check.
 pub fn apply_cached(repo: &Repository, patch: &[u8], reverse: bool) -> Result<()> {
-    Patch::parse(patch)?;
+    let parsed = Patch::parse(patch)?;
+    validate_apply_paths(&parsed)?;
     apply_once(repo, patch, reverse, true)?;
     apply_once(repo, patch, reverse, false)
 }
@@ -512,6 +589,30 @@ mod tests {
             .unwrap();
         let patch = Patch::parse(&cached[offset..]).unwrap();
         apply_cached(&f.repo, &patch.select(0, 0, None, true).unwrap(), true).unwrap();
+        assert_eq!(f.repo.command(["show", ":sub/foo"]).unwrap(), b"original\n");
+    }
+    #[test]
+    fn unprefixed_patch_cannot_stage_same_named_root_file() {
+        let f = Fixture::new();
+        fs::create_dir(f.root.join("sub")).unwrap();
+        for path in ["foo", "sub/foo"] {
+            fs::write(f.root.join(path), b"original\n").unwrap();
+        }
+        f.repo.command(["add", "--", "foo", "sub/foo"]).unwrap();
+        f.repo.command(["commit", "-qm", "base"]).unwrap();
+        f.repo.command(["config", "diff.noprefix", "true"]).unwrap();
+        fs::write(f.root.join("sub/foo"), b"original\nselected\n").unwrap();
+        let raw = f
+            .repo
+            .worktree_diff_bytes(Some(std::path::Path::new("sub/foo")))
+            .unwrap();
+        let offset = raw
+            .windows(11)
+            .position(|part| part == b"diff --git ")
+            .unwrap();
+        let patch = Patch::parse(&raw[offset..]).unwrap();
+        assert!(apply_cached(&f.repo, &patch.select(0, 0, None, false).unwrap(), false).is_err());
+        assert_eq!(f.repo.command(["show", ":foo"]).unwrap(), b"original\n");
         assert_eq!(f.repo.command(["show", ":sub/foo"]).unwrap(), b"original\n");
     }
     #[test]
