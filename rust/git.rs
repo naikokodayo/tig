@@ -262,6 +262,7 @@ impl Repository {
         context: usize,
         word_diff: bool,
         file: Option<&Path>,
+        width: usize,
     ) -> Result<String> {
         let oid = self.revision(revision)?;
         let mut args: Vec<OsString> = [
@@ -270,7 +271,7 @@ impl Repository {
             "--no-textconv",
             "--no-show-signature",
             "--format=fuller",
-            "--stat",
+            &format!("--stat={width}"),
             "--patch",
             &format!("-U{context}"),
             if word_diff {
@@ -1064,7 +1065,7 @@ mod tests {
         repo.command(["commit", "-qam", "change"]).unwrap();
         for context in [0, 3, 4, 5, 8] {
             for word in [false, true] {
-                let show = repo.show("HEAD", context, word, None).unwrap();
+                let show = repo.show("HEAD", context, word, None, 80).unwrap();
                 let span = if context == 0 {
                     "10".into()
                 } else {
@@ -1139,7 +1140,7 @@ mod tests {
         assert_eq!(blame.len(), 2);
         assert_eq!(blame[1].line, 2);
         assert!(repo
-            .show("HEAD", 3, false, None)
+            .show("HEAD", 3, false, None, 80)
             .unwrap()
             .contains("initial"));
         fs::rename(f.0.join(":(glob)*"), f.0.join("renamed")).unwrap();
@@ -1163,7 +1164,7 @@ mod tests {
                 original_path: None
             })
             .is_err());
-        assert!(repo.show("--output=oops", 3, false, None).is_err());
+        assert!(repo.show("--output=oops", 3, false, None, 80).is_err());
         assert!(repo.history(&["--format=oops".into()], 1).is_err());
     }
 }
