@@ -154,6 +154,11 @@ fn format_date(date: DateTime<FixedOffset>, format: &str, local: bool) -> Result
             continue;
         }
         let spec = chars.next().ok_or("Trailing % in date format")?;
+        // C's non-local %s applies libc mktime with tm_isdst=0 in the user's TZ.
+        // ponytail: reject until the backend can reproduce that conversion safely.
+        if spec == 's' && !local {
+            return Err("Non-local %s date format is not supported; use date-local".into());
+        }
         // Locale-sensitive directives must use strftime, not Chrono's English defaults.
         if !"%YymdHMSFRTzZ".contains(spec) {
             if !"aAbBcCDeGghIjklpnPrstTuUVwWxX".contains(spec) {

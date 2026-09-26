@@ -69,3 +69,12 @@ Chrono `StrftimeItems::new` 对非法或未知规格产生 `Item::Error`，`new_
 最终实现仅让已列入允许集合的常见指令使用系统 backend；`%E`、`%O`、padding 修饰符和任意扩展仍明确报错，而不是假称已实现全部 libc 格式。`TEST_TIME_NOW` 使用严格整数/范围校验，未模仿 C `atoi` 对无效文本变成零的行为。普通 raw Git 头由新解析入口读取，原版 date-test 的首个失败因此从 pager 提前退出转为可逐项验证。最终结果见 [`date-focused.json`](evidence/date-focused.json)：date 8/8，六个原版脚本合计 27/27；完整迁移兼容门仍开放。
 
 PR #4 合入后，blame 时间戳也复用相同 Chrono 转换，删除第二套手写 Gregorian 换算，保留 blame 的 0..9999 年范围。共享入口在附加偏移前使用 `checked_add_offset` 校验本地日期范围；最小/最大时间戳边界回归先失败再通过。Unix 0 显示层兼容规则也通过 blame 渲染回归覆盖。本地/locale 子进程成本同样适用于 blame 每行，未声称大历史性能达标。
+
+
+## OPEN：非本地自定义 `%s`
+
+复查发现不能把非本地 `%s` 交给 `TZ=UTC date` 并声称等价：C 先取提交 wall time 的 `gmtime`（`tm_isdst=0`），libc `%s` 再按用户 TZ 调用 `mktime`。例如 `1719792000 +0000`、`TZ=America/New_York` 的 C 输出是 `1719810000`，此前 Rust 输出 `1719792000`。24 个修复前 C/Rust 本地与非本地 probe 及二进制摘要保存在 [`date-percent-s-before.json`](evidence/date-percent-s-before.json)。[Darwin strftime 实现](https://github.com/apple-oss-distributions/Libc/blob/main/stdtime/FreeBSD/strftime.c)
+
+当前边界改为明确拒绝非本地 `%s`，错误为 `Non-local %s date format is not supported; use date-local`。本地 `%s`、字面量 `%%s` 与零日期的空白显示保留。回归覆盖纽约冬季/夏季、提交偏移与 Kolkata；先在旧二进制复现错误成功返回，再验证新行为。`date-local` 会改变显示语义，是可选模式，不是精确兼容替代。
+
+精确非本地 `%s` 仍是 **OPEN gate**。BSD `date -j -f` 默认 `tm_isdst=-1`，`%Z` 需要已知且能被解析的标准时区名；GNU 也通过本地缩写影响 DST 判断，没有找到可对任意 TZ 强制 `tm_isdst=0` 的通用 CLI 接口。本次不加入 unsafe FFI、新运行时依赖或冬夏偏移启发式；后续需安全复现 libc/TZ 行为并建立跨平台对照后才能关闭此门。[Apple date.c](https://github.com/apple-oss-distributions/shell_cmds/blob/main/date/date.c)、[Apple strptime.c](https://github.com/apple-oss-distributions/Libc/blob/main/stdtime/FreeBSD/strptime.c)、[GNU parse-datetime.y](https://github.com/coreutils/gnulib/blob/master/lib/parse-datetime.y)

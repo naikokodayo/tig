@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 BINARY = ROOT / 'target/release/tig'
 
 
-def check(temporary, timestamp, setting, expected, args=('--pretty=raw',), **overrides):
+def check(temporary, timestamp, setting, expected, args=('--pretty=raw',), error=None, **overrides):
     directory = Path(temporary)
     config = directory / 'tigrc'
     config.write_text('set main-view = date:default commit-title:yes,graph=no,refs=no\n' + setting)
@@ -27,6 +27,8 @@ def check(temporary, timestamp, setting, expected, args=('--pretty=raw',), **ove
     if expected is None:
         assert result.returncode != 0 and 'tig: ' in result.stderr, result
         assert 'panicked' not in result.stderr, result.stderr
+        if error:
+            assert error in result.stderr, result.stderr
     else:
         assert result.returncode == 0 and not result.stderr, result.stderr
         assert screen.read_text().splitlines()[0].rstrip() == expected, screen.read_text()
@@ -35,7 +37,18 @@ def check(temporary, timestamp, setting, expected, args=('--pretty=raw',), **ove
 with tempfile.TemporaryDirectory(prefix='tig-date-') as temporary:
     custom = 'set main-view-date = custom\nset main-view-date-format = "%F %T %z %Z"\n'
     local = custom + 'set main-view-date-local = yes\n'
+    seconds_format = 'set main-view-date = custom\nset main-view-date-format = "%s"\n'
+    seconds_error = 'Non-local %s date format is not supported; use date-local'
     cases = [
+        ('1704067200 +0000', seconds_format, None, {'TZ': 'America/New_York', 'error': seconds_error}),
+        ('1719792000 +0900', seconds_format, None, {'TZ': 'America/New_York', 'error': seconds_error}),
+        ('1719792000 +0000', seconds_format, None, {'TZ': 'Asia/Kolkata', 'error': seconds_error}),
+        ('1704067200 +0000', seconds_format + 'set main-view-date-local = yes\n', '1704067200', {'TZ': 'America/New_York'}),
+        ('1719792000 +0900', seconds_format + 'set main-view-date-local = yes\n', '1719792000', {'TZ': 'America/New_York'}),
+        ('1719792000 +0000', seconds_format + 'set main-view-date-local = yes\n', '1719792000', {'TZ': 'Asia/Kolkata'}),
+        ('1719792000 +0000', seconds_format.replace('%s', '%%s'), '%s', {'TZ': 'America/New_York'}),
+        ('1719792000 +0000', seconds_format.replace('%s', '%%%s'), None, {'error': seconds_error}),
+        ('0 +0000', seconds_format, '', {'TZ': 'America/New_York'}),
         ('0 +0000', '', '', {}),
         ('0 +0000', local, '', {'TZ': 'America/New_York'}),
         ('0 +0000', 'set main-view-date = relative\n', '', {}),
