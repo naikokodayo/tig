@@ -1,0 +1,221 @@
+{
+  "scope": "Refs command selection parity only; full migration gate remains OPEN",
+  "source_commit": "519f88be310170317c68857f956c04d92d833877",
+  "main_commit": "34684f799a5b44e7074aa4967c53c10608119f10",
+  "binary_sha256": "5b0958f212ba367c9327622d8505903b47c3e3cd63fff954a19676ea77a83927",
+  "rust_toolchain": "1.81.0",
+  "rust_tests": {
+    "library": 46,
+    "binary": 18,
+    "failed": 0
+  },
+  "fmt": "passed",
+  "clippy_all_targets_D_warnings": "passed",
+  "release": "passed",
+  "pty": {
+    "passed": 108,
+    "transcript_sha256": "c510689355b214232c0eb8171d92390f7953ac0a4960d33d949db1aa9c793741",
+    "checks": [
+      "working changes precede history",
+      "hide working changes for history navigation",
+      "j selects second commit",
+      "Enter opens selected commit diff",
+      "Tab focuses split parent",
+      "Tab focuses split child",
+      "K loads previous parent commit into diff",
+      "J loads next parent commit into diff",
+      "O maximizes focused diff",
+      "q returns to selected history row",
+      "search prompt",
+      "search selects matching commit",
+      "status opens at header",
+      "select unstaged fixture",
+      "u stages fixture",
+      "stage verified against Git index",
+      "Enter opens cached diff",
+      "R preserves cached diff",
+      "back from cached diff",
+      "u unstages fixture",
+      "unstage verified against Git index",
+      "open two-line unstaged patch",
+      "line staging search prompt",
+      "select added line A",
+      "1 stages only selected line",
+      "single-line stage index and unchanged worktree",
+      "back to status after line stage",
+      "refresh partially staged status",
+      "select cached partial file",
+      "open cached partial patch",
+      "line unstage search prompt",
+      "select cached added line A",
+      "1 unstages only selected line and closes empty stage",
+      "single-line unstage empty index and unchanged worktree",
+      "refresh fully unstaged status",
+      "open hunk for staging",
+      "hunk staging search prompt",
+      "select line within hunk",
+      "u stages complete hunk and closes empty stage",
+      "whole-hunk stage includes both lines and preserves worktree",
+      "refresh fully staged status",
+      "open cached hunk",
+      "hunk unstaging search prompt",
+      "select cached hunk line",
+      "cached u unstages complete hunk and closes empty stage",
+      "whole-hunk unstage empties index and preserves worktree",
+      "back from status",
+      "external argv command prompt",
+      "silent external argv command returns to history",
+      "external command literal argv without implicit shell",
+      "external path command prompt",
+      "external command handles literal special filename",
+      "external argv stages exact spaced special-character filename",
+      "external cleanup command prompt",
+      "external argv cleanup returns to history",
+      "echo command prompt",
+      "plus command displays first stdout line",
+      "foreground command prompt",
+      "foreground command waits for Enter",
+      "foreground command resumes raw UI after Enter",
+      "quick command prompt",
+      "successful quick command resumes without Enter",
+      "failed quick command prompt",
+      "failed quick command still waits for Enter",
+      "failed command resumes after Enter",
+      "move off HEAD before default H",
+      "default H resolves HEAD and selects newest commit",
+      "quoted key binding prompt",
+      "install quoted H command binding",
+      "H preserves quoted argv and echoes result",
+      "foreground canonical tty, resumed raw UI, echo and quoted argv verified",
+      "tree opens",
+      "select root blob",
+      "Enter opens blob",
+      "q returns to tree",
+      "select nested tree",
+      "open nested tree",
+      "back restores parent tree",
+      "R preserves parent tree",
+      "resize redraws clipped status at row 11",
+      "quit leaves alternate screen and restores cursor",
+      "quit leaves alternate screen and restores cursor terminal restoration",
+      "+2 selects second row after working changes",
+      "+2 session quit",
+      "+2 session quit terminal restoration",
+      "blame -- file",
+      "blame session quit",
+      "blame session quit terminal restoration",
+      "blame resolves subdirectory relative file",
+      "subdirectory blame session quit",
+      "subdirectory blame session quit terminal restoration",
+      "SIGTERM session history",
+      "signal while search prompt active",
+      "SIGTERM exit",
+      "SIGTERM exit terminal restoration",
+      "SIGHUP session history",
+      "SIGHUP exit",
+      "SIGHUP exit terminal restoration",
+      "SIGINT session history",
+      "SIGINT exit",
+      "SIGINT exit terminal restoration",
+      "untracked row precedes history",
+      "untracked row opens untracked-only status",
+      "select untracked file",
+      "stage last untracked file and return to main",
+      "untracked staging changes only Git index",
+      "synthetic status session quit",
+      "synthetic status session quit terminal restoration"
+    ]
+  },
+  "original_scripts_unchanged": true,
+  "environment": "macOS arm64, release binary first in PATH, test/tools in PATH, controlling PTY, init.defaultBranch=master via GIT_CONFIG_COUNT=1",
+  "upstream": [
+    {
+      "test": "test/refs/branch-checkout-test",
+      "passed": 7,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "test": "test/refs/branch-tag-test",
+      "passed": 1,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "test": "test/refs/branch-var-test",
+      "passed": 3,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "test": "test/refs/default-test",
+      "passed": 2,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "test": "test/refs/filter-test",
+      "passed": 0,
+      "failed": 2,
+      "failures": [
+        "[FAIL] main.screen != expected/main.screen",
+        "[FAIL] refs.screen != expected/refs.screen"
+      ]
+    },
+    {
+      "test": "test/refs/refresh-test",
+      "passed": 3,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "test": "test/refs/replace-test",
+      "passed": 0,
+      "failed": 2,
+      "failures": [
+        "[FAIL] refs.screen != expected/refs.screen",
+        "[FAIL] main.screen != expected/main.screen"
+      ]
+    },
+    {
+      "test": "test/refs/start-on-line-test",
+      "passed": 1,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "test": "test/refs/worktree-test",
+      "passed": 1,
+      "failed": 0,
+      "failures": []
+    },
+    {
+      "test": "test/main/branch-var-test",
+      "passed": 0,
+      "failed": 2,
+      "failures": [
+        "[FAIL] unexpected status code: 1 (should be 0)",
+        "[FAIL] vars_assert_count != expected/vars_assert_count"
+      ]
+    },
+    {
+      "test": "test/prompt/exec-test",
+      "passed": 0,
+      "failed": 6,
+      "failures": [
+        "[FAIL] unexpected status code: 1 (should be 0)",
+        "[FAIL] exec-without-arg-doesnt-crash.screen not found",
+        "[FAIL] exec-without-arg-doesnt-crash.stderr != expected/exec-without-arg-doesnt-crash.stderr",
+        "[FAIL] unexpected status code: 1 (should be 0)",
+        "[FAIL] exec-only-flags-doesnt-crash.screen not found",
+        "[FAIL] exec-only-flags-doesnt-crash.stderr != expected/exec-only-flags-doesnt-crash.stderr"
+      ]
+    },
+    {
+      "test": "test/tigrc/width-test",
+      "passed": 54,
+      "failed": 0,
+      "failures": []
+    }
+  ]
+}

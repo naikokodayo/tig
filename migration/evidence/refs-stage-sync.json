@@ -1,0 +1,285 @@
+{
+  "scope": "All nine unchanged original refs scripts after main ffcb9310 stage sync; C baseline not rerun",
+  "source_commit": "d32f4736ba748bd63f387c3d7a1c979b08ddde06",
+  "main_commit": "ffcb9310f028ca5ea7302cded3e4d7783e13a0b6",
+  "routing": {
+    "tig": {
+      "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/refs-parity-task-clone/target/release/tig",
+      "sha256": "7b140b9d6815a6898ce44a75d3916cd8782826b73db50b36988247b67a7fb3ba"
+    }
+  },
+  "rust_1_81": {
+    "fmt": "pass",
+    "test_counts": [
+      50,
+      0,
+      18,
+      0
+    ],
+    "clippy_all_targets_D_warnings": "pass",
+    "release": "pass"
+  },
+  "semantics": "Ordinary tag/ref variables remain short. Full refs/tags/... is used when a same-named branch exists or Git symbolic-full-name resolution differs from the selected full tag. No fixed pseudoref list or command-specific argv rewrite.",
+  "regression": "Real checkout of selected HEAD and ORIG_HEAD tags reaches the older commit; normal short tag expansion and branch collision tests pass.",
+  "results": [
+    {
+      "script": "test/refs/branch-checkout-test",
+      "script_sha256": "90cdd097756de3865295522f27b5919fd5e84f9dd9b1a7f0991edbbb7057d3d1",
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "pass",
+      "reasons": [],
+      "checks": {
+        "OK": 7
+      },
+      "assertions": [
+        {
+          "id": "19455fa3642af6a6a7d527dd043caf5a70eaad2d.refinfo#1",
+          "status": "OK"
+        },
+        {
+          "id": "this_is_really_a_long_long_long_long_long_long_long_branch.head#1",
+          "status": "OK"
+        },
+        {
+          "id": "a3f25ca556c1cef1ef3a0704f5deaec8687c84b9.refinfo#1",
+          "status": "OK"
+        },
+        {
+          "id": "this_is_really_a_long_long_long_long_long_long_long_tag.head#1",
+          "status": "OK"
+        },
+        {
+          "id": "refs-init.screen#1",
+          "status": "OK"
+        },
+        {
+          "id": "refs-checked-out-branch.screen#1",
+          "status": "OK"
+        },
+        {
+          "id": "refs-checked-out-tag.screen#1",
+          "status": "OK"
+        }
+      ],
+      "receipt_path": "test/tmp/refs/branch-checkout-test/.test-result",
+      "receipt": "  [OK] 19455fa3642af6a6a7d527dd043caf5a70eaad2d.refinfo assertion\n  [OK] this_is_really_a_long_long_long_long_long_long_long_branch.head assertion\n  [OK] a3f25ca556c1cef1ef3a0704f5deaec8687c84b9.refinfo assertion\n  [OK] this_is_really_a_long_long_long_long_long_long_long_tag.head assertion\n  [OK] refs-init.screen assertion\n  [OK] refs-checked-out-branch.screen assertion\n  [OK] refs-checked-out-tag.screen assertion\n",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": ""
+    },
+    {
+      "script": "test/refs/branch-tag-test",
+      "script_sha256": "4759456f345044d023f8d542128bdcbea9fb5d22f3c8ebcfaefe605a218502bc",
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "pass",
+      "reasons": [],
+      "checks": {
+        "OK": 1
+      },
+      "assertions": [
+        {
+          "id": "refs-initial.screen#1",
+          "status": "OK"
+        }
+      ],
+      "receipt_path": "test/tmp/refs/branch-tag-test/.test-result",
+      "receipt": "  [OK] refs-initial.screen assertion\n",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": ""
+    },
+    {
+      "script": "test/refs/branch-var-test",
+      "script_sha256": "bc039b2d994df5e32261605e8fc9320cd5b22dedf2cc83b1a4d325884eac1066",
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "pass",
+      "reasons": [],
+      "checks": {
+        "OK": 3
+      },
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "status": "OK"
+        },
+        {
+          "id": "vars#1",
+          "status": "OK"
+        },
+        {
+          "id": "refs.screen#1",
+          "status": "OK"
+        }
+      ],
+      "receipt_path": "test/tmp/refs/branch-var-test/.test-result",
+      "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] refs.screen assertion\n",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": ""
+    },
+    {
+      "script": "test/refs/default-test",
+      "script_sha256": "fa6f469aa8cceb5487604f8d8e9ca02154eb6190592a533470bd729918fefcb5",
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "pass",
+      "reasons": [],
+      "checks": {
+        "OK": 2
+      },
+      "assertions": [
+        {
+          "id": "refs-default.screen#1",
+          "status": "OK"
+        },
+        {
+          "id": "refs-with-line-number.screen#1",
+          "status": "OK"
+        }
+      ],
+      "receipt_path": "test/tmp/refs/default-test/.test-result",
+      "receipt": "  [OK] refs-default.screen assertion\n  [OK] refs-with-line-number.screen assertion\n",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": ""
+    },
+    {
+      "script": "test/refs/filter-test",
+      "script_sha256": "a1f75f010b847def15a56cb1ef134be855bee05825aa1b898492103f8d06ae75",
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "fail",
+      "reasons": [
+        "failed_checks"
+      ],
+      "checks": {
+        "FAIL": 2
+      },
+      "assertions": [
+        {
+          "id": "main.screen#1",
+          "status": "FAIL"
+        },
+        {
+          "id": "refs.screen#1",
+          "status": "FAIL"
+        }
+      ],
+      "receipt_path": "test/tmp/refs/filter-test/.test-result",
+      "receipt": "[FAIL] main.screen != expected/main.screen\n\u001b[1mdiff --git a/expected/main.screen b/main.screen\u001b[m\n\u001b[1mindex 556ff61..3000ab2 100644\u001b[m\n\u001b[1m--- a/expected/main.screen\u001b[m\n\u001b[1m+++ b/main.screen\u001b[m\n\u001b[36m@@ -1,4 +1,4 @@\u001b[m\n\u001b[31m-2009-02-13 23:31 +0000 Committer I [master] [my-branch2] {origin/my-branch2} <my-tag2> [refs/my-raw-ref2] Initial commit\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-02-13 23:31 +0000 Committer I [master] <my-tag2> <my-tag1> {origin/my-branch2} {origin/my-branch1} [my-branch2] [my\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n[FAIL] refs.screen != expected/refs.screen\n\u001b[1mdiff --git a/expected/refs.screen b/refs.screen\u001b[m\n\u001b[1mindex e1437cb..52ecf1a 100644\u001b[m\n\u001b[1m--- a/expected/refs.screen\u001b[m\n\u001b[1m+++ b/refs.screen\u001b[m\n\u001b[36m@@ -1,8 +1,8 @@\u001b[m\n   All references    \u001b[m\n   master            \u001b[m\n   my-branch2        \u001b[m\n\u001b[32m+\u001b[m\u001b[32m  my-branch1\u001b[m\u001b[41m        \u001b[m\n   origin/my-branch2 \u001b[m\n\u001b[32m+\u001b[m\u001b[32m  origin/my-branch1\u001b[m\u001b[41m \u001b[m\n   my-tag2           \u001b[m\n\u001b[31m-  refs/my-raw-ref2\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-[refs] All references  100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[refs] All references                                                                                                70%\u001b[m\n",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": "| Failed 2 out of 2 test(s)\r\n| [FAIL] main.screen != expected/main.screen\r\n| \u001b[1mdiff --git a/expected/main.screen b/main.screen\u001b[m\r\n| \u001b[1mindex 556ff61..3000ab2 100644\u001b[m\r\n| \u001b[1m--- a/expected/main.screen\u001b[m\r\n| \u001b[1m+++ b/main.screen\u001b[m\r\n| \u001b[36m@@ -1,4 +1,4 @@\u001b[m\r\n| \u001b[31m-2009-02-13 23:31 +0000 Committer I [master] [my-branch2] {origin/my-branch2} <my-tag2> [refs/my-raw-ref2] Initial commit\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-02-13 23:31 +0000 Committer I [master] <my-tag2> <my-tag1> {origin/my-branch2} {origin/my-branch1} [my-branch2] [my\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| [FAIL] refs.screen != expected/refs.screen\r\n| \u001b[1mdiff --git a/expected/refs.screen b/refs.screen\u001b[m\r\n| \u001b[1mindex e1437cb..52ecf1a 100644\u001b[m\r\n| \u001b[1m--- a/expected/refs.screen\u001b[m\r\n| \u001b[1m+++ b/refs.screen\u001b[m\r\n| \u001b[36m@@ -1,8 +1,8 @@\u001b[m\r\n|    All references    \u001b[m\r\n|    master            \u001b[m\r\n|    my-branch2        \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m  my-branch1\u001b[m\u001b[41m        \u001b[m\r\n|    origin/my-branch2 \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m  origin/my-branch1\u001b[m\u001b[41m \u001b[m\r\n|    my-tag2           \u001b[m\r\n| \u001b[31m-  refs/my-raw-ref2\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-[refs] All references  100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[refs] All references                                                                                                70%\u001b[m\r\n"
+    },
+    {
+      "script": "test/refs/refresh-test",
+      "script_sha256": "96400babf8380c040d74c79aa707ce39985b813f179d385ce6620302c382080c",
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "pass",
+      "reasons": [],
+      "checks": {
+        "OK": 3
+      },
+      "assertions": [
+        {
+          "id": "refs-initial.screen#1",
+          "status": "OK"
+        },
+        {
+          "id": "refs-after-move-add.screen#1",
+          "status": "OK"
+        },
+        {
+          "id": "refs-after-delete-reset.screen#1",
+          "status": "OK"
+        }
+      ],
+      "receipt_path": "test/tmp/refs/refresh-test/.test-result",
+      "receipt": "  [OK] refs-initial.screen assertion\n  [OK] refs-after-move-add.screen assertion\n  [OK] refs-after-delete-reset.screen assertion\n",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": ""
+    },
+    {
+      "script": "test/refs/replace-test",
+      "script_sha256": "a18e6d147af235955df8f41888e07c27211a3c8bd711bc61c7cd20b1aaa6697c",
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "fail",
+      "reasons": [
+        "failed_checks"
+      ],
+      "checks": {
+        "FAIL": 2
+      },
+      "assertions": [
+        {
+          "id": "refs.screen#1",
+          "status": "FAIL"
+        },
+        {
+          "id": "main.screen#1",
+          "status": "FAIL"
+        }
+      ],
+      "receipt_path": "test/tmp/refs/replace-test/.test-result",
+      "receipt": "[FAIL] refs.screen != expected/refs.screen\n\u001b[1mdiff --git a/expected/refs.screen b/refs.screen\u001b[m\n\u001b[1mindex a407569..4699f41 100644\u001b[m\n\u001b[1m--- a/expected/refs.screen\u001b[m\n\u001b[1m+++ b/refs.screen\u001b[m\n\u001b[36m@@ -4,8 +4,8 @@\u001b[m\n 5cb3412 2010-04-07 05:37 +0000 Max Power     origin/HEAD    Commit 10 E\u001b[m\n 957f2b3 2009-12-17 12:49 +0000 Ren\u00e9 L\u00e9vesque v1.0           Commit 8 B\u001b[m\n d9a8c8b 2009-10-18 22:14 +0000 Max Power     not-replace    Commit 6 E\u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[32m+\u001b[m\u001b[32m2053940 2009-07-25 18:32 +0000 Max Power     replaced       Commit 4 E\u001b[m\n\u001b[32m+\u001b[m\u001b[32m5d9d565 2009-09-23 09:07 +0000 Ren\u00e9 L\u00e9vesque replaced       Commit 6 B\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n[FAIL] main.screen != expected/main.screen\n\u001b[1mdiff --git a/expected/main.screen b/main.screen\u001b[m\n\u001b[1mindex 3166e87..66d2c96 100644\u001b[m\n\u001b[1m--- a/expected/main.screen\u001b[m\n\u001b[1m+++ b/main.screen\u001b[m\n\u001b[36m@@ -8,10 +8,10 @@\u001b[m\n 7116156 2010-02-06 15:02 +0000 \u4f5c\u8005                  o Commit 9 C\u001b[m\n 9927870 2010-01-29 02:40 +0000 Ren\u00e9 L\u00e9vesque         o Commit 9 B\u001b[m\n a3f25ca 2010-01-20 14:18 +0000 A. U. Thor            o Commit 9 A\u001b[m\n\u001b[31m-d9a8c8b 2009-10-18 22:14 +0000 Max Power             o ~not-replace~ Commit 6 E\u001b[m\n\u001b[32m+\u001b[m\u001b[32md9a8c8b 2009-10-18 22:14 +0000 Max Power             o [replaced] [not-replace]\u001b[m\u001b[41m \u001b[m\n 02e1e72 2009-10-10 09:52 +0000 J\u00f8rgen Thygesen Brahe o Commit 6 D\u001b[m\n\u001b[31m-5d9d565 2009-09-23 09:07 +0000 Ren\u00e9 L\u00e9vesque         o ~replaced~ Commit 6 B\u001b[m\n\u001b[32m+\u001b[m\u001b[32m5d9d565 2009-09-23 09:07 +0000 Ren\u00e9 L\u00e9vesque         o [replaced] Commit 6 B\u001b[m\n 2ba9ed5 2009-09-14 20:45 +0000 A. U. Thor            o Commit 6 A\u001b[m\n\u001b[31m-2053940 2009-07-25 18:32 +0000 Max Power             o ~replaced~ Commit 4 E\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2053940 2009-07-25 18:32 +0000 Max Power             o [replaced] Commit 4 E\u001b[m\n ceac6c2 2009-07-17 06:10 +0000 J\u00f8rgen Thygesen Brahe o Commit 4 D\u001b[m\n [main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 34             47%\u001b[m\n",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": "| Failed 2 out of 2 test(s)\r\n| [FAIL] refs.screen != expected/refs.screen\r\n| \u001b[1mdiff --git a/expected/refs.screen b/refs.screen\u001b[m\r\n| \u001b[1mindex a407569..4699f41 100644\u001b[m\r\n| \u001b[1m--- a/expected/refs.screen\u001b[m\r\n| \u001b[1m+++ b/refs.screen\u001b[m\r\n| \u001b[36m@@ -4,8 +4,8 @@\u001b[m\r\n|  5cb3412 2010-04-07 05:37 +0000 Max Power     origin/HEAD    Commit 10 E\u001b[m\r\n|  957f2b3 2009-12-17 12:49 +0000 Ren\u00e9 L\u00e9vesque v1.0           Commit 8 B\u001b[m\r\n|  d9a8c8b 2009-10-18 22:14 +0000 Max Power     not-replace    Commit 6 E\u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2053940 2009-07-25 18:32 +0000 Max Power     replaced       Commit 4 E\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m5d9d565 2009-09-23 09:07 +0000 Ren\u00e9 L\u00e9vesque replaced       Commit 6 B\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| [FAIL] main.screen != expected/main.screen\r\n| \u001b[1mdiff --git a/expected/main.screen b/main.screen\u001b[m\r\n| \u001b[1mindex 3166e87..66d2c96 100644\u001b[m\r\n| \u001b[1m--- a/expected/main.screen\u001b[m\r\n| \u001b[1m+++ b/main.screen\u001b[m\r\n| \u001b[36m@@ -8,10 +8,10 @@\u001b[m\r\n|  7116156 2010-02-06 15:02 +0000 \u4f5c\u8005                  o Commit 9 C\u001b[m\r\n|  9927870 2010-01-29 02:40 +0000 Ren\u00e9 L\u00e9vesque         o Commit 9 B\u001b[m\r\n|  a3f25ca 2010-01-20 14:18 +0000 A. U. Thor            o Commit 9 A\u001b[m\r\n| \u001b[31m-d9a8c8b 2009-10-18 22:14 +0000 Max Power             o ~not-replace~ Commit 6 E\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32md9a8c8b 2009-10-18 22:14 +0000 Max Power             o [replaced] [not-replace]\u001b[m\u001b[41m \u001b[m\r\n|  02e1e72 2009-10-10 09:52 +0000 J\u00f8rgen Thygesen Brahe o Commit 6 D\u001b[m\r\n| \u001b[31m-5d9d565 2009-09-23 09:07 +0000 Ren\u00e9 L\u00e9vesque         o ~replaced~ Commit 6 B\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m5d9d565 2009-09-23 09:07 +0000 Ren\u00e9 L\u00e9vesque         o [replaced] Commit 6 B\u001b[m\r\n|  2ba9ed5 2009-09-14 20:45 +0000 A. U. Thor            o Commit 6 A\u001b[m\r\n| \u001b[31m-2053940 2009-07-25 18:32 +0000 Max Power             o ~replaced~ Commit 4 E\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2053940 2009-07-25 18:32 +0000 Max Power             o [replaced] Commit 4 E\u001b[m\r\n|  ceac6c2 2009-07-17 06:10 +0000 J\u00f8rgen Thygesen Brahe o Commit 4 D\u001b[m\r\n|  [main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 34             47%\u001b[m\r\n"
+    },
+    {
+      "script": "test/refs/start-on-line-test",
+      "script_sha256": "e518cd18ff4891b3099f76d3ee8f09e60de1431af603740b09bdbcef034b9f11",
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "pass",
+      "reasons": [],
+      "checks": {
+        "OK": 1
+      },
+      "assertions": [
+        {
+          "id": "position.screen#1",
+          "status": "OK"
+        }
+      ],
+      "receipt_path": "test/tmp/refs/start-on-line-test/.test-result",
+      "receipt": "  [OK] position.screen assertion\n",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": ""
+    },
+    {
+      "script": "test/refs/worktree-test",
+      "script_sha256": "52e7a5bb711284896590077360af4a1708abb8bb990fe64685338d454ccbfb86",
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "pass",
+      "reasons": [],
+      "checks": {
+        "OK": 1
+      },
+      "assertions": [
+        {
+          "id": "worktree.screen#1",
+          "status": "OK"
+        }
+      ],
+      "receipt_path": "test/tmp/refs/worktree-test/.test-result",
+      "receipt": "  [OK] worktree.screen assertion\n",
+      "skip": "",
+      "skipped_cases": {},
+      "transcript": ""
+    }
+  ],
+  "pty": {
+    "passed": 126,
+    "binary_sha256": "7b140b9d6815a6898ce44a75d3916cd8782826b73db50b36988247b67a7fb3ba",
+    "transcript_sha256": "6d74b120e17f7a8a8fedff77e8e0c6e1de18b8264d3d1aba5a30f2341dd9ecc7"
+  }
+}

@@ -1301,6 +1301,7 @@ impl App {
         }) {
             let selected_ref = match self.selected() {
                 Item::Ref(_, name) => name,
+                Item::Text if self.view.name == "refs" => Some(String::new()),
                 _ => None,
             };
             self.select_context();
