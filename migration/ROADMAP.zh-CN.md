@@ -4,7 +4,7 @@
 
 ## 当前阶段门
 
-最新严格配对快照固定在源码 `86ce7680`（差异视图、引用过滤、树路径合并后，状态/trace 与配置改动合并前）：154 个原版脚本在 C 与 Rust 两侧均实际尝试，且 Rust 应用与图形辅助程序均由 Rust 构建。C 为 152 通过、0 失败、2 跳过；Rust 为 104 通过、47 失败、3 跳过。Rust 达到的真实断言为 475 通过、82 失败，另有 15 条相对 C 未执行；19 条非断言失败记录单独计数。较早快照为 Rust 95 通过、56 失败、3 跳过。完整二进制哈希、原始输出和逐脚本映射见 [最新严格配对证据](evidence/upstream-rust-only-after-refs-tree-diff.json) 与 [较早快照](evidence/upstream-rust-only-after-main-date-prompt.json)。该结果不是当前主分支的成绩；后续集成检查仍在进行。阶段门保持开启，最终应用 benchmark 延后。
+最新严格配对快照固定在源码 `ac78df21`：154 个原版脚本在 C 与 Rust 两侧均实际尝试，且 Rust 应用与图形辅助程序均由 Rust 构建。C 为 152 通过、0 失败、2 跳过；Rust 为 121 通过、30 失败、3 跳过。Rust 达到的真实断言为 517 通过、47 失败，另有 8 条相对 C 未执行；11 条非断言失败记录单独计数。较早的 `86ce7680` 快照为 Rust 104 通过、47 失败、3 跳过。完整二进制哈希、原始输出和逐脚本映射见 [最新严格配对证据](evidence/upstream-rust-only-after-integration.json) 与 [较早快照](evidence/upstream-rust-only-after-refs-tree-diff.json)。这是当前开发任务开始前的源码快照，不代表后续合并后的成绩。阶段门保持开启，最终应用 benchmark 延后。
 
 ## 并行任务与合并顺序
 
