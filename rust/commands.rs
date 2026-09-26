@@ -117,6 +117,23 @@ pub fn prepare_with_context(
     line: usize,
     selected_ref: Option<&str>,
 ) -> Result<PreparedCommand> {
+    if let Some(reference) = selected_ref.filter(|name| !name.is_empty() && *name != "HEAD") {
+        // Selection names are data, never Git options. Validate the full name
+        // before shortening it for commands such as `git checkout %(branch)`.
+        if !reference.starts_with("refs/") {
+            return Err(GitError("Expected a full selected reference name".into()));
+        }
+        repo.command(["check-ref-format", reference])?;
+        let short = ["refs/heads/", "refs/tags/", "refs/remotes/"]
+            .iter()
+            .find_map(|prefix| reference.strip_prefix(prefix))
+            .unwrap_or(reference);
+        if short.starts_with('-') {
+            return Err(GitError(
+                "Selected reference must not start with '-'".into(),
+            ));
+        }
+    }
     let mut argv = config::words(command).map_err(GitError)?;
     if argv.is_empty() {
         return Err(GitError("No command arguments".into()));
@@ -196,9 +213,13 @@ pub fn prepare_with_context(
     ] {
         variables.insert(key, value.into());
     }
-    // A remote branch or tag must never fall back to the checked-out branch.
-    if let Some(branch) = selected_ref.and_then(|name| name.strip_prefix("refs/heads/")) {
+    // A known refs selection can have an empty branch/tag. Keep that distinct
+    // from a view that has not supplied reference context at all.
+    if let Some(reference) = selected_ref {
+        let branch = reference.strip_prefix("refs/heads/").unwrap_or("");
+        let tag = reference.strip_prefix("refs/tags/").unwrap_or("");
         variables.insert("branch", branch.into());
+        variables.insert("tag", tag.into());
     }
     // refs_select() sets the viewed head to this ref's OID. Other views need
     // their viewed-head context supplied before this variable can be supported.
@@ -216,7 +237,12 @@ pub fn prepare_with_context(
             })
             .max_by_key(|name| name.len())
         {
+            let branch = &reference[remote.len() + 1..];
+            if branch.starts_with('-') {
+                return Err(GitError("Selected branch must not start with '-'".into()));
+            }
             variables.insert("remote", remote.into());
+            variables.insert("branch", branch.into());
         }
     }
     variables.insert("file", path.as_os_str().to_owned());
@@ -318,8 +344,35 @@ mod tests {
             "selected"
         );
         assert!(make(None).is_err());
-        assert!(make(Some("refs/tags/v1")).is_err());
-        assert!(make(Some("refs/remotes/origin/selected")).is_err());
+        assert_eq!(make(Some("refs/tags/v1")).unwrap().argv[1], "");
+        assert_eq!(make(Some("")).unwrap().argv[1], "");
+        for invalid in [
+            "--help",
+            "refs/heads/has space",
+            "refs/heads/-danger",
+            "refs/tags/-danger",
+        ] {
+            assert!(make(Some(invalid)).is_err(), "{invalid}");
+        }
+        // Git permits shell metacharacters in refnames; argv expansion must
+        // preserve them as one literal argument, without invoking a shell.
+        assert_eq!(
+            make(Some("refs/heads/topic;literal")).unwrap().argv[1],
+            "topic;literal"
+        );
+        let tag = prepare(
+            &repo,
+            "!echo %(tag) %(branch)",
+            "selected-oid",
+            Path::new(""),
+            Some("refs/tags/v1"),
+        )
+        .unwrap();
+        assert_eq!(tag.argv, ["echo", "v1", ""]);
+        assert_eq!(
+            make(Some("refs/remotes/origin/selected")).unwrap().argv[1],
+            ""
+        );
         assert_eq!(
             prepare(
                 &repo,
@@ -369,6 +422,13 @@ mod tests {
                 name,
             )
         };
+        assert_eq!(
+            make(Some("refs/remotes/upstream/nested/topic"))
+                .unwrap()
+                .argv[1],
+            "topic"
+        );
+        assert!(make(Some("refs/remotes/upstream/-danger")).is_err());
         let remote = remote_command(Some("refs/remotes/upstream/main")).unwrap();
         assert_eq!(remote.argv[1], "upstream");
         assert_eq!(remote.argv[2], "origin");
