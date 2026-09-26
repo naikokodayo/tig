@@ -557,3 +557,14 @@ surface (including copy-following flags) remain unsupported; full stash renderin
 nested view behavior and curses screenshot encoding remain open migration work.
 The complete original suite was not rerun for this slice, and full parity and
 end-to-end benchmarks remain gated.
+
+### Non-local `%s` follow-up
+
+The PR #3 blanket refusal is replaced by a host POSIX bridge on 64-bit macOS
+and GNU/Linux with 64-bit system Perl and its core POSIX module. First-party
+unsafe remains forbidden; no Cargo dependency is added. Missing tools, other
+platforms and invalid output fail explicitly. The implementation retains the
+commit wall time and libc's `tm_isdst=0` behavior, including summer dates.
+Runtime requirements, evaluated Rust alternatives, differential/upstream
+receipts and the still-open performance/full-migration boundaries are in the
+[updated date compatibility record](migration/chrono-date-compatibility.md#非本地-s系统-posix-桥接).
