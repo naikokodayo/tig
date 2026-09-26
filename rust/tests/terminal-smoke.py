@@ -316,6 +316,34 @@ def main():
             finish('synthetic status session quit')
             git('reset', '-q', '--', 'new-untracked.txt')
             untracked.unlink()
+            partial_text = 'FIRST\nsecond line\naddition one\naddition two\n'
+            (repo / 'fixture.txt').write_text(partial_text)
+            before, selector = start(('status',))
+            expect('partial block status', ['[status] Nothing to update'])
+            expect('select partial block file', ["[status] Press u to stage 'fixture.txt'"], b'jjjj')
+            expect('open partial block patch', ['+FIRST', '+addition one', '+addition two', '[stage]'], b'\r')
+            expect('split block search prompt', ['/'], b'/')
+            expect('select block for splitting', ['[stage]'], b'\\+addition one\r',
+                   raw_required=(b'\x1b[7m+addition one',))
+            expect('backslash splits hunk with shared context', ['@@ -1,2 +1,2 @@', '@@ -2,1 +2,3 @@', '[stage]'], b'\\')
+            assert git('diff', '--cached') == ''
+            expect('split partial search prompt', ['/'], b'/')
+            expect('select change within split hunk', ['[stage]'], b'\\+addition one\r',
+                   raw_required=(b'\x1b[7m+addition one',))
+            expect('2 stages contiguous block only', ['+FIRST', '[stage]'], b'2')
+            assert git('show', ':fixture.txt') == 'first line\nsecond line\naddition one\naddition two\n'
+            assert (repo / 'fixture.txt').read_text() == partial_text
+            expect('partial block refreshes status without R', ["[status] Press u to stage 'fixture.txt'"], b'q')
+            expect('select staged block', ["[status] Press u to unstage 'fixture.txt'"], b'kk')
+            expect('open staged block', ['+addition one', '+addition two', '[stage]'], b'\r')
+            expect('partial unstage search prompt', ['/'], b'/')
+            expect('select block to unstage', ['[stage]'], b'\\+addition two\r',
+                   raw_required=(b'\x1b[7m+addition two',))
+            expect('2 unstages block and closes empty stage', ['[status]'], b'2')
+            assert git('diff', '--cached') == ''
+            assert (repo / 'fixture.txt').read_text() == partial_text
+            evidence['checks'].append({'name': 'split and partial block stage/unstage preserve worktree and update only selected index block', 'passed': True})
+            finish('partial block session quit')
             evidence['passed'] = True
 
     except Exception as error:
