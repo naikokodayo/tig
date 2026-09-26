@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "bb71579eaa80d26bda2dcfb4e9c38ea1a32e6415",
+  "source_commit": "8be85f764973f40b0c52bc5f80d8804a7a3f3600",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -122,7 +122,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity)\n    Finished `release` profile [optimized] target(s) in 16.58s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity)\n    Finished `release` profile [optimized] target(s) in 33.94s\n",
       "results": [
         {
           "script": "test/prompt/exec-test",
@@ -200,7 +200,7 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/target/release/tig",
-          "sha256": "42f1fed8fe83b709721e37b5d36a0576ffe7b5a326e85b31e6c94b316cfe0988"
+          "sha256": "84baf448dacd2f79e288bda26ce71f28b7c43d6d70a1b14bb0aafd55e8dc1988"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/prompt-command-parity/target/release/test-graph",
