@@ -1,0 +1,23 @@
+c: pass    test/diff/diff-context-test
+c: pass    test/diff/diff-wdiff-context-test
+c: pass    test/diff/editor-test
+c: pass    test/diff/submodule-editor-test
+c: pass    test/diff/worktree-editor-test
+c: pass    test/tree/chdir-test
+c: pass    test/tree/default-test
+c: pass    test/tree/file-name-test
+c: pass    test/tree/recurse-test
+c: pass    test/tree/submodule-editor-test
+c: pass    test/tree/worktree-editor-test
+rust: pass    test/diff/diff-context-test
+rust: pass    test/diff/diff-wdiff-context-test
+rust: pass    test/diff/editor-test
+rust: pass    test/diff/submodule-editor-test
+rust: pass    test/diff/worktree-editor-test
+rust: pass    test/tree/chdir-test
+rust: pass    test/tree/default-test
+rust: fail    test/tree/file-name-test
+rust: pass    test/tree/recurse-test
+rust: pass    test/tree/submodule-editor-test
+rust: pass    test/tree/worktree-editor-test
+BLOCKED: migration/evidence/tree-paths/review-fix/upstream.json
