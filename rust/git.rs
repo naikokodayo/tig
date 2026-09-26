@@ -52,6 +52,13 @@ where
     I: IntoIterator<Item = S>,
     S: AsRef<OsStr>,
 {
+    run_with_input(cwd, args, None)
+}
+fn run_with_input<I, S>(cwd: &Path, args: I, input: Option<&[u8]>) -> Result<Vec<u8>>
+where
+    I: IntoIterator<Item = S>,
+    S: AsRef<OsStr>,
+{
     let mut command = Command::new("git");
     // Environment equivalents keep Git's global execution policy separate from
     // the subcommand argv, as in upstream's trace. Preserve inherited config.
@@ -76,8 +83,32 @@ where
         .env("GIT_TERMINAL_PROMPT", "0")
         .env("LC_ALL", "C")
         .stdin(Stdio::null());
-    let output = crate::trace::output(&mut command)
-        .map_err(|e| GitError(format!("Could not run git: {e}")))?;
+    let output = if let Some(input) = input {
+        use std::io::Write;
+        command
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped());
+        crate::trace::command(&command);
+        let mut child = command.spawn().map_err(|e| GitError(e.to_string()))?;
+        let mut stdin = child.stdin.take().expect("piped Git stdin");
+        // Drain output while writing: either pipe can exceed the OS buffer.
+        let (output, written) = std::thread::scope(|scope| {
+            let writer = scope.spawn(move || stdin.write_all(input));
+            (child.wait_with_output(), writer.join())
+        });
+        let output = output.map_err(|e| GitError(e.to_string()))?;
+        crate::trace::append(&output.stderr);
+        if output.status.success() {
+            written
+                .map_err(|_| GitError("Git stdin writer panicked".into()))?
+                .map_err(|e| GitError(format!("Could not write Git stdin: {e}")))?;
+        }
+        output
+    } else {
+        crate::trace::output(&mut command)
+            .map_err(|e| GitError(format!("Could not run git: {e}")))?
+    };
     if !output.status.success() {
         return Err(GitError(format!(
             "git exited with {}: {}",
@@ -245,6 +276,8 @@ impl HistoryOptions {
                 "--grep" | "--max-count" | "--skip" | "--min-parents" | "--max-parents" | "-n" => {
                     expects_value = !inline_value;
                 }
+                "--stdin" if !inline_value => { options.has_revision = true; }
+                "--no-walk" if !inline_value || matches!(arg.as_str(), "--no-walk=sorted" | "--no-walk=unsorted") => {}
                 "--all" | "--branches" | "--tags" | "--remotes" | "--glob" | "--exclude" => {
                     if matches!(name, "--glob" | "--exclude") && !inline_value { expects_value = true; }
                     options.has_revision = true;
@@ -323,6 +356,23 @@ impl Repository {
         limit: usize,
         order: &str,
     ) -> Result<Vec<Commit>> {
+        self.history_with_input(revisions, limit, order, None)
+    }
+    pub fn history_from_stdin(
+        &self,
+        revisions: &[String],
+        input: &[u8],
+        order: &str,
+    ) -> Result<Vec<Commit>> {
+        self.history_with_input(revisions, 0, order, Some(input))
+    }
+    fn history_with_input(
+        &self,
+        revisions: &[String],
+        limit: usize,
+        order: &str,
+        input: Option<&[u8]>,
+    ) -> Result<Vec<Commit>> {
         let options = HistoryOptions::parse(revisions)?;
         let order_arg = match order {
             "auto" | "topo" => Some("--topo-order"),
@@ -362,7 +412,7 @@ impl Repository {
         } else {
             &self.invocation
         };
-        let mut result = parse_history(&run(directory, args)?)?;
+        let mut result = parse_history(&run_with_input(directory, args, input)?)?;
         let references = self.refs()?;
         let upstream = self
             .command(["rev-parse", "--symbolic-full-name", "@{upstream}"])

@@ -3465,20 +3465,26 @@ fn run() -> Result<()> {
             .max(3);
     }
     if cli.view == "pager" || (cli.view == "diff" && !io::stdin().is_terminal()) {
-        let mut text = String::new();
-        io::Read::read_to_string(&mut io::stdin(), &mut text)?;
+        let forward_stdin = cli
+            .git_args
+            .iter()
+            .take_while(|arg| !matches!(arg.as_str(), "--" | "--end-of-options"))
+            .any(|arg| arg == "--stdin");
+        let mut input = Vec::new();
+        io::Read::read_to_end(&mut io::stdin(), &mut input)?;
+        // Revision names are Git bytes; only rendered stdin text needs UTF-8.
+        let text = if forward_stdin {
+            ""
+        } else {
+            std::str::from_utf8(&input)?
+        };
         if cli.view == "diff" {
-            if cli
-                .git_args
-                .iter()
-                .take_while(|arg| !matches!(arg.as_str(), "--" | "--end-of-options"))
-                .any(|arg| arg == "--stdin")
-            {
+            if forward_stdin {
                 return Err(
                     "Forwarding revision input to git show --stdin is not supported yet".into(),
                 );
             }
-            app.view = View::text("diff", &text);
+            app.view = View::text("diff", text);
             app.view.from_stdin = true;
             if let Some(oid) = text.lines().find_map(|line| {
                 line.strip_prefix("commit ")
@@ -3490,13 +3496,23 @@ fn run() -> Result<()> {
                 app.view.revision = oid.into();
                 app.revision = oid.into();
             }
-        } else if cli
-            .git_args
-            .iter()
-            .take_while(|arg| !matches!(arg.as_str(), "--" | "--end-of-options"))
-            .any(|arg| arg == "--pretty=raw")
+        } else if forward_stdin
+            || cli
+                .git_args
+                .iter()
+                .take_while(|arg| !matches!(arg.as_str(), "--" | "--end-of-options"))
+                .any(|arg| arg == "--pretty=raw")
         {
-            let commits = tig_rs::git::parse_raw_history(&text)?;
+            let commits = if forward_stdin {
+                let order = app.config.value("commit-order").unwrap_or("auto");
+                app.repo()?.history_from_stdin(
+                    &app.args,
+                    &input,
+                    if order == "auto" { "default" } else { order },
+                )?
+            } else {
+                tig_rs::git::parse_raw_history(text)?
+            };
             app.view = View::new("main");
             app.view.from_stdin = true;
             for commit in commits {
@@ -3504,7 +3520,7 @@ fn run() -> Result<()> {
             }
             app.view.redraw_stdin(&app.config, app.width)?;
         } else {
-            app.view = View::text("pager", &text);
+            app.view = View::text("pager", text);
         }
     } else {
         if cli.view == "blame" {
