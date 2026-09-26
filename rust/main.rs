@@ -1943,7 +1943,7 @@ impl App {
 }
 
 fn cell_width(text: &str) -> usize {
-    text.chars().map(|c| c.width().unwrap_or(0)).sum()
+    tig_rs::render::cell_width(text)
 }
 fn log_header_offset(line: &str) -> Option<usize> {
     line.find("commit ").filter(|&i| {

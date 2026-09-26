@@ -709,8 +709,18 @@ impl Config {
             }
             "bind" => return Err("Invalid key binding: bind keymap key action".into()),
             "color" if args.len() >= 4 => {
-                let replacement = match args[1].as_str() {
-                    "main-revgraph" => return Err("main-revgraph is obsolete".into()),
+                let (prefix, name) = if args[1].starts_with(['\'', '"']) {
+                    (None, args[1].as_str())
+                } else {
+                    args[1]
+                        .split_once('.')
+                        .map_or((None, args[1].as_str()), |(prefix, name)| {
+                            (Some(prefix), name)
+                        })
+                };
+                let name = name.to_ascii_lowercase().replace('_', "-");
+                let replacement = match name.as_str() {
+                    "main-revgraph" => return Err(format!("{} is obsolete", args[1])),
                     "acked" => Some("'    Acked-by'"),
                     "diff-copy-from" => Some("'copy from '"),
                     "diff-copy-to" => Some("'copy to '"),
@@ -737,10 +747,24 @@ impl Config {
                     _ => None,
                 };
                 validate_colors(&args[2..])?;
-                self.colors
-                    .insert(replacement.unwrap_or(&args[1]).into(), args[2..].to_vec());
+                let target = match (prefix, replacement) {
+                    (Some(prefix), Some(replacement)) => {
+                        let prefix = if prefix == "branch" { "refs" } else { prefix };
+                        if !is_view(prefix) && !matches!(prefix, "generic" | "search") {
+                            return Err(format!("Unknown key map: {prefix}"));
+                        }
+                        // An explicit view overrides the replacement's default view.
+                        let area = replacement
+                            .split_once('.')
+                            .map_or(replacement, |(_, area)| area);
+                        format!("{prefix}.{area}")
+                    }
+                    (_, Some(replacement)) => replacement.into(),
+                    _ => args[1].clone(),
+                };
+                self.colors.insert(target, args[2..].to_vec());
                 if let Some(replacement) = replacement {
-                    return Err(format!("{} has been replaced by {replacement}", args[1]));
+                    return Err(format!("{name} has been replaced by {replacement}"));
                 }
             }
             "color" => {
@@ -775,6 +799,19 @@ impl Config {
             .iter()
             .position(|s| s.split(':').next() == Some(column))
             .ok_or_else(|| format!("The {view} view does not have a {column} column configured"))?;
+        // C updates an existing date column before returning its enum diagnostic.
+        // Whole-view replacement remains transactional in validate_setting.
+        if column == "date" && matches!(suffix, "date" | "date-display") {
+            let value = if suffix == "date" {
+                values[0].split(',').next().unwrap()
+            } else {
+                &values[0]
+            };
+            if let Err(error) = validate_column_value("date", "display", value) {
+                self.set_column(&format!("{view}-view-date-display"), &["default".into()])?;
+                return Err(error);
+            }
+        }
         let mut specs = old.clone();
         let original = specs[index].split_once(':').map_or("yes", |(_, s)| s);
         let mut fields: Vec<String> = original.split(',').map(String::from).collect();
@@ -1048,14 +1085,14 @@ fn column_type(column: &str, option: &str) -> Option<&'static str> {
 }
 fn validate_scalar(name: &str, kind: &str, value: &str) -> Result<(), String> {
     if let Some(kind) = kind.strip_prefix("enum ") {
-        if kind == "date" && matches!(value, "local" | "short") {
+        if kind == "date" && normalize_enum(kind, value).is_err() {
+            let hint = match value.to_ascii_lowercase().as_str() {
+                "local" => ", use the 'date-local' column option",
+                "short" => ", use the 'custom' display mode and set 'date-format'",
+                _ => "",
+            };
             return Err(format!(
-                "'{value}' is no longer supported for date-display, use {}",
-                if value == "local" {
-                    "the 'date-local' column option"
-                } else {
-                    "the 'custom' display mode and set 'date-format'"
-                }
+                "'{value}' is no longer supported for date-display{hint}"
             ));
         }
         return normalize_enum(kind, value).map(|_| ());
@@ -1442,16 +1479,30 @@ mod tests {
             assert!(c.apply_command(command).is_err());
             assert_eq!(c.settings, before);
         }
-        // Removed date modes diagnose without applying the global enum fallback.
-        for value in ["local", "short"] {
-            c.parse(&format!("set main-view-date-display = {value}"));
-            assert_eq!(c.settings, before);
-            assert!(c
-                .diagnostics
-                .last()
-                .unwrap()
-                .contains("is no longer supported for date-display"));
+        // Invalid scoped date displays recover even when they report an error.
+        for suffix in ["date", "date-display"] {
+            for value in ["local", "short", "LOCAL", "invalid"] {
+                c.apply_command("set main-view-date = custom,format=%Y,width=12")
+                    .unwrap();
+                c.diagnostics.clear();
+                c.parse(&format!("set main-view-{suffix} = {value}"));
+                assert_eq!(c.diagnostics.len(), 1);
+                assert!(c.diagnostics[0].contains("is no longer supported for date-display"));
+                assert!(c.settings["main-view"].contains(&"date:default,format=%Y,width=12".into()));
+                c.apply_command("set main-view-date = custom").unwrap();
+                assert!(c
+                    .apply_command(&format!("set main-view-{suffix} = {value}"))
+                    .is_err());
+                assert!(c.settings["main-view"].contains(&"date:default,format=%Y,width=12".into()));
+            }
         }
+        // Whole-view replacement builds fresh columns; a failure discards them.
+        c.apply_command("set main-view-date = custom").unwrap();
+        let before = c.settings.clone();
+        assert!(c
+            .apply_command("set main-view = date:local commit-title")
+            .is_err());
+        assert_eq!(c.settings, before);
     }
 
     #[test]
@@ -1548,6 +1599,37 @@ mod tests {
         );
         assert!(c.colors.contains_key("tree.header"));
         assert!(!c.colors.contains_key("main-revgraph"));
+    }
+    #[test]
+    fn prefixed_legacy_colors_keep_the_callers_view() {
+        let mut c = Config::defaults();
+        for (area, canonical) in [
+            ("tree.tree-head", "tree.header"),
+            ("diff.tree-head", "diff.header"),
+            ("tree.tree-dir", "tree.directory"),
+        ] {
+            assert_eq!(
+                c.apply_command(&format!("color {area} yellow default"))
+                    .unwrap_err(),
+                format!(
+                    "{} has been replaced by {}",
+                    area.split_once('.').unwrap().1,
+                    if area.ends_with("tree-dir") {
+                        "tree.directory"
+                    } else {
+                        "tree.header"
+                    }
+                )
+            );
+            assert_eq!(c.colors[canonical], ["yellow", "default"]);
+            assert!(!c.colors.contains_key(area));
+        }
+        assert_eq!(
+            c.apply_command("color main.main-revgraph yellow default")
+                .unwrap_err(),
+            "main.main-revgraph is obsolete"
+        );
+        assert!(!c.colors.contains_key("main.main-revgraph"));
     }
     #[test]
     fn original_view_column_fixture_and_atomic_errors() {

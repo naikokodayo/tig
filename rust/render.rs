@@ -12,7 +12,7 @@ use crate::{
     model::{BlameLine, Commit},
 };
 use std::collections::BTreeMap;
-use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
+use unicode_width::UnicodeWidthChar;
 
 pub(crate) struct Column<'a> {
     pub(crate) name: &'a str,
@@ -82,6 +82,11 @@ pub fn sanitize(text: &str) -> String {
         .collect()
 }
 
+/// Measure the same Unicode scalars that clip consumes, including zero-width marks.
+pub fn cell_width(text: &str) -> usize {
+    text.chars().map(|c| c.width().unwrap_or(0)).sum()
+}
+
 /// Clip without splitting UTF-8 or exceeding terminal-cell width. Combining
 /// characters stay attached to the preceding character; terminal width rules
 /// for complex emoji sequences may differ between terminal implementations.
@@ -102,12 +107,12 @@ pub fn clip(text: &str, width: usize) -> String {
 
 /// Trim a field with Tig's one-cell configured delimiter.
 pub fn trim_field(text: &str, width: usize, config: &Config) -> String {
-    if text.width() <= width || width == 0 {
+    if cell_width(text) <= width || width == 0 {
         return clip(text, width);
     }
     let delimiter = match config.value("truncation-delimiter").unwrap_or("~") {
         "utf8" | "utf-8" => "⋯",
-        s if s.width() == 1 && !s.chars().any(char::is_control) => s,
+        s if cell_width(s) == 1 && !s.chars().any(char::is_control) => s,
         _ => "~",
     };
     let mut clipped = clip(text, width - 1);
@@ -262,7 +267,11 @@ pub fn render_blame(
         } else if name == "id" {
             config.usize_value("id-width", 7).max(1)
         } else {
-            values.iter().map(|value| value.width()).max().unwrap_or(0)
+            values
+                .iter()
+                .map(|value| cell_width(value))
+                .max()
+                .unwrap_or(0)
         };
         if name == "line-number" {
             cells = cells.clamp(3, 9);
@@ -278,12 +287,12 @@ pub fn render_blame(
             }
             let mut clipped = clip(value, cells);
             if matches!(name, "author" | "committer" | "file-name")
-                && value.width() > cells
+                && cell_width(value) > cells
                 && (name == "file-name" || cells > 10)
             {
                 clipped = trim_field(value, cells, config);
             }
-            let padding = " ".repeat(cells.saturating_sub(clipped.width()));
+            let padding = " ".repeat(cells.saturating_sub(cell_width(&clipped)));
             if name == "line-number" {
                 row.push_str(&padding);
                 row.push_str(&clipped);
@@ -471,7 +480,7 @@ pub fn render_commits(
         } else if col.name == "id" {
             config.usize_value("id-width", 7).max(1)
         } else {
-            values.iter().map(|s| s.width()).max().unwrap_or(0)
+            values.iter().map(|s| cell_width(s)).max().unwrap_or(0)
         };
         if fixed == 0 && max > 0 {
             size = size.min(max);
@@ -495,11 +504,11 @@ pub fn render_commits(
             let mut value = clip(value, size);
             if matches!(col.name, "author" | "committer")
                 && size > 10
-                && fields[index][i].width() > size
+                && cell_width(&fields[index][i]) > size
             {
                 value = trim_field(&fields[index][i], size, config);
             }
-            let padding = size.saturating_sub(value.width());
+            let padding = size.saturating_sub(cell_width(&value));
             if col.name == "line-number" {
                 row.push_str(&" ".repeat(padding));
                 row.push_str(&value);
@@ -681,6 +690,10 @@ mod tests {
     }
     #[test]
     fn configured_truncation_delimiters_and_fallbacks() {
+        let config = Config::defaults();
+        assert_eq!(trim_field("👩‍💻", 2, &config), "~");
+        assert_eq!(trim_field("👩‍💻x", 4, &config), "👩‍~");
+        assert_eq!(trim_field("e\u{301}x", 1, &config), "~");
         for (setting, expected) in [
             ("_", "_"),
             ("utf8", "⋯"),
@@ -738,7 +751,7 @@ mod tests {
         let row = &render_commits(&config, &[a], 12).unwrap()[0];
         assert_eq!(row, "作者 a [31m  終");
         assert!(!row.chars().any(char::is_control));
-        assert!(clip(row, 12).width() <= 12);
+        assert!(cell_width(&clip(row, 12)) <= 12);
         assert_eq!(clip("a界b", 2), "a");
         assert_eq!(clip("e\u{301}界", 1), "e\u{301}");
     }
