@@ -1001,7 +1001,7 @@ impl App {
         }
         Ok(())
     }
-    fn enter(&mut self) -> Result<()> {
+    fn enter(&mut self, split: bool) -> Result<()> {
         if self.view.name == "help" {
             if let Some(help) = &mut self.help {
                 if help.toggle_section(self.view.selected, &self.config) {
@@ -1031,7 +1031,7 @@ impl App {
         let parent = self.view.clone();
         let depth = self.previous.len();
         let (vertical, _, child) = self.pane_sizes();
-        let child_width = if vertical { child } else { self.width };
+        let child_width = if split && vertical { child } else { self.width };
         match self.selected() {
             Item::Commit(c) => {
                 self.revision = c.oid;
@@ -1137,7 +1137,7 @@ impl App {
             let from_grep = parent.name == "grep";
             self.previous.truncate(depth);
             self.other = Some(parent);
-            self.split = true;
+            self.split = split;
             self.parent_focused = false;
             if from_grep {
                 self.center_selection();
@@ -1471,7 +1471,7 @@ impl App {
                     return Ok(false);
                 }
             }
-            "enter" => self.enter()?,
+            "enter" => self.enter(true)?,
             "view-next" => {
                 if self.split {
                     self.swap_panes();
@@ -1486,7 +1486,7 @@ impl App {
                 let old = self.view.selected;
                 self.view.move_by(if action == "next" { 1 } else { -1 });
                 if self.view.selected != old {
-                    self.enter()?;
+                    self.enter(split)?;
                 }
                 if self.parent_focused {
                     self.swap_panes();
@@ -1694,7 +1694,7 @@ impl App {
                 if self.view.name == "main" && !matches!(self.selected(), Item::Changes(_)) {
                     return Err("No stage content; select working tree changes".into());
                 }
-                self.enter()?;
+                self.enter(true)?;
                 if self.view.name == "stage" {
                     if let Some(parent) = self.other.take() {
                         self.previous.push(parent);
@@ -2222,14 +2222,14 @@ mod editor_tests {
             height: 20,
         };
         assert_eq!(app.edit_target(), Some((PathBuf::from("b"), 0)));
-        app.enter().unwrap();
+        app.enter(true).unwrap();
         assert_eq!(app.view.selected, 9);
         app.view = View::text(
             "diff",
             "commit abc\n---\n a | 1 +\n b | 1 +\ndiff --git a/a b/a\ndiff --git a/b b/b\n",
         );
         app.view.selected = 3;
-        app.enter().unwrap();
+        app.enter(true).unwrap();
         assert_eq!(app.view.selected, 5);
         let mixed = b"diff --cc conflict\n@@@ -1,1 -1,1 +1,1 @@@\n++x\ndiff --git a/other b/other\n--- a/other\n+++ b/other\n@@ -1 +1 @@\n-old\n+new\n";
         app.view = View::text("stage", &String::from_utf8_lossy(mixed));
@@ -3244,7 +3244,7 @@ mod tests {
             app.selected(),
             Item::Changes(ChangeKind::Untracked)
         ));
-        app.enter().unwrap();
+        app.enter(true).unwrap();
         assert_eq!(app.view.name, "status");
         app.view.selected = 2;
         app.action("status-update").unwrap();
@@ -3270,7 +3270,7 @@ mod tests {
         app.action("view-status").unwrap();
         app.view.selected = app.view.items.iter().position(|item|
             matches!(item, Item::Status(entry, false) if entry.path == PathBuf::from("tracked"))).unwrap();
-        app.enter().unwrap();
+        app.enter(true).unwrap();
         app.action("maximize").unwrap();
         app.view.selected = app
             .view
