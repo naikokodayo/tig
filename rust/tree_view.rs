@@ -219,18 +219,6 @@ fn draw(
 ) -> git::Result<Vec<TreeRow>> {
     let cols = columns(config)?;
     let mut rows = vec![String::new(); entries.len()];
-    let mut number = 0;
-    let numbers: Vec<_> = entries
-        .iter()
-        .map(|entry| {
-            if entry.parent {
-                0
-            } else {
-                number += 1;
-                number
-            }
-        })
-        .collect();
     for col in cols.into_iter().filter(Column::enabled) {
         let fixed = col.number("width").map_err(GitError)?;
         let max = maximum(&col, width)?;
@@ -263,8 +251,9 @@ fn draw(
                     "line-number" => {
                         let interval = col.number("interval")?;
                         let interval = if interval == 0 { 5 } else { interval };
-                        if numbers[i] == 1 || (numbers[i] > 0 && numbers[i] % interval == 0) {
-                            numbers[i].to_string()
+                        let number = i + 2; // The directory header is line 1.
+                        if number % interval == 0 {
+                            number.to_string()
                         } else {
                             String::new()
                         }
@@ -635,6 +624,14 @@ mod tests {
             }
         }
         assert_eq!(checked, 15);
+        let mut config = Config::defaults();
+        config.parse(
+            "set line-graphics = ascii\nset tree-view = line-number:yes,interval=5 file-name",
+        );
+        let rows = load(&repo, &config, "HEAD", Path::new(""), 80, None, false).unwrap();
+        assert!(rows[1].text.starts_with("   | "));
+        assert!(rows[4].text.starts_with("  5| "));
+        assert!(rows[9].text.starts_with(" 10| "));
     }
     #[test]
     fn modes_units_and_history_paths() {

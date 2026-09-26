@@ -127,7 +127,11 @@ def main():
                         return plain
                 raise AssertionError(f'{label}: missing {required!r}; received {bytes(received)!r}')
 
-            expect('history rendering', ['newest fixture commit', 'oldest fixture commit', f'[main] {newest} - commit 1 of 2'])
+            expect('working changes precede history', ['Unstaged changes', 'newest fixture commit',
+                                                       'oldest fixture commit', '[main] Unstaged changes'])
+            expect('hide working changes for history navigation',
+                   ['newest fixture commit', 'oldest fixture commit', f'[main] {newest} - commit 1 of 2'],
+                   b':set show-changes = no\r')
             expect('j selects second commit', [f'[main] {oldest} - commit 2 of 2'], b'j')
             expect('Enter opens selected commit diff', ['[diff]', oldest, 'oldest fixture commit'], b'\r')
             expect('Tab focuses split parent', [f'[main] {oldest} - commit 2 of 2', '[diff]'], b'\t',
@@ -172,34 +176,31 @@ def main():
             expect('line unstage search prompt', ['/'], b'/')
             expect('select cached added line A', ['[stage]'], b'\\+unstaged fixture\r',
                    raw_required=(b'\x1b[7m+unstaged fixture',))
-            expect('1 unstages only selected line', ["[stage] Staged changes to 'fixture.txt'", ' 0%'], b'1')
+            expect('1 unstages only selected line and closes empty stage', ['[status]'], b'1')
             assert git('diff', '--cached') == ''
             assert (repo / 'fixture.txt').read_text() == worktree_text
             evidence['checks'].append({'name': 'single-line unstage empty index and unchanged worktree', 'passed': True})
-            expect('back after line unstage', ["[status] Press u to unstage 'fixture.txt'"], b'q')
             expect('refresh fully unstaged status', ["[status] Press u to stage 'fixture.txt' for commit"], b'R')
             expect('open hunk for staging', ['+unstaged fixture', '+second added fixture', '[stage]'], b'\r')
             expect('hunk staging search prompt', ['/'], b'/')
             expect('select line within hunk', ['[stage]'], b'\\+unstaged fixture\r',
                    raw_required=(b'\x1b[7m+unstaged fixture',))
-            expect('u stages complete hunk', ["[stage] Unstaged changes to 'fixture.txt'", ' 0%'], b'u')
+            expect('u stages complete hunk and closes empty stage', ['[status]'], b'u')
             cached = git('diff', '--cached')
             assert '+unstaged fixture' in cached and '+second added fixture' in cached, cached
             assert git('show', ':fixture.txt') == worktree_text
             assert (repo / 'fixture.txt').read_text() == worktree_text
             evidence['checks'].append({'name': 'whole-hunk stage includes both lines and preserves worktree',
                                        'passed': True, 'cached_diff': cached})
-            expect('back after hunk stage', ["[status] Press u to stage 'fixture.txt' for commit"], b'q')
             expect('refresh fully staged status', ["[status] Press u to unstage 'fixture.txt'"], b'R')
             expect('open cached hunk', ['+unstaged fixture', '+second added fixture', '[stage]'], b'\r')
             expect('hunk unstaging search prompt', ['/'], b'/')
             expect('select cached hunk line', ['[stage]'], b'\\+unstaged fixture\r',
                    raw_required=(b'\x1b[7m+unstaged fixture',))
-            expect('cached u unstages complete hunk', ["[stage] Staged changes to 'fixture.txt'", ' 0%'], b'u')
+            expect('cached u unstages complete hunk and closes empty stage', ['[status]'], b'u')
             assert git('diff', '--cached') == ''
             assert (repo / 'fixture.txt').read_text() == worktree_text
             evidence['checks'].append({'name': 'whole-hunk unstage empties index and preserves worktree', 'passed': True})
-            expect('back after hunk unstage', ["[status] Press u to unstage 'fixture.txt'"], b'q')
             expect('back from status', [f'[main] {newest} - commit 1 of 2'], b'q')
             expect('external argv command prompt', [':'], b':')
             expect('silent external argv command returns to history', [f'[main] {newest} - commit 1 of 2'],
@@ -285,7 +286,7 @@ def main():
 
             finish('quit leaves alternate screen and restores cursor')
             before, selector = start(('+2',))
-            expect('+2 sets initial selection', [f'[main] {oldest} - commit 2 of 2'])
+            expect('+2 selects second row after working changes', [f'[main] {newest} - commit 1 of 2'])
             finish('+2 session quit')
             before, selector = start(('blame', '--', 'fixture.txt'))
             expect('blame -- file', ['first line', 'second line', '[blame] fixture.txt - line 1 of 2'])
@@ -296,12 +297,25 @@ def main():
             for termination in (signal.SIGTERM, signal.SIGHUP, signal.SIGINT):
                 offset = len(transcript)
                 before, selector = start()
-                expect(termination.name + ' session history', [f'[main] {newest} - commit 1 of 2', 'PTY_CHILD_PID='])
+                expect(termination.name + ' session history', ['[main] Unstaged changes', 'PTY_CHILD_PID='])
                 child_pid = int(re.search(rb'PTY_CHILD_PID=(\d+)', transcript[offset:]).group(1))
                 if termination == signal.SIGTERM:
                     expect('signal while search prompt active', ['/'], b'/')
                 os.kill(child_pid, termination)
                 finish(termination.name + ' exit', send=None, expected_exit=1)
+            untracked = repo / 'new-untracked.txt'
+            untracked.write_text('new file\n')
+            before, selector = start()
+            expect('untracked row precedes history', ['Untracked changes', 'Unstaged changes', '[main] Untracked changes'])
+            expect('untracked row opens untracked-only status', ['new-untracked.txt', '[status] Nothing to update'], b'\r')
+            expect('select untracked file', ["[status] Press u to stage 'new-untracked.txt' for addition"], b'jj')
+            expect('stage last untracked file and return to main', ['Staged changes', 'Unstaged changes', '[main] Unstaged changes'], b'u')
+            assert git('show', ':new-untracked.txt') == 'new file\n'
+            assert untracked.read_text() == 'new file\n'
+            evidence['checks'].append({'name': 'untracked staging changes only Git index', 'passed': True})
+            finish('synthetic status session quit')
+            git('reset', '-q', '--', 'new-untracked.txt')
+            untracked.unlink()
             evidence['passed'] = True
 
     except Exception as error:

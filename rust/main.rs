@@ -13,6 +13,7 @@ use std::{
     env, fs,
     io::{self, IsTerminal, Write},
     path::PathBuf,
+    process::Command,
 };
 use tig_rs::{
     config::{Cli, Config},
@@ -27,10 +28,88 @@ const HELP: &str = "Tig Rust migration (compatibility work in progress)\n\nUsage
 #[derive(Clone)]
 enum Item {
     Commit(Commit),
+    Changes(ChangeKind),
     Status(StatusEntry, bool),
     Tree(TreeEntry),
     Ref(String, Option<String>),
     Text,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ChangeKind {
+    Untracked,
+    Unstaged,
+    Staged,
+}
+impl ChangeKind {
+    fn title(self) -> &'static str {
+        match self {
+            Self::Untracked => "Untracked changes",
+            Self::Unstaged => "Unstaged changes",
+            Self::Staged => "Staged changes",
+        }
+    }
+}
+
+fn changes(entries: &[StatusEntry], show_untracked: bool) -> Vec<ChangeKind> {
+    let mut kinds = Vec::new();
+    if show_untracked && entries.iter().any(|entry| entry.index == '?') {
+        kinds.push(ChangeKind::Untracked);
+    }
+    if entries
+        .iter()
+        .any(|entry| !matches!(entry.worktree, ' ' | '?'))
+    {
+        kinds.push(ChangeKind::Unstaged);
+    }
+    if entries
+        .iter()
+        .any(|entry| !matches!(entry.index, ' ' | '?' | 'U') && entry.worktree != 'U')
+    {
+        kinds.push(ChangeKind::Staged);
+    }
+    kinds
+}
+
+fn changes_date() -> Result<String> {
+    let mut date = Command::new("date");
+    if let Ok(seconds) = env::var("TEST_TIME_NOW") {
+        let seconds: i64 = seconds.parse()?;
+        date.arg("-u");
+        if cfg!(target_os = "linux") {
+            date.arg("-d").arg(format!("@{seconds}"));
+        } else {
+            date.arg("-r").arg(seconds.to_string());
+        }
+    }
+    let output = date.arg("+%Y-%m-%dT%H:%M:%S%z").output()?;
+    if !output.status.success() {
+        return Err(format!("date failed: {}", String::from_utf8_lossy(&output.stderr)).into());
+    }
+    let value = String::from_utf8(output.stdout)?;
+    let value = value.trim();
+    if value.len() < 5 {
+        return Err("Invalid current date".into());
+    }
+    Ok(format!(
+        "{}:{}",
+        &value[..value.len() - 2],
+        &value[value.len() - 2..]
+    ))
+}
+
+fn changes_commit(kind: ChangeKind, parent: String, date: &str, oid: &str) -> Commit {
+    Commit {
+        oid: oid.into(),
+        parents: vec![parent],
+        author: "Not Committed Yet".into(),
+        date: date.into(),
+        author_email: "not.committed.yet".into(),
+        committer: "Not Committed Yet".into(),
+        committer_email: "not.committed.yet".into(),
+        committer_date: date.into(),
+        subject: kind.title().into(),
+        decorations: String::new(),
+    }
 }
 #[derive(Clone)]
 struct View {
@@ -136,8 +215,47 @@ impl App {
         view.revision = self.revision.clone();
         view.path = self.path.clone();
         view.staged = self.view.staged && name == "stage";
-        view.untracked = self.view.untracked && name == "stage";
+        view.untracked = self.view.untracked && matches!(name, "stage" | "status");
         Ok(view)
+    }
+    fn status_view(&self, untracked_only: bool) -> Result<View> {
+        let repo = self.repo()?;
+        let entries = repo.status()?;
+        let mut v = View::new("status");
+        v.untracked = untracked_only;
+        v.push(repo.status_header()?, Item::Text);
+        for (group, title) in [
+            (0, "Changes to be committed:"),
+            (1, "Changes not staged for commit:"),
+            (2, "Untracked files:"),
+        ] {
+            if untracked_only && group != 2 {
+                continue;
+            }
+            v.push(title.into(), Item::Text);
+            let start = v.rows.len();
+            for e in &entries {
+                let visible = match group {
+                    0 => e.staged(),
+                    1 => e.index != '?' && e.worktree != ' ' && e.worktree != '!',
+                    _ => e.index == '?',
+                };
+                if visible {
+                    v.push(
+                        format!(
+                            "{} {}",
+                            if group == 0 { e.index } else { e.worktree },
+                            e.path.display()
+                        ),
+                        Item::Status(e.clone(), group == 0),
+                    );
+                }
+            }
+            if v.rows.len() == start {
+                v.push("  (no files)".into(), Item::Text);
+            }
+        }
+        Ok(v)
     }
     fn load_content(&self, name: &str) -> Result<View> {
         let mut v = View::new(name);
@@ -148,43 +266,54 @@ impl App {
         match name {
             "main" => {
                 let commits = repo.history(&self.args, 0)?;
-                let rows = tig_rs::render::render_commits(&self.config, &commits, self.width)?;
-                for (row, commit) in rows.into_iter().zip(commits) {
-                    v.push(row, Item::Commit(commit));
-                }
-            }
-            "status" => {
-                let entries = repo.status()?;
-                v.push(repo.status_header()?, Item::Text);
-                for (group, title) in [
-                    (0, "Changes to be committed:"),
-                    (1, "Changes not staged for commit:"),
-                    (2, "Untracked files:"),
-                ] {
-                    v.push(title.into(), Item::Text);
-                    let start = v.rows.len();
-                    for e in &entries {
-                        let visible = match group {
-                            0 => e.staged(),
-                            1 => e.index != '?' && e.worktree != ' ' && e.worktree != '!',
-                            _ => e.index == '?',
-                        };
-                        if visible {
-                            v.push(
-                                format!(
-                                    "{} {}",
-                                    if group == 0 { e.index } else { e.worktree },
-                                    e.path.display()
-                                ),
-                                Item::Status(e.clone(), group == 0),
-                            );
+                let head = if self.config.bool_value("show-changes", true) && !repo.bare {
+                    repo.revision("HEAD").ok()
+                } else {
+                    None
+                };
+                let kinds = if head
+                    .as_ref()
+                    .is_some_and(|id| commits.iter().any(|c| c.oid == *id))
+                {
+                    changes(
+                        &repo.status()?,
+                        self.config.bool_value("show-untracked", true),
+                    )
+                } else {
+                    Vec::new()
+                };
+                let date = if kinds.is_empty() {
+                    String::new()
+                } else {
+                    changes_date()?
+                };
+                let null_id = head
+                    .as_ref()
+                    .map(|id| "0".repeat(id.len()))
+                    .unwrap_or_default();
+                let mut display = Vec::with_capacity(commits.len() + kinds.len());
+                let mut items = Vec::with_capacity(commits.len() + kinds.len());
+                for commit in commits {
+                    if head.as_ref().is_some_and(|id| commit.oid == *id) {
+                        for (index, kind) in kinds.iter().copied().enumerate() {
+                            let parent = if index + 1 < kinds.len() {
+                                null_id.clone()
+                            } else {
+                                commit.oid.clone()
+                            };
+                            display.push(changes_commit(kind, parent, &date, &null_id));
+                            items.push(Item::Changes(kind));
                         }
                     }
-                    if v.rows.len() == start {
-                        v.push("  (no files)".into(), Item::Text);
-                    }
+                    items.push(Item::Commit(commit.clone()));
+                    display.push(commit);
+                }
+                let rows = tig_rs::render::render_commits(&self.config, &display, self.width)?;
+                for (row, item) in rows.into_iter().zip(items) {
+                    v.push(row, item);
                 }
             }
+            "status" => return self.status_view(self.view.name == "status" && self.view.untracked),
 
             "tree" => {
                 let sort = if self.view.name == name {
@@ -365,6 +494,27 @@ impl App {
         self.previous.push(std::mem::replace(&mut self.view, next));
         Ok(())
     }
+    fn refresh_main_parent(&mut self) -> Result<()> {
+        let Some(old) = self.other.as_ref().filter(|view| view.name == "main") else {
+            return Ok(());
+        };
+        let selected = old.items.get(old.selected).cloned();
+        let top = old.top;
+        let mut next = self.load("main")?;
+        next.selected = selected
+            .as_ref()
+            .and_then(|selected| {
+                next.items.iter().position(|item| match (selected, item) {
+                    (Item::Changes(a), Item::Changes(b)) => a == b,
+                    (Item::Commit(a), Item::Commit(b)) => a.oid == b.oid,
+                    _ => false,
+                })
+            })
+            .unwrap_or(0);
+        next.top = top;
+        self.other = Some(next);
+        Ok(())
+    }
     fn sync_context(&mut self) {
         self.args = self.view.args.clone();
         self.revision = self.view.revision.clone();
@@ -387,6 +537,10 @@ impl App {
     fn select_context(&mut self) {
         match self.selected() {
             Item::Commit(c) => self.revision = c.oid,
+            Item::Changes(_) => {
+                self.revision = "HEAD".into();
+                self.path.clear();
+            }
             Item::Ref(id, _) => self.revision = id,
             Item::Tree(e) => self.path = e.path,
             Item::Status(e, _) => self.path = e.path,
@@ -418,12 +572,38 @@ impl App {
         Ok(())
     }
     fn enter(&mut self) -> Result<()> {
+        if self.view.name == "stage" && self.view.path.as_os_str().is_empty() {
+            if let Some(header) = stage_stat_header(&self.view.rows, self.view.selected) {
+                self.view.selected = header;
+                self.center_selection();
+                return Ok(());
+            }
+        }
         let parent = self.view.clone();
         let depth = self.previous.len();
         match self.selected() {
             Item::Commit(c) => {
                 self.revision = c.oid;
                 self.open("diff")?;
+            }
+            Item::Changes(kind) => {
+                self.revision = "HEAD".into();
+                self.path.clear();
+                if kind == ChangeKind::Untracked {
+                    let mut view = self.status_view(true)?;
+                    view.args = self.args.clone();
+                    view.revision = self.revision.clone();
+                    self.previous.push(std::mem::replace(&mut self.view, view));
+                } else {
+                    let staged = kind == ChangeKind::Staged;
+                    let raw = self.repo()?.diff_bytes(staged, None)?;
+                    let mut view = View::text("stage", &String::from_utf8_lossy(&raw));
+                    view.args = self.args.clone();
+                    view.revision = self.revision.clone();
+                    view.staged = staged;
+                    view.raw_patch = raw;
+                    self.previous.push(std::mem::replace(&mut self.view, view));
+                }
             }
             Item::Ref(id, _) => {
                 self.revision = id.clone();
@@ -576,8 +756,11 @@ impl App {
             "stage" if self.view.untracked => {
                 Some((self.view.path.clone(), self.view.selected + 1))
             }
-            "stage" => diff_edit_target(&self.view.rows, self.view.selected)
-                .map(|(_, line)| (self.view.path.clone(), line)),
+            "stage" => diff_edit_target(
+                &self.view.rows,
+                stage_stat_header(&self.view.rows, self.view.selected)
+                    .unwrap_or(self.view.selected),
+            ),
             "diff" | "log" | "pager" => diff_edit_target(&self.view.rows, self.view.selected),
             _ => None,
         }
@@ -869,18 +1052,34 @@ impl App {
                         return Err("No text patch selected".into());
                     }
                     let prefix_rows = raw[..offset].iter().filter(|byte| **byte == b'\n').count();
-                    let patch = tig_rs::patch::Patch::parse(&raw[offset..])?;
-                    let (file, hunk, line) =
-                        patch.locate(self.view.selected.saturating_sub(prefix_rows))?;
-                    let line = if action == "stage-update-line" {
-                        Some(line.ok_or("Select an added or removed line")?)
+                    if action == "status-update"
+                        && self.view.path.as_os_str().is_empty()
+                        && self.view.selected < prefix_rows
+                    {
+                        tig_rs::patch::apply_cached(
+                            self.repo()?,
+                            &raw[offset..],
+                            self.view.staged,
+                        )?;
                     } else {
-                        None
-                    };
-                    let selected = patch.select(file, hunk, line, self.view.staged)?;
-                    tig_rs::patch::apply_cached(self.repo()?, &selected, self.view.staged)?;
+                        let patch = tig_rs::patch::Patch::parse(&raw[offset..])?;
+                        let (file, hunk, line) =
+                            patch.locate(self.view.selected.saturating_sub(prefix_rows))?;
+                        let line = if action == "stage-update-line" {
+                            Some(line.ok_or("Select an added or removed line")?)
+                        } else {
+                            None
+                        };
+                        let selected = patch.select(file, hunk, line, self.view.staged)?;
+                        tig_rs::patch::apply_cached(self.repo()?, &selected, self.view.staged)?;
+                    }
                 }
-                return self.action("refresh");
+                self.refresh_main_parent()?;
+                self.action("refresh")?;
+                if self.view.rows.is_empty() && self.other.is_some() {
+                    self.action("view-close")?;
+                }
+                return Ok(true);
             }
             "status-update" if self.view.name == "status" => {
                 if let Item::Status(e, staged) = self.selected() {
@@ -889,7 +1088,19 @@ impl App {
                     } else {
                         self.repo()?.stage(&e)?;
                     }
-                    return self.action("refresh");
+                    self.refresh_main_parent()?;
+                    self.action("refresh")?;
+                    if self.view.untracked
+                        && self.other.is_some()
+                        && !self
+                            .view
+                            .items
+                            .iter()
+                            .any(|item| matches!(item, Item::Status(..)))
+                    {
+                        self.action("view-close")?;
+                    }
+                    return Ok(true);
                 }
             }
             "show-version" => self.message = format!("tig-rs {}", env!("CARGO_PKG_VERSION")),
@@ -1049,6 +1260,29 @@ fn log_header_offset(line: &str) -> Option<usize> {
                     .chars()
                     .all(|c| matches!(c, ' ' | '*' | '|' | '/' | '\\')))
     })
+}
+
+fn stage_stat_header(rows: &[String], selected: usize) -> Option<usize> {
+    let is_header = |line: &str| {
+        line.starts_with("diff --git ")
+            || line.starts_with("diff --cc ")
+            || line.starts_with("diff --combined ")
+    };
+    let first_patch = rows.iter().position(|row| is_header(row))?;
+    if selected >= first_patch || !rows.get(selected)?.contains(" | ") {
+        return None;
+    }
+    let stat_index = rows[..=selected]
+        .iter()
+        .filter(|row| row.contains(" | "))
+        .count()
+        .checked_sub(1)?;
+    rows.iter()
+        .enumerate()
+        .skip(first_patch)
+        .filter(|(_, row)| is_header(row))
+        .nth(stat_index)
+        .map(|(index, _)| index)
 }
 
 fn diff_edit_target(rows: &[String], selected: usize) -> Option<(PathBuf, usize)> {
@@ -1216,7 +1450,7 @@ fn git_patch_path(raw: &str) -> Option<PathBuf> {
 
 #[cfg(test)]
 mod editor_tests {
-    use super::{diff_edit_target, git_patch_path};
+    use super::{diff_edit_target, git_patch_path, stage_stat_header, App, Config, Item, View};
     use std::path::PathBuf;
 
     #[test]
@@ -1248,6 +1482,58 @@ mod editor_tests {
         assert_eq!(diff_edit_target(&rows, 7), Some((PathBuf::from("a"), 9)));
         assert_eq!(diff_edit_target(&rows, 10), Some((PathBuf::from("a"), 10)));
         assert_eq!(diff_edit_target(&rows, 15), Some((PathBuf::from("b"), 1)));
+    }
+
+    #[test]
+    fn aggregate_stage_stats_jump_to_matching_patch_and_file() {
+        let rows: Vec<String> = [
+            " a | 1 +",
+            " b | 1 +",
+            " 2 files changed, 2 insertions(+)",
+            "",
+            "diff --git a/a b/a",
+            "--- a/a",
+            "+++ b/a",
+            "@@ -0,0 +1 @@",
+            "+one",
+            "diff --git a/b b/b",
+            "--- a/b",
+            "+++ b/b",
+            "@@ -0,0 +1 @@",
+            "+two",
+        ]
+        .into_iter()
+        .map(str::to_owned)
+        .collect();
+        assert_eq!(stage_stat_header(&rows, 0), Some(4));
+        assert_eq!(stage_stat_header(&rows, 1), Some(9));
+        assert_eq!(stage_stat_header(&rows, 2), None);
+        assert_eq!(diff_edit_target(&rows, 9), Some((PathBuf::from("b"), 0)));
+        let mut view = View::new("stage");
+        for row in rows {
+            view.push(row, Item::Text);
+        }
+        view.selected = 1;
+        let mut app = App {
+            repo: None,
+            config: Config::default(),
+            view,
+            previous: vec![],
+            pending_command: None,
+            other: None,
+            split: false,
+            parent_focused: false,
+            revision: "HEAD".into(),
+            path: PathBuf::new(),
+            args: vec![],
+            message: String::new(),
+            search: String::new(),
+            width: 80,
+            height: 20,
+        };
+        assert_eq!(app.edit_target(), Some((PathBuf::from("b"), 0)));
+        app.enter().unwrap();
+        assert_eq!(app.view.selected, 9);
     }
 
     #[test]
@@ -1353,6 +1639,7 @@ fn pane_screen(view: &mut View, width: usize, visible: usize) -> Vec<String> {
         .collect();
     let reference = match view.items.get(view.selected) {
         Some(Item::Commit(c)) => c.oid.clone(),
+        Some(Item::Changes(kind)) => kind.title().into(),
         Some(Item::Tree(e)) if view.name == "tree" => {
             if e.path == view.path.parent().unwrap_or(std::path::Path::new(""))
                 && !view.path.as_os_str().is_empty()
@@ -1378,11 +1665,20 @@ fn pane_screen(view: &mut View, width: usize, visible: usize) -> Vec<String> {
         ),
         _ if view.name == "status" => "Nothing to update".into(),
         _ if view.name == "diff" => view.revision.clone(),
-        _ if view.name == "stage" => format!(
-            "{} changes to '{}'",
-            if view.staged { "Staged" } else { "Unstaged" },
-            view.path.display()
-        ),
+        _ if view.name == "stage"
+            && view.path.as_os_str().is_empty()
+            && stage_stat_header(&view.rows, view.selected).is_some() =>
+        {
+            "Press '<Enter>' to jump to file diff".into()
+        }
+        _ if view.name == "stage" => {
+            let kind = if view.staged { "Staged" } else { "Unstaged" };
+            if view.path.as_os_str().is_empty() {
+                format!("{kind} changes")
+            } else {
+                format!("{kind} changes to '{}'", view.path.display())
+            }
+        }
         _ if view.name == "blob" || view.name == "blame" => view.path.display().to_string(),
         _ => String::new(),
     };
@@ -1394,6 +1690,7 @@ fn pane_screen(view: &mut View, width: usize, visible: usize) -> Vec<String> {
         && !view.rows.is_empty()
         && !(view.name == "refs" && view.selected == 0)
         && reference != "Open parent directory"
+        && !matches!(view.items.get(view.selected), Some(Item::Changes(_)))
     {
         title.push_str(&format!(
             " - {} {} of {}",
@@ -1405,12 +1702,22 @@ fn pane_screen(view: &mut View, width: usize, visible: usize) -> Vec<String> {
             },
             if view.name == "tree" {
                 view.line_numbers.get(view.selected).copied().unwrap_or(0)
+            } else if view.name == "main" {
+                view.items[..=view.selected]
+                    .iter()
+                    .filter(|item| matches!(item, Item::Commit(_)))
+                    .count()
             } else {
                 view.selected + usize::from(view.name != "refs")
             },
             view.rows.len().saturating_sub(match view.name.as_str() {
                 "refs" => 1,
                 "tree" => 1 + usize::from(!view.path.as_os_str().is_empty()),
+                "main" => view
+                    .items
+                    .iter()
+                    .filter(|item| matches!(item, Item::Changes(_)))
+                    .count(),
                 _ => 0,
             })
         ));
@@ -1834,6 +2141,90 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn staging_last_untracked_file_refreshes_synthetic_main_parent() {
+        let root = env::temp_dir().join(format!(
+            "tig-main-untracked-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        fs::create_dir(&root).unwrap();
+        assert!(Command::new("git")
+            .current_dir(&root)
+            .args(["init", "-q"])
+            .status()
+            .unwrap()
+            .success());
+        let repo = Repository::discover(&root).unwrap();
+        repo.command(["config", "user.name", "Test"]).unwrap();
+        repo.command(["config", "user.email", "test@example.invalid"])
+            .unwrap();
+        repo.command(["config", "commit.gpgsign", "false"]).unwrap();
+        fs::write(root.join("tracked"), "base\n").unwrap();
+        repo.command(["add", "tracked"]).unwrap();
+        repo.command(["commit", "-qm", "base"]).unwrap();
+        fs::write(root.join("new"), "new\n").unwrap();
+        let mut app = App {
+            repo: Some(repo),
+            config: Config::defaults(),
+            view: View::new("main"),
+            previous: vec![],
+            pending_command: None,
+            other: None,
+            split: false,
+            parent_focused: false,
+            revision: "HEAD".into(),
+            path: PathBuf::new(),
+            args: vec![],
+            message: String::new(),
+            search: String::new(),
+            width: 80,
+            height: 20,
+        };
+        app.view = app.load("main").unwrap();
+        assert!(matches!(
+            app.selected(),
+            Item::Changes(ChangeKind::Untracked)
+        ));
+        app.enter().unwrap();
+        assert_eq!(app.view.name, "status");
+        app.view.selected = 2;
+        app.action("status-update").unwrap();
+        assert_eq!(app.view.name, "main");
+        assert!(matches!(app.selected(), Item::Changes(ChangeKind::Staged)));
+        fs::remove_dir_all(root).unwrap();
+    }
+    #[test]
+    fn changes_follow_index_order_and_do_not_stage_unmerged_entries() {
+        let entry = |index, worktree| StatusEntry {
+            index,
+            worktree,
+            path: PathBuf::from("file"),
+            original_path: None,
+        };
+        let entries = [
+            entry('?', '?'),
+            entry(' ', 'M'),
+            entry('M', ' '),
+            entry('U', 'U'),
+        ];
+        assert_eq!(
+            changes(&entries, true),
+            vec![
+                ChangeKind::Untracked,
+                ChangeKind::Unstaged,
+                ChangeKind::Staged
+            ]
+        );
+        assert_eq!(
+            changes(&[entry('U', 'U')], true),
+            vec![ChangeKind::Unstaged]
+        );
+        assert_eq!(changes(&[entry('?', '?')], false), Vec::<ChangeKind>::new());
+    }
     #[test]
     fn log_message_cannot_replace_selected_commit() {
         assert_eq!(log_header_offset("commit 0123456789"), Some(0));

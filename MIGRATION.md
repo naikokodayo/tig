@@ -37,7 +37,9 @@ License: GPL-2.0-or-later; original history, COPYING and copyright notices retai
   configuration effects still need compatibility work.
 - `rust/main.rs`: initial terminal application using Crossterm, with owned view
   state and terminal cleanup, split panes, parent/child focus/navigation,
-  branch/tracking status headers and status position restoration.
+  branch/tracking status headers, status position restoration, and synthetic
+  untracked/unstaged/staged rows before HEAD. Aggregate stage diffs and
+  untracked-only status can be opened from those rows.
   It does not call the original Tig binary.
 - Search now uses the maintained `regex` crate for pattern matching, case
   options and optional wraparound. This is not yet a POSIX ERE compatibility
@@ -198,3 +200,26 @@ against editing the prior commit's file from a later commit header; that guard
 has a focused unit regression. 36 Rust unit tests and 103 real PTY checks pass
 on the rebuilt binary. Rust full parity and end-to-end benchmarks remain gated
 on the remaining failures.
+
+## Fifth checkpoint verification
+
+The main view now shows working-tree change rows before HEAD and opens the
+corresponding aggregate stage or untracked-only status view. Whole-repository
+stage updates refresh the parent, empty stage views close, and aggregate diff
+stat rows jump to their matching patch. Editor targets come from the selected
+patch path. Tree line numbers now count the directory header like original Tig.
+
+The three unchanged original main change-row scripts pass all 12 assertions;
+the five tree-width cases in the original width script also pass their screen
+and stderr assertions. Rust formatting, all 39 unit tests, Clippy with warnings
+denied, release build, and 108 real PTY checks pass. An independent review
+found no remaining high-priority wrong-file or index-mutation issue in this
+checkpoint.
+
+The fifth full upstream run attempted all 154 recipes and reported **316 of
+609 assertions failed**, in 150 tests with 3 skips and 1 recipe without a
+result receipt. See `migration/evidence/rust-upstream-fifth.json` and the raw
+log. The graph helper still routes through C under `SYSTEM_TIG=1`; these
+numbers are not a Rust completion percentage. The `grep` view, other view
+actions, and broader compatibility remain open, so the end-to-end benchmark
+is still gated.
