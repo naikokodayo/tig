@@ -222,7 +222,7 @@ impl Repository {
             })
             .collect()
     }
-    pub fn show(&self, revision: &str) -> Result<String> {
+    pub fn show(&self, revision: &str, context: usize, word_diff: bool) -> Result<String> {
         let oid = self.revision(revision)?;
         Ok(text(&self.command([
             "show",
@@ -232,6 +232,12 @@ impl Repository {
             "--format=fuller",
             "--stat",
             "--patch",
+            &format!("-U{context}"),
+            if word_diff {
+                "--word-diff=plain"
+            } else {
+                "--word-diff=none"
+            },
             &oid,
             "--",
         ])?))
@@ -731,6 +737,44 @@ mod tests {
             .is_err());
     }
     #[test]
+    fn show_applies_context_and_word_diff_without_changing_history() {
+        let fixture = Fixture::new();
+        let repo = fixture.repo();
+        repo.command(["config", "commit.gpgsign", "false"]).unwrap();
+        use std::fmt::Write;
+        let mut before = String::new();
+        for n in 1..=20 {
+            writeln!(before, "line {n}").unwrap();
+        }
+        fs::write(fixture.0.join("file"), &before).unwrap();
+        repo.command(["add", "file"]).unwrap();
+        repo.command(["commit", "-qm", "base"]).unwrap();
+        fs::write(
+            fixture.0.join("file"),
+            before.replace("line 10\n", "changed 10\n"),
+        )
+        .unwrap();
+        repo.command(["commit", "-qam", "change"]).unwrap();
+        for context in [0, 3, 4, 5, 8] {
+            for word in [false, true] {
+                let show = repo.show("HEAD", context, word).unwrap();
+                let span = if context == 0 {
+                    "10".into()
+                } else {
+                    format!("{},{}", 10 - context, 2 * context + 1)
+                };
+                assert!(show.contains(&format!("@@ -{span} +{span} @@")), "{show}");
+                assert!(show.contains(if word {
+                    "[-line-]{+changed+} 10"
+                } else {
+                    "-line 10\n+changed 10"
+                }));
+            }
+        }
+        assert_eq!(repo.history(&[], 0).unwrap().len(), 2);
+    }
+
+    #[test]
     fn real_repository_roundtrip_and_literal_staging() {
         let f = Fixture::new();
         let repo = f.repo();
@@ -785,7 +829,7 @@ mod tests {
         let blame = repo.blame(Some("HEAD"), Path::new(":(glob)*")).unwrap();
         assert_eq!(blame.len(), 2);
         assert_eq!(blame[1].line, 2);
-        assert!(repo.show("HEAD").unwrap().contains("initial"));
+        assert!(repo.show("HEAD", 3, false).unwrap().contains("initial"));
         fs::rename(f.0.join(":(glob)*"), f.0.join("renamed")).unwrap();
         repo.command(["add", "--all", "--", ":(glob)*", "renamed"])
             .unwrap();
@@ -807,7 +851,7 @@ mod tests {
                 original_path: None
             })
             .is_err());
-        assert!(repo.show("--output=oops").is_err());
+        assert!(repo.show("--output=oops", 3, false).is_err());
         assert!(repo.history(&["--format=oops".into()], 1).is_err());
     }
 }
