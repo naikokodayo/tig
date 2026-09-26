@@ -777,3 +777,21 @@ At merge source `e8fdc0f2`, fmt, **73 Rust tests**, Clippy, **130 PTY checks**,
 or runtime failures occurred. The exact source/binary manifest and new receipts
 are in [`refs-filter-replace-sync/checks.json`](migration/evidence/refs-filter-replace-sync/checks.json).
 Earlier receipts remain unchanged; this does not close the full migration gate.
+
+### Configuration review fixes after refs main integration
+
+After pushing the review fixes, main advanced to `b056a7ac` (PR #17). Merged it
+without rewriting history; both appended documentation records are retained and
+the refs changes in the shared renderer coexist with scalar field measurement.
+At source `5ec2d9879f378b1eacf03647546196b3e3b05765`, formatting, **77 unit tests**,
+Clippy, release build, **16 C/Rust recovery checks**, and **130 PTY checks** pass.
+The expanded original pairing adds all nine refs scripts: C passes **36 scripts
+and 178 assertions**; Rust passes **32 scripts**, with **168 passing / 10 failing
+assertions** and **3 runtime failure checks**, no skips. The same four scripts
+remain failed: command-value-long, escape-var, quote, and blame/default.
+
+`migration/evidence/config-render-main-sync-{checks,recovery,pty,upstream}.json`
+and `config-render-main-sync-checks.log` record this final integration's source
+manifest and matching binary hashes. The preceding 297e1787 receipts remain
+historical. This is still scoped validation with an open full-migration gate;
+the next commit adds only this record and its evidence.
