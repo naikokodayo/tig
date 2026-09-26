@@ -797,6 +797,53 @@ Reproduce the new paired check with `python3 rust/tests/diff-navigation.py`
 after building both C and Rust binaries. Original C/tests and dependencies are
 unchanged relative to the integrated main; first-party Rust still forbids unsafe.
 
+### Main navigation and refresh slice (2026-09-27)
+
+Main's `parent` and `<`/`back` now preserve row, vertical offset and horizontal
+offset through refresh and staging. Empty history stays in main; a root/missing
+parent and out-of-range numeric jump leave the selection in place. `--merge`
+requests boundary commits, whose markers now reach both graph renderers.
+Diff headers append Git's describe result when the commit has no direct tag.
+
+Prompt `:!command` reuses safe argv expansion and opens a maximized command-output
+pager. The prompt, scripted command and interactive command paths share
+`refresh_after_command`; their previous inline refresh calls are replaced.
+It refreshes both displayed panes or the cached main/status parent of a
+full-screen view. Closing a split's command pager returns to main without
+restoring a stale diff. Bound external commands and `:exec` retain their
+foreground/confirmation semantics.
+
+Paired source `3ae580f8e3a9c4843f9112d130179d97e460777e` integrates main
+`0d80d985`, including trace/status, tree, refs, configuration and blame changes.
+The earlier documentation conflict retained both records; the final merge
+needed no manual code resolution. Original C/tests, dependencies and Actions
+are unchanged by this slice; first-party Rust still forbids unsafe.
+
+The [single final receipt](migration/evidence/main-navigation-final.json)
+contains source/binary SHA-256 manifests, original assertion results and raw
+failure output, plus necessary safety regressions. Intermediate before/after
+receipts remain available in Git at `83c06b65`; no duplicate final receipt
+sets are retained. The four requested scripts improved from **14/28** Rust
+assertions at `c097ffb8` to **27/28**: goto, jump-ends and refresh pass in full.
+The final 20-script pairing passes **94/94 C assertions** and **92/94 Rust
+assertions** (18 scripts pass, two fail), with no skips or missing assertions.
+
+Rust 1.81 formatting, **83 unit tests**, Clippy with warnings denied, release
+build, **150 PTY checks**, **6 diff-input checks**, **8 paired diff-navigation
+comparisons**, **6 blame-navigation checks** and **12 blame review probes** pass.
+The strict original-test gate remains **BLOCKED**: the narrow `view-split` date
+column uses a separator cell, and `main-options` ignores the history limit.
+Command-output capture still places stderr after stdout and uses the existing
+synchronous loader. No full-suite rerun or completed-migration claim is made.
+
+Review fix `f31cc142` refreshes cached parents using their own args/revision/path,
+then restores the active context even on error. The real-repository regression
+`python3 rust/tests/main-command-refresh.py` failed with ambiguous `needle`
+before the fix; both fullscreen grep exec/pager commands now pass and return
+to main correctly. The existing main navigation and staging tests, formatting,
+Clippy and release build pass. The same receipt contains this small source/hash
+and red/green supplement; the earlier broad results retain their original source.
+
 ### Configuration slice review fixes and main 297e1787 synchronization
 
 Merged main `297e1787` (including PR #12); the only conflict was the appended

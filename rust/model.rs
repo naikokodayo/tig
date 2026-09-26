@@ -5,6 +5,7 @@ use std::path::PathBuf;
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Commit {
     pub oid: String,
+    pub boundary: bool,
     pub parents: Vec<String>,
     pub author: String,
     pub date: String,

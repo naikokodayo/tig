@@ -149,10 +149,19 @@ def main():
             expect('hide working changes for history navigation',
                    ['newest fixture commit', 'oldest fixture commit', f'[main] {newest} - commit 1 of 2'],
                    b':set show-changes = no\r')
+            expect('comma selects main parent', [f'[main] {oldest} - commit 2 of 2'], b',')
+            expect('refresh preserves main history', [f'[main] {oldest} - commit 2 of 2'], b'R')
+            expect('less-than restores main position', [f'[main] {newest} - commit 1 of 2'], b'<')
+            expect('empty main history stays open', ['Already at start of history', '[main]'], b'<')
+            expect('prompt command opens pager', ['[pager] echo navigation-output', 'navigation-output'],
+                   b':!echo navigation-output\r')
+            expect('command pager closes to main', [f'[main] {newest} - commit 1 of 2'], b'q')
             expect('j selects second commit', [f'[main] {oldest} - commit 2 of 2'], b'j')
             expect('Enter opens selected commit diff', ['[diff]', oldest, 'oldest fixture commit'], b'\r')
             expect('Tab focuses split parent', [f'[main] {oldest} - commit 2 of 2', '[diff]'], b'\t',
                    raw_required=(b'\x1b[7m[main]',))
+            expect('main command refreshes displayed diff refs', ['Refs: <parent-refresh>', '[main]'],
+                   b':exec @git tag parent-refresh %(commit)\r')
             expect('Tab focuses split child', [f'[main] {oldest} - commit 2 of 2', '[diff]'], b'\t',
                    raw_required=(b'\x1b[7m[diff]',))
             expect('K loads previous parent commit into diff', [f'[main] {newest} - commit 1 of 2', f'[diff] {newest}'], b'K')
@@ -160,6 +169,10 @@ def main():
             expect('O maximizes focused diff', [f'[diff] {oldest}'], b'O',
                    raw_required=(b'\x1b[23;1H\x1b[7m[diff]',))
             expect('q returns to selected history row', [f'[main] {oldest} - commit 2 of 2'], b'q')
+            expect('reopen split for command pager', ['[diff]', oldest], b'\r')
+            expect('split command pager maximizes', ['[pager] echo split-output', 'split-output'],
+                   b':!echo split-output\r', raw_required=(b'\x1b[23;1H\x1b[7m[pager]',))
+            expect('split command pager closes to main', [f'[main] {oldest} - commit 2 of 2'], b'q')
             expect('search prompt', ['/'], b'/')
             expect('search selects matching commit', [f'[main] {newest} - commit 1 of 2'], b'newest\r')
             expect('status opens at header', ['Changes not staged for commit:', 'fixture.txt', '[status] Nothing to update'], b's')

@@ -1,0 +1,3097 @@
+{
+  "schema": 1,
+  "source_commit": "3ae580f8e3a9c4843f9112d130179d97e460777e",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "BLOCKED",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/diff/line-number-test",
+          "script_sha256": "4f169e7dbcd1ec8d8958c12e64fc4c030c0a3093100492a3c7af9c4e41036e72",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "added-line-number.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/diff/maximized-navigation-test",
+          "script_sha256": "f6374b754da38f426afd74a770566cf91a3fd21c4714ed0efe090e89b2e24d5c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "maximized.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "maximized-after-next.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-after-next.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/diff/open-after-split-test",
+          "script_sha256": "e5b590b8db0cdbd92776301e1fbbc9faefef2aa3ab11a3952de12ff45c153333",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "split-after-next.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-after-next.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/boundary-test",
+          "script_sha256": "74e2e050399801013310584dee78409edf18779f387853bd1df039e8d697fb07",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "merge-view.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/default-test",
+          "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-ref-format.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-remotes-hidden.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/goto-test",
+          "script_sha256": "2ec9c12269d3ffd14b14e643a8a328096a7ff04a768c8cdf2948b5a4e3238ff0",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "commit-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-1-back.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-2.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-2-again.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-5.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-5-still.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-3.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/graph-argument-test",
+          "script_sha256": "dec2e0ff1c54fbc34224b177df4e30d786473f12bde2800dd9f6b278a30675db",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "follow.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "follow.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-parent.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-parent.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/jump-ends-test",
+          "script_sha256": "72446dd77ed40b9215b369c063233e7daa934f3ce106f1fedbe01fb644dcbd5c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-goto-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-1.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-1.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-2.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-2.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/main-options-test",
+          "script_sha256": "dddb92e5a6a90488359c6a2f47eb84415b22308e52940f206bca268593db4fe0",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "with-10-lines.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/merge-test",
+          "script_sha256": "57723b9fd6ed6157ecaeaa6efd30ad1ead43a4ccf039eec3ec6971351cab7d71",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-with-conflict.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/no-merges-test",
+          "script_sha256": "dce74d5e289a5e7830f96e1ccede6b85bb17a5b5d7da32ba72789e0857e82a47",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "no-merges.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/refresh-test",
+          "script_sha256": "299ee5ce1fc8fd738059aa30604c50411c876e8c0a7035684056f85b94b79111",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-all.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-soft.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-a-and-bc.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-hard.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-tag.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/search-test",
+          "script_sha256": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-search-author.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-empty.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-find-next.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title-no-match.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-time.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-smart-case.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/show-changes-test",
+          "script_sha256": "243aabd40fe83a59940f0289d19596d94d1cd7fccc088e3f1116f79b0e13b709",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 9
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-and-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-and-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-renamed.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-all-refs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/start-on-line-test",
+          "script_sha256": "09118ca562b3167b5ced4913185fe7e8b99062f40e7ce4a9a97091a92219187d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/update-unstaged-changes-test",
+          "script_sha256": "241f169bbd0c507256bb23b2a56963cd1dafd3325a642693d7f21c5ef871ce8c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/view-split-test",
+          "script_sha256": "1893d1cec14ce3191fe06aca35c9f3e71891bb61f40b8cedb645bc52b82a16f4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "main-vsplit-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-vsplit-25-75.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-hsplit-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-hsplit-50-50.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/prompt/exec-test",
+          "script_sha256": "9a755be87f6937665502bb136649b505fa4e6c081a2c638fce4d19bb0ff7732a",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "exec-without-arg-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-without-arg-doesnt-crash.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-only-flags-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-only-flags-doesnt-crash.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/status/refresh-test",
+          "script_sha256": "8da82f46fb86373992e5546fadbff84a17eaef025b7d0f39966dd005025dd6a5",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 11
+          },
+          "assertions": [
+            {
+              "id": "status-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-add-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-add-all.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-commit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-reset-soft.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-reset-a-and-bc.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-checkout-bc.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-reset-hard.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-touch-new-file.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-rm-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-checkout-a.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/tree/default-test",
+          "script_sha256": "23e23dcb558030646b8df5455822274ce3ee201fc4c37f76a7109fcd264b93fa",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 7
+          },
+          "assertions": [
+            {
+              "id": "tree-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-author.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-file-size.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-mode.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-common.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-d8-stubs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/src/tig",
+          "sha256": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 20
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.09s\n",
+      "results": [
+        {
+          "script": "test/diff/line-number-test",
+          "script_sha256": "4f169e7dbcd1ec8d8958c12e64fc4c030c0a3093100492a3c7af9c4e41036e72",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "added-line-number.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/diff/maximized-navigation-test",
+          "script_sha256": "f6374b754da38f426afd74a770566cf91a3fd21c4714ed0efe090e89b2e24d5c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "maximized.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "maximized-after-next.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-after-next.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/diff/open-after-split-test",
+          "script_sha256": "e5b590b8db0cdbd92776301e1fbbc9faefef2aa3ab11a3952de12ff45c153333",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "split-after-next.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-after-next.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/boundary-test",
+          "script_sha256": "74e2e050399801013310584dee78409edf18779f387853bd1df039e8d697fb07",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "merge-view.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/default-test",
+          "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-ref-format.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-remotes-hidden.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/goto-test",
+          "script_sha256": "2ec9c12269d3ffd14b14e643a8a328096a7ff04a768c8cdf2948b5a4e3238ff0",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "commit-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-1-back.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-2.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-2-again.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-5.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-5-still.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-3.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/graph-argument-test",
+          "script_sha256": "dec2e0ff1c54fbc34224b177df4e30d786473f12bde2800dd9f6b278a30675db",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "follow.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "follow.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-parent.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-parent.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/jump-ends-test",
+          "script_sha256": "72446dd77ed40b9215b369c063233e7daa934f3ce106f1fedbe01fb644dcbd5c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-goto-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-1.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-1.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-2.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-2.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/main-options-test",
+          "script_sha256": "dddb92e5a6a90488359c6a2f47eb84415b22308e52940f206bca268593db4fe0",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "with-10-lines.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/main/main-options-test/.test-result",
+          "receipt": "[FAIL] with-10-lines.screen != expected/with-10-lines.screen\n\u001b[1mdiff --git a/expected/with-10-lines.screen b/with-10-lines.screen\u001b[m\n\u001b[1mindex 6e5eb3f..6df9f1d 100644\u001b[m\n\u001b[1m--- a/expected/with-10-lines.screen\u001b[m\n\u001b[1m+++ b/with-10-lines.screen\u001b[m\n\u001b[36m@@ -8,8 +8,8 @@\u001b[m\n 2010-02-06 15:02 +0000 作者                  o Commit 9 C\u001b[m\n 2010-01-29 02:40 +0000 René Lévesque         o Commit 9 B\u001b[m\n 2010-01-20 14:18 +0000 A. U. Thor            o Commit 9 A\u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m-[main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 10            100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-12 01:56 +0000 Max Power             o Commit 8 E\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-03 13:33 +0000 Jørgen Thygesen Brahe o Commit 8 D\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-26 01:11 +0000 作者                  o Commit 8 C\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-17 12:49 +0000 René Lévesque         o <v1.0> Commit 8 B\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 50             28%\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] with-10-lines.screen != expected/with-10-lines.screen\r\n| \u001b[1mdiff --git a/expected/with-10-lines.screen b/with-10-lines.screen\u001b[m\r\n| \u001b[1mindex 6e5eb3f..6df9f1d 100644\u001b[m\r\n| \u001b[1m--- a/expected/with-10-lines.screen\u001b[m\r\n| \u001b[1m+++ b/with-10-lines.screen\u001b[m\r\n| \u001b[36m@@ -8,8 +8,8 @@\u001b[m\r\n|  2010-02-06 15:02 +0000 作者                  o Commit 9 C\u001b[m\r\n|  2010-01-29 02:40 +0000 René Lévesque         o Commit 9 B\u001b[m\r\n|  2010-01-20 14:18 +0000 A. U. Thor            o Commit 9 A\u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m-[main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 10            100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-12 01:56 +0000 Max Power             o Commit 8 E\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-03 13:33 +0000 Jørgen Thygesen Brahe o Commit 8 D\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-26 01:11 +0000 作者                  o Commit 8 C\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-17 12:49 +0000 René Lévesque         o <v1.0> Commit 8 B\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 50             28%\u001b[m\r\n"
+        },
+        {
+          "script": "test/main/merge-test",
+          "script_sha256": "57723b9fd6ed6157ecaeaa6efd30ad1ead43a4ccf039eec3ec6971351cab7d71",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-with-conflict.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/no-merges-test",
+          "script_sha256": "dce74d5e289a5e7830f96e1ccede6b85bb17a5b5d7da32ba72789e0857e82a47",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "no-merges.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/refresh-test",
+          "script_sha256": "299ee5ce1fc8fd738059aa30604c50411c876e8c0a7035684056f85b94b79111",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-all.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-soft.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-a-and-bc.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-hard.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-tag.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/search-test",
+          "script_sha256": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-search-author.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-empty.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-find-next.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title-no-match.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-time.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-smart-case.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/show-changes-test",
+          "script_sha256": "243aabd40fe83a59940f0289d19596d94d1cd7fccc088e3f1116f79b0e13b709",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 9
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-and-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-and-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-renamed.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-all-refs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/start-on-line-test",
+          "script_sha256": "09118ca562b3167b5ced4913185fe7e8b99062f40e7ce4a9a97091a92219187d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/update-unstaged-changes-test",
+          "script_sha256": "241f169bbd0c507256bb23b2a56963cd1dafd3325a642693d7f21c5ef871ce8c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/main/view-split-test",
+          "script_sha256": "1893d1cec14ce3191fe06aca35c9f3e71891bb61f40b8cedb645bc52b82a16f4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 3,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "main-vsplit-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-vsplit-25-75.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "main-hsplit-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-hsplit-50-50.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/view-split-test/.test-result",
+          "receipt": "  [OK] main-vsplit-default.screen assertion\n[FAIL] main-vsplit-25-75.screen != expected/main-vsplit-25-75.screen\n\u001b[1mdiff --git a/expected/main-vsplit-25-75.screen b/main-vsplit-25-75.screen\u001b[m\n\u001b[1mindex 6a136ae..dfbbf9d 100644\u001b[m\n\u001b[1m--- a/expected/main-vsplit-25-75.screen\u001b[m\n\u001b[1m+++ b/main-vsplit-25-75.screen\u001b[m\n\u001b[36m@@ -1,17 +1,17 @@\u001b[m\n\u001b[31m-2010-04-07 05:37 +0 |commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\n\u001b[31m-2010-03-29 17:15 +0 |Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5c\u001b[m\n\u001b[31m-2010-03-21 04:53 +0 |Author:     Max Power <power123@example.org>\u001b[m\n\u001b[31m-2010-03-12 16:31 +0 |AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n\u001b[31m-2010-03-04 04:09 +0 |Commit:     Committer <c.ommitter@example.net>\u001b[m\n\u001b[31m-2010-02-23 15:46 +0 |CommitDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n\u001b[31m-2010-02-15 03:24 +0 |\u001b[m\n\u001b[31m-2010-02-06 15:02 +0 |    Commit 10 E\u001b[m\n\u001b[31m-2010-01-29 02:40 +0 |\u001b[m\n\u001b[31m-2010-01-20 14:18 +0 |\u001b[m\n\u001b[31m-2010-01-12 01:56 +0 |\u001b[m\n\u001b[31m-2010-01-03 13:33 +0 |\u001b[m\n\u001b[31m-2009-12-26 01:11 +0 |\u001b[m\n\u001b[31m-2009-12-17 12:49 +0 |\u001b[m\n\u001b[31m-2009-12-09 00:27 +0 |\u001b[m\n\u001b[31m-2009-11-30 12:05 +0 |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-04-07 05:37 +00|commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-29 17:15 +00|Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5c\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-21 04:53 +00|Author:     Max Power <power123@example.org>\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-12 16:31 +00|AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-04 04:09 +00|Commit:     Committer <c.ommitter@example.net>\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-02-23 15:46 +00|CommitDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-02-15 03:24 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-02-06 15:02 +00|    Commit 10 E\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-29 02:40 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-20 14:18 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-12 01:56 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-03 13:33 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-26 01:11 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-17 12:49 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-09 00:27 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-11-30 12:05 +00|\u001b[m\n [main] 5cb3412a5 32%|[diff] 5cb3412a5e06e506840495b91acc885037a48b72 - line 100%\u001b[m\n  [OK] main-hsplit-default.screen assertion\n  [OK] main-hsplit-50-50.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 4 test(s)\r\n|   [OK] main-vsplit-default.screen assertion\r\n| [FAIL] main-vsplit-25-75.screen != expected/main-vsplit-25-75.screen\r\n| \u001b[1mdiff --git a/expected/main-vsplit-25-75.screen b/main-vsplit-25-75.screen\u001b[m\r\n| \u001b[1mindex 6a136ae..dfbbf9d 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-vsplit-25-75.screen\u001b[m\r\n| \u001b[1m+++ b/main-vsplit-25-75.screen\u001b[m\r\n| \u001b[36m@@ -1,17 +1,17 @@\u001b[m\r\n| \u001b[31m-2010-04-07 05:37 +0 |commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\r\n| \u001b[31m-2010-03-29 17:15 +0 |Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5c\u001b[m\r\n| \u001b[31m-2010-03-21 04:53 +0 |Author:     Max Power <power123@example.org>\u001b[m\r\n| \u001b[31m-2010-03-12 16:31 +0 |AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n| \u001b[31m-2010-03-04 04:09 +0 |Commit:     Committer <c.ommitter@example.net>\u001b[m\r\n| \u001b[31m-2010-02-23 15:46 +0 |CommitDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n| \u001b[31m-2010-02-15 03:24 +0 |\u001b[m\r\n| \u001b[31m-2010-02-06 15:02 +0 |    Commit 10 E\u001b[m\r\n| \u001b[31m-2010-01-29 02:40 +0 |\u001b[m\r\n| \u001b[31m-2010-01-20 14:18 +0 |\u001b[m\r\n| \u001b[31m-2010-01-12 01:56 +0 |\u001b[m\r\n| \u001b[31m-2010-01-03 13:33 +0 |\u001b[m\r\n| \u001b[31m-2009-12-26 01:11 +0 |\u001b[m\r\n| \u001b[31m-2009-12-17 12:49 +0 |\u001b[m\r\n| \u001b[31m-2009-12-09 00:27 +0 |\u001b[m\r\n| \u001b[31m-2009-11-30 12:05 +0 |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-04-07 05:37 +00|commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-29 17:15 +00|Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5c\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-21 04:53 +00|Author:     Max Power <power123@example.org>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-12 16:31 +00|AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-04 04:09 +00|Commit:     Committer <c.ommitter@example.net>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-02-23 15:46 +00|CommitDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-02-15 03:24 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-02-06 15:02 +00|    Commit 10 E\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-29 02:40 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-20 14:18 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-12 01:56 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-03 13:33 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-26 01:11 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-17 12:49 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-09 00:27 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-11-30 12:05 +00|\u001b[m\r\n|  [main] 5cb3412a5 32%|[diff] 5cb3412a5e06e506840495b91acc885037a48b72 - line 100%\u001b[m\r\n|   [OK] main-hsplit-default.screen assertion\r\n|   [OK] main-hsplit-50-50.screen assertion\r\n"
+        },
+        {
+          "script": "test/prompt/exec-test",
+          "script_sha256": "9a755be87f6937665502bb136649b505fa4e6c081a2c638fce4d19bb0ff7732a",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "exec-without-arg-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-without-arg-doesnt-crash.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-only-flags-doesnt-crash.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-only-flags-doesnt-crash.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/status/refresh-test",
+          "script_sha256": "8da82f46fb86373992e5546fadbff84a17eaef025b7d0f39966dd005025dd6a5",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 11
+          },
+          "assertions": [
+            {
+              "id": "status-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-add-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-add-all.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-commit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-reset-soft.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-reset-a-and-bc.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-checkout-bc.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-reset-hard.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-touch-new-file.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-rm-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-after-checkout-a.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        },
+        {
+          "script": "test/tree/default-test",
+          "script_sha256": "23e23dcb558030646b8df5455822274ce3ee201fc4c37f76a7109fcd264b93fa",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 7
+          },
+          "assertions": [
+            {
+              "id": "tree-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-author.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-file-size.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-mode.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-common.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-d8-stubs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "skip": "",
+          "skipped_cases": {}
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/target/release/tig",
+          "sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/target/release/test-graph",
+          "sha256": "a6ef9931a15d6ad838b43c660d18484e24bfcd8c5a70c96f8dbc4ad896f5f852"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 18,
+        "fail": 2
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/diff/line-number-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "added-line-number.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/maximized-navigation-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "split.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "maximized.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "maximized-after-next.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-after-next.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/open-after-split-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "split.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "split-after-next.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-after-next.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/boundary-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "merge-view.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/default-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-ref-format.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-remotes-hidden.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-no-refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-no-graph.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-diff.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/goto-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "commit-1.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "commit-1-back.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "commit-2.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "commit-2-again.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "commit-5.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "commit-5-still.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "unstaged-changes.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "commit-3.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/graph-argument-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "follow.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "follow.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "first-parent.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "first-parent.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/jump-ends-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-goto-1.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-goto-1.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-goto-max.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-goto-max.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-goto-max-plus-1.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-goto-max-plus-1.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-goto-max-plus-2.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-goto-max-plus-2.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/main-options-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "with-10-lines.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/merge-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-with-conflict.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/no-merges-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "no-merges.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/refresh-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-with-unstaged.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-add-a.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-add-all.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-commit.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-reset-soft.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-reset-a-and-bc.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-reset-hard.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-after-tag.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/search-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-search-author.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-author-empty.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-author-find-next.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-title.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-title-no-match.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-time.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-smart-case.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/show-changes-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-with-unstaged.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-unstaged-split.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-unstaged-and-staged-split.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-staged.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-staged-split.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-staged-and-unstaged.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-renamed.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-conflict.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-all-refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/start-on-line-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "position.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/update-unstaged-changes-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "start.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "result.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/view-split-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "main-vsplit-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-vsplit-25-75.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "main-hsplit-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-hsplit-50-50.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/prompt/exec-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "exec-without-arg-doesnt-crash.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "exec-without-arg-doesnt-crash.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "exec-only-flags-doesnt-crash.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "exec-only-flags-doesnt-crash.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/status/refresh-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "status-with-unstaged.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-add-a.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-add-all.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-commit.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-reset-soft.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-reset-a-and-bc.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-checkout-bc.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-reset-hard.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-touch-new-file.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-rm-a.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-after-checkout-a.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/default-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "tree-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-default-author.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-default-date.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-default-file-size.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-default-mode.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-common.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-d8-stubs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ],
+  "integrated_main": "0d80d9851627831a7d80a6f911c2d8fe40f8a435",
+  "source_manifest_sha256": {
+    "Cargo.lock": "4dff74ef4ccdb94d739984c33d6b06c217c12144f4095dde5e16bf10902ebbb5",
+    "Cargo.toml": "9c0a27f7f353f722308d07664ba1645e9dc6dfe35a94201839f7b4cd93752c69",
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "compat/ansidecl.h": "ad38622cd19e079228ce345d383cdf12cce71a869f89bb6b4bc2173829bb8ddb",
+    "compat/compat.h": "d855ca98c45a040cf1cde0f32c4ea681c143c609be56c278b42a8ab5ab635c22",
+    "compat/hashtab.c": "cf8b2e72616a833a3775208f619cd9db039c245d6365d3f645bc350537b8613e",
+    "compat/hashtab.h": "0751898241f5609e9a3768dff6680f3e30b44a5d36506c9eb9ca6021623eb0b0",
+    "compat/mkstemps.c": "2f96dc28b0f33618c6da01e5fb6afde9d3a029c988dc716c7d3182e4bceaf419",
+    "compat/setenv.c": "b2c56d2c4a76b1f432dadbb37185779e50c75aa0b3afc8965b1616e92ba9effb",
+    "compat/strndup.c": "3b0a8f6d54eff4227207f1ec9b7df2b587241cb655eeed8e65b3a74eaed17d51",
+    "compat/utf8proc.c": "b0df763ea34c8cceac9730ec20e8795c336bf21a3b4f7d2e56b88b07601f5b3d",
+    "compat/utf8proc.h": "3ec0d5c70b1171b236815a437b319163e6ada1570f4f9115bbdc497075b1b014",
+    "compat/utf8proc.license.md": "3b510150d34f248a221bb88e1d811238d6c6c18b51231822c42974c39bb07256",
+    "compat/utf8proc_data.c": "950e549dbfc853c4304425f3af1875e72fa9fc9697c273c763400c2da4e380a7",
+    "compat/wordexp.c": "1bfd138933548f3e869774a8c183b5a8d1507556d32ba20d44cd464cbcb87929",
+    "config.make.in": "405bd55baa6b204c3b98cd0e3e94196bef3bf7e5199076066f949fb134b1b566",
+    "configure.ac": "48dfcb2c8034d65a338f9f4af7f48fefdff9051b99febc1e3cb35e35189502be",
+    "include/tig/apps.h": "e0d6e87c700abd65d3eacdb76b2f36391b467aae9ebcd18ad68e8269d20fd377",
+    "include/tig/argv.h": "e3fc263832c89cb45a6990f81e18efde74008f4531c3dc332b03e6c02e8bcb86",
+    "include/tig/blame.h": "314fd50e62281b9ed0ad63cdf685a33f8ecf41b4fac37643e9ee486bcf87f6f3",
+    "include/tig/blob.h": "99ac1cc6ed697521a3ee00c059463fc7c9d5e7fff2fca2c850c099d3ce7d1162",
+    "include/tig/diff.h": "1f6b143c35a328f41d0e6d7ccfe991b3f761e3137c70b59461dda549af952dbb",
+    "include/tig/display.h": "ef9c9cffdf2affb38576ecfb51ae3e6ed5f9f8528577819982c6863aaf7f5931",
+    "include/tig/draw.h": "ff2cc0bdaa825f017a3cf496ccc161266613b49997b68f6bbe4a068e89a6b481",
+    "include/tig/git.h": "1767a1943902c2d8592c47ee33817e9439d9fc1bcc53d1a3f32993dafe872d7a",
+    "include/tig/graph.h": "8da8aa8407ee991857246f23fd1640341c148b7d04ec1d03283364c6bc838c99",
+    "include/tig/grep.h": "b70cdaf20cfa5134219bcdae7fc157d7667ffd67955feae0c4df12c3942cb464",
+    "include/tig/help.h": "c207541276bd32c3c68ed1decd07d8399bd3e4ce78c0945980af84d4523bdc83",
+    "include/tig/io.h": "7526c1aa5e9baab9eecb94c62736e6c672d6e3127a98e3414e6091dafcebcfa0",
+    "include/tig/keys.h": "350c09f59056d1deef5fa3f067531eaa6364218382f8683e47908074be054f48",
+    "include/tig/line.h": "a51a49d0d887040c2d04828f6994a8cdf4f695279c18c501009e8f96ba27b065",
+    "include/tig/log.h": "9c36935d2e2aa5f61be527ecbcd39d581a86771341e4b915d80ac60ec067e63f",
+    "include/tig/main.h": "636ab53bb8bd6c9d85395bacc3becfe24796faefa304ca5ddc27fac4200b0148",
+    "include/tig/map.h": "f82984977ac43229173def29eb0a63a9381120c9c2e33eb83a268fee4b002732",
+    "include/tig/options.h": "8004c7e68a1c0a0b795cc8bba3f14d91e135cdac8890c10fc51585a59084565e",
+    "include/tig/pager.h": "328a10d9c497d6885327a8abd66450ff9ae361b72be92c74121e5390118942d9",
+    "include/tig/parse.h": "003e5b93048fde1a775072b8fc4281ea4ace09ca76f6ff4a9c06a27f0e97700d",
+    "include/tig/prompt.h": "4c9a1409c12e6a896fdb657d7ef18fbbe2e300cde89c23db39ce85b26e795ca0",
+    "include/tig/refdb.h": "0fd97c7d6c3f378610bb4b0f4a312e00cc850d6f3ba0976535caa8a3e1eaa043",
+    "include/tig/reflog.h": "1cc4329d09111312224ca188f66f15719d72c1b36ff621d4fcc57f46a2b0eb68",
+    "include/tig/refs.h": "b0685945b686de381a568dc4d66382157a5068f2441b2cd4c2c6b429b15b9c52",
+    "include/tig/repo.h": "e5d2a44ec82fc06276f82e352e6d4d43c4d5db344a69deff4285e4fed938f1e5",
+    "include/tig/request.h": "65f5dfce8fca028ff87f86949de623e30d4bf66d2eca0708893355b42c006b93",
+    "include/tig/search.h": "59c6f342f00cb2f6790664100b8edc7417f7f277cb9cbc9489c0da8c252eda36",
+    "include/tig/stage.h": "5e3cedbfb1b812ce477fbac9c76d89e03dde3eef00a8af4dca74cafe0dbcabc1",
+    "include/tig/stash.h": "166b9d3cac24cdcacff019300872df45aea9e9eeb1d7770ef969e599f4e57809",
+    "include/tig/status.h": "6be20029eb8c53f3795b8324535dcb7239d7187b3649a64faff27dae496ca186",
+    "include/tig/string.h": "28ea2fdb3078fe641f465cba24ec4fdb91507ec83d78502f1341587f9d90d223",
+    "include/tig/tig.h": "b3bd68b0ec52236e15750d37b41e8ba7e304e22733b1a7d863ff5e7fba604620",
+    "include/tig/tree.h": "4cecaeff99be0ccb23134d25fb9b447a5c334bbe0d10f0883d0f54e2777be159",
+    "include/tig/types.h": "1103d4116a0454991462173f0a60e37030233a30a2f9a0539065dfbeb862321f",
+    "include/tig/ui.h": "cf647c2364c24d83fb0712946e0bba43145776946a2f64db865f6fe439c6a68a",
+    "include/tig/util.h": "9dc77bf677d1d03e5fa655202f2c690702c0894f6f61561434527dcd1250d1f8",
+    "include/tig/view.h": "fefa46c91dfba697688d8f56c4e8139a9a4582355c7a230ed32d825ce8f42f3b",
+    "include/tig/watch.h": "ee834d19effee9360a2480d3087172ff7eeb8084d28ce6fd6216e9a9ec341141",
+    "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
+    "rust/commands.rs": "5289316798c285a6055ff040aec0f7d355cfca6905bb8702d952a7b612104b19",
+    "rust/config.rs": "2818658ce690aa15596b13040bfbfba812fecf8ba83dcb93671650ee7585d623",
+    "rust/date.rs": "51d16041689246691bcfacc8a2f2654e39ae2a123c5aec770c449bfc6ced24f4",
+    "rust/git.rs": "ab12c51280142e4cea295673cefa8e8187068163225293c357ef6758920ceafb",
+    "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
+    "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+    "rust/help_view.rs": "029b06cf5c7c88523fe4fb4f3374f737f7fbffd7807169dcd8b8f207cf87b158",
+    "rust/lib.rs": "81e3bdf035141234a178271b092b084f6e105bf159f1e2af4b21e8483d20a088",
+    "rust/main.rs": "4c8f760cc4c2a65413eaa962b7c05b95aa1e5889f4618769a0257edaf5177c30",
+    "rust/model.rs": "f1131c9182b02c51a5e9307a194669cec4f835fbd0d5d26b24e1e977336e8dda",
+    "rust/patch.rs": "11b9b2d0dd871b36462ad9ac371203cc9a53ee0539797dcbe698429291d2685c",
+    "rust/refs_view.rs": "35e6d25a83bb9651b5b268b00c75a4c81468746a3158556e2d44bf1e12b11267",
+    "rust/render.rs": "8571c26f7663439502962f8cb889d038dcde3f9d09d272d670a1fdf408282a32",
+    "rust/tests/blame-navigation.py": "bc7b60c9821929dca18484ccc5e912f34e10bb817807fe760641e9360b365eb7",
+    "rust/tests/blame-review.py": "12d94d23c4a2466e4150fee7c30f38534c5c7dfdda680ff8b15492f8d734a973",
+    "rust/tests/config-recovery.py": "0bd908d544c7ea3cb94a9a4e109b9b81dfdaf626e25e795ceed0eb87c829851a",
+    "rust/tests/date-compatibility.py": "730fb29be21cd0eab61e97d7789116505227d4d58fe70640af4d9acff2c205fa",
+    "rust/tests/date-percent-s.py": "3a837e0703587ba8f9909d630d700bd17f14bfc34b1e1fe105201e7600df6c4c",
+    "rust/tests/diff-input.py": "a3b5c4ab386484e78f959b469c76a16e53ebbaa69983ad7f157104fa0f3474c3",
+    "rust/tests/diff-navigation.py": "ac38d3cb56fc1bad1b628465cc85d67446e0439e6317d25a3e723c621b99e639",
+    "rust/tests/graph-differential.py": "666efeca9ee6cd79cb8bd70cf5639f00438a6b6dff7135ad03f98e53de8d7c8e",
+    "rust/tests/graph-v1-differential.py": "9e144d33dd228875d5a90b8068871102139ce3989324d98e6ffc5ce7d8830ace",
+    "rust/tests/status-filter.py": "99dfb28d0d4719c7abd940a6a22d08bc73a03a27eac30cb1924f42e165963789",
+    "rust/tests/terminal-smoke.py": "a09c21e70201587e58c116f2d9a9f7849c6472da6ebe3c0750dd56eb562173a4",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "rust/trace.rs": "4fb87248de03495a20b7d4f3863c971c30000a07c1f688d55b2625b22bcf8c23",
+    "rust/tree_view.rs": "c2292d0afab8e20f08579f536bedd00cb9926f099021f9c6d2c56bd56db9ac4a",
+    "src/apps.c": "43c3081ffad52b97e5673bad7c1188b18c1a8b871eabcf1a7cf7e6206354a6ff",
+    "src/argv.c": "d8de624659202094264d41b183035219965a315f917b67ebe23b5db5415cc514",
+    "src/blame.c": "55feb3aae006e3de2d567600c998d0b1f254bb3fab467f327d27079d93d72cc1",
+    "src/blob.c": "10c4f782f68ef140c38b853fd294f77534d9be05854689bb24fe711bfeec4c4b",
+    "src/diff.c": "af27dc07c813c77c1901b2f7dd91588497c7c173a58640c9f1c188387737c9e3",
+    "src/display.c": "004164acca5fcee1d0b05fe74a25f8a0089be333096ec9e41797bb82270d730d",
+    "src/draw.c": "a6f87bc1e2451194aecafd385bd088e9b24923b245ac36a0b538d4ee5cecb4c3",
+    "src/graph-v1.c": "5629db8249152f85bd7d7dcd07efa07548ac8a5831e9577a39103bbafb5a232e",
+    "src/graph-v2.c": "1adea5e85ba5149cc0ee9f19255498a2f84fa6e2bb158bda1af97374018f2a12",
+    "src/graph.c": "f4a7ba12f06e946da7b339fa07adff377ceb8f0aaf78947f4017735d278064b7",
+    "src/grep.c": "26797960107b316d6ffbcf5127399737dac391f07166d3da7332bd3be2a0fca5",
+    "src/help.c": "4d4dcaeafbaa6178c3449c29432454e753dd4aa395bb7a50cbbfde01a386cbb3",
+    "src/io.c": "a7415aa5a52399f9fb76645b214830e395fd974dd009f05ba02525356099fc6a",
+    "src/keys.c": "382b82cc6abe48124011de19f6aa3378339da218560ba2fe431f2312f8cd556c",
+    "src/line.c": "2ba4b35ddadb4fc772ee88146545bb151b3ca6dd6834f9e6d20dbb540535229e",
+    "src/log.c": "7f25d0ea4ad0c7c4373ed3a2146a415c3bbeb8afb0c8ef73ba4bab914015711b",
+    "src/main.c": "12f741ff7470fbd0b80dda514411a93bc6e60548edf8b6e17aa7a766e9bdad1e",
+    "src/map.c": "3e8de64e3adca21923f77e0fc52e69debef4b818d78db712f9d3f8038a5447ff",
+    "src/options.c": "f1c3816ea391f5c96489b34a521d4cf80f9be78da0fc6233857c7353ab00e448",
+    "src/pager.c": "aa7ae2909c8547e09f1cf319b1717212c9ef9c50b727887998aa765374ba8101",
+    "src/parse.c": "32fe063b2afc0b7e547204254f286b4c8bcbfb2b109272506180d008384ca93b",
+    "src/prompt.c": "6f358c75f49a784403462b09f67a25112545bb92d455e7b77e71dd293d9df203",
+    "src/refdb.c": "76bd9a8aad15799246b4ad81c3eee6454827e1491c80768e2e21c94d004f7fa5",
+    "src/reflog.c": "da6b3531e496c86c0764f5ac82fa8745726e4eab36090ce15a6a427f09eda3df",
+    "src/refs.c": "8ee8c3ca862fcbcc6750a8db4fd849631efcd6a64758cb3c8684589445ef0170",
+    "src/repo.c": "0ceb1ec9815ddfb96e6a2af5480f197026224ddd287a68516cb6c4d414ed7537",
+    "src/request.c": "3b85f8a4149264ee6f555adca8a7bbaf0083ee3288f8dcae03cb4229a886af90",
+    "src/search.c": "1b4f90f7ecb94d93ad631728237fab9a5955559b163eef29d541bcc468c74fa5",
+    "src/stage.c": "f5aebfe09715f0cae621e8647efe5d7c9b29d60e7b965da3bc7e67a5f07be5bf",
+    "src/stash.c": "5abf9761fcfc9f79675fd5966d95c9e7d6c7c5482fd981c0000b37d3b78ccbda",
+    "src/status.c": "783fe47be3ad6710cca5584ac8f66fb273813668f8803206ff0a14a8f2c7579a",
+    "src/string.c": "7cf5ae5399f82a12410cda95e7632ad21d20eec29ed44087918783532b0aac27",
+    "src/tig.c": "1c15c23b26b4aafcf0a9f27e6a605abb701ae75408d801b06d1addd7f87c55f0",
+    "src/tree.c": "92f70af66a7c8d4cc2bf5da5dd5e80f25227454f1553aa749b2fd3e6959db85e",
+    "src/types.c": "bf3ca3e087f249ae22dc4ce905f352341bee20baf522265d571d1fb0c38733d5",
+    "src/ui.c": "0bf2b96e6c20b783fbe14373895b9b3417244d54f911a52dda9f7240e758ea8f",
+    "src/util.c": "d046f1e185d540f2acd8b8926ee3aa9fd3d8d10b987fd7a9b1df4379ef11da0f",
+    "src/view.c": "61d005305e6074d89db95852f426da513e5f75052752b5546f8466964133471c",
+    "src/watch.c": "122588c5516075588c86fda5014c0cacef7d88026dea150df1b1b0bce1e224a7",
+    "tigrc": "aa897801785995fec07f43cedb3dee06cf2124e5bd1475d6e22ba7badfcded5b"
+  },
+  "binary_sha256": {
+    "src/tig": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+    "test/tools/test-graph": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849",
+    "target/release/tig": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+    "target/release/test-graph": "a6ef9931a15d6ad838b43c660d18484e24bfcd8c5a70c96f8dbc4ad896f5f852"
+  },
+  "assertion_totals": {
+    "c": {
+      "OK": 94
+    },
+    "rust": {
+      "OK": 92,
+      "FAIL": 2
+    }
+  },
+  "retention": "One final receipt. Passing transcript/receipt duplicates omitted; all assertion outcomes and raw failure transcripts retained. Intermediate before/after evidence remains in Git at 83c06b656dd8927419d95d1df612bb207dd4378a.",
+  "reproduce_original_pairing": [
+    "rustup",
+    "run",
+    "1.81.0",
+    "python3",
+    "rust/tests/upstream-suite.py",
+    "--output",
+    "/tmp/main-navigation-pair.json",
+    "test/diff/line-number-test",
+    "test/diff/maximized-navigation-test",
+    "test/diff/open-after-split-test",
+    "test/main/boundary-test",
+    "test/main/default-test",
+    "test/main/goto-test",
+    "test/main/graph-argument-test",
+    "test/main/jump-ends-test",
+    "test/main/main-options-test",
+    "test/main/merge-test",
+    "test/main/no-merges-test",
+    "test/main/refresh-test",
+    "test/main/search-test",
+    "test/main/show-changes-test",
+    "test/main/start-on-line-test",
+    "test/main/update-unstaged-changes-test",
+    "test/main/view-split-test",
+    "test/prompt/exec-test",
+    "test/status/refresh-test",
+    "test/tree/default-test"
+  ],
+  "unchanged_relative_to_integrated_main": [
+    "src",
+    "include",
+    "compat",
+    "test",
+    "Cargo.toml",
+    "Cargo.lock",
+    ".github"
+  ],
+  "first_party_unsafe_policy": {
+    "rust/lib.rs": true,
+    "rust/main.rs": true
+  },
+  "validation": [
+    {
+      "command": "rustup run 1.81.0 cargo fmt --check",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": "rustup run 1.81.0 cargo test --locked --all-targets",
+      "exit_code": 0,
+      "output": "test result: ok. 59 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.33s\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\ntest result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.38s"
+    },
+    {
+      "command": "rustup run 1.81.0 cargo clippy --locked --all-targets -- -D warnings",
+      "exit_code": 0,
+      "output": "    Checking tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.52s\n"
+    },
+    {
+      "command": "rustup run 1.81.0 cargo build --locked --release --bins",
+      "exit_code": 0,
+      "output": "   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation)\n    Finished `release` profile [optimized] target(s) in 26.98s\n"
+    },
+    {
+      "command": "python3 rust/tests/diff-input.py",
+      "exit_code": 0,
+      "output": "6 diff input checks passed\n"
+    }
+  ],
+  "pty": {
+    "scope": "Implemented Rust UI workflows only; not upstream parity",
+    "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+    "checks": [
+      {
+        "name": "working changes precede history",
+        "passed": true
+      },
+      {
+        "name": "save options to quoted path",
+        "passed": true
+      },
+      {
+        "name": "save options keeps unquoted hash in path",
+        "passed": true
+      },
+      {
+        "name": "save options refuses overwrite",
+        "passed": true
+      },
+      {
+        "name": "save options reports missing directory",
+        "passed": true
+      },
+      {
+        "name": "hide working changes for history navigation",
+        "passed": true
+      },
+      {
+        "name": "comma selects main parent",
+        "passed": true
+      },
+      {
+        "name": "refresh preserves main history",
+        "passed": true
+      },
+      {
+        "name": "less-than restores main position",
+        "passed": true
+      },
+      {
+        "name": "empty main history stays open",
+        "passed": true
+      },
+      {
+        "name": "prompt command opens pager",
+        "passed": true
+      },
+      {
+        "name": "command pager closes to main",
+        "passed": true
+      },
+      {
+        "name": "j selects second commit",
+        "passed": true
+      },
+      {
+        "name": "Enter opens selected commit diff",
+        "passed": true
+      },
+      {
+        "name": "Tab focuses split parent",
+        "passed": true
+      },
+      {
+        "name": "main command refreshes displayed diff refs",
+        "passed": true
+      },
+      {
+        "name": "Tab focuses split child",
+        "passed": true
+      },
+      {
+        "name": "K loads previous parent commit into diff",
+        "passed": true
+      },
+      {
+        "name": "J loads next parent commit into diff",
+        "passed": true
+      },
+      {
+        "name": "O maximizes focused diff",
+        "passed": true
+      },
+      {
+        "name": "q returns to selected history row",
+        "passed": true
+      },
+      {
+        "name": "reopen split for command pager",
+        "passed": true
+      },
+      {
+        "name": "split command pager maximizes",
+        "passed": true
+      },
+      {
+        "name": "split command pager closes to main",
+        "passed": true
+      },
+      {
+        "name": "search prompt",
+        "passed": true
+      },
+      {
+        "name": "search selects matching commit",
+        "passed": true
+      },
+      {
+        "name": "status opens at header",
+        "passed": true
+      },
+      {
+        "name": "select unstaged fixture",
+        "passed": true
+      },
+      {
+        "name": "u stages fixture",
+        "passed": true
+      },
+      {
+        "name": "stage verified against Git index",
+        "passed": true
+      },
+      {
+        "name": "Enter opens cached diff",
+        "passed": true
+      },
+      {
+        "name": "R preserves cached diff",
+        "passed": true
+      },
+      {
+        "name": "back from cached diff",
+        "passed": true
+      },
+      {
+        "name": "u unstages fixture",
+        "passed": true
+      },
+      {
+        "name": "unstage verified against Git index",
+        "passed": true
+      },
+      {
+        "name": "open two-line unstaged patch",
+        "passed": true
+      },
+      {
+        "name": "line staging search prompt",
+        "passed": true
+      },
+      {
+        "name": "select added line A",
+        "passed": true
+      },
+      {
+        "name": "1 stages only selected line",
+        "passed": true
+      },
+      {
+        "name": "single-line stage index and unchanged worktree",
+        "passed": true
+      },
+      {
+        "name": "back to status after line stage",
+        "passed": true
+      },
+      {
+        "name": "refresh partially staged status",
+        "passed": true
+      },
+      {
+        "name": "select cached partial file",
+        "passed": true
+      },
+      {
+        "name": "open cached partial patch",
+        "passed": true
+      },
+      {
+        "name": "line unstage search prompt",
+        "passed": true
+      },
+      {
+        "name": "select cached added line A",
+        "passed": true
+      },
+      {
+        "name": "1 unstages only selected line and closes empty stage",
+        "passed": true
+      },
+      {
+        "name": "single-line unstage empty index and unchanged worktree",
+        "passed": true
+      },
+      {
+        "name": "refresh fully unstaged status",
+        "passed": true
+      },
+      {
+        "name": "open hunk for staging",
+        "passed": true
+      },
+      {
+        "name": "hunk staging search prompt",
+        "passed": true
+      },
+      {
+        "name": "select line within hunk",
+        "passed": true
+      },
+      {
+        "name": "u stages complete hunk and closes empty stage",
+        "passed": true
+      },
+      {
+        "name": "whole-hunk stage includes both lines and preserves worktree",
+        "passed": true
+      },
+      {
+        "name": "refresh fully staged status",
+        "passed": true
+      },
+      {
+        "name": "open cached hunk",
+        "passed": true
+      },
+      {
+        "name": "hunk unstaging search prompt",
+        "passed": true
+      },
+      {
+        "name": "select cached hunk line",
+        "passed": true
+      },
+      {
+        "name": "cached u unstages complete hunk and closes empty stage",
+        "passed": true
+      },
+      {
+        "name": "whole-hunk unstage empties index and preserves worktree",
+        "passed": true
+      },
+      {
+        "name": "back from status",
+        "passed": true
+      },
+      {
+        "name": "external argv command prompt",
+        "passed": true
+      },
+      {
+        "name": "silent external argv command returns to history",
+        "passed": true
+      },
+      {
+        "name": "external command literal argv without implicit shell",
+        "passed": true
+      },
+      {
+        "name": "external path command prompt",
+        "passed": true
+      },
+      {
+        "name": "external command handles literal special filename",
+        "passed": true
+      },
+      {
+        "name": "external argv stages exact spaced special-character filename",
+        "passed": true
+      },
+      {
+        "name": "external cleanup command prompt",
+        "passed": true
+      },
+      {
+        "name": "external argv cleanup returns to history",
+        "passed": true
+      },
+      {
+        "name": "echo command prompt",
+        "passed": true
+      },
+      {
+        "name": "plus command displays first stdout line",
+        "passed": true
+      },
+      {
+        "name": "foreground command prompt",
+        "passed": true
+      },
+      {
+        "name": "foreground command waits for Enter",
+        "passed": true
+      },
+      {
+        "name": "foreground command resumes raw UI after Enter",
+        "passed": true
+      },
+      {
+        "name": "quick command prompt",
+        "passed": true
+      },
+      {
+        "name": "successful quick command resumes without Enter",
+        "passed": true
+      },
+      {
+        "name": "failed quick command prompt",
+        "passed": true
+      },
+      {
+        "name": "failed quick command still waits for Enter",
+        "passed": true
+      },
+      {
+        "name": "failed command resumes after Enter",
+        "passed": true
+      },
+      {
+        "name": "move off HEAD before default H",
+        "passed": true
+      },
+      {
+        "name": "default H resolves HEAD and selects newest commit",
+        "passed": true
+      },
+      {
+        "name": "quoted key binding prompt",
+        "passed": true
+      },
+      {
+        "name": "install quoted H command binding",
+        "passed": true
+      },
+      {
+        "name": "H preserves quoted argv and echoes result",
+        "passed": true
+      },
+      {
+        "name": "foreground canonical tty, resumed raw UI, echo and quoted argv verified",
+        "passed": true
+      },
+      {
+        "name": "TIG_TRACE includes captured commands but excludes foreground argv",
+        "passed": true
+      },
+      {
+        "name": "tree opens",
+        "passed": true
+      },
+      {
+        "name": "select root blob",
+        "passed": true
+      },
+      {
+        "name": "Enter opens blob",
+        "passed": true
+      },
+      {
+        "name": "q returns to tree",
+        "passed": true
+      },
+      {
+        "name": "select nested tree",
+        "passed": true
+      },
+      {
+        "name": "open nested tree",
+        "passed": true
+      },
+      {
+        "name": "back restores parent tree",
+        "passed": true
+      },
+      {
+        "name": "R preserves parent tree",
+        "passed": true
+      },
+      {
+        "name": "resize redraws clipped status at row 11",
+        "passed": true
+      },
+      {
+        "name": "quit leaves alternate screen and restores cursor",
+        "passed": true
+      },
+      {
+        "name": "quit leaves alternate screen and restores cursor terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "+2 selects second row after working changes",
+        "passed": true
+      },
+      {
+        "name": "+2 session quit",
+        "passed": true
+      },
+      {
+        "name": "+2 session quit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "blame -- file",
+        "passed": true
+      },
+      {
+        "name": "blame session quit",
+        "passed": true
+      },
+      {
+        "name": "blame session quit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "subdirectory main opens",
+        "passed": true
+      },
+      {
+        "name": "first tree uses startup directory",
+        "passed": true
+      },
+      {
+        "name": "startup tree parent reaches worktree root",
+        "passed": true
+      },
+      {
+        "name": "subdirectory tree session quit",
+        "passed": true
+      },
+      {
+        "name": "subdirectory tree session quit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "external cwd with explicit Git environment opens main",
+        "passed": true
+      },
+      {
+        "name": "external cwd opens root tree",
+        "passed": true
+      },
+      {
+        "name": "external cwd tree session quit",
+        "passed": true
+      },
+      {
+        "name": "external cwd tree session quit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "blame resolves subdirectory relative file",
+        "passed": true
+      },
+      {
+        "name": "subdirectory blame session quit",
+        "passed": true
+      },
+      {
+        "name": "subdirectory blame session quit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "SIGTERM session history",
+        "passed": true
+      },
+      {
+        "name": "signal while search prompt active",
+        "passed": true
+      },
+      {
+        "name": "SIGTERM exit",
+        "passed": true
+      },
+      {
+        "name": "SIGTERM exit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "SIGHUP session history",
+        "passed": true
+      },
+      {
+        "name": "SIGHUP exit",
+        "passed": true
+      },
+      {
+        "name": "SIGHUP exit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "SIGINT session history",
+        "passed": true
+      },
+      {
+        "name": "SIGINT exit",
+        "passed": true
+      },
+      {
+        "name": "SIGINT exit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "untracked row precedes history",
+        "passed": true
+      },
+      {
+        "name": "untracked row opens untracked-only status",
+        "passed": true
+      },
+      {
+        "name": "select untracked file",
+        "passed": true
+      },
+      {
+        "name": "stage last untracked file and return to main",
+        "passed": true
+      },
+      {
+        "name": "untracked staging changes only Git index",
+        "passed": true
+      },
+      {
+        "name": "synthetic status session quit",
+        "passed": true
+      },
+      {
+        "name": "synthetic status session quit terminal restoration",
+        "passed": true
+      },
+      {
+        "name": "partial block status",
+        "passed": true
+      },
+      {
+        "name": "select partial block file",
+        "passed": true
+      },
+      {
+        "name": "open partial block patch",
+        "passed": true
+      },
+      {
+        "name": "split block search prompt",
+        "passed": true
+      },
+      {
+        "name": "select block for splitting",
+        "passed": true
+      },
+      {
+        "name": "backslash splits hunk with shared context",
+        "passed": true
+      },
+      {
+        "name": "split partial search prompt",
+        "passed": true
+      },
+      {
+        "name": "select change within split hunk",
+        "passed": true
+      },
+      {
+        "name": "2 stages contiguous block only",
+        "passed": true
+      },
+      {
+        "name": "partial block refreshes status without R",
+        "passed": true
+      },
+      {
+        "name": "select staged block",
+        "passed": true
+      },
+      {
+        "name": "open staged block",
+        "passed": true
+      },
+      {
+        "name": "partial unstage search prompt",
+        "passed": true
+      },
+      {
+        "name": "select block to unstage",
+        "passed": true
+      },
+      {
+        "name": "2 unstages block and closes empty stage",
+        "passed": true
+      },
+      {
+        "name": "split and partial block stage/unstage preserve worktree and update only selected index block",
+        "passed": true
+      },
+      {
+        "name": "partial block session quit",
+        "passed": true
+      },
+      {
+        "name": "partial block session quit terminal restoration",
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "transcript_sha256": "edc9a41d7acc08c49a9e0ef1a3c8c29b380a79f62e29bfaa2dd5f9ac9a32fd2d",
+    "reproduce": "python3 rust/tests/terminal-smoke.py (this run redirected its EVIDENCE output to /tmp)"
+  },
+  "diff_navigation": {
+    "source_commit": "3ae580f8e3a9c4843f9112d130179d97e460777e",
+    "binary_sha256": {
+      "src/tig": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+      "target/release/tig": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d"
+    },
+    "results": [
+      {
+        "width": 180,
+        "stats": {
+          "c": {
+            "split": " ...ong-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "next": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "previous": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "refresh": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +"
+          },
+          "rust": {
+            "split": " ...ong-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "next": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "previous": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "refresh": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +"
+          }
+        }
+      },
+      {
+        "width": 181,
+        "stats": {
+          "c": {
+            "split": " ...ong-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "next": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "previous": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "refresh": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +"
+          },
+          "rust": {
+            "split": " ...ong-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "next": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "previous": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+            "refresh": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +"
+          }
+        }
+      }
+    ]
+  },
+  "blame_navigation": {
+    "scope": "Additional real-PTY rename/boundary regressions; not full parity",
+    "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+    "checks": [
+      "recursive blame uses historical quoted path and original line",
+      "parent follows previous filename and maps the inserted line",
+      "back restores original blame position",
+      "parent of a root line leaves the view usable",
+      "parent preserves the blame revision lower bound",
+      "read-only navigation preserves index and worktree"
+    ]
+  },
+  "blame_review": {
+    "scope": "Ten paired C/Rust probes and two Rust quoted-tab regressions; replacement Enter preserves C semantics. C quoted-tab tracing stays in diff and is not a parity pass.",
+    "source_commit": "3ae580f8e3a9c4843f9112d130179d97e460777e",
+    "checks": [
+      {
+        "name": "c: replacement Enter round trip",
+        "binary": "src/tig",
+        "binary_sha256": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+        "expected_revision": "6a5e1d8b51c28bb459a0bd479064c491b25e9dc2",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "rust: replacement Enter round trip",
+        "binary": "target/release/tig",
+        "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+        "expected_revision": "6a5e1d8b51c28bb459a0bd479064c491b25e9dc2",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "c: deleted line in 'deletion'",
+        "binary": "src/tig",
+        "binary_sha256": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+        "expected_revision": "639fcec385ea54f53eedd51c3c7cf5048f05386d",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "c: added line in 'deletion'",
+        "binary": "src/tig",
+        "binary_sha256": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+        "expected_revision": "f5692566401b045aa62ba88042b1c681d8b7f0d8",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "rust: deleted line in 'deletion'",
+        "binary": "target/release/tig",
+        "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+        "expected_revision": "639fcec385ea54f53eedd51c3c7cf5048f05386d",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "rust: added line in 'deletion'",
+        "binary": "target/release/tig",
+        "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+        "expected_revision": "f5692566401b045aa62ba88042b1c681d8b7f0d8",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "c: deleted line in 'space name'",
+        "binary": "src/tig",
+        "binary_sha256": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+        "expected_revision": "c914612c52b309c2bb10c16e5787a27314b2bc64",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "c: added line in 'space name'",
+        "binary": "src/tig",
+        "binary_sha256": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+        "expected_revision": "d5490eaf3d3dd40dfed2a5233e2d632ff7b2628a",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "rust: deleted line in 'space name'",
+        "binary": "target/release/tig",
+        "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+        "expected_revision": "c914612c52b309c2bb10c16e5787a27314b2bc64",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "rust: added line in 'space name'",
+        "binary": "target/release/tig",
+        "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+        "expected_revision": "d5490eaf3d3dd40dfed2a5233e2d632ff7b2628a",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "rust: deleted line in 'tab\\tname'",
+        "binary": "target/release/tig",
+        "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+        "expected_revision": "8b3807995052891e7e304bb8023f5ba7e4e2b6b7",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      },
+      {
+        "name": "rust: added line in 'tab\\tname'",
+        "binary": "target/release/tig",
+        "binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+        "expected_revision": "887f3742c8010d6148d63f27b4e19f419eaf2bf9",
+        "exit_code": 0,
+        "timed_out": false,
+        "passed": true
+      }
+    ]
+  },
+  "supplemental_commands": [
+    "python3 rust/tests/diff-navigation.py",
+    "python3 rust/tests/blame-navigation.py",
+    "python3 rust/tests/blame-review.py"
+  ],
+  "known_limits": [
+    "main/main-options-test ignores configured history limit",
+    "main/view-split-test narrow date column consumes one separator cell",
+    "Command output appends stderr after stdout; interleaving is not preserved",
+    "Commands and loaders remain synchronous"
+  ],
+  "review_fix": {
+    "source_commit": "f31cc1420039d3fb83c205a3834a29f3477533c4",
+    "source_manifest_base": "3ae580f8e3a9c4843f9112d130179d97e460777e",
+    "source_sha256_overrides": {
+      "rust/main.rs": "2496b4d0babde57794ebd89f49b9c540186683a5e9e8540cdae9bd4d282c9f15",
+      "rust/tests/main-command-refresh.py": "8516d8d98e1a0b483cd66d8b648cce1c51003617a37d7fcda9ac8fa3c43ce7aa"
+    },
+    "binary_sha256": {
+      "src/tig": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+      "test/tools/test-graph": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849",
+      "target/release/tig": "8ec24b5895d5ddff34170560d8ebcf2d7b9be2d8b4457c77d6306d1eab3dd038",
+      "target/release/test-graph": "a6ef9931a15d6ad838b43c660d18484e24bfcd8c5a70c96f8dbc4ad896f5f852"
+    },
+    "cause": "refresh_parent loaded cached main with the active grep arguments. It now temporarily uses the parent args/revision/path, restoring active context before propagating either success or error.",
+    "before_binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+    "regression_command": "python3 rust/tests/main-command-refresh.py",
+    "before_exit_code": 1,
+    "before_output": "Traceback (most recent call last):\n  File \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/rust/tests/main-command-refresh.py\", line 34, in <module>\n    assert code == 0 and not timed_out, (command, code, transcript)\nAssertionError: (':exec @echo fine', 1, \"tig: git exited with exit status: 128: fatal: ambiguous argument 'needle': unknown revision or path not in the working tree.\\r\\nUse '--' to separate paths from revisions, like this:\\r\\n'git <command> [<revision>...] -- [<file>...]'\\r\\n\")\n",
+    "after_exit_code": 0,
+    "after_output": "PASS: :exec @echo fine preserves fullscreen grep and cached main\nPASS: :!echo fine preserves fullscreen grep and cached main\n",
+    "validation": [
+      {
+        "command": "rustup run 1.81.0 cargo fmt --check",
+        "exit_code": 0,
+        "output": ""
+      },
+      {
+        "command": "rustup run 1.81.0 cargo test --locked --bin tig main_graph_uses_history_traversal_options",
+        "exit_code": 0,
+        "output": "   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.00s\n     Running unittests rust/main.rs (target/debug/deps/tig-33ccf7946334abad)\n\nrunning 1 test\ntest tests::main_graph_uses_history_traversal_options ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 23 filtered out; finished in 8.23s\n\n"
+      },
+      {
+        "command": "rustup run 1.81.0 cargo test --locked --bin tig staging_last_untracked_file_refreshes_synthetic_main_parent",
+        "exit_code": 0,
+        "output": "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s\n     Running unittests rust/main.rs (target/debug/deps/tig-33ccf7946334abad)\n\nrunning 1 test\ntest tests::staging_last_untracked_file_refreshes_synthetic_main_parent ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 23 filtered out; finished in 3.31s\n\n"
+      },
+      {
+        "command": "rustup run 1.81.0 cargo clippy --locked --all-targets -- -D warnings",
+        "exit_code": 0,
+        "output": "    Checking tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.64s\n"
+      },
+      {
+        "command": "rustup run 1.81.0 cargo build --locked --release --bins",
+        "exit_code": 0,
+        "output": "   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation)\n    Finished `release` profile [optimized] target(s) in 15.70s\n"
+      }
+    ],
+    "scope": "Directed regression only. Prior original pairing and broad PTY results above remain attributed to 3ae580f8; they were not rerun for this fix."
+  }
+}
