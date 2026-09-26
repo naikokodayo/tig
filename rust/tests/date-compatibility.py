@@ -38,16 +38,15 @@ with tempfile.TemporaryDirectory(prefix='tig-date-') as temporary:
     custom = 'set main-view-date = custom\nset main-view-date-format = "%F %T %z %Z"\n'
     local = custom + 'set main-view-date-local = yes\n'
     seconds_format = 'set main-view-date = custom\nset main-view-date-format = "%s"\n'
-    seconds_error = 'Non-local %s date format is not supported; use date-local'
     cases = [
-        ('1704067200 +0000', seconds_format, None, {'TZ': 'America/New_York', 'error': seconds_error}),
-        ('1719792000 +0900', seconds_format, None, {'TZ': 'America/New_York', 'error': seconds_error}),
-        ('1719792000 +0000', seconds_format, None, {'TZ': 'Asia/Kolkata', 'error': seconds_error}),
+        ('1704067200 +0000', seconds_format, '1704085200', {'TZ': 'America/New_York'}),
+        ('1719792000 +0900', seconds_format, '1719842400', {'TZ': 'America/New_York'}),
+        ('1719792000 +0000', seconds_format, '1719772200', {'TZ': 'Asia/Kolkata'}),
         ('1704067200 +0000', seconds_format + 'set main-view-date-local = yes\n', '1704067200', {'TZ': 'America/New_York'}),
         ('1719792000 +0900', seconds_format + 'set main-view-date-local = yes\n', '1719792000', {'TZ': 'America/New_York'}),
         ('1719792000 +0000', seconds_format + 'set main-view-date-local = yes\n', '1719792000', {'TZ': 'Asia/Kolkata'}),
         ('1719792000 +0000', seconds_format.replace('%s', '%%s'), '%s', {'TZ': 'America/New_York'}),
-        ('1719792000 +0000', seconds_format.replace('%s', '%%%s'), None, {'error': seconds_error}),
+        ('1719792000 +0000', seconds_format.replace('%s', '%%%s'), '%1719792000', {}),
         ('0 +0000', seconds_format, '', {'TZ': 'America/New_York'}),
         ('0 +0000', '', '', {}),
         ('0 +0000', local, '', {'TZ': 'America/New_York'}),
@@ -78,7 +77,28 @@ with tempfile.TemporaryDirectory(prefix='tig-date-') as temporary:
         print('SKIP: fr_FR UTF-8 locale is not installed')
     for timestamp, setting, expected, overrides in cases:
         check(temporary, timestamp, setting, None if expected is None else expected + ' subject', **overrides)
+    for value, error in [
+        (-62135596801, 'Non-local %s supports wall-time years 1..9999 only'),
+        (253402300800, 'Invalid ISO 8601 commit date'),
+    ]:
+        check(temporary, f'{value} +0000', seconds_format, None, error=error)
+    # Only an actual non-local %s requires Perl. Missing/broken tools fail closed.
+    check(temporary, '1719792000 +0000', seconds_format, None, PATH='',
+          error='Non-local %s requires system Perl with POSIX')
+    check(temporary, '1719792000 +0000', seconds_format.replace('%s', '%%s'), '%s subject', PATH='')
+    check(temporary, '0 +0000', seconds_format, ' subject', PATH='')
+    check(temporary, '1719792000 +0000', seconds_format, '1719810000 subject',
+          TZ='America/New_York', PERL5OPT='-MNonexistentTigTestModule', PERL5LIB=temporary)
+    fake = Path(temporary) / 'perl'
+    for program, message in [
+        ('printf wrong', 'Invalid non-local %s output'),
+        ('printf 123; exit 23', 'Non-local %s failed'),
+        ('printf 123; printf diagnostic >&2', 'Non-local %s failed'),
+    ]:
+        fake.write_text('#!/bin/sh\n' + program + '\n')
+        fake.chmod(0o755)
+        check(temporary, '1719792000 +0000', seconds_format, None, PATH=temporary, error=message)
     for boundary in ['--', '--end-of-options']:
         check(temporary, '1440961292 +0900', '', 'commit ' + 'a' * 40,
               args=(boundary, '--pretty=raw'))
-    print(f'{len(cases) + 2} date compatibility checks passed')
+    print(f'{len(cases) + 11} date compatibility checks passed')
