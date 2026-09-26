@@ -551,6 +551,56 @@ pub fn parse_history(bytes: &[u8]) -> Result<Vec<Commit>> {
         })
         .collect())
 }
+/// Decode Git's C-quoted pathname without treating it as a worktree path.
+pub fn parse_git_path(raw: &[u8]) -> Result<PathBuf> {
+    if !raw.starts_with(b"\"") {
+        return path(raw);
+    }
+    let quoted = raw
+        .strip_prefix(b"\"")
+        .and_then(|s| s.strip_suffix(b"\""))
+        .ok_or_else(|| GitError("Malformed quoted Git path".into()))?;
+    let mut bytes = Vec::with_capacity(quoted.len());
+    let mut i = 0;
+    while i < quoted.len() {
+        if quoted[i] != b'\\' {
+            bytes.push(quoted[i]);
+        } else {
+            i += 1;
+            let escaped = *quoted
+                .get(i)
+                .ok_or_else(|| GitError("Malformed quoted Git path".into()))?;
+            match escaped {
+                b'\\' | b'"' => bytes.push(escaped),
+                b'a' => bytes.push(7),
+                b'b' => bytes.push(8),
+                b'f' => bytes.push(12),
+                b't' => bytes.push(b'\t'),
+                b'n' => bytes.push(b'\n'),
+                b'r' => bytes.push(b'\r'),
+                b'v' => bytes.push(11),
+                b'0'..=b'7' => {
+                    let digits = quoted
+                        .get(i..i + 3)
+                        .filter(|s| s.iter().all(|b| (b'0'..=b'7').contains(b)))
+                        .ok_or_else(|| GitError("Malformed quoted Git path".into()))?;
+                    let value = u16::from(digits[0] - b'0') * 64
+                        + u16::from(digits[1] - b'0') * 8
+                        + u16::from(digits[2] - b'0');
+                    bytes.push(
+                        u8::try_from(value)
+                            .map_err(|_| GitError("Invalid Git path byte".into()))?,
+                    );
+                    i += 2;
+                }
+                _ => return Err(GitError("Malformed quoted Git path".into())),
+            }
+        }
+        i += 1;
+    }
+    path(&bytes)
+}
+
 pub fn parse_blame(bytes: &[u8]) -> Result<Vec<BlameLine>> {
     let mut result = Vec::new();
     let mut current: Option<BlameLine> = None;
@@ -559,6 +609,9 @@ pub fn parse_blame(bytes: &[u8]) -> Result<Vec<BlameLine>> {
             let mut line = current
                 .take()
                 .ok_or_else(|| GitError("Blame content without header".into()))?;
+            if line.filename.as_os_str().is_empty() {
+                return Err(GitError("Blame record has no filename".into()));
+            }
             line.text = text(content);
             result.push(line);
             continue;
@@ -567,6 +620,26 @@ pub fn parse_blame(bytes: &[u8]) -> Result<Vec<BlameLine>> {
         if let Some(line) = current.as_mut() {
             if let Some(value) = row.strip_prefix("author ") {
                 line.author = value.into();
+            } else if let Some(value) = row.strip_prefix("author-mail ") {
+                line.author_email = value.trim_start_matches('<').trim_end_matches('>').into();
+            } else if let Some(value) = row.strip_prefix("author-time ") {
+                line.author_time = value
+                    .parse()
+                    .map_err(|_| GitError("Invalid author time".into()))?;
+            } else if let Some(value) = row.strip_prefix("author-tz ") {
+                line.author_tz = value.into();
+            } else if let Some(value) = row.strip_prefix("committer ") {
+                line.committer = value.into();
+            } else if let Some(value) = row.strip_prefix("committer-mail ") {
+                line.committer_email = value.trim_start_matches('<').trim_end_matches('>').into();
+            } else if let Some(value) = row.strip_prefix("committer-time ") {
+                line.committer_time = value
+                    .parse()
+                    .map_err(|_| GitError("Invalid committer time".into()))?;
+            } else if let Some(value) = row.strip_prefix("committer-tz ") {
+                line.committer_tz = value.into();
+            } else if let Some(value) = raw.strip_prefix(b"filename ") {
+                line.filename = parse_git_path(value)?;
             }
             if let Some(value) = row.strip_prefix("summary ") {
                 line.summary = value.into();
@@ -588,6 +661,14 @@ pub fn parse_blame(bytes: &[u8]) -> Result<Vec<BlameLine>> {
                     .parse()
                     .map_err(|_| GitError("Invalid blame line".into()))?,
                 author: String::new(),
+                author_email: String::new(),
+                author_time: 0,
+                author_tz: String::new(),
+                committer: String::new(),
+                committer_email: String::new(),
+                committer_time: 0,
+                committer_tz: String::new(),
+                filename: PathBuf::new(),
                 summary: String::new(),
                 text: String::new(),
             });
@@ -605,6 +686,21 @@ mod tests {
     use std::fs;
     use std::sync::atomic::{AtomicU64, Ordering};
     static NEXT: AtomicU64 = AtomicU64::new(0);
+    #[test]
+    fn blame_porcelain_keeps_dates_and_historical_path() {
+        let oid = "a".repeat(40);
+        let raw = format!("{oid} 2 1 1\nauthor A\nauthor-mail <a@example.test>\nauthor-time 0\nauthor-tz -0200\ncommitter C\ncommitter-mail <c@example.test>\ncommitter-time 3600\ncommitter-tz +0100\nsummary Subject\nfilename \"old\\tname\"\n\tcontent\n");
+        let lines = parse_blame(raw.as_bytes()).unwrap();
+        assert_eq!(lines[0].author_email, "a@example.test");
+        assert_eq!(lines[0].author_time, 0);
+        assert_eq!(lines[0].author_tz, "-0200");
+        assert_eq!(lines[0].committer, "C");
+        assert_eq!(lines[0].committer_time, 3600);
+        assert_eq!(lines[0].committer_tz, "+0100");
+        assert_eq!(lines[0].filename, Path::new("old\tname"));
+        assert!(parse_git_path(b"\"bad\\777\"").is_err());
+        assert!(parse_blame(format!("{oid} 1 1\n\tmissing path\n").as_bytes()).is_err());
+    }
     struct Fixture(PathBuf);
     impl Fixture {
         fn new() -> Self {

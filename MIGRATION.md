@@ -329,8 +329,23 @@ result is not byte-for-byte screen parity.
 
 After merge, formatting, **57 Rust unit tests**, Clippy with warnings denied,
 release build and **108 PTY checks** pass. The full original suite attempted
-all 154 recipes and reported **186 of 589 assertions failed** in 150 tests,
+all 154 recipes and reported **186 FAIL records among 589 OK/FAIL records** in 150 tests,
 with 3 skips and 1 missing receipt. See
 `migration/evidence/rust-upstream-tenth.json` and its raw log. This is still a
 mixed helper route and early exits change the denominator, so the parity
 gate remains open and the end-to-end application benchmark remains gated.
+The FAIL total also includes process errors and timeouts, not only behavioral
+assertion mismatches.
+
+## Eleventh checkpoint verification
+
+Reviewed [config parity PR #2](https://github.com/naikokodayo/tig/pull/2)
+is merged. Formatting, 61 Rust unit tests, Clippy with warnings denied,
+release build, and 108 PTY checks pass. The unchanged full original suite
+attempted all 154 recipes and reported **184 FAIL records among 589 OK/FAIL
+records** in 150 tests, with 3 skips and 1 missing receipt. See
+`migration/evidence/rust-upstream-eleventh.json` and its raw log. This run was
+on `3e8f4b8e`, before the subsequently merged blame PR #4. The FAIL total
+includes process errors and timeouts, so it is not solely a count of
+behavioral assertion mismatches. The graph helper still routes through C;
+Rust full parity and the application benchmark remain gated.
