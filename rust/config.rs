@@ -190,6 +190,52 @@ impl Config {
         }
         config
     }
+    /// Consume shared diff switches before passing revision filters to history.
+    pub fn take_diff_options(&mut self, args: &mut Vec<String>) {
+        let mut paths = false;
+        let mut value_next = false;
+        args.retain(|arg| {
+            if paths || std::mem::take(&mut value_next) {
+                return true;
+            }
+            if matches!(arg.as_str(), "--" | "--end-of-options") {
+                paths = true;
+                return true;
+            }
+            value_next = matches!(
+                arg.as_str(),
+                "--since"
+                    | "--after"
+                    | "--until"
+                    | "--before"
+                    | "--author"
+                    | "--committer"
+                    | "--grep"
+                    | "--max-count"
+                    | "--skip"
+                    | "--min-parents"
+                    | "--max-parents"
+                    | "-n"
+                    | "--glob"
+                    | "--exclude"
+            );
+            let setting = match arg.as_str() {
+                "--word-diff" | "--word-diff=plain" => Some(("word-diff", "yes".into())),
+                "--word-diff=none" => Some(("word-diff", "no".into())),
+                _ => arg
+                    .strip_prefix("-U")
+                    .and_then(|n| n.parse::<usize>().ok())
+                    .filter(|&n| n <= 999_999)
+                    .map(|n| ("diff-context", n.to_string())),
+            };
+            if let Some((name, value)) = setting {
+                self.settings.insert(name.into(), vec![value]);
+                false
+            } else {
+                true
+            }
+        });
+    }
     pub fn load_file(&mut self, path: &Path, quiet_missing: bool) {
         if let Err(e) = self.read_file(path, quiet_missing, &mut Vec::new()) {
             self.diagnostics.push(e);
@@ -902,6 +948,16 @@ pub struct Cli {
     pub version: bool,
 }
 impl Cli {
+    pub fn diff_revision(&self) -> &str {
+        let args = match self.git_args.split_first() {
+            Some((first, rest)) if first == "--end-of-options" => rest,
+            _ => &self.git_args,
+        };
+        args.first()
+            .filter(|arg| arg.as_str() != "--")
+            .map_or("HEAD", String::as_str)
+    }
+
     pub fn parse(args: &[String], pager_mode: bool) -> Result<Self, String> {
         let mut cli = Self {
             view: if pager_mode { "pager" } else { "main" }.into(),
@@ -935,7 +991,7 @@ impl Cli {
         for arg in &args[i..] {
             if !paths {
                 match arg.as_str() {
-                    "--" => paths = true,
+                    "--" | "--end-of-options" => paths = true,
                     "-h" | "--help" => {
                         cli.help = true;
                         continue;
@@ -967,6 +1023,55 @@ impl Cli {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn diff_cli_switches_update_shared_config_without_eating_paths_or_filter_values() {
+        let mut config = Config::defaults();
+        let mut args = [
+            "HEAD",
+            "--word-diff",
+            "-U8",
+            "--grep",
+            "--word-diff=none",
+            "--",
+            "--word-diff=none",
+            "-U0",
+        ]
+        .map(str::to_owned)
+        .to_vec();
+        config.take_diff_options(&mut args);
+        assert!(config.bool_value("word-diff", false));
+        assert_eq!(config.usize_value("diff-context", 3), 8);
+        assert_eq!(
+            args,
+            [
+                "HEAD",
+                "--grep",
+                "--word-diff=none",
+                "--",
+                "--word-diff=none",
+                "-U0"
+            ]
+        );
+        let mut args = [
+            "--word-diff=plain",
+            "--word-diff=none",
+            "-U0",
+            "--word-diff=color",
+            "-U1000000",
+            "--end-of-options",
+            "-U9",
+        ]
+        .map(str::to_owned)
+        .to_vec();
+        config.take_diff_options(&mut args);
+        assert!(!config.bool_value("word-diff", true));
+        assert_eq!(config.usize_value("diff-context", 3), 0);
+        assert_eq!(
+            args,
+            ["--word-diff=color", "-U1000000", "--end-of-options", "-U9"]
+        );
+    }
+
     #[test]
     fn upstream_defaults_and_overrides() {
         let mut c = Config::defaults();
@@ -1178,6 +1283,33 @@ bind generic <Lt> back
         c.apply_command("toggle log-options").unwrap();
         assert!(c.settings["log-options"].is_empty());
     }
+    #[test]
+    fn show_revision_respects_end_of_options_and_path_separator() {
+        for (args, expected) in [
+            (vec![], "HEAD"),
+            (vec!["HEAD~1"], "HEAD~1"),
+            (vec!["--end-of-options", "HEAD~1", "--", "file"], "HEAD~1"),
+            (vec!["--end-of-options"], "HEAD"),
+            (vec!["--end-of-options", "--", "file"], "HEAD"),
+            (vec!["--", "--end-of-options", "HEAD~1"], "HEAD"),
+            (vec!["--end-of-options", "--help"], "--help"),
+            (vec!["--end-of-options", "--word-diff"], "--word-diff"),
+            (
+                vec!["--end-of-options", "--end-of-options"],
+                "--end-of-options",
+            ),
+        ] {
+            let args: Vec<String> = std::iter::once("show")
+                .chain(args)
+                .map(str::to_owned)
+                .collect();
+            let mut cli = Cli::parse(&args, false).unwrap();
+            Config::defaults().take_diff_options(&mut cli.git_args);
+            assert!(!cli.help, "{args:?}");
+            assert_eq!(cli.diff_revision(), expected, "{args:?}");
+        }
+    }
+
     #[test]
     fn cli_preserves_git_arguments_and_separator() {
         let args = ["-C", "repo", "show", "+12", "HEAD~2", "--", "--help", "a b"].map(String::from);
