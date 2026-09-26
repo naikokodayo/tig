@@ -592,3 +592,38 @@ commit wall time and libc's `tm_isdst=0` behavior, including summer dates.
 Runtime requirements, evaluated Rust alternatives, differential/upstream
 receipts and the still-open performance/full-migration boundaries are in the
 [updated date compatibility record](migration/chrono-date-compatibility.md#非本地-s系统-posix-桥接).
+
+### Diff review fix and main synchronization
+
+The review found that Enter → maximize → next retained fullscreen presentation
+but loaded the next diff with the child pane's stat width. The new paired
+`rust/tests/diff-navigation.py` regression failed before the fix: Rust truncated
+a long stat filename while C retained it. Child opening now receives the intended
+split/fullscreen state before loading Git output; next/previous preserve that
+state instead of restoring it only after loading. Initial split behavior remains
+covered. At 180 and 181 columns, all eight comparisons (split, maximized next,
+maximized previous, and refresh) now match C.
+
+Merged main through `c097ffb8` (including PR #11) without rewriting published
+history. The MIGRATION.md append conflict retains both prior records; automatic
+code merges retain the history-graph/date changes and prompt/view-close fixes.
+All earlier diff receipts remain historical and unchanged.
+
+Final source `000e985da7814b55e652e19d50d0ee8a10c1146c` passes Rust 1.81 fmt,
+**72 unit tests**, Clippy, release build, **130 PTY checks**, **6 stdin checks**,
+**38 date/argument checks**, and the **8 new paired navigation comparisons**.
+The final original-test scope is the previous 22 scripts plus the two PR #11
+prompt/script regressions: **C 24/24 scripts and 169 OK assertions; Rust 18
+passing / 6 failing scripts, 161 OK / 8 failed assertion records and one extra
+runtime failure**. The same six previously documented failures remain; the new
+navigation regression and both PR #11 scripts pass. No full-suite claim is made.
+
+Final source manifests, binary hashes and logs are retained in
+[`diff-render-review-checks.json`](migration/evidence/diff-render-review-checks.json),
+[check log](migration/evidence/diff-render-review-checks.log),
+[PTY receipt](migration/evidence/diff-render-review-pty.json),
+[paired navigation receipt](migration/evidence/diff-render-review-navigation.json),
+and [original-script receipt](migration/evidence/diff-render-review-upstream.json).
+Reproduce the new paired check with `python3 rust/tests/diff-navigation.py`
+after building both C and Rust binaries. Original C/tests and dependencies are
+unchanged relative to the integrated main; first-party Rust still forbids unsafe.
