@@ -855,3 +855,22 @@ and `config-render-main-sync-checks.log` record this final integration's source
 manifest and matching binary hashes. The preceding 297e1787 receipts remain
 historical. This is still scoped validation with an open full-migration gate;
 the next commit adds only this record and its evidence.
+
+### Configuration review fixes after tree main integration
+
+Main advanced again to `86ce7680` (PR #15). Source
+`7979862af0570c965d2f9f6530ff4b23017c00e8` merges it, retaining both appended
+migration records and both adjacent tree/grep unit tests. Formatting, **78 unit
+tests**, Clippy, release build, **16 C/Rust recovery checks**, and **139 PTY checks**
+pass. The targeted merge check pairs the six requested tigrc scripts and all six
+tree scripts: C passes **12 scripts / 58 assertions**; Rust passes **8 scripts**,
+with **50 passing / 8 failing assertions**, **2 runtime failure checks**, no skips.
+The three command failures remain; tree/file-name retains the same first-child
+Unicode filename snapshot mismatch recorded by PR #15's review-fix receipt.
+The obsolete diagnostic and truncation scripts still pass, as do both tree
+editor scripts. This is not a rerun of the earlier 36-script scope or full suite.
+
+`migration/evidence/config-render-tree-sync-{checks,recovery,pty,upstream}.json`
+and the checks log bind this latest source and binaries. Earlier wider receipts
+remain attributed to their own commits. The next commit is documentation and
+evidence only. The three P2 fixes are ready for re-review; full parity stays open.
