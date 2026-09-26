@@ -312,14 +312,7 @@ fn draw(
                 && value.width() > cells
                 && (col.name == "file-name" || cells > 10)
             {
-                let delimiter = config.value("truncation-delimiter").unwrap_or("~");
-                let delimiter = render::sanitize(if delimiter == "utf-8" {
-                    "…"
-                } else {
-                    delimiter
-                });
-                value_clipped = render::clip(value, cells.saturating_sub(delimiter.width()));
-                value_clipped.push_str(&render::clip(&delimiter, cells));
+                value_clipped = render::trim_field(value, cells, config);
             }
             let padding = " ".repeat(cells.saturating_sub(value_clipped.width()));
             if matches!(col.name, "file-size" | "line-number") {
