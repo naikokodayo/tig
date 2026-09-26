@@ -240,6 +240,7 @@ impl HistoryOptions {
             }
             match name {
                 "--grep-reflog" if reflog => { expects_value = !inline_value; }
+                "-g" | "--walk-reflogs" if reflog && !inline_value => {}
                 "--since" | "--after" | "--until" | "--before" | "--author" | "--committer" |
                 "--grep" | "--max-count" | "--skip" | "--min-parents" | "--max-parents" | "-n" => {
                     expects_value = !inline_value;

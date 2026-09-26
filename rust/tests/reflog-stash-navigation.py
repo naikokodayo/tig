@@ -51,7 +51,8 @@ with tempfile.TemporaryDirectory(prefix='tig-reflog-stash-') as temporary:
     git('checkout', '-qb', 'topic')
     git('checkout', '-q', 'master')
     for arguments in (['--grep-reflog=checkout'],
-                      ['--grep-reflog=moving from master to topic']):
+                      ['--grep-reflog=moving from master to topic'],
+                      ['-g'], ['--walk-reflogs']):
         screens = []
         for mode, binary in (('c', ROOT / 'src/tig'),
                              ('rust', ROOT / 'target/release/tig')):
@@ -63,7 +64,10 @@ with tempfile.TemporaryDirectory(prefix='tig-reflog-stash-') as temporary:
             assert code == 0 and not timed_out, (mode, arguments, code, transcript)
             screen = output.read_text()
             assert 'checkout: moving from master to topic' in screen, screen
-            assert 'commit: second' not in screen and 'reset: moving' not in screen, screen
+            if arguments[0].startswith('--grep-reflog='):
+                assert 'commit: second' not in screen and 'reset: moving' not in screen, screen
+            else:
+                assert 'commit: second' in screen and 'reset: moving' in screen, screen
             screens.append([line.rstrip() for line in screen.splitlines()])
         assert screens[0] == screens[1], (arguments, screens)
         print(f'PASS: paired C/Rust reflog filter {arguments!r}')
