@@ -2,6 +2,7 @@
 
 Initially based on `34684f799a5b44e7074aa4967c53c10608119f10`, including PR #2.
 Review follow-up merged main `e1cf5eeb` (date PR #3) at `08cf851`.
+Stage synchronization merged main `ffcb9310` (stage PR #9) at `67253a7`.
 The Rust migration remains incomplete. No upstream test or expected output changed.
 
 ## Cause and change
@@ -72,6 +73,22 @@ Rust records 97 passing assertions, 13 failed assertions, and 2 failed runtime
 checks (15 FAIL records total). The category gate remains BLOCKED. Full per-script receipts, hashes, process
 exit codes, and C/Rust assertion mapping are recorded in
 [tigrc-save-review-upstream.json](tigrc-save-review-upstream.json).
+
+## Stage main synchronization
+
+Main `ffcb9310` merged without source conflicts. The merged `main.rs` retains the
+save action; the merged PTY script retains both stage checks and the literal-hash
+actual-file regression. On commit `67253a7`, Rust 1.81 fmt, 69 unit tests,
+Clippy with `-D warnings`, locked release build, all 130 PTY checks, and 29 date
+compatibility checks pass. The final release binary was used by both PTY and
+paired script verification.
+
+The paired driver reran `append-option-test`, `builtin-save-test`, and
+`save-option-test`: both C and Rust pass all three scripts and all five
+assertions; `PASS_SELECTED_SCRIPTS` is limited to this selection. Receipts are in
+[tigrc-save-stage-sync-upstream.json](tigrc-save-stage-sync-upstream.json).
+The earlier 17-script category results below remain pinned to `08cf851`; neither
+the category nor the full suite was rerun during this stage synchronization.
 
 ## Still unresolved
 

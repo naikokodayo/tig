@@ -184,5 +184,25 @@
       }
     },
     "paired_receipt": "tigrc-save-review-upstream.json"
+  },
+  "stage_sync_revalidation": {
+    "source_commit": "67253a75a961cb3658cb79fc0753a4268a616e74",
+    "merged_main": "ffcb9310f028ca5ea7302cded3e4d7783e13a0b6",
+    "binary_sha256": "6b3b842c4d995e3f9d0190a96c10a40ca947e588487f171ff2b72d8a46ad97cd",
+    "fmt": "pass",
+    "unit_tests": 69,
+    "clippy_all_targets_deny_warnings": "pass",
+    "release_build": "pass",
+    "pty_checks_passed": 130,
+    "date_compatibility_checks_passed": 29,
+    "saved_scripts_c": {
+      "pass": 3
+    },
+    "saved_scripts_rust": {
+      "pass": 3
+    },
+    "paired_gate": "PASS_SELECTED_SCRIPTS",
+    "paired_receipt": "tigrc-save-stage-sync-upstream.json",
+    "scope": "Three save scripts only; prior 17-script tigrc category results remain pinned to 08cf851."
   }
 }
