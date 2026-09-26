@@ -30,14 +30,18 @@ fn split_words(line: &str, allow_unclosed: bool) -> Result<Vec<String>, String> 
     let mut word = String::new();
     let mut quote = None;
     let mut started = false;
-    let mut chars = line.chars();
-    while let Some(c) = chars.next() {
+    let mut word_start = 0;
+    let mut chars = line.char_indices();
+    while let Some((offset, c)) = chars.next() {
+        if !started && !c.is_whitespace() {
+            word_start = offset;
+        }
         if let Some(q) = quote {
             if c == q {
                 quote = None;
             } else if c == '\\' {
                 match chars.next() {
-                    Some(c) => word.push(c),
+                    Some((_, c)) => word.push(c),
                     None if allow_unclosed => break,
                     None => return Err("Trailing escape in quoted argument".into()),
                 }
@@ -59,8 +63,13 @@ fn split_words(line: &str, allow_unclosed: bool) -> Result<Vec<String>, String> 
             started = true;
         }
     }
-    if quote.is_some() && !allow_unclosed {
-        return Err("Unclosed quoted argument".into());
+    if quote.is_some() {
+        if !allow_unclosed {
+            return Err("Unclosed quoted argument".into());
+        }
+        // C retains an unfinished argument verbatim; removing its quote could
+        // turn a malformed binding into a valid command when the key is used.
+        word = line[word_start..].into();
     }
     if started {
         result.push(word);
@@ -211,7 +220,7 @@ impl Config {
             Ok(p) => p,
             Err(e) if quiet && e.kind() == std::io::ErrorKind::NotFound => return Ok(()),
             Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
-                return Err(format!("File does not exist: {}", path.display()))
+                return Err(format!("File does not exist: {}", original.display()))
             }
             Err(e) => return Err(format!("{}: {e}", path.display())),
         };
@@ -362,17 +371,28 @@ impl Config {
     fn apply_config(&mut self, args: &[String], stack: &mut Vec<PathBuf>) -> Result<(), String> {
         // File loading recovers invalid global enums to the first entry, like C
         // parse_enum. Interactive commands keep their existing atomic errors.
-        if args.len() == 4 && args[0] == "set" && args[2] == "=" {
+        if args.len() >= 4 && args[0] == "set" && args[2] == "=" {
             let name = args[1].to_ascii_lowercase().replace('_', "-");
             if let Some(kind) = option_type(&name).and_then(|k| k.strip_prefix("enum ")) {
-                if normalize_enum(kind, &args[3]).is_err() {
-                    let fallback = enum_values(kind)[0].clone();
-                    self.settings.insert(name.clone(), vec![fallback.clone()]);
-                    return Err(format!(
-                        "'{}' is not a valid value for {name}; using {fallback}",
-                        args[3]
-                    ));
-                }
+                let value = match normalize_enum(kind, &args[3]) {
+                    Ok(value) => value,
+                    Err(_) => {
+                        let fallback = enum_values(kind)[0].clone();
+                        self.settings.insert(name.clone(), vec![fallback.clone()]);
+                        return Err(format!(
+                            "'{}' is not a valid value for {name}; using {fallback}",
+                            args[3]
+                        ));
+                    }
+                };
+                // C option_update parses (and stores) the first value before
+                // checking excess arguments, and keeps a parse error first.
+                self.settings.insert(name.clone(), vec![value]);
+                return if args.len() == 4 {
+                    Ok(())
+                } else {
+                    Err(format!("Option {name} only takes one value"))
+                };
             }
         }
         self.apply(args, stack)
@@ -1062,6 +1082,38 @@ mod tests {
     }
 
     #[test]
+    fn config_enum_error_order_and_date_column_boundary() {
+        let mut c = Config::defaults();
+        c.parse("set ignore-space = all\nset ignore-space = jada extra");
+        assert_eq!(c.value("ignore-space"), Some("no"));
+        assert_eq!(
+            c.diagnostics,
+            ["<input>:2: 'jada' is not a valid value for ignore-space; using no"]
+        );
+        c.diagnostics.clear();
+        c.parse("set ignore-space = all extra");
+        assert_eq!(c.value("ignore-space"), Some("all"));
+        assert_eq!(
+            c.diagnostics,
+            ["<input>:1: Option ignore-space only takes one value"]
+        );
+        let before = c.settings.clone();
+        for command in [
+            "set ignore-space = jada extra",
+            "set ignore-space = no extra",
+        ] {
+            assert!(c.apply_command(command).is_err());
+            assert_eq!(c.settings, before);
+        }
+        // Column recovery is outside this slice: never apply the global fallback.
+        for value in ["local", "short"] {
+            c.parse(&format!("set main-view-date-display = {value}"));
+            assert_eq!(c.settings, before);
+            assert!(c.diagnostics.last().unwrap().contains("Invalid date value"));
+        }
+    }
+
+    #[test]
     fn source_summaries_belong_only_to_files_with_direct_errors() {
         let dir = env::temp_dir().join(format!("tig-config-summary-{}", std::process::id()));
         fs::create_dir_all(&dir).unwrap();
@@ -1087,6 +1139,19 @@ mod tests {
             c.diagnostics[3],
             format!("Errors while loading {}.", parent.display())
         );
+        let missing = format!("~/.tig-config-missing-{}", std::process::id());
+        assert!(!expand_home(Path::new(&missing)).unwrap().exists());
+        fs::write(&parent, format!("source {missing}\n")).unwrap();
+        c.diagnostics.clear();
+        c.load_file(&parent, false);
+        assert_eq!(
+            c.diagnostics,
+            [
+                format!("{}:1: File does not exist: {missing}", parent.display()),
+                format!("Errors while loading {}.", parent.display()),
+            ]
+        );
+        c.apply_command(&format!("source -q {missing}")).unwrap();
         fs::remove_dir_all(dir).unwrap();
     }
 

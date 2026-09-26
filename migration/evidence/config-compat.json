@@ -1,14 +1,14 @@
 {
-  "base_revision": "e94a87b43eba520d0c0e54d1dd19c3d6ddd367b6",
+  "base_revision": "4b2262a7b0dd7c3b0a62316a5ecb4e6582caaade",
   "environment": "macOS arm64; Rust 1.81.0; original shell scripts run in a PTY with the Rust release binary first in PATH",
   "sha256": {
-    "rust/config.rs": "f0085a95bf701219dc6a02831050daf0b79bcb20e52571d249e60ce5e76f3f82",
-    "rust/main.rs": "047ae1ed9ad10165dc5475a20f6402c3fd20b22ba65a3b8e7ab335cc3e70a5b5",
-    "target/release/tig": "9a6989d9ad593d350167d323db4d550067ff7987aeedc2e6f0a3940170660955"
+    "rust/config.rs": "97e0b38930592c2fa2790bdf87a3ee5ec1f4244ca66bb5dae148a5ad6c53ebba",
+    "rust/main.rs": "cda49f9c3585d33516a18d33f132e235c7cbbe121c28c6c8ce3cec58005b408c",
+    "target/release/tig": "1d409025b0430cf062356f8526aa5b0b2e7cbf0302ff8a391c03cf9abfcd5593"
   },
   "checks": {
     "rustup run 1.81.0 cargo fmt --all -- --check": "PASS",
-    "rustup run 1.81.0 cargo test --locked --all-targets": "PASS: 40 library + 15 binary tests",
+    "rustup run 1.81.0 cargo test --locked --all-targets": "PASS: 41 library + 16 binary tests",
     "rustup run 1.81.0 cargo clippy --locked --all-targets -- -D warnings": "PASS",
     "rustup run 1.81.0 cargo build --locked --release": "PASS",
     "git diff --check": "PASS"
@@ -82,9 +82,16 @@
       ]
     }
   },
-  "quote_baseline_comparison": "Built unmodified base_revision in a separate target directory; quote-test receipt is byte-for-byte identical to the fixed release receipt: shell-command.txt passes, command-variable expansion exits with Unclosed command variable, 6 of 7 checks fail.",
+  "quote_baseline_comparison": "A separately built unmodified e94a87b main produced a byte-for-byte identical quote-test receipt; the final follow-up release was compared against that same receipt. base_revision adds only roadmap documentation over e94a87b.",
   "original_assertions_modified": false,
   "full_suite_rerun": false,
   "scope": "Configuration-file warning prefix, original diagnostic paths, per-file direct-error summaries, invalid global enum fallback, malformed quoted bindings, continuation line numbers and EOF. Prompt words/apply_command errors remain strict and atomic.",
-  "remaining": "Full configuration parity is not claimed. Column enum fallback/obsolete date modes and other non-bind quotation semantics are outside this slice. quote-test command-variable expansion remains failing. view-column-test, compat-error-test, append-option-test, builtin-error-test and other tigrc scripts may benefit from the shared diagnostics changes but were not rerun."
+  "remaining": "Full configuration parity is not claimed. Column enum fallback/obsolete date modes and other non-bind quotation semantics are outside this slice. quote-test command-variable expansion remains failing. view-column-test, compat-error-test, append-option-test, builtin-error-test and other tigrc scripts may benefit from the shared diagnostics changes but were not rerun.",
+  "quote_baseline_revision": "e94a87b43eba520d0c0e54d1dd19c3d6ddd367b6",
+  "review_followup": {
+    "missing_source": "File does not exist retains the source argument including ~; the file summary still uses its expanded path. Regression covers source -q as well.",
+    "enum_order": "For global enums, C option_update first parses/stores the value and reports excess arguments only after successful parsing. Both jada extra (fallback warning, no) and all extra (arity warning, all) have state/diagnostic regressions; prompt errors remain atomic.",
+    "date_boundary": "Column date-display does not enter option_type/global enum recovery. local/short are regression-checked to leave state unchanged; full C obsolete date-mode recovery remains outside scope.",
+    "quoted_binding": "Unfinished quoted arguments preserve original bytes instead of losing quote characters. Actual App.binding -> App.action tests cover both quote kinds and assert unchanged configuration. Existing valid quoted shell-command assertions still pass."
+  }
 }
