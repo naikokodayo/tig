@@ -330,7 +330,10 @@ mod tests {
         }
 
         for name in ["origin", "upstream", "upstream/nested"] {
-            repo.command(["remote", "add", name, "/unused"]).unwrap();
+            // New Git rejects overlapping names in `remote add`; older configs
+            // can still contain them. Build that legacy fixture directly.
+            repo.command(["config", &format!("remote.{name}.url"), "/unused"])
+                .unwrap();
         }
         repo.command(["config", "branch.checked-out.remote", "origin"])
             .unwrap();
