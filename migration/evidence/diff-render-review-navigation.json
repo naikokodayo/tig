@@ -1,0 +1,43 @@
+{
+  "source_commit": "000e985da7814b55e652e19d50d0ee8a10c1146c",
+  "binary_sha256": {
+    "src/tig": "885b62190fbd4ace86c499fca0a722a8fb2404e482a66871c2553de6c67a341e",
+    "target/release/tig": "eb86fed62274a5617ce7aa5dde415ca2d69d7991f8a46113c6f2c96817f6742d"
+  },
+  "results": [
+    {
+      "width": 180,
+      "stats": {
+        "c": {
+          "split": " ...ong-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+          "next": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+          "previous": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+          "refresh": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +"
+        },
+        "rust": {
+          "split": " ...ong-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+          "next": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+          "previous": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+          "refresh": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +"
+        }
+      }
+    },
+    {
+      "width": 181,
+      "stats": {
+        "c": {
+          "split": " ...ong-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+          "next": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+          "previous": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+          "refresh": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +"
+        },
+        "rust": {
+          "split": " ...ong-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+          "next": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+          "previous": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +",
+          "refresh": " long-directory/long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-long-file-name-.txt | 1 +"
+        }
+      }
+    }
+  ]
+}
