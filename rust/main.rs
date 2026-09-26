@@ -622,7 +622,7 @@ impl App {
                     )?,
                 );
                 view.revision = oid.clone();
-                if let Some(commit) = repo.history(&[oid], 1)?.first() {
+                if let Some(commit) = repo.history(&[oid, "--".into()], 1)?.first() {
                     let refs = tig_rs::render::refs(&self.config, &commit.decorations, ", ");
                     if !refs.is_empty() && !view.rows.is_empty() {
                         view.rows.insert(1, format!("Refs: {refs}"));
@@ -2940,6 +2940,9 @@ mod tests {
         assert_eq!(app.load("main").unwrap().rows[0], implicit_path.rows[0]);
         app.args.clear();
         assert!(app.load("main").unwrap().rows[5].starts_with("●"));
+        app.revision = app.repo().unwrap().revision("HEAD").unwrap();
+        fs::write(root.join(&app.revision), "revision-shaped filename").unwrap();
+        assert!(app.load("diff").is_ok());
         fs::remove_dir_all(root).unwrap();
     }
 
