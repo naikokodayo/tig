@@ -10,6 +10,11 @@ use std::process::{Command, Stdio};
 pub struct Patch {
     pub files: Vec<FilePatch>,
 }
+pub struct SplitHunk {
+    pub range: Range<usize>,
+    pub patch: Vec<u8>,
+    pub display: Vec<String>,
+}
 #[derive(Clone, Debug)]
 pub struct FilePatch {
     pub headers: Vec<Vec<u8>>,
@@ -284,7 +289,7 @@ impl Patch {
     }
     /// Split at context separating changes, sharing that context on both sides.
     /// Returns the replacement hunk bytes and its raw row range; never writes Git.
-    pub fn split_hunk(&self, file: usize, hunk: usize) -> Result<(Range<usize>, Vec<u8>)> {
+    pub fn split_hunk(&self, file: usize, hunk: usize) -> Result<SplitHunk> {
         let source = self
             .files
             .get(file)
@@ -292,7 +297,12 @@ impl Patch {
             .ok_or_else(|| error("Hunk index out of range"))?;
         let mut changes = Vec::new();
         let mut index = 0;
-        while index < source.lines.len() {
+        let counted_end = source
+            .lines
+            .iter()
+            .position(|row| row.starts_with(b"\\"))
+            .unwrap_or(source.lines.len());
+        while index < counted_end {
             if matches!(source.lines[index].first(), Some(b'+' | b'-')) {
                 let range = source.change_range(index)?;
                 index = range.end;
@@ -305,6 +315,7 @@ impl Patch {
             return Err(error("The chunk cannot be split"));
         }
         let mut output = Vec::new();
+        let mut display = Vec::new();
         let mut old = source.old_start;
         let mut new = source.new_start;
         let mut previous_start = 0;
@@ -333,7 +344,21 @@ impl Patch {
                 old_count: 0,
                 new_count: 0,
             };
+            let offset = output.len();
             split.write(&mut output)?;
+            let mut rows = String::from_utf8_lossy(&output[offset..])
+                .lines()
+                .map(str::to_owned)
+                .collect::<Vec<_>>();
+            // C stops counting the display header at the first no-newline marker.
+            // Keep the complete, validated patch separately for subsequent staging.
+            if counted_end < end {
+                let mut counted = split.clone();
+                counted.lines.truncate(counted_end.saturating_sub(start));
+                let (old_count, new_count) = counted.counts()?;
+                rows[0] = format!("@@ -{old},{old_count} +{new},{new_count} @@");
+            }
+            display.extend(rows);
             previous_start = start;
         }
         let start = self.files[..file]
@@ -352,7 +377,11 @@ impl Patch {
                 .iter()
                 .map(|hunk| 1 + hunk.lines.len())
                 .sum::<usize>();
-        Ok((start..start + 1 + source.lines.len(), output))
+        Ok(SplitHunk {
+            range: start..start + 1 + source.lines.len(),
+            patch: output,
+            display,
+        })
     }
     /// `line` indexes the hunk body (including marker rows). `reverse` selects
     /// changes from the index side for unstage, then apply_cached uses -R.
@@ -835,14 +864,32 @@ mod tests {
         f.repo
             .command(["reset", "-q", "HEAD", "--", "space name"])
             .unwrap();
-        let (range, split) = patch.split_hunk(0, 0).unwrap();
+        let index_before = fs::read(f.root.join(".git/index")).unwrap();
+        let split = patch.split_hunk(0, 0).unwrap();
+        assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), index_before);
+        assert_eq!(fs::read(f.root.join("space name")).unwrap(), working);
+        assert_eq!(
+            split
+                .display
+                .iter()
+                .filter(|row| row.starts_with("@@"))
+                .map(String::as_str)
+                .collect::<Vec<_>>(),
+            [
+                "@@ -1,3 +1,3 @@",
+                "@@ -2,5 +2,5 @@",
+                "@@ -5,4 +5,4 @@",
+                "@@ -8,4 +8,1 @@"
+            ]
+        );
+        let range = split.range;
         let mut split_patch = raw
             .split_inclusive(|byte| *byte == b'\n')
             .take(range.start)
             .flatten()
             .copied()
             .collect::<Vec<_>>();
-        split_patch.extend(split);
+        split_patch.extend(split.patch);
         let split = Patch::parse(&split_patch).unwrap();
         assert_eq!(split.files[0].hunks.len(), 4);
         assert_eq!(

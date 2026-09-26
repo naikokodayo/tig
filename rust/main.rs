@@ -2174,7 +2174,8 @@ impl App {
                             {
                                 return Err("No chunks to split in sight".into());
                             }
-                            let (range, replacement) = patch.split_hunk(file, hunk)?;
+                            let split = patch.split_hunk(file, hunk)?;
+                            let range = split.range;
                             let boundaries: Vec<usize> = std::iter::once(0)
                                 .chain(raw.split_inclusive(|b| *b == b'\n').scan(
                                     0,
@@ -2188,12 +2189,13 @@ impl App {
                             raw.splice(
                                 boundaries[prefix_rows + range.start]
                                     ..boundaries[prefix_rows + range.end],
-                                replacement,
+                                split.patch,
                             );
-                            let rows: Vec<String> = String::from_utf8_lossy(&raw)
-                                .lines()
-                                .map(str::to_owned)
-                                .collect();
+                            let mut rows = self.view.rows.clone();
+                            rows.splice(
+                                prefix_rows + range.start..prefix_rows + range.end,
+                                split.display,
+                            );
                             self.view.items = vec![Item::Text; rows.len()];
                             self.view.line_numbers = (1..=rows.len()).collect();
                             self.view.rows = rows;
