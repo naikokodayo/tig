@@ -2,6 +2,17 @@
 
 Status: scoped improvement; full Rust migration/parity remains open.
 
+Latest verification synced main **e1cf5eeb** (date PR #3), without merge conflicts.
+The authoritative latest receipts are in **`date-sync/`**, at implementation
+commit **b9da8c7**: Rust 1.81 format, **68 unit tests**, Clippy `-D warnings`,
+release build, **126 PTY checks** and **29 date checks** pass. PTY and paired
+runner executable hashes match exactly. The paired original run still has C
+19/19 scripts passing and Rust 15 passing / 4 failing scripts, with 98 passing /
+7 failing assertions and 4 not reached. Stage remains 25/26 assertions passing;
+the same intentional C hunk-count exception is retained. See
+`date-sync/summary.json` and `date-sync/paired-rust-only.json`. No Actions result
+is claimed. The older receipts below retain their original source versions.
+
 The branch began at `3e8f4b8` and merged `34684f7` before the final checks.
 Initial implementation verification: `cf6fda4089691d07a83aea4a136c1db8a95b6f57`.
 Then merged the harness-only main `03f6a29f`. The authoritative paired rerun is
@@ -38,7 +49,7 @@ There are no worktree writes, new dependencies, unsafe Rust, force/reject flags,
 or relaxations for rename, copy, mode, binary, combined or added/deleted line
 selection. All callers of the patch selection methods were inspected.
 
-## Verification
+## Earlier verification before the date merge
 
 On macOS arm64, Rust 1.81.0:
 
