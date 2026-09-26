@@ -1863,6 +1863,7 @@ impl App {
         }
         .max(1) as isize;
         match action {
+            "none" => (),
             "quit" => return Ok(false),
             "parent" if self.view.name == "main" => {
                 if self.view.history.last().map(|pos| pos.0) != Some(self.view.selected) {
@@ -3566,6 +3567,7 @@ fn run() -> Result<()> {
     }
     app.center_selection();
     let mut terminal = Terminal::open()?;
+    let mut key_sequence = String::new();
     loop {
         terminal.draw(&mut app)?;
         let action = match terminal.read()? {
@@ -3579,9 +3581,25 @@ fn run() -> Result<()> {
                 MouseEventKind::ScrollDown => "move-down".into(),
                 _ => continue,
             },
-            Event::Key(k) => app.binding(&key_name(k.code, k.modifiers)),
+            Event::Key(k) => {
+                if !key_sequence.is_empty() && k.code == KeyCode::Esc {
+                    key_sequence.clear();
+                    app.message.clear();
+                    continue;
+                }
+                key_sequence.push_str(&key_name(k.code, k.modifiers));
+                if app
+                    .config
+                    .key_sequence_pending(&app.view.name, &key_sequence)
+                {
+                    app.message = format!("Keys: {key_sequence}");
+                    continue;
+                }
+                app.binding(&key_sequence)
+            }
             _ => continue,
         };
+        key_sequence.clear();
         app.message.clear();
         if action == "search" || action == "search-back" {
             if let Some(s) =
