@@ -134,6 +134,11 @@ def main():
             expect('save options to quoted path', ['Saved options to '], save_command)
             saved_bytes = saved_options.read_bytes()
             assert b'set log-options = --cc --stat' in saved_bytes
+            hash_options = home / 'hash#options.tigrc'
+            expect('save options keeps unquoted hash in path', ['Saved options to '],
+                   f':save-options {hash_options}\r'.encode())
+            assert not (home / 'hash').exists(), 'save-options wrote the truncated path'
+            assert hash_options.read_bytes() == saved_bytes
             expect('save options refuses overwrite', ['Failed to save options:'], save_command)
             assert saved_options.read_bytes() == saved_bytes
             expect('save options reports missing directory', ['Failed to save options:'],

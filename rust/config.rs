@@ -20,7 +20,8 @@ pub struct Config {
     pub diagnostics: Vec<String>,
 }
 
-/// Split a config/prompt line without a shell, retaining empty quoted arguments.
+/// Split arguments without a shell, retaining empty quoted arguments and literal #.
+/// Config-file comments are removed separately by parse_line.
 /// Backslashes outside quotes are literal (notably the stage split binding).
 pub fn words(line: &str) -> Result<Vec<String>, String> {
     split_words(line, false)
@@ -49,8 +50,6 @@ fn split_words(line: &str, allow_unclosed: bool) -> Result<Vec<String>, String> 
             } else {
                 word.push(c);
             }
-        } else if c == '#' {
-            break;
         } else if c == '\'' || c == '"' {
             quote = Some(c);
             started = true;
@@ -1255,8 +1254,8 @@ mod tests {
         assert_eq!(c.action("status", "j").unwrap(), &["none"]);
         assert!(c.colors.contains_key("#literal"));
         assert_eq!(
-            words("a '' \"b # c\" # discarded").unwrap(),
-            ["a", "", "b # c"]
+            words("a '' \"b # c\" # literal").unwrap(),
+            ["a", "", "b # c", "#", "literal"]
         );
         assert!(words("'broken").is_err());
         c.parse("set tab-size = 0\nset mouse = maybe\nset invented = yes");
