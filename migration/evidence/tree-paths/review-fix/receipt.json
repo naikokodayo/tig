@@ -1,0 +1,77 @@
+{
+  "source_commit": "be9ebd86ba16238dd66ff709e8d25b2e0e9dc9eb",
+  "integrated_main": "297e1787",
+  "source_sha256": {
+    "Cargo.lock": "4dff74ef4ccdb94d739984c33d6b06c217c12144f4095dde5e16bf10902ebbb5",
+    "Cargo.toml": "9c0a27f7f353f722308d07664ba1645e9dc6dfe35a94201839f7b4cd93752c69",
+    "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
+    "rust/commands.rs": "d277d85bab05c246bb5ed0ca18e62c8b1058780b2e60e38357691bd083cc2944",
+    "rust/config.rs": "2937ef5185e995c46b111ae05238397b67bc7b3ea700f77b632ca96bc21cc638",
+    "rust/date.rs": "1efe556b4746b2c220949673a40add71ce8bda44aaa68ae0b04f49d9c4f371c7",
+    "rust/git.rs": "f166777ce9d69ec78f6d0841fc29dc1352af2f405c6e27fff7f3a2807c4cc19d",
+    "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
+    "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+    "rust/help_view.rs": "029b06cf5c7c88523fe4fb4f3374f737f7fbffd7807169dcd8b8f207cf87b158",
+    "rust/lib.rs": "91d7fefb621f5c5abfdba0f03a8f1e494f906fb495335fafeba4a12972e7403c",
+    "rust/main.rs": "087a81da8e92e00fd9709e286e2948fb30e756f71ede00f8cd77f5f48d47d8d8",
+    "rust/model.rs": "5771eceed341a5ace3db7772b70db092d3f1e2038aaaed85afa8c91ec9a844b7",
+    "rust/patch.rs": "c2219dd3a28d15d811f1f1de2ca1c5d3b20162d32d48f53e1778ff9639040152",
+    "rust/refs_view.rs": "ceefbe71443d46fa3889aa242f2bdffe989c311e8cc746dcb27b63a4759c13ea",
+    "rust/render.rs": "865f5e9107b4780f4bf58646ab7213eb9880af55d99c096325f52d6416ac0798",
+    "rust/tests/date-compatibility.py": "730fb29be21cd0eab61e97d7789116505227d4d58fe70640af4d9acff2c205fa",
+    "rust/tests/date-percent-s.py": "3a837e0703587ba8f9909d630d700bd17f14bfc34b1e1fe105201e7600df6c4c",
+    "rust/tests/diff-input.py": "a3b5c4ab386484e78f959b469c76a16e53ebbaa69983ad7f157104fa0f3474c3",
+    "rust/tests/diff-navigation.py": "ac38d3cb56fc1bad1b628465cc85d67446e0439e6317d25a3e723c621b99e639",
+    "rust/tests/graph-differential.py": "666efeca9ee6cd79cb8bd70cf5639f00438a6b6dff7135ad03f98e53de8d7c8e",
+    "rust/tests/graph-v1-differential.py": "9e144d33dd228875d5a90b8068871102139ce3989324d98e6ffc5ce7d8830ace",
+    "rust/tests/terminal-smoke.py": "43ee4a59cd86a88a08fe5bb286d61421594983d613f0efd2076e9189c4f7deea",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "rust/tree_view.rs": "32289d27da92f6297d80178bb181b7c2952ec9bced29632272dcd96b8104814b"
+  },
+  "binary_sha256": {
+    "c": {
+      "tig": "9b76f2e712590a2a824f2b88a0ad1275a23062f6f9d408b1aa3da4fb85ed3e50",
+      "test-graph": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+    },
+    "rust": {
+      "tig": "f2ab01b06f8563a208f74f5f110f45b78a8581cde312d838c311cfd667fe7a25",
+      "test-graph": "b72ed6263bb60b8185d94e4faeb6289382a6af5dea1544ac88286137b1445078"
+    }
+  },
+  "checks": {
+    "fmt": "pass",
+    "clippy_warnings_denied": "pass",
+    "rust_tests": 73,
+    "pty_checks": 139,
+    "external_cwd_c_rust_screens": "equal",
+    "diff_navigation_comparisons": 8,
+    "diff_input_checks": 6,
+    "original_c_assertions": {
+      "pass": 99,
+      "fail": 0
+    },
+    "original_rust_assertions": {
+      "pass": 98,
+      "fail": 1
+    }
+  },
+  "red_regression": "pty-red.log/json captures the old binary reporting prefix not found with absolute GIT_DIR/GIT_WORK_TREE and cwd outside the worktree; new PTY checks assert Git prefix is empty and root tree opens.",
+  "scope": "11 original tree/diff scripts; not a full-suite run. Existing file-name-test first-child-dir.screen remains the only failed assertion.",
+  "merge_resolution": "Retains load_width(name, width) from main and first-tree initialization/rollback; adapts test constructors, open and enter calls to integrated signatures.",
+  "check_timing": "fmt/unit/Clippy ran on the source bytes committed by the merge; upstream, PTY, input and navigation checks ran after that commit. Later commit adds only evidence and MIGRATION.md.",
+  "reference_files_unchanged": true,
+  "evidence_sha256": {
+    "migration/evidence/tree-paths/review-fix/clippy.log": "0b85439ac71927bd51b812c02742b517797e6f415276df18f112e022e40afb0a",
+    "migration/evidence/tree-paths/review-fix/diff-input.log": "2ba8bc60ef9829aef92cac7fa52a452e8cffdc02b0a7aba26867c04b603538c6",
+    "migration/evidence/tree-paths/review-fix/diff-navigation.json": "9260593bf519fe80c0354b20373b16df4295df66e725ea7908fd47acb094f305",
+    "migration/evidence/tree-paths/review-fix/external-cwd-paired.json": "1c5aabbcebe1842f445beac3f7dfc8285609b0902f804484445ecb6f9cb4fab4",
+    "migration/evidence/tree-paths/review-fix/fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "migration/evidence/tree-paths/review-fix/pty-red.json": "23c90c4e16fc669a525ca5db432a3619a1d36755e3892ad5f457ef76d85d4a0a",
+    "migration/evidence/tree-paths/review-fix/pty-red.log": "ac22fa295f7ab3fa17f61b8567359e84a76f0b9138332de5cb75455b94e9d11c",
+    "migration/evidence/tree-paths/review-fix/pty.json": "343c38d2bcb8f54ba0570db8332ed0d7a2e001e3d4b8cbbd15fec7b3e9b9c761",
+    "migration/evidence/tree-paths/review-fix/pty.log": "72dd3f2eea303b77ffa7e85ff51135ff709d4f0fe474ddb4aa387fb549752702",
+    "migration/evidence/tree-paths/review-fix/unit.log": "2c26e72d138de18f59f029425e4fbdb0fa9457f06c65c5de7bfa2853e92036a6",
+    "migration/evidence/tree-paths/review-fix/upstream.json": "76336f2b66ebcffa2853d848ded2807bc64411af3f5339344d97342be804c576",
+    "migration/evidence/tree-paths/review-fix/upstream.log": "77609c203fb0d26fbb91987fc837a451bd8cb687dfedf9440d8eaea9814a1936"
+  }
+}

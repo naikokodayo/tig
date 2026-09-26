@@ -1,0 +1,41 @@
+{
+  "source_commit": "be9ebd86ba16238dd66ff709e8d25b2e0e9dc9eb",
+  "scope": "C/Rust scripted PTY: absolute GIT_DIR and GIT_WORK_TREE; cwd outside worktree",
+  "runs": {
+    "c": {
+      "binary_sha256": "9b76f2e712590a2a824f2b88a0ad1275a23062f6f9d408b1aa3da4fb85ed3e50",
+      "screen": [
+        "Directory path /",
+        "-rw-r--r-- Test 8 2020-01-01 00:00 +0000 file",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "[tree] d95f3ad14dee633a758d2e331151e950dd13e4ed - file 1 of 1               100%"
+      ],
+      "exit_code": 0
+    },
+    "rust": {
+      "binary_sha256": "f2ab01b06f8563a208f74f5f110f45b78a8581cde312d838c311cfd667fe7a25",
+      "screen": [
+        "Directory path /",
+        "-rw-r--r-- Test 8 2020-01-01 00:00 +0000 file",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "[tree] d95f3ad14dee633a758d2e331151e950dd13e4ed - file 1 of 1               100%"
+      ],
+      "exit_code": 0
+    }
+  },
+  "passed": true
+}

@@ -1,0 +1,1838 @@
+{
+  "schema": 1,
+  "source_commit": "be9ebd86ba16238dd66ff709e8d25b2e0e9dc9eb",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "BLOCKED",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/diff/diff-context-test",
+          "script_sha256": "70d66cc7fbbace58b14cf4c12613de5bc00f084e3ed9d043e2b886daad275dd4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 10
+          },
+          "assertions": [
+            {
+              "id": "diff-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-default-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8-from-main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/diff-context-test/.test-result",
+          "receipt": "  [OK] diff-default.screen assertion\n  [OK] diff-u4.screen assertion\n  [OK] diff-u5.screen assertion\n  [OK] diff-u10.screen assertion\n  [OK] diff-u8.screen assertion\n  [OK] diff-default-from-main.screen assertion\n  [OK] diff-u10-from-main.screen assertion\n  [OK] diff-u4-from-main.screen assertion\n  [OK] diff-u5-from-main.screen assertion\n  [OK] diff-u8-from-main.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/diff-wdiff-context-test",
+          "script_sha256": "a494649318b6f871a86ba78525850005ac81104bfe7296dc27f7bfcfe477d88b",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 10
+          },
+          "assertions": [
+            {
+              "id": "diff-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-default-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8-from-main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/diff-wdiff-context-test/.test-result",
+          "receipt": "  [OK] diff-default.screen assertion\n  [OK] diff-u4.screen assertion\n  [OK] diff-u5.screen assertion\n  [OK] diff-u10.screen assertion\n  [OK] diff-u8.screen assertion\n  [OK] diff-default-from-main.screen assertion\n  [OK] diff-u10-from-main.screen assertion\n  [OK] diff-u4-from-main.screen assertion\n  [OK] diff-u5-from-main.screen assertion\n  [OK] diff-u8-from-main.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/editor-test",
+          "script_sha256": "2eb49eea8dacad57a98b5cf1c8b304e8bad7521eca40ca80261348e19c6e2434",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 15
+          },
+          "assertions": [
+            {
+              "id": "default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/editor-test/.test-result",
+          "receipt": "  [OK] default.screen assertion\n  [OK] default.stderr assertion\n  [OK] sub-directory.screen assertion\n  [OK] sub-directory.stderr assertion\n  [OK] sub-directory-diffstat.screen assertion\n  [OK] sub-directory-diffstat.stderr assertion\n  [OK] mnemonic.screen assertion\n  [OK] mnemonic.stderr assertion\n  [OK] noprefix.screen assertion\n  [OK] noprefix.stderr assertion\n  [OK] default-conflict.screen assertion\n  [OK] default-conflict.stderr assertion\n  [OK] noprefix-conflict.screen assertion\n  [OK] noprefix-conflict.stderr assertion\n  [OK] editor.log assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/submodule-editor-test",
+          "script_sha256": "2badbbefeed0ee5b02a987a6b48ffa93554d6d8a59d5d1dac61920b96b238a4b",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 16
+          },
+          "assertions": [
+            {
+              "id": "default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/submodule-editor-test/.test-result",
+          "receipt": "  [OK] default.screen assertion\n  [OK] default.stderr assertion\n  [OK] sub-directory.screen assertion\n  [OK] sub-directory.stderr assertion\n  [OK] sub-directory-diffstat.screen assertion\n  [OK] sub-directory-diffstat.stderr assertion\n  [OK] mnemonic.screen assertion\n  [OK] mnemonic.stderr assertion\n  [OK] noprefix.screen assertion\n  [OK] noprefix.stderr assertion\n  [OK] default-conflict.screen assertion\n  [OK] default-conflict.stderr assertion\n  [OK] noprefix-conflict.screen assertion\n  [OK] noprefix-conflict.stderr assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/worktree-editor-test",
+          "script_sha256": "9ef4bf6fcaae3012e39756792c16edf8541ad42a898909289927d2674d38c074",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 16
+          },
+          "assertions": [
+            {
+              "id": "default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/worktree-editor-test/.test-result",
+          "receipt": "  [OK] default.screen assertion\n  [OK] default.stderr assertion\n  [OK] sub-directory.screen assertion\n  [OK] sub-directory.stderr assertion\n  [OK] sub-directory-diffstat.screen assertion\n  [OK] sub-directory-diffstat.stderr assertion\n  [OK] mnemonic.screen assertion\n  [OK] mnemonic.stderr assertion\n  [OK] noprefix.screen assertion\n  [OK] noprefix.stderr assertion\n  [OK] default-conflict.screen assertion\n  [OK] default-conflict.stderr assertion\n  [OK] noprefix-conflict.screen assertion\n  [OK] noprefix-conflict.stderr assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/chdir-test",
+          "script_sha256": "168a6399b9f4b02774f284993da4e389a3af6fce8313b61975ef94eab47ad475",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "tree-top.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-one.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-two.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-three.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-seven.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cdup-depth-six.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cdup-depth-five.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cdup-depth-four.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/chdir-test/.test-result",
+          "receipt": "  [OK] tree-top.screen assertion\n  [OK] tree-cd-depth-one.screen assertion\n  [OK] tree-cd-depth-two.screen assertion\n  [OK] tree-cd-depth-three.screen assertion\n  [OK] tree-cd-depth-seven.screen assertion\n  [OK] tree-cdup-depth-six.screen assertion\n  [OK] tree-cdup-depth-five.screen assertion\n  [OK] tree-cdup-depth-four.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/default-test",
+          "script_sha256": "23e23dcb558030646b8df5455822274ce3ee201fc4c37f76a7109fcd264b93fa",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 7
+          },
+          "assertions": [
+            {
+              "id": "tree-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-author.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-file-size.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-mode.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-common.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-d8-stubs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/default-test/.test-result",
+          "receipt": "  [OK] tree-default.screen assertion\n  [OK] tree-default-author.screen assertion\n  [OK] tree-default-date.screen assertion\n  [OK] tree-default-file-size.screen assertion\n  [OK] tree-default-mode.screen assertion\n  [OK] tree-common.screen assertion\n  [OK] tree-d8-stubs.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/file-name-test",
+          "script_sha256": "92f13ad7be65e397e220fd1ceb9aa8effbcb873d7697b42a552d411506a18e35",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "root-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-child-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "second-child-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "second-child-dir-first-file.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/file-name-test/.test-result",
+          "receipt": "  [OK] root-dir.screen assertion\n  [OK] first-child-dir.screen assertion\n  [OK] second-child-dir.screen assertion\n  [OK] second-child-dir-first-file.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/recurse-test",
+          "script_sha256": "3b280320cafaf4628e2cec041cb12cfdc0eba41b09f6e6cf06fe8535c7792a8f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "tree-recurse.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/recurse-test/.test-result",
+          "receipt": "  [OK] tree-recurse.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/submodule-editor-test",
+          "script_sha256": "f7062c9c27baa6dbb67cde15e0779c5961664f66a01185d90dbc42bc1909c3e7",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench-common-src.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/submodule-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] bench-common-src.screen assertion\n  [OK] bench.screen assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/worktree-editor-test",
+          "script_sha256": "28bb4386d315ee6b2940ab8660152d21e66de48a909a986a4eb4f2ebc2951393",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench-common-src.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/worktree-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] bench-common-src.screen assertion\n  [OK] bench.screen assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths/src/tig",
+          "sha256": "9b76f2e712590a2a824f2b88a0ad1275a23062f6f9d408b1aa3da4fb85ed3e50"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 11
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths)\n    Finished `release` profile [optimized] target(s) in 33.20s\n",
+      "results": [
+        {
+          "script": "test/diff/diff-context-test",
+          "script_sha256": "70d66cc7fbbace58b14cf4c12613de5bc00f084e3ed9d043e2b886daad275dd4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 10
+          },
+          "assertions": [
+            {
+              "id": "diff-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-default-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8-from-main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/diff-context-test/.test-result",
+          "receipt": "  [OK] diff-default.screen assertion\n  [OK] diff-u4.screen assertion\n  [OK] diff-u5.screen assertion\n  [OK] diff-u10.screen assertion\n  [OK] diff-u8.screen assertion\n  [OK] diff-default-from-main.screen assertion\n  [OK] diff-u10-from-main.screen assertion\n  [OK] diff-u4-from-main.screen assertion\n  [OK] diff-u5-from-main.screen assertion\n  [OK] diff-u8-from-main.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/diff-wdiff-context-test",
+          "script_sha256": "a494649318b6f871a86ba78525850005ac81104bfe7296dc27f7bfcfe477d88b",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 10
+          },
+          "assertions": [
+            {
+              "id": "diff-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-default-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8-from-main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/diff-wdiff-context-test/.test-result",
+          "receipt": "  [OK] diff-default.screen assertion\n  [OK] diff-u4.screen assertion\n  [OK] diff-u5.screen assertion\n  [OK] diff-u10.screen assertion\n  [OK] diff-u8.screen assertion\n  [OK] diff-default-from-main.screen assertion\n  [OK] diff-u10-from-main.screen assertion\n  [OK] diff-u4-from-main.screen assertion\n  [OK] diff-u5-from-main.screen assertion\n  [OK] diff-u8-from-main.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/editor-test",
+          "script_sha256": "2eb49eea8dacad57a98b5cf1c8b304e8bad7521eca40ca80261348e19c6e2434",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 15
+          },
+          "assertions": [
+            {
+              "id": "default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/editor-test/.test-result",
+          "receipt": "  [OK] default.screen assertion\n  [OK] default.stderr assertion\n  [OK] sub-directory.screen assertion\n  [OK] sub-directory.stderr assertion\n  [OK] sub-directory-diffstat.screen assertion\n  [OK] sub-directory-diffstat.stderr assertion\n  [OK] mnemonic.screen assertion\n  [OK] mnemonic.stderr assertion\n  [OK] noprefix.screen assertion\n  [OK] noprefix.stderr assertion\n  [OK] default-conflict.screen assertion\n  [OK] default-conflict.stderr assertion\n  [OK] noprefix-conflict.screen assertion\n  [OK] noprefix-conflict.stderr assertion\n  [OK] editor.log assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/submodule-editor-test",
+          "script_sha256": "2badbbefeed0ee5b02a987a6b48ffa93554d6d8a59d5d1dac61920b96b238a4b",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 16
+          },
+          "assertions": [
+            {
+              "id": "default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/submodule-editor-test/.test-result",
+          "receipt": "  [OK] default.screen assertion\n  [OK] default.stderr assertion\n  [OK] sub-directory.screen assertion\n  [OK] sub-directory.stderr assertion\n  [OK] sub-directory-diffstat.screen assertion\n  [OK] sub-directory-diffstat.stderr assertion\n  [OK] mnemonic.screen assertion\n  [OK] mnemonic.stderr assertion\n  [OK] noprefix.screen assertion\n  [OK] noprefix.stderr assertion\n  [OK] default-conflict.screen assertion\n  [OK] default-conflict.stderr assertion\n  [OK] noprefix-conflict.screen assertion\n  [OK] noprefix-conflict.stderr assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/diff/worktree-editor-test",
+          "script_sha256": "9ef4bf6fcaae3012e39756792c16edf8541ad42a898909289927d2674d38c074",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 16
+          },
+          "assertions": [
+            {
+              "id": "default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "sub-directory-diffstat.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mnemonic.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "default-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "noprefix-conflict.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/worktree-editor-test/.test-result",
+          "receipt": "  [OK] default.screen assertion\n  [OK] default.stderr assertion\n  [OK] sub-directory.screen assertion\n  [OK] sub-directory.stderr assertion\n  [OK] sub-directory-diffstat.screen assertion\n  [OK] sub-directory-diffstat.stderr assertion\n  [OK] mnemonic.screen assertion\n  [OK] mnemonic.stderr assertion\n  [OK] noprefix.screen assertion\n  [OK] noprefix.stderr assertion\n  [OK] default-conflict.screen assertion\n  [OK] default-conflict.stderr assertion\n  [OK] noprefix-conflict.screen assertion\n  [OK] noprefix-conflict.stderr assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/chdir-test",
+          "script_sha256": "168a6399b9f4b02774f284993da4e389a3af6fce8313b61975ef94eab47ad475",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "tree-top.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-one.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-two.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-three.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-seven.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cdup-depth-six.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cdup-depth-five.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cdup-depth-four.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/chdir-test/.test-result",
+          "receipt": "  [OK] tree-top.screen assertion\n  [OK] tree-cd-depth-one.screen assertion\n  [OK] tree-cd-depth-two.screen assertion\n  [OK] tree-cd-depth-three.screen assertion\n  [OK] tree-cd-depth-seven.screen assertion\n  [OK] tree-cdup-depth-six.screen assertion\n  [OK] tree-cdup-depth-five.screen assertion\n  [OK] tree-cdup-depth-four.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/default-test",
+          "script_sha256": "23e23dcb558030646b8df5455822274ce3ee201fc4c37f76a7109fcd264b93fa",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 7
+          },
+          "assertions": [
+            {
+              "id": "tree-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-author.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-file-size.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-mode.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-common.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-d8-stubs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/default-test/.test-result",
+          "receipt": "  [OK] tree-default.screen assertion\n  [OK] tree-default-author.screen assertion\n  [OK] tree-default-date.screen assertion\n  [OK] tree-default-file-size.screen assertion\n  [OK] tree-default-mode.screen assertion\n  [OK] tree-common.screen assertion\n  [OK] tree-d8-stubs.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/file-name-test",
+          "script_sha256": "92f13ad7be65e397e220fd1ceb9aa8effbcb873d7697b42a552d411506a18e35",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 3,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "root-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-child-dir.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "second-child-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "second-child-dir-first-file.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/file-name-test/.test-result",
+          "receipt": "  [OK] root-dir.screen assertion\n[FAIL] first-child-dir.screen != expected/first-child-dir.screen\n\u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\n\u001b[1mindex 0a482af..53d6b42 100644\u001b[m\n\u001b[1m--- a/expected/first-child-dir.screen\u001b[m\n\u001b[1m+++ b/first-child-dir.screen\u001b[m\n\u001b[36m@@ -1,7 +1,7 @@\u001b[m\n Directory path /-- foo bar/\u001b[m\n drwxr-xr-x                                    ..\u001b[m\n -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\n\u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n  [OK] second-child-dir.screen assertion\n  [OK] second-child-dir-first-file.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 4 test(s)\r\n|   [OK] root-dir.screen assertion\r\n| [FAIL] first-child-dir.screen != expected/first-child-dir.screen\r\n| \u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\r\n| \u001b[1mindex 0a482af..53d6b42 100644\u001b[m\r\n| \u001b[1m--- a/expected/first-child-dir.screen\u001b[m\r\n| \u001b[1m+++ b/first-child-dir.screen\u001b[m\r\n| \u001b[36m@@ -1,7 +1,7 @@\u001b[m\r\n|  Directory path /-- foo bar/\u001b[m\r\n|  drwxr-xr-x                                    ..\u001b[m\r\n|  -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\r\n| \u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|   [OK] second-child-dir.screen assertion\r\n|   [OK] second-child-dir-first-file.screen assertion\r\n"
+        },
+        {
+          "script": "test/tree/recurse-test",
+          "script_sha256": "3b280320cafaf4628e2cec041cb12cfdc0eba41b09f6e6cf06fe8535c7792a8f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "tree-recurse.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/recurse-test/.test-result",
+          "receipt": "  [OK] tree-recurse.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/submodule-editor-test",
+          "script_sha256": "f7062c9c27baa6dbb67cde15e0779c5961664f66a01185d90dbc42bc1909c3e7",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench-common-src.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/submodule-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] bench-common-src.screen assertion\n  [OK] bench.screen assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/worktree-editor-test",
+          "script_sha256": "28bb4386d315ee6b2940ab8660152d21e66de48a909a986a4eb4f2ebc2951393",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench-common-src.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/worktree-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] bench-common-src.screen assertion\n  [OK] bench.screen assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths/target/release/tig",
+          "sha256": "f2ab01b06f8563a208f74f5f110f45b78a8581cde312d838c311cfd667fe7a25"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tree-paths/target/release/test-graph",
+          "sha256": "b72ed6263bb60b8185d94e4faeb6289382a6af5dea1544ac88286137b1445078"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 10,
+        "fail": 1
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/diff/diff-context-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "diff-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u4.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u5.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u10.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u8.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-default-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u10-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u4-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u5-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u8-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/diff-wdiff-context-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "diff-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u4.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u5.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u10.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u8.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-default-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u10-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u4-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u5-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u8-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/editor-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "default.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory-diffstat.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory-diffstat.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "mnemonic.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "mnemonic.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "default-conflict.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "default-conflict.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix-conflict.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix-conflict.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "editor.log#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/submodule-editor-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "default.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory-diffstat.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory-diffstat.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "mnemonic.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "mnemonic.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "default-conflict.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "default-conflict.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix-conflict.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix-conflict.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "editor.log#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "exec-env#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/worktree-editor-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "default.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory-diffstat.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "sub-directory-diffstat.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "mnemonic.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "mnemonic.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "default-conflict.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "default-conflict.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix-conflict.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "noprefix-conflict.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "editor.log#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "exec-env#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/chdir-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "tree-top.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-cd-depth-one.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-cd-depth-two.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-cd-depth-three.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-cd-depth-seven.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-cdup-depth-six.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-cdup-depth-five.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-cdup-depth-four.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/default-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "tree-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-default-author.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-default-date.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-default-file-size.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-default-mode.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-common.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-d8-stubs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/file-name-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "root-dir.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "first-child-dir.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "second-child-dir.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "second-child-dir-first-file.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/recurse-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "tree-recurse.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/submodule-editor-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bench-common-src.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bench.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "editor.log#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "exec-env#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/worktree-editor-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bench-common-src.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bench.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "editor.log#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "exec-env#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ]
+}

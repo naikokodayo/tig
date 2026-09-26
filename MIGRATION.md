@@ -661,3 +661,29 @@ and [original-script receipt](migration/evidence/diff-render-review-upstream.jso
 Reproduce the new paired check with `python3 rust/tests/diff-navigation.py`
 after building both C and Rust binaries. Original C/tests and dependencies are
 unchanged relative to the integrated main; first-party Rust still forbids unsafe.
+
+### Tree review fix: explicit worktree outside the invocation directory
+
+Review reproduced `prefix not found` when `GIT_DIR` and `GIT_WORK_TREE` point
+to a valid repository but the process cwd is outside its worktree. The previous
+filesystem-prefix assumption is replaced with `git rev-parse --show-prefix`
+executed in the discovery directory. Git supplies the empty prefix for this
+case. Nonempty paths still require repository-relative normal components;
+component collection removes Git's trailing separator without decoding filename
+bytes. The discovery directory is private again. First-open/failed-load behavior
+is retained.
+
+Merged main `297e1787` (PR #12) into the published branch. The open-view conflict
+preserves main's requested rendering width and this branch's directory
+initialization; both migration records remain intact. At integrated source
+`be9ebd86ba16238dd66ff709e8d25b2e0e9dc9eb`, fmt, **73 Rust tests**, Clippy with
+warnings denied, **139 PTY checks**, **8 paired diff navigation comparisons**
+and **6 diff input checks** pass. The new real-environment PTY case failed on
+the previous binary and passes now; a separate C/Rust scripted PTY comparison
+produces identical root-tree screens from an external cwd.
+
+The 11 unchanged original tree/diff scripts pass **99/99 C assertions** and
+**98/99 Rust assertions**. The sole remaining difference is the previously
+recorded Unicode filename screen; the parity gate remains OPEN. No full suite
+or benchmark was run. Updated source/binary hashes, negative regression and
+all focused evidence are in the [review-fix receipt](migration/evidence/tree-paths/review-fix/receipt.json).
