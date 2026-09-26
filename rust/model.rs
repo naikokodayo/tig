@@ -66,6 +66,8 @@ pub struct BlameLine {
     pub committer_tz: String,
     /// Path at the blamed commit; never an implicit worktree edit target.
     pub filename: PathBuf,
+    /// Previous commit and path reported by Git, including renames.
+    pub previous: Option<(String, PathBuf)>,
     pub summary: String,
     pub text: String,
 }

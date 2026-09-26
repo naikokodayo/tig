@@ -335,6 +335,7 @@ struct View {
     revision: String,
     path: PathBuf,
     staged: bool,
+    diff_base: Option<String>,
     untracked: bool,
     raw_patch: Vec<u8>,
     from_stdin: bool,
@@ -355,6 +356,7 @@ impl View {
             revision: "HEAD".into(),
             path: PathBuf::new(),
             staged: false,
+            diff_base: None,
             untracked: false,
             raw_patch: Vec::new(),
             from_stdin: false,
@@ -597,7 +599,8 @@ impl App {
                 }
             }
             "blame" => {
-                let blame = repo.blame(Some(&self.revision), &self.path)?;
+                let lower_bound = self.args.iter().find_map(|arg| arg.strip_prefix('^'));
+                let blame = repo.blame(Some(&self.revision), &self.path, lower_bound)?;
                 for (row, line) in tig_rs::render::render_blame(&self.config, &blame, self.width)?
                     .into_iter()
                     .zip(blame)
@@ -607,12 +610,44 @@ impl App {
             }
             "diff" => {
                 let oid = repo.revision(&self.revision)?;
+                let diff_base = if self.view.name == "stash" {
+                    Some(repo.revision(&format!("{oid}^"))?)
+                } else if self.view.name == "diff" {
+                    self.view.diff_base.clone()
+                } else {
+                    None
+                };
+                if let Some(base) = &diff_base {
+                    let text = repo.command([
+                        "diff",
+                        "--no-ext-diff",
+                        "--no-textconv",
+                        "--stat",
+                        "--patch",
+                        &format!("-U{}", self.config.usize_value("diff-context", 3)),
+                        if self.config.bool_value("word-diff", false) {
+                            "--word-diff=plain"
+                        } else {
+                            "--word-diff=none"
+                        },
+                        base,
+                        &oid,
+                        "--",
+                    ])?;
+                    let mut view = View::text(name, &String::from_utf8_lossy(&text));
+                    view.revision = oid;
+                    view.diff_base = diff_base;
+                    return Ok(view);
+                }
                 let mut view = View::text(
                     name,
                     &repo.show(
                         &oid,
                         self.config.usize_value("diff-context", 3),
                         self.config.bool_value("word-diff", false),
+                        (self.config.bool_value("file-filter", true)
+                            && !self.path.as_os_str().is_empty())
+                        .then_some(self.path.as_path()),
                     )?,
                 );
                 view.revision = oid.clone();
@@ -794,14 +829,17 @@ impl App {
                     v.push(row, Item::Grep(hit));
                 }
             }
-            "reflog" | "stash" => {
+            "stash" => {
+                let output = repo.command(["stash", "list", "--format=%H %gd: %gs"])?;
+                for row in String::from_utf8_lossy(&output).lines() {
+                    if let Some((oid, label)) = row.split_once(' ') {
+                        v.push(label.into(), Item::Ref(oid.into(), None));
+                    }
+                }
+            }
+            "reflog" => {
                 let mut args = vec![name.to_string()];
-                if name == "stash" {
-                    args.push("list".into());
-                }
-                if name != "stash" {
-                    args.push("--no-color".into());
-                }
+                args.push("--no-color".into());
                 args.extend(self.args.clone());
                 return Ok(View::text(
                     name,
@@ -958,6 +996,108 @@ impl App {
             Item::Text => (),
         }
     }
+    fn blame_forward(&mut self, parent: bool) -> Result<()> {
+        let Item::Blame(line) = self.selected() else {
+            return Ok(());
+        };
+        let (revision, path, selected) = if parent {
+            let Some((revision, path)) = &line.previous else {
+                self.message = "The selected commit has no parents with this file".into();
+                return Ok(());
+            };
+            let mut from = OsString::from(format!("{revision}:"));
+            from.push(path);
+            let mut to = OsString::from(format!("{}:", line.oid));
+            to.push(&line.filename);
+            let patch = self.repo()?.command(vec![
+                "diff".into(),
+                "--no-ext-diff".into(),
+                "--no-textconv".into(),
+                "--no-color".into(),
+                "-U0".into(),
+                from,
+                to,
+                "--".into(),
+            ])?;
+            let mut old_line = None;
+            let mut new_line = 0;
+            let mut selected = self.view.selected;
+            for row in String::from_utf8_lossy(&patch).lines() {
+                if row.starts_with("@@ ") {
+                    old_line = diff_hunk_line(row, '-');
+                    new_line = diff_hunk_line(row, '+').unwrap_or(0);
+                } else if let (Some(old_line), Some(text)) = (old_line, row.strip_prefix('+')) {
+                    if new_line == line.original_line && text == line.text {
+                        selected = old_line.saturating_sub(1);
+                        break;
+                    }
+                    new_line += 1;
+                }
+            }
+            (revision.clone(), path.clone(), selected)
+        } else {
+            if line.oid.bytes().all(|byte| byte == b'0') {
+                self.message = "No commit exists for the selected line".into();
+                return Ok(());
+            }
+            (
+                line.oid,
+                line.filename,
+                line.original_line.saturating_sub(1),
+            )
+        };
+        if revision == self.view.revision && path == self.view.path {
+            self.message = "The selected commit is already displayed".into();
+            return Ok(());
+        }
+        let top = self.view.top;
+        self.revision = revision;
+        self.path = path;
+        self.open("blame")?;
+        self.view.selected = selected.min(self.view.rows.len().saturating_sub(1));
+        self.view.top = top;
+        self.center_selection();
+        Ok(())
+    }
+    fn trace_blame(&mut self) -> Result<()> {
+        let selected = self.view.selected;
+        let row = self
+            .view
+            .rows
+            .get(selected)
+            .ok_or("No selected diff line")?;
+        let old = row.starts_with('-') && !row.starts_with("--- ");
+        let hunk = self.view.rows[..=selected]
+            .iter()
+            .rfind(|row| row.starts_with("@@"));
+        if row.starts_with("@@") || !hunk.is_some_and(|row| row.starts_with("@@ ")) {
+            return Err("The line to trace must be inside an ordinary diff chunk".into());
+        }
+        let (path, number) =
+            diff_target(&self.view.rows, selected, old).ok_or("No file and line to blame")?;
+        let revision = self.view.rows[..=selected]
+            .iter()
+            .rev()
+            .find_map(|row| row.strip_prefix("commit "))
+            .unwrap_or(&self.view.revision);
+        let revision = if old {
+            format!("{revision}^")
+        } else {
+            revision.to_owned()
+        };
+        let origin = self
+            .repo()?
+            .blame(Some(&revision), &path, None)?
+            .into_iter()
+            .find(|line| line.line == number)
+            .ok_or("No blame for selected line")?;
+        self.revision = origin.oid;
+        self.path = origin.filename;
+        self.open("blame")?;
+        self.view.selected = origin.original_line.saturating_sub(1);
+        self.center_selection();
+        Ok(())
+    }
     fn tree_parent(&mut self) -> Result<()> {
         let old = self.view.path.clone();
         if let Some(parent) = old.parent() {
@@ -1028,7 +1168,24 @@ impl App {
             }
             Item::Blame(line) => {
                 self.revision = line.oid;
+                self.path = line.filename.clone();
                 self.open("diff")?;
+                let start = self
+                    .view
+                    .rows
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, row)| row.starts_with("diff --git "))
+                    .find_map(|(index, _)| {
+                        (diff_edit_target(&self.view.rows, index)
+                            == Some((line.filename.clone(), 0)))
+                        .then_some(index)
+                    });
+                if let Some(selected) =
+                    start.and_then(|start| diff_line_at(&self.view.rows, start, line.original_line))
+                {
+                    self.view.selected = selected;
+                }
             }
             Item::Text if self.view.name == "refs" && self.view.selected == 0 => {
                 self.args = vec!["--all".into()];
@@ -1118,7 +1275,7 @@ impl App {
             self.other = Some(parent);
             self.split = true;
             self.parent_focused = false;
-            if from_grep {
+            if from_grep || self.other.as_ref().is_some_and(|view| view.name == "blame") {
                 self.center_selection();
             }
         }
@@ -1399,8 +1556,12 @@ impl App {
             self.find(false);
             return Ok(true);
         }
-        if !action.is_empty() && action.bytes().all(|byte| byte.is_ascii_digit()) {
-            return self.action(&format!("goto {action}"));
+        if let Some(number) = action
+            .split_whitespace()
+            .next()
+            .filter(|word| word.bytes().all(|byte| byte.is_ascii_digit()))
+        {
+            return self.action(&format!("goto {number}"));
         }
         if let Some(target) = action.strip_prefix("goto ") {
             if let Ok(line) = target.parse::<usize>() {
@@ -1443,9 +1604,8 @@ impl App {
                     self.split = false;
                     self.parent_focused = false;
                 } else if let Some(v) = self.previous.pop() {
-                    self.revision = v.revision.clone();
-                    self.path = v.path.clone();
                     self.view = v;
+                    self.sync_context();
                 } else {
                     return Ok(false);
                 }
@@ -1480,8 +1640,34 @@ impl App {
             "move-half-page-up" => self.view.move_by(-page / 2),
             "move-first-line" => self.view.selected = 0,
             "move-last-line" => self.view.selected = self.view.rows.len().saturating_sub(1),
-            "scroll-left" => self.view.left = self.view.left.saturating_sub(8),
-            "scroll-right" => self.view.left = self.view.left.saturating_add(8),
+            "scroll-left" | "scroll-right" => {
+                let width = if self.split && self.other.is_some() {
+                    let (vertical, parent, child) = self.pane_sizes();
+                    if vertical {
+                        if self.parent_focused {
+                            parent
+                        } else {
+                            child
+                        }
+                    } else {
+                        self.width
+                    }
+                } else {
+                    self.width
+                };
+                let option = self.config.value("horizontal-scroll").unwrap_or("50%");
+                let step = if let Some(percent) = option.strip_suffix('%') {
+                    width.saturating_mul(percent.parse::<usize>().unwrap_or(50)) / 100
+                } else {
+                    option.parse().unwrap_or(8)
+                }
+                .max(1);
+                self.view.left = if action == "scroll-left" {
+                    self.view.left.saturating_sub(step)
+                } else {
+                    self.view.left.saturating_add(step)
+                };
+            }
             "scroll-first-col" => self.view.left = 0,
             "scroll-line-down" | "scroll-line-up" => {
                 let max_top = self.view.rows.len().saturating_sub(page as usize);
@@ -1660,6 +1846,11 @@ impl App {
             }
             "show-version" => self.message = format!("tig-rs {}", env!("CARGO_PKG_VERSION")),
             "parent" if self.view.name == "tree" => self.tree_parent()?,
+            "parent" if self.view.name == "blame" => self.blame_forward(true)?,
+            "view-blame" if self.view.name == "blame" => self.blame_forward(false)?,
+            "view-blame" if matches!(self.view.name.as_str(), "diff" | "log" | "pager") => {
+                self.trace_blame()?
+            }
             "screen-redraw" => (),
             "view-diff" if self.view.name == "stage" => self.split = false,
             "view-stage" if matches!(self.view.name.as_str(), "main" | "status") => {
@@ -1928,6 +2119,10 @@ fn diff_reloaded_line(old: &View, rows: &[String]) -> Option<usize> {
         return None;
     }
     let start = rows.iter().position(|row| row == header)?;
+    diff_line_at(rows, start, target)
+}
+
+fn diff_line_at(rows: &[String], start: usize, target: usize) -> Option<usize> {
     let mut line = None;
     for (index, row) in rows.iter().enumerate().skip(start + 1) {
         if row.starts_with("diff ") {
@@ -1948,9 +2143,13 @@ fn diff_reloaded_line(old: &View, rows: &[String]) -> Option<usize> {
 }
 
 fn diff_hunk_start(row: &str) -> Option<usize> {
+    diff_hunk_line(row, '+')
+}
+
+fn diff_hunk_line(row: &str, marker: char) -> Option<usize> {
     row.split_whitespace()
-        .find(|field| field.starts_with('+'))?
-        .trim_start_matches('+')
+        .find(|field| field.starts_with(marker))?
+        .trim_start_matches(marker)
         .split(',')
         .next()?
         .parse()
@@ -1958,6 +2157,10 @@ fn diff_hunk_start(row: &str) -> Option<usize> {
 }
 
 fn diff_edit_target(rows: &[String], selected: usize) -> Option<(PathBuf, usize)> {
+    diff_target(rows, selected, false)
+}
+
+fn diff_target(rows: &[String], selected: usize, old_side: bool) -> Option<(PathBuf, usize)> {
     rows.get(selected)?;
     let is_header = |line: &str| {
         line.starts_with("diff --git ")
@@ -2005,19 +2208,32 @@ fn diff_edit_target(rows: &[String], selected: usize) -> Option<(PathBuf, usize)
         .position(|line| is_header(line))
         .map_or(rows.len(), |index| header + 1 + index);
     let patch = &rows[header + 1..end];
-    let path = if let Some(file) = patch
-        .iter()
-        .find_map(|line| line.strip_prefix("rename to "))
-    {
+    let path = if let Some(file) = patch.iter().find_map(|line| {
+        line.strip_prefix(if old_side {
+            "rename from "
+        } else {
+            "rename to "
+        })
+    }) {
         git_patch_path(file)?
     } else {
-        let file = patch.iter().find_map(|line| line.strip_prefix("+++ "))?;
+        let file = patch
+            .iter()
+            .find_map(|line| line.strip_prefix(if old_side { "--- " } else { "+++ " }))?;
         if file == "/dev/null" {
             return None;
         }
         let path = git_patch_path(file)?;
         let old = &rows[header];
-        let prefix = if (old.starts_with("diff --git a/") || old.starts_with("diff --git \"a/"))
+        let prefix = if old_side {
+            // Require the complete pair: an unprefixed file named a/file
+            // must never be mistaken for the different repository path file.
+            [("a", "b"), ("i", "w")].into_iter().find_map(|(from, to)| {
+                let (quote, raw) = file.strip_prefix('"').map_or(("", file), |raw| ("\"", raw));
+                let suffix = raw.strip_prefix(&format!("{from}/"))?;
+                (old == &format!("diff --git {file} {quote}{to}/{suffix}")).then_some(from)
+            })
+        } else if (old.starts_with("diff --git a/") || old.starts_with("diff --git \"a/"))
             && path.starts_with("b/")
         {
             Some("b")
@@ -2054,12 +2270,14 @@ fn diff_edit_target(rows: &[String], selected: usize) -> Option<(PathBuf, usize)
     let Some(hunk) = hunk else {
         return Some((path, 0));
     };
-    let start = diff_hunk_start(&rows[hunk])?;
+    let start = diff_hunk_line(&rows[hunk], if old_side { '-' } else { '+' })?;
     let preceding = rows
         .get(hunk + 1..selected)
         .unwrap_or(&[])
         .iter()
-        .filter(|line| !line.starts_with('-') && !line.starts_with('\\'))
+        .filter(|line| {
+            !line.starts_with(if old_side { '+' } else { '-' }) && !line.starts_with('\\')
+        })
         .count();
     Some((path, start + preceding))
 }
@@ -2070,7 +2288,9 @@ fn git_patch_path(raw: &str) -> Option<PathBuf> {
 
 #[cfg(test)]
 mod editor_tests {
-    use super::{diff_edit_target, git_patch_path, stage_stat_header, App, Config, Item, View};
+    use super::{
+        diff_edit_target, diff_target, git_patch_path, stage_stat_header, App, Config, Item, View,
+    };
     use std::path::PathBuf;
 
     #[test]
@@ -2104,6 +2324,59 @@ mod editor_tests {
             ..line
         });
         assert_eq!(app.edit_target(), Some((PathBuf::from("new/file"), 1)));
+    }
+
+    #[test]
+    fn deleted_diff_line_uses_old_path_and_old_hunk_count() {
+        let rows: Vec<String> = [
+            "diff --git a/old b/new",
+            "rename from old",
+            "rename to new",
+            "--- a/old",
+            "+++ b/new",
+            "@@ -9,2 +12,3 @@",
+            "+inserted",
+            " context",
+            "-deleted",
+            "+replacement",
+        ]
+        .into_iter()
+        .map(str::to_owned)
+        .collect();
+        assert_eq!(
+            diff_target(&rows, 8, true),
+            Some((PathBuf::from("old"), 10))
+        );
+        assert_eq!(diff_edit_target(&rows, 9), Some((PathBuf::from("new"), 14)));
+        let rows: Vec<String> = [
+            "diff --git a/removed b/removed",
+            "--- a/removed",
+            "+++ /dev/null",
+            "@@ -1 +0,0 @@",
+            "-deleted",
+        ]
+        .into_iter()
+        .map(str::to_owned)
+        .collect();
+        assert_eq!(
+            diff_target(&rows, 4, true),
+            Some((PathBuf::from("removed"), 1))
+        );
+        assert_eq!(diff_edit_target(&rows, 4), None);
+        let rows: Vec<String> = [
+            "diff --git a/file a/file",
+            "--- a/file",
+            "+++ /dev/null",
+            "@@ -1 +0,0 @@",
+            "-deleted",
+        ]
+        .into_iter()
+        .map(str::to_owned)
+        .collect();
+        assert_eq!(
+            diff_target(&rows, 4, true),
+            Some((PathBuf::from("a/file"), 1))
+        );
     }
 
     #[test]
@@ -2743,8 +3016,23 @@ fn run() -> Result<()> {
             if app.args.len() > 1 || app.args.first().is_some_and(|arg| arg.starts_with('-')) {
                 return Err("Rust blame currently supports [revision] -- path only".into());
             }
-            if let Some(rev) = app.args.first() {
-                app.revision = rev.clone();
+            if let Some(rev) = app.args.first().cloned() {
+                if let Some((lower, upper)) = rev.split_once("..") {
+                    if upper.starts_with('.') {
+                        return Err("Blame requires a two-dot revision range".into());
+                    }
+                    app.revision =
+                        app.repo()?
+                            .revision(if upper.is_empty() { "HEAD" } else { upper })?;
+                    app.args = vec![format!(
+                        "^{}",
+                        app.repo()?
+                            .revision(if lower.is_empty() { "HEAD" } else { lower })?
+                    )];
+                } else {
+                    app.revision = rev;
+                    app.args.clear();
+                }
             }
             if let Some(repo) = &app.repo {
                 let cwd = env::current_dir()?;
