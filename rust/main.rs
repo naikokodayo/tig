@@ -1663,10 +1663,16 @@ impl App {
                     self.width
                 };
                 let option = self.config.value("horizontal-scroll").unwrap_or("50%");
-                let step = if let Some(percent) = option.strip_suffix('%') {
-                    width.saturating_mul(percent.parse::<usize>().unwrap_or(50)) / 100
+                // C parse_step uses the leading integer, even for decimal values.
+                let amount = option
+                    .split(['.', 'e', 'E', '%'])
+                    .next()
+                    .and_then(|number| number.parse::<usize>().ok())
+                    .unwrap_or(0);
+                let step = if option.ends_with('%') {
+                    width.saturating_mul(amount) / 100
                 } else {
-                    option.parse().unwrap_or(8)
+                    amount
                 }
                 .max(1);
                 self.view.left = if action == "scroll-left" {
@@ -3744,6 +3750,16 @@ mod tests {
         let lines = pane_screen(&mut app.view, &app.config, 30, 2);
         assert!(lines[2].ends_with("100%"));
         assert_eq!(cell_width(&lines[2]), 30);
+        for (option, expected) in [("50%", 40), ("12.5%", 9), ("3.5", 3), ("1e1", 1), ("0", 1)] {
+            app.config
+                .settings
+                .insert("horizontal-scroll".into(), vec![option.into()]);
+            app.view.left = 0;
+            app.action("scroll-right").unwrap();
+            assert_eq!(app.view.left, expected, "{option}");
+            app.action("scroll-left").unwrap();
+            assert_eq!(app.view.left, 0);
+        }
     }
     #[test]
     fn terminal_content_is_safe_and_cell_clipped() {
