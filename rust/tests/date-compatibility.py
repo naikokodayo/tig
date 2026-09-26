@@ -36,6 +36,11 @@ with tempfile.TemporaryDirectory(prefix='tig-date-') as temporary:
     custom = 'set main-view-date = custom\nset main-view-date-format = "%F %T %z %Z"\n'
     local = custom + 'set main-view-date-local = yes\n'
     cases = [
+        ('0 +0000', '', '', {}),
+        ('0 +0000', local, '', {'TZ': 'America/New_York'}),
+        ('0 +0000', 'set main-view-date = relative\n', '', {}),
+        ('-32400 +0900', custom, '', {}),
+        ('0 +0900', '', '1970-01-01 09:00 +0900', {}),
         ('1710053999 +0000', local, '2024-03-10 01:59:59 -0500 EST', {'TZ': 'America/New_York'}),
         ('1710054000 +0000', local, '2024-03-10 03:00:00 -0400 EDT', {'TZ': 'America/New_York'}),
         ('1710054000 +0000', local, '2024-03-10 03:00:00 -0400 EDT', {'TZ': 'EST5EDT,M3.2.0,M11.1.0'}),

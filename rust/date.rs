@@ -114,6 +114,11 @@ pub fn format(
 ) -> Result<String, String> {
     let date = DateTime::parse_from_rfc3339(iso)
         .map_err(|error| format!("Invalid ISO 8601 commit date {iso:?}: {error}"))?;
+    // C stores the commit's wall time in time->sec and treats zero as absent.
+    // Preserve the valid instant/offset; only suppress its displayed date.
+    if date.naive_local().and_utc().timestamp() == 0 {
+        return Ok(String::new());
+    }
     if matches!(display, "relative" | "relative-compact") {
         return Ok(relative(
             date.timestamp(),

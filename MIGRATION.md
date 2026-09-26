@@ -388,3 +388,29 @@ PR #1 diff-context scripts additionally pass **20/20**, for **47/47** focused
 assertions and zero failures. See [`date-sync.json`](migration/evidence/date-sync.json)
 and its checks/focused logs for the new binary hash. Earlier date receipts
 remain historical. The full upstream suite was not rerun.
+
+### Date slice sync with PR #2 and zero-date review fix
+
+Merged fork main `3e8f4b8e`; the only text conflict combined both appended
+migration records. Configuration parsing/diagnostics and date toggles retain
+both slices' behavior. The review's Unix-zero display regression first failed,
+then passed with a display-only guard matching C `time->sec == 0`. This field
+is commit wall time, so raw `0 +0000` and `-32400 +0900` display no date, while
+`0 +0900` remains `1970-01-01 09:00 +0900`. Parsing still accepts valid Unix zero.
+Five equivalent C binary probes confirm these display cases.
+
+Rust 1.81 fmt, **64 unit tests**, Clippy with warnings denied, release build,
+**20 isolated date/argument checks**, and **108 PTY checks** pass. Twelve original
+focused scripts pass **69/69** assertions (main/date-related 27, diff-context 20,
+configuration 22). The additional original quote-test remains **1 pass / 6 failures**;
+its receipt exactly matches PR #2's saved record. This is **70 passes / 6 failures**
+across all 13 scripts actually run, not an all-green suite. The full upstream
+suite was not rerun. See [`date-config-sync.json`](migration/evidence/date-config-sync.json)
+and its focused/check logs for the final binary and exact scope.
+
+Performance limitation: every local/locale date still starts one system `date`
+process, including repeated redraws. Large histories may therefore block the UI;
+there is no cache, batching, or large-history performance claim. The zero-date
+guard avoids a process for the sentinel, but is a compatibility fix, not a general
+performance optimization. Measure representative histories before adding a
+bounded cache or batching while preserving TZ/locale semantics.

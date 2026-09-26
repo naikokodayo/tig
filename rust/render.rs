@@ -491,6 +491,30 @@ mod tests {
         assert_eq!(clip("e\u{301}界", 1), "e\u{301}");
     }
     #[test]
+    fn zero_wall_time_is_blank_without_rejecting_unix_zero() {
+        let epoch = crate::date::raw("0 +0000").unwrap();
+        assert_eq!(epoch, "1970-01-01T00:00:00+00:00");
+        let shifted_epoch = crate::date::raw("-32400 +0900").unwrap();
+        for mode in ["default", "custom", "relative", "relative-compact"] {
+            for local in ["yes", "no"] {
+                let spec = format!("date:{mode},local={local},format=%F");
+                let column = Column::parse(&spec).unwrap();
+                assert_eq!(date(&epoch, &column).unwrap(), "", "{spec}");
+                assert_eq!(date(&shifted_epoch, &column).unwrap(), "", "{spec}");
+            }
+        }
+        let column = Column::parse("date:default").unwrap();
+        assert_eq!(
+            date(&crate::date::raw("0 +0900").unwrap(), &column).unwrap(),
+            "1970-01-01 09:00 +0900"
+        );
+        assert_eq!(
+            date(&crate::date::raw("-1 +0000").unwrap(), &column).unwrap(),
+            "1969-12-31 23:59 +0000"
+        );
+    }
+
+    #[test]
     fn dates_email_and_overrides() {
         let mut config = Config::defaults();
         config.parse(

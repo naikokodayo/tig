@@ -1,0 +1,102 @@
+{
+  "merged_main": "3e8f4b8e93ce3603a2c71dc92f1f576365eff84f",
+  "merge_commit": "2992c65b671f0e167aceda331becd543dadd375e",
+  "binary_sha256": "00f23de06fea450331af5fd79c4d0a15212fe7d8b3ac4257db6aaeacd73123a0",
+  "tests": [
+    {
+      "script": "test/main/date-test",
+      "passed": 8,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/pretty-raw-test",
+      "passed": 1,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/default-test",
+      "passed": 6,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/show-changes-test",
+      "passed": 9,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/show-changes-after-rename-test",
+      "passed": 1,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/main/update-unstaged-changes-test",
+      "passed": 2,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/diff/diff-context-test",
+      "passed": 10,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/diff/diff-wdiff-context-test",
+      "passed": 10,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/tigrc/source-test",
+      "passed": 10,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/tigrc/parse-test",
+      "passed": 2,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/tigrc/env-vars-test",
+      "passed": 2,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/tigrc/xdg-config-home-test",
+      "passed": 8,
+      "failed": 0,
+      "exit_code": 0
+    },
+    {
+      "script": "test/tigrc/quote-test",
+      "passed": 1,
+      "failed": 6,
+      "exit_code": 0
+    }
+  ],
+  "environment": "macOS arm64; Rust 1.81.0",
+  "verification": {
+    "fmt": true,
+    "unit_tests_passed": 64,
+    "unit_tests_failed": 0,
+    "clippy_warnings_denied": true,
+    "release_build": true,
+    "date_subprocess_checks_passed": 20,
+    "date_subprocess_checks_skipped": 0,
+    "original_c_zero_date_checks_passed": 5,
+    "terminal_checks_passed": 108
+  },
+  "review_fix": "C time->sec is wall-time seconds: suppress zero only at display, keeping Unix zero valid; raw 0 +0900 still displays. Display regression failed before fix.",
+  "quote_test": "1 pass, 6 failures; receipt compared byte-for-byte by lines with merged config-compat.json, unchanged",
+  "performance_limit": "Local/locale formatting starts one GNU/BSD date subprocess per rendered value on each redraw; O(n) process starts, no cache or large-history performance claim. Zero sentinel returns before launching a process.",
+  "original_tests_unchanged": true,
+  "full_suite_rerun": false
+}
