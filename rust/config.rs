@@ -22,6 +22,10 @@ pub struct Config {
 /// Split a config/prompt line without a shell, retaining empty quoted arguments.
 /// Backslashes outside quotes are literal (notably the stage split binding).
 pub fn words(line: &str) -> Result<Vec<String>, String> {
+    split_words(line, false)
+}
+
+fn split_words(line: &str, allow_unclosed: bool) -> Result<Vec<String>, String> {
     let mut result = Vec::new();
     let mut word = String::new();
     let mut quote = None;
@@ -32,7 +36,11 @@ pub fn words(line: &str) -> Result<Vec<String>, String> {
             if c == q {
                 quote = None;
             } else if c == '\\' {
-                word.push(chars.next().ok_or("Trailing escape in quoted argument")?);
+                match chars.next() {
+                    Some(c) => word.push(c),
+                    None if allow_unclosed => break,
+                    None => return Err("Trailing escape in quoted argument".into()),
+                }
             } else {
                 word.push(c);
             }
@@ -51,7 +59,7 @@ pub fn words(line: &str) -> Result<Vec<String>, String> {
             started = true;
         }
     }
-    if quote.is_some() {
+    if quote.is_some() && !allow_unclosed {
         return Err("Unclosed quoted argument".into());
     }
     if started {
@@ -163,20 +171,13 @@ impl Config {
         }
         if let Some(user) = env::var_os("TIGRC_USER") {
             config.load_file(Path::new(&user), true);
-        } else if let Some(home) = env::var_os("HOME") {
-            let base = env::var_os("XDG_CONFIG_HOME")
+        } else if env::var_os("HOME").is_some() {
+            let path = env::var_os("XDG_CONFIG_HOME")
                 .filter(|p| !p.is_empty())
-                .map(PathBuf::from)
-                .unwrap_or_else(|| PathBuf::from(&home).join(".config"));
-            let path = base.join("tig/config");
-            config.load_file(
-                &if path.exists() {
-                    path
-                } else {
-                    PathBuf::from(home).join(".tigrc")
-                },
-                true,
-            );
+                .map(|p| PathBuf::from(p).join("tig/config"))
+                .unwrap_or_else(|| PathBuf::from("~/.config/tig/config"));
+            let exists = expand_home(&path).is_ok_and(|p| p.exists());
+            config.load_file(if exists { &path } else { Path::new("~/.tigrc") }, true);
         }
         if let Ok(value) = env::var("TIG_DIFF_OPTS") {
             if !value.is_empty() {
@@ -204,6 +205,7 @@ impl Config {
         if path.as_os_str().is_empty() {
             return Ok(());
         }
+        let original = path;
         let path = expand_home(path)?;
         let canonical = match fs::canonicalize(&path) {
             Ok(p) => p,
@@ -222,7 +224,10 @@ impl Config {
         let text =
             fs::read_to_string(&canonical).map_err(|e| format!("{}: {e}", path.display()))?;
         stack.push(canonical);
-        self.parse_text(&text, &path, stack);
+        if self.parse_text(&text, original, stack) {
+            self.diagnostics
+                .push(format!("Errors while loading {}.", path.display()));
+        }
         stack.pop();
         Ok(())
     }
@@ -311,35 +316,66 @@ impl Config {
     pub fn parse(&mut self, text: &str) {
         self.parse_text(text, Path::new("<input>"), &mut Vec::new());
     }
-    fn parse_text(&mut self, text: &str, path: &Path, stack: &mut Vec<PathBuf>) {
+    /// Returns whether this file had a direct error; sourced files report their own.
+    fn parse_text(&mut self, text: &str, path: &Path, stack: &mut Vec<PathBuf>) -> bool {
         let mut logical = String::new();
-        let mut start = 1;
-        for (index, line) in text.lines().enumerate() {
-            if logical.is_empty() {
-                start = index + 1;
-            }
-            let line = line.trim_end();
-            if let Some(prefix) = line.strip_suffix('\\') {
+        let mut lineno = 0;
+        let mut errors = false;
+        for line in text.split_inclusive('\n') {
+            lineno += 1;
+            // C io_get_line replaces only a backslash immediately before LF.
+            if let Some(prefix) = line.strip_suffix("\\\n") {
                 logical.push_str(prefix);
-                logical.push(' ');
+                logical.push_str("  ");
                 continue;
             }
             logical.push_str(line);
-            // Upstream strips comments before splitting arguments, even inside quotes.
-            let content = logical.split('#').next().unwrap_or("");
-            let result = words(content).and_then(|args| self.apply(&args, stack));
-            if let Err(e) = result {
-                self.diagnostics
-                    .push(format!("{}:{start}: {e}", path.display()));
-            }
+            errors |= self.parse_line(&logical, path, lineno, stack);
             logical.clear();
         }
         if !logical.is_empty() {
-            self.diagnostics.push(format!(
-                "{}:{start}: Unterminated continuation",
-                path.display()
-            ));
+            // At EOF C processes the remaining continuation as one final line.
+            errors |= self.parse_line(&logical, path, lineno + 1, stack);
         }
+        errors
+    }
+    fn parse_line(
+        &mut self,
+        line: &str,
+        path: &Path,
+        lineno: usize,
+        stack: &mut Vec<PathBuf>,
+    ) -> bool {
+        // Upstream strips comments before splitting arguments, even inside quotes.
+        let content = line.split('#').next().unwrap_or("").trim();
+        // A malformed quoted binding still reaches the bind validator in C.
+        // Keep prompt/command parsing strict, and retain string-setting validation.
+        let binding = content.split_whitespace().next() == Some("bind");
+        let result = split_words(content, binding).and_then(|args| self.apply_config(&args, stack));
+        if let Err(e) = result {
+            self.diagnostics
+                .push(format!("{}:{lineno}: {e}", path.display()));
+            return true;
+        }
+        false
+    }
+    fn apply_config(&mut self, args: &[String], stack: &mut Vec<PathBuf>) -> Result<(), String> {
+        // File loading recovers invalid global enums to the first entry, like C
+        // parse_enum. Interactive commands keep their existing atomic errors.
+        if args.len() == 4 && args[0] == "set" && args[2] == "=" {
+            let name = args[1].to_ascii_lowercase().replace('_', "-");
+            if let Some(kind) = option_type(&name).and_then(|k| k.strip_prefix("enum ")) {
+                if normalize_enum(kind, &args[3]).is_err() {
+                    let fallback = enum_values(kind)[0].clone();
+                    self.settings.insert(name.clone(), vec![fallback.clone()]);
+                    return Err(format!(
+                        "'{}' is not a valid value for {name}; using {fallback}",
+                        args[3]
+                    ));
+                }
+            }
+        }
+        self.apply(args, stack)
     }
     fn apply(&mut self, args: &[String], stack: &mut Vec<PathBuf>) -> Result<(), String> {
         if args.is_empty() {
@@ -988,6 +1024,72 @@ mod tests {
         assert_eq!(c.diagnostics.len(), 3);
         assert_eq!(c.value("tab-size"), Some("4"));
     }
+    #[test]
+    fn config_diagnostics_recover_without_changing_prompt_errors() {
+        let mut c = Config::default();
+        c.parse(concat!(
+            "set ignore-space = all\n",
+            "set ignore-space = JaDa\n",
+            "bind generic \" edit\n",
+            "bind generic ' options\n",
+            "bind generic \" @sh -c \"echo %(commit) | pbcopy\"\n",
+            "bind generic ' !sh -c 'git | tig'\n",
+            "set tab-size = \\\n0\n",
+            "c\\\no\\\nl\\\no\\\nr\\\n",
+        ));
+        assert_eq!(c.value("ignore-space"), Some("no"));
+        assert_eq!(
+            c.diagnostics,
+            [
+                "<input>:2: 'JaDa' is not a valid value for ignore-space; using no",
+                "<input>:3: Invalid key binding: bind keymap key action",
+                "<input>:4: Invalid key binding: bind keymap key action",
+                "<input>:5: Unknown command flag '%'; expected one of :!?@<+>",
+                "<input>:6: Unknown command flag '|'; expected one of :!?@<+>",
+                "<input>:8: Value must be between 1 and 1024",
+                "<input>:14: Unknown option command: c",
+            ]
+        );
+        c.apply_command("set ignore-space = all").unwrap();
+        let before = c.settings.clone();
+        assert!(c.apply_command("set ignore-space = JaDa").is_err());
+        assert_eq!(c.settings, before);
+        assert_eq!(
+            c.apply_command("bind generic \" edit").unwrap_err(),
+            "Unclosed quoted argument"
+        );
+        assert!(words("'broken").is_err());
+    }
+
+    #[test]
+    fn source_summaries_belong_only_to_files_with_direct_errors() {
+        let dir = env::temp_dir().join(format!("tig-config-summary-{}", std::process::id()));
+        fs::create_dir_all(&dir).unwrap();
+        let child = dir.join("child");
+        let parent = dir.join("parent");
+        fs::write(&child, "bad\nset tab-size = 3\n").unwrap();
+        fs::write(&parent, format!("source {}\n", child.display())).unwrap();
+        let mut c = Config::default();
+        c.load_file(&parent, false);
+        assert_eq!(
+            c.diagnostics,
+            [
+                format!("{}:1: Unknown option command: bad", child.display()),
+                format!("Errors while loading {}.", child.display()),
+            ]
+        );
+        assert_eq!(c.value("tab-size"), Some("3"));
+        fs::write(&parent, format!("source {}\nbad\n", child.display())).unwrap();
+        c.diagnostics.clear();
+        c.load_file(&parent, false);
+        assert_eq!(c.diagnostics.len(), 4);
+        assert_eq!(
+            c.diagnostics[3],
+            format!("Errors while loading {}.", parent.display())
+        );
+        fs::remove_dir_all(dir).unwrap();
+    }
+
     #[test]
     fn source_cycles_missing_and_recovery() {
         let dir = env::temp_dir().join(format!("tig-rust-config-{}", std::process::id()));

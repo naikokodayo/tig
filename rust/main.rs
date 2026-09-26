@@ -2509,7 +2509,7 @@ fn run() -> Result<()> {
     }
     let config = Config::load();
     for message in &config.diagnostics {
-        eprintln!("tig: {message}");
+        eprintln!("tig warning: {message}");
     }
     let invocation = env::current_dir()?;
     let repo = Repository::discover(&invocation).ok();

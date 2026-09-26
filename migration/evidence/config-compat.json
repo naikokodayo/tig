@@ -1,0 +1,90 @@
+{
+  "base_revision": "e94a87b43eba520d0c0e54d1dd19c3d6ddd367b6",
+  "environment": "macOS arm64; Rust 1.81.0; original shell scripts run in a PTY with the Rust release binary first in PATH",
+  "sha256": {
+    "rust/config.rs": "f0085a95bf701219dc6a02831050daf0b79bcb20e52571d249e60ce5e76f3f82",
+    "rust/main.rs": "047ae1ed9ad10165dc5475a20f6402c3fd20b22ba65a3b8e7ab335cc3e70a5b5",
+    "target/release/tig": "9a6989d9ad593d350167d323db4d550067ff7987aeedc2e6f0a3940170660955"
+  },
+  "checks": {
+    "rustup run 1.81.0 cargo fmt --all -- --check": "PASS",
+    "rustup run 1.81.0 cargo test --locked --all-targets": "PASS: 40 library + 15 binary tests",
+    "rustup run 1.81.0 cargo clippy --locked --all-targets -- -D warnings": "PASS",
+    "rustup run 1.81.0 cargo build --locked --release": "PASS",
+    "git diff --check": "PASS"
+  },
+  "focused_command": "PATH=\"$PWD/target/release:$PWD/test/tools:$PATH\" TEST_OPTS=\"verbose no-indent\" GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=init.defaultBranch GIT_CONFIG_VALUE_0=master sh test/tigrc/<script>",
+  "quote_test_environment": "GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=init.defaultBranch GIT_CONFIG_VALUE_0=master",
+  "original_scripts": {
+    "source-test": {
+      "passed": 10,
+      "failed": 0,
+      "receipt": [
+        "  [OK] source-file-plain.screen assertion",
+        "  [OK] source-file-plain.stderr assertion",
+        "  [OK] source-file-quietly.screen assertion",
+        "  [OK] source-file-quietly.stderr assertion",
+        "  [OK] source-nonexistent-file.screen assertion",
+        "  [OK] source-nonexistent-file.stderr assertion",
+        "  [OK] source-nonexistent-file-quietly.screen assertion",
+        "  [OK] source-nonexistent-file-quietly.stderr assertion",
+        "  [OK] source-tilde-path.screen assertion",
+        "  [OK] source-tilde-path.stderr assertion"
+      ]
+    },
+    "parse-test": {
+      "passed": 2,
+      "failed": 0,
+      "receipt": [
+        "  [OK] stderr assertion",
+        "  [OK] help.screen assertion"
+      ]
+    },
+    "env-vars-test": {
+      "passed": 2,
+      "failed": 0,
+      "receipt": [
+        "  [OK] stderr assertion",
+        "  [OK] help.screen assertion"
+      ]
+    },
+    "xdg-config-home-test": {
+      "passed": 8,
+      "failed": 0,
+      "receipt": [
+        "  [OK] case-.tigrc.out assertion",
+        "  [OK] case-.tigrc.stderr assertion",
+        "  [OK] case-.config-tig-config.out assertion",
+        "  [OK] case-.config-tig-config.stderr assertion",
+        "  [OK] case-.config-tig-config.out assertion",
+        "  [OK] case-.config-tig-config.stderr assertion",
+        "  [OK] case-etc-tig-config.out assertion",
+        "  [OK] case-etc-tig-config.stderr assertion"
+      ]
+    },
+    "quote-test": {
+      "passed": 1,
+      "failed": 6,
+      "receipt": [
+        "[FAIL] unexpected status code: 1 (should be 0)",
+        "[FAIL] stderr != expected/stderr",
+        "diff --git a/expected/stderr b/stderr",
+        "index e69de29..32bcdac 100644",
+        "--- a/expected/stderr",
+        "+++ b/stderr",
+        "@@ -0,0 +1 @@",
+        "+tig: Unclosed command variable",
+        "  [OK] shell-command.txt assertion",
+        "[FAIL] quoted-prompt-with-spaces.screen not found",
+        "[FAIL] mid-quoted-prompt-with-spaces.screen not found",
+        "[FAIL] single-quoted-arg-with-escaped-chars.screen not found",
+        "[FAIL] double-quoted-arg-with-escaped-chars.screen not found"
+      ]
+    }
+  },
+  "quote_baseline_comparison": "Built unmodified base_revision in a separate target directory; quote-test receipt is byte-for-byte identical to the fixed release receipt: shell-command.txt passes, command-variable expansion exits with Unclosed command variable, 6 of 7 checks fail.",
+  "original_assertions_modified": false,
+  "full_suite_rerun": false,
+  "scope": "Configuration-file warning prefix, original diagnostic paths, per-file direct-error summaries, invalid global enum fallback, malformed quoted bindings, continuation line numbers and EOF. Prompt words/apply_command errors remain strict and atomic.",
+  "remaining": "Full configuration parity is not claimed. Column enum fallback/obsolete date modes and other non-bind quotation semantics are outside this slice. quote-test command-variable expansion remains failing. view-column-test, compat-error-test, append-option-test, builtin-error-test and other tigrc scripts may benefit from the shared diagnostics changes but were not rerun."
+}
