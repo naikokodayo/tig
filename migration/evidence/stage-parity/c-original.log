@@ -1,0 +1,6 @@
+      TEST  test/stage/default-test
+      TEST  test/stage/gh-410-test
+      TEST  test/stage/maximized-unstaged-changes-test
+      TEST  test/stage/split-chunk-test
+      TEST  test/stage/update-part-test
+   SUMMARY  Passed 26 assertions in 5 tests
