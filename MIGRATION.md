@@ -582,6 +582,19 @@ records every transcript and reason. This predates the merged main-graph PR #8
 and subsequent work, so it is not a current-main or final benchmark result.
 
 
+### Full strict paired snapshot after main graph, date `%s`, and prompt fixes
+
+At source `c097ffb8a03f34f91accb9287ea299313f316c7e`, the fail-closed
+runner again attempted all 154 unchanged original scripts with separately
+hashed C and Rust-only application/graph binaries. C passed 152 and skipped
+two. Rust passed 95, failed 56, and skipped three; 462 actual assertions
+passed, 95 failed, and 15 C-side assertions were not reached. Another 21
+failure checks concern setup or runtime behavior rather than assertions.
+The [paired receipt](migration/evidence/upstream-rust-only-after-main-date-prompt.json)
+records every transcript and reason. This source predates merged PR #12, so
+these numbers are not current-main or final benchmark results. The parity gate
+remains **OPEN**.
+
 ### Non-local `%s` follow-up
 
 The PR #3 blanket refusal is replaced by a host POSIX bridge on 64-bit macOS
