@@ -335,6 +335,9 @@ struct WrappedText {
 struct View {
     name: String,
     rows: Vec<String>,
+    commit_fields: Vec<tig_rs::render::CommitField>,
+    commit_row_widths: Vec<usize>,
+    rendered_top: usize,
     wrapping: Option<WrappedText>,
     items: Vec<Item>,
     line_numbers: Vec<usize>,
@@ -359,6 +362,9 @@ impl View {
         Self {
             name: name.into(),
             rows: vec![],
+            commit_fields: vec![],
+            commit_row_widths: vec![],
+            rendered_top: 0,
             wrapping: None,
             items: vec![],
             line_numbers: vec![],
@@ -478,7 +484,9 @@ impl View {
         config
             .settings
             .insert("main-view-commit-title-graph".into(), vec!["no".into()]);
-        self.rows = tig_rs::render::render_commits(&config, &commits, width)?;
+        (self.rows, self.commit_fields) =
+            tig_rs::render::render_commit_fields(&config, &commits, width)?;
+        self.commit_row_widths = vec![width; self.rows.len()];
         Ok(())
     }
     fn restore_status_selection(&mut self) {
@@ -630,7 +638,7 @@ impl App {
         }
         if name == "main" && self.view.name == "main" && self.view.from_stdin {
             let mut view = self.view.clone();
-            view.redraw_stdin(&self.config, self.width)?;
+            view.redraw_stdin(&self.config, width)?;
             return Ok(view);
         }
         let repo = self.repo()?;
@@ -694,7 +702,10 @@ impl App {
                     items.push(Item::Commit(commit.clone()));
                     display.push(commit);
                 }
-                let rows = tig_rs::render::render_commits(&config, &display, self.width)?;
+                let (rows, fields) =
+                    tig_rs::render::render_commit_fields(&config, &display, width)?;
+                v.commit_fields = fields;
+                v.commit_row_widths = vec![width; rows.len()];
                 for (row, item) in rows.into_iter().zip(items) {
                     v.push(row, item);
                 }
@@ -801,10 +812,20 @@ impl App {
                 view.revision = oid.clone();
                 if let Some(commit) = repo.history(&[oid, "--".into()], 1)?.first() {
                     let mut refs = tig_rs::render::refs(&self.config, &commit.decorations, ", ");
-                    if !commit
-                        .decorations
-                        .split(", ")
-                        .any(|r| r.starts_with("tag: "))
+                    // C creates an empty Refs line only when annotated tags exist.
+                    let describe = !refs.is_empty()
+                        || (commit.decorations.is_empty()
+                            && repo.refs().is_ok_and(|refs| {
+                                refs.iter().any(|reference| {
+                                    reference.name.starts_with("refs/tags/")
+                                        && !reference.target.is_empty()
+                                })
+                            }));
+                    if describe
+                        && !commit
+                            .decorations
+                            .split(", ")
+                            .any(|r| r.starts_with("tag: "))
                     {
                         if let Ok(description) = repo.command(["describe", "--tags", &commit.oid]) {
                             let description = String::from_utf8_lossy(&description);
@@ -998,7 +1019,10 @@ impl App {
                 config
                     .settings
                     .insert("main-view-commit-title-graph".into(), vec!["no".into()]);
-                let rows = tig_rs::render::render_commits(&config, &commits, width)?;
+                let (rows, fields) =
+                    tig_rs::render::render_commit_fields(&config, &commits, width)?;
+                v.commit_fields = fields;
+                v.commit_row_widths = vec![width; rows.len()];
                 for ((row, commit), selector) in rows.into_iter().zip(commits).zip(selectors) {
                     v.push(row, Item::Ref(commit.oid, Some(selector)));
                 }
@@ -1767,7 +1791,7 @@ impl App {
             if self.config.color_commands != Config::defaults().color_commands {
                 return Err("save-view does not support custom color rules yet".into());
             }
-            self.screen();
+            self.screen(false);
             let (vertical, parent, child) = self.pane_sizes();
             let (width, height) = if self.split && self.other.is_some() {
                 let size = if self.parent_focused { parent } else { child };
@@ -1874,7 +1898,14 @@ impl App {
             let mut config = self.config.clone();
             config.apply_command_for_view(&self.view.name, action)?;
             self.config = config;
-            return self.action("refresh");
+            self.action("refresh")?;
+            if self.split && self.other.is_some() {
+                self.swap_panes();
+                let result = self.action("refresh");
+                self.swap_panes();
+                result?;
+            }
+            return Ok(true);
         }
         if let Some(pattern) = action.strip_prefix('/') {
             self.search = pattern.into();
@@ -2014,7 +2045,7 @@ impl App {
             "move-half-page-up" => self.view.move_by(-page / 2),
             "move-first-line" => self.view.selected = 0,
             "move-last-line" => self.view.selected = self.view.rows.len().saturating_sub(1),
-            "scroll-left" | "scroll-right" => {
+            "scroll-left" | "scroll-right" | "scroll-first-col" => {
                 let width = if self.split && self.other.is_some() {
                     let (vertical, parent, child) = self.pane_sizes();
                     if vertical {
@@ -2042,13 +2073,15 @@ impl App {
                     amount
                 }
                 .max(1);
-                self.view.left = if action == "scroll-left" {
+                self.view.commit_row_widths.fill(width);
+                self.view.left = if action == "scroll-first-col" {
+                    0
+                } else if action == "scroll-left" {
                     self.view.left.saturating_sub(step)
                 } else {
                     self.view.left.saturating_add(step)
                 };
             }
-            "scroll-first-col" => self.view.left = 0,
             "scroll-line-down" | "scroll-line-up" => {
                 let max_top = self.view.rows.len().saturating_sub(page as usize);
                 let next = if action == "scroll-line-down" {
@@ -2302,9 +2335,9 @@ impl App {
             }
             _ => return Err(format!("Not implemented in Rust yet: {action}").into()),
         }
-        // C reloads flexible-width log rows when a vertical split opens/closes.
+        // Reload width-dependent rows when a vertical split opens/closes.
         if was_split != (self.split && self.other.is_some()) && self.pane_sizes().0 {
-            if self.view.name == "log" {
+            if self.view.name == "log" || (was_split && self.view.name == "main") {
                 self.action("refresh")?;
             }
             if self.split && self.other.as_ref().is_some_and(|view| view.name == "log") {
@@ -2351,7 +2384,7 @@ impl App {
         } else {
             size.parse::<usize>().unwrap_or(total * 2 / 3)
         };
-        let minimum = if vertical { 1 } else { 4.min(total / 2) };
+        let minimum = 4.min(total / 2);
         let child = child.max(minimum).min(total.saturating_sub(minimum));
         (
             vertical,
@@ -2359,7 +2392,7 @@ impl App {
             child.saturating_sub(usize::from(vertical)),
         )
     }
-    fn screen(&mut self) -> Vec<String> {
+    fn screen(&mut self, saved: bool) -> Vec<String> {
         let mut lines = if self.split && self.other.is_some() {
             let (vertical, parent_size, child_size) = self.pane_sizes();
             let other = self.other.as_mut().unwrap();
@@ -2374,12 +2407,14 @@ impl App {
                     &self.config,
                     parent_size,
                     self.height.saturating_sub(2),
+                    saved,
                 );
                 let right = pane_screen(
                     child,
                     &self.config,
                     child_size,
                     self.height.saturating_sub(2),
+                    saved,
                 );
                 left.into_iter()
                     .zip(right)
@@ -2398,12 +2433,14 @@ impl App {
                     &self.config,
                     self.width,
                     parent_size.saturating_sub(1),
+                    saved,
                 );
                 lines.extend(pane_screen(
                     child,
                     &self.config,
                     self.width,
                     child_size.saturating_sub(1),
+                    saved,
                 ));
                 lines
             }
@@ -2413,6 +2450,7 @@ impl App {
                 &self.config,
                 self.width,
                 self.height.saturating_sub(2),
+                saved,
             )
         };
         lines.push(clip(&self.message, 0, self.width));
@@ -2423,6 +2461,7 @@ impl App {
         let script = fs::read_to_string(path)?;
         let mut lines = script.lines();
         while let Some(raw) = lines.next() {
+            self.screen(false);
             let line = raw.trim();
             if line.is_empty() || line.starts_with('#') {
                 continue;
@@ -2433,8 +2472,18 @@ impl App {
             } else if matches!(line, ":g" | ":view-grep") {
                 grep_prompt = true;
             } else if let Some(path) = line.strip_prefix(":save-display ") {
-                let mut screen = self.screen();
+                let mut screen = self.screen(true);
                 screen.pop();
+                // C save_display trims the combined line, including empty right panes.
+                for line in &mut screen {
+                    line.truncate(
+                        line.trim_end_matches(|c: char| c.is_ascii_whitespace())
+                            .len(),
+                    );
+                    if line.is_empty() {
+                        line.push(' ');
+                    }
+                }
                 fs::write(path, format!("{}\n", screen.join("\n")))?;
             } else if let Some(pattern) = line.strip_prefix('/').or_else(|| line.strip_prefix('?'))
             {
@@ -3079,25 +3128,60 @@ fn pager_line_numbers(config: &Config, view: &View) -> Option<(usize, usize)> {
     Some((width, interval))
 }
 
-fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -> Vec<String> {
+fn pane_screen(
+    view: &mut View,
+    config: &Config,
+    width: usize,
+    visible: usize,
+    saved: bool,
+) -> Vec<String> {
     view.wrap_text(config, width);
     let visible = visible.max(1);
+    let old_top = view.rendered_top;
     if view.selected < view.top {
         view.top = view.selected;
     }
     if view.selected >= view.top + visible {
         view.top = view.selected + 1 - visible;
     }
+    // C split_view preserves existing parent cells and redraws only selection.
+    // Scrolling or reloading invalidates those retained row widths.
+    for index in view.top
+        ..view
+            .top
+            .saturating_add(visible)
+            .min(view.commit_row_widths.len())
+    {
+        if !(old_top..old_top.saturating_add(visible)).contains(&index) {
+            view.commit_row_widths[index] = width;
+        }
+    }
+    view.rendered_top = view.top;
+    if let Some(row_width) = view.commit_row_widths.get_mut(view.selected) {
+        *row_width = width;
+    }
     let line_numbers = pager_line_numbers(config, view);
-    let separator = if config.value("line-graphics") == Some("utf-8") {
+    let separator = if !saved && config.value("line-graphics") != Some("ascii") {
         "│ "
     } else {
-        "| "
+        tig_rs::render::line_number_separator(config)
     };
     let mut lines: Vec<String> = (0..visible)
         .map(|i| {
             let index = view.top + i;
             let row = view.rows.get(index).map(String::as_str).unwrap_or("");
+            let clipped_fields = tig_rs::render::clip_commit_fields(
+                row,
+                &view.commit_fields,
+                view.commit_row_widths
+                    .get(index)
+                    .copied()
+                    .unwrap_or(width)
+                    .saturating_add(view.left),
+                config,
+                saved,
+            );
+            let row = clipped_fields.as_str();
             let expanded;
             let row = if let Some(wrap) = &view.wrapping {
                 expanded = format!(
@@ -3245,6 +3329,11 @@ fn pane_screen(view: &mut View, config: &Config, width: usize, visible: usize) -
         (view.top + visible).min(view.rows.len()) * 100 / view.rows.len()
     };
     let suffix = format!(" {percent}%");
+    if width < suffix.len() {
+        // C cannot position the percentage when it is wider than the title window.
+        lines.push(clip(&title, 0, width.saturating_sub(1)));
+        return lines;
+    }
     let title_width = width.saturating_sub(suffix.len());
     let title = clip(&title, 0, title_width);
     lines.push(format!(
@@ -3325,7 +3414,7 @@ impl Terminal {
         }
     }
     fn draw(&mut self, app: &mut App) -> Result<()> {
-        let lines = app.screen();
+        let lines = app.screen(false);
         queue!(self.out, cursor::MoveTo(0, 0), Clear(ClearType::All))?;
         for (i, line) in lines.iter().enumerate() {
             queue!(self.out, cursor::MoveTo(0, i as u16))?;
@@ -3681,6 +3770,9 @@ fn run() -> Result<()> {
             Event::Resize(w, h) => {
                 app.width = w as usize;
                 app.height = h as usize;
+                if let Err(error) = app.refresh_after_command() {
+                    app.message = error.to_string();
+                }
                 continue;
             }
             Event::Mouse(m) => {
@@ -4655,7 +4747,7 @@ mod tests {
         app.config
             .settings
             .insert("vertical-split".into(), vec!["no".into()]);
-        let screen = app.screen();
+        let screen = app.screen(false);
         assert_eq!(screen.len(), 16);
         assert!(screen[4].starts_with("[pager] - line 5 of 6"));
         assert!(screen[4].ends_with("83%"));
@@ -4681,7 +4773,7 @@ mod tests {
         assert_eq!(app.message, "Can't close last remaining view");
         assert_eq!(app.view.revision, "parent");
         app.view.selected = 5;
-        let lines = pane_screen(&mut app.view, &app.config, 30, 2);
+        let lines = pane_screen(&mut app.view, &app.config, 30, 2, false);
         assert!(lines[2].ends_with("100%"));
         assert_eq!(cell_width(&lines[2]), 30);
         for (option, expected) in [("50%", 40), ("12.5%", 9), ("3.5", 3), ("1e1", 1), ("0", 1)] {
@@ -4766,22 +4858,25 @@ mod tests {
         );
         view.selected = 5;
         let original = view.rows.clone();
-        let lines = pane_screen(&mut view, &config, 90, 6);
+        let lines = pane_screen(&mut view, &config, 90, 6, false);
         assert_eq!(lines[0], "  1| commit abc");
         assert_eq!(lines[1], "   | ---");
         assert_eq!(lines[4], "  5| +++ b/file");
         assert!(lines[6].starts_with("[diff] Changes to 'file' - line 6 of 6"));
         assert_eq!(view.rows, original);
-        assert_eq!(pane_screen(&mut view, &config, 90, 8)[6], "");
+        assert_eq!(pane_screen(&mut view, &config, 90, 8, false)[6], "");
         view.left = 5;
-        assert_eq!(pane_screen(&mut view, &config, 90, 6)[0], "commit abc");
+        assert_eq!(
+            pane_screen(&mut view, &config, 90, 6, false)[0],
+            "commit abc"
+        );
         view.left = 0;
         assert_eq!(
             diff_edit_target(&view.rows, 5),
             Some((PathBuf::from("file"), 0))
         );
         view.selected = 2;
-        assert!(pane_screen(&mut view, &config, 90, 6)[6]
+        assert!(pane_screen(&mut view, &config, 90, 6, false)[6]
             .starts_with("[diff] Press '<Enter>' to jump to file diff"));
     }
 

@@ -244,11 +244,7 @@ pub fn render_blame(
     let show_filename = lines
         .first()
         .is_some_and(|first| lines.iter().any(|line| line.filename != first.filename));
-    let separator = match config.value("line-graphics") {
-        Some("ascii") => "| ",
-        Some("utf-8") => "│ ",
-        _ => "x ", // Tig's default ACS vertical line is `x` in the test terminal.
-    };
+    let separator = line_number_separator(config);
     let mut rows = vec![String::new(); lines.len()];
     for spec in specs {
         let (name, rest) = spec.split_once(':').unwrap_or((spec, "yes"));
@@ -459,6 +455,68 @@ pub fn main_graph_enabled(config: &Config) -> bool {
     })
 }
 
+pub fn line_number_separator(config: &Config) -> &'static str {
+    match config.value("line-graphics") {
+        Some("ascii") => "| ",
+        Some("utf-8") => "│ ",
+        _ => "x ", // Tig's default ACS vertical line in saved terminal cells.
+    }
+}
+
+/// Field boundaries retained alongside full rows for clipping at a pane edge.
+#[derive(Clone)]
+pub struct CommitField {
+    start: usize,
+    end: usize,
+    trim: bool,
+    right_align: bool,
+    line_number: bool,
+}
+
+/// Keep full rows searchable and horizontally scrollable; only shorten the field
+/// intersecting the right edge, reserving its trailing space like C draw_field.
+pub fn clip_commit_fields(
+    row: &str,
+    fields: &[CommitField],
+    edge: usize,
+    config: &Config,
+    saved: bool,
+) -> String {
+    let mut row = row.to_owned();
+    if !saved && !matches!(config.value("line-graphics"), Some("ascii" | "utf-8")) {
+        for field in fields.iter().filter(|field| field.line_number) {
+            let offset = clip(&row, field.end - 2).len();
+            if row.as_bytes().get(offset) == Some(&b'x') {
+                row.replace_range(offset..offset + 1, "│");
+            }
+        }
+    }
+    let Some(field) = fields
+        .iter()
+        .find(|field| !field.line_number && field.start < edge && edge <= field.end)
+    else {
+        return row;
+    };
+    let prefix = clip(&row, field.start);
+    let text = clip(&row[prefix.len()..], field.end - field.start - 1);
+    let width = edge - field.start - 1;
+    let value = if field.trim {
+        trim_field(text.trim_end_matches(' '), width, config)
+    } else if field.right_align {
+        let text = clip(text.trim_start_matches(' '), width);
+        format!(
+            "{}{text}",
+            " ".repeat(width.saturating_sub(cell_width(&text)))
+        )
+    } else {
+        clip(&text, width)
+    };
+    format!(
+        "{prefix}{value}{}",
+        " ".repeat(width.saturating_sub(cell_width(&value)) + 1)
+    )
+}
+
 /// Render a complete main-view commit list, so autosized columns see all rows.
 /// The plain string result cannot represent Tig color/overflow attributes.
 pub fn render_commits(
@@ -466,6 +524,18 @@ pub fn render_commits(
     commits: &[Commit],
     width: usize,
 ) -> Result<Vec<String>, String> {
+    let (rows, fields) = render_commit_fields(config, commits, width)?;
+    Ok(rows
+        .iter()
+        .map(|row| clip_commit_fields(row, &fields, width, config, false))
+        .collect())
+}
+
+pub fn render_commit_fields(
+    config: &Config,
+    commits: &[Commit],
+    width: usize,
+) -> Result<(Vec<String>, Vec<CommitField>), String> {
     let columns = main_columns(config)?;
     let mut graph = Graph::new();
     let ascii = config.value("line-graphics") == Some("ascii");
@@ -568,7 +638,7 @@ pub fn render_commits(
         if col.name == "line-number" {
             size = size.clamp(3, 9);
         }
-        sizes.push(size.min(width));
+        sizes.push(size);
         fields.push(values);
     }
     let mut rows = Vec::with_capacity(commits.len());
@@ -592,7 +662,7 @@ pub fn render_commits(
             if col.name == "line-number" {
                 row.push_str(&" ".repeat(padding));
                 row.push_str(&value);
-                row.push_str(if ascii { "| " } else { "│ " });
+                row.push_str(line_number_separator(config));
             } else if col.name == "date" && col.display == "relative" {
                 row.push_str(&" ".repeat(padding));
                 row.push_str(&value);
@@ -605,7 +675,23 @@ pub fn render_commits(
         }
         rows.push(row);
     }
-    Ok(rows)
+    let mut fields = Vec::new();
+    let mut start = 0;
+    for (column, size) in columns.iter().zip(sizes) {
+        if column.name == "commit-title" {
+            break;
+        }
+        let end = start + size + if column.name == "line-number" { 2 } else { 1 };
+        fields.push(CommitField {
+            start,
+            end,
+            trim: matches!(column.name, "author" | "committer") && size > 10,
+            right_align: column.name == "date" && column.display == "relative",
+            line_number: column.name == "line-number",
+        });
+        start = end;
+    }
+    Ok((rows, fields))
 }
 
 // Curses uses ASCII commit markers with line-drawing edges in its default mode.
@@ -800,6 +886,24 @@ mod tests {
             );
         }
     }
+    #[test]
+    fn pane_fields_keep_full_text_and_distinguish_live_line_graphics() {
+        let mut config = Config::defaults();
+        config
+            .parse("set main-view = line-number:yes author:full commit-title:yes,graph=no,refs=no");
+        let (rows, fields) = render_commit_fields(&config, &[commit()], 80).unwrap();
+        assert_eq!(
+            clip_commit_fields(&rows[0], &fields, 12, &config, false),
+            "  1│ Jonas~ "
+        );
+        assert_eq!(
+            clip_commit_fields(&rows[0], &fields, 12, &config, true),
+            "  1x Jonas~ "
+        );
+        assert!(rows[0].ends_with("Jonas Fonseca WIP: Upgrade"));
+        assert!(render_commits(&config, &[commit()], 80).unwrap()[0].starts_with("  1│ "));
+    }
+
     #[test]
     fn upstream_width_fixture() {
         let mut config = Config::defaults();
