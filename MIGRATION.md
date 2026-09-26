@@ -813,7 +813,7 @@ full-screen view. Closing a split's command pager returns to main without
 restoring a stale diff. Bound external commands and `:exec` retain their
 foreground/confirmation semantics.
 
-Final source `3ae580f8e3a9c4843f9112d130179d97e460777e` integrates main
+Paired source `3ae580f8e3a9c4843f9112d130179d97e460777e` integrates main
 `0d80d985`, including trace/status, tree, refs, configuration and blame changes.
 The earlier documentation conflict retained both records; the final merge
 needed no manual code resolution. Original C/tests, dependencies and Actions
@@ -835,6 +835,14 @@ The strict original-test gate remains **BLOCKED**: the narrow `view-split` date
 column uses a separator cell, and `main-options` ignores the history limit.
 Command-output capture still places stderr after stdout and uses the existing
 synchronous loader. No full-suite rerun or completed-migration claim is made.
+
+Review fix `f31cc142` refreshes cached parents using their own args/revision/path,
+then restores the active context even on error. The real-repository regression
+`python3 rust/tests/main-command-refresh.py` failed with ambiguous `needle`
+before the fix; both fullscreen grep exec/pager commands now pass and return
+to main correctly. The existing main navigation and staging tests, formatting,
+Clippy and release build pass. The same receipt contains this small source/hash
+and red/green supplement; the earlier broad results retain their original source.
 
 ### Configuration slice review fixes and main 297e1787 synchronization
 

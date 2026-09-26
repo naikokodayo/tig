@@ -3044,5 +3044,54 @@
     "main/view-split-test narrow date column consumes one separator cell",
     "Command output appends stderr after stdout; interleaving is not preserved",
     "Commands and loaders remain synchronous"
-  ]
+  ],
+  "review_fix": {
+    "source_commit": "f31cc1420039d3fb83c205a3834a29f3477533c4",
+    "source_manifest_base": "3ae580f8e3a9c4843f9112d130179d97e460777e",
+    "source_sha256_overrides": {
+      "rust/main.rs": "2496b4d0babde57794ebd89f49b9c540186683a5e9e8540cdae9bd4d282c9f15",
+      "rust/tests/main-command-refresh.py": "8516d8d98e1a0b483cd66d8b648cce1c51003617a37d7fcda9ac8fa3c43ce7aa"
+    },
+    "binary_sha256": {
+      "src/tig": "0cba1f3967093760b15b2bbfabbef3a4f159898f2fc697c100d02e085375d8ee",
+      "test/tools/test-graph": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849",
+      "target/release/tig": "8ec24b5895d5ddff34170560d8ebcf2d7b9be2d8b4457c77d6306d1eab3dd038",
+      "target/release/test-graph": "a6ef9931a15d6ad838b43c660d18484e24bfcd8c5a70c96f8dbc4ad896f5f852"
+    },
+    "cause": "refresh_parent loaded cached main with the active grep arguments. It now temporarily uses the parent args/revision/path, restoring active context before propagating either success or error.",
+    "before_binary_sha256": "25bb55c5734dff9ccd31887632ba372eb1c213d0e5900917c762ec1ec9d1e62d",
+    "regression_command": "python3 rust/tests/main-command-refresh.py",
+    "before_exit_code": 1,
+    "before_output": "Traceback (most recent call last):\n  File \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation/rust/tests/main-command-refresh.py\", line 34, in <module>\n    assert code == 0 and not timed_out, (command, code, transcript)\nAssertionError: (':exec @echo fine', 1, \"tig: git exited with exit status: 128: fatal: ambiguous argument 'needle': unknown revision or path not in the working tree.\\r\\nUse '--' to separate paths from revisions, like this:\\r\\n'git <command> [<revision>...] -- [<file>...]'\\r\\n\")\n",
+    "after_exit_code": 0,
+    "after_output": "PASS: :exec @echo fine preserves fullscreen grep and cached main\nPASS: :!echo fine preserves fullscreen grep and cached main\n",
+    "validation": [
+      {
+        "command": "rustup run 1.81.0 cargo fmt --check",
+        "exit_code": 0,
+        "output": ""
+      },
+      {
+        "command": "rustup run 1.81.0 cargo test --locked --bin tig main_graph_uses_history_traversal_options",
+        "exit_code": 0,
+        "output": "   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.00s\n     Running unittests rust/main.rs (target/debug/deps/tig-33ccf7946334abad)\n\nrunning 1 test\ntest tests::main_graph_uses_history_traversal_options ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 23 filtered out; finished in 8.23s\n\n"
+      },
+      {
+        "command": "rustup run 1.81.0 cargo test --locked --bin tig staging_last_untracked_file_refreshes_synthetic_main_parent",
+        "exit_code": 0,
+        "output": "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s\n     Running unittests rust/main.rs (target/debug/deps/tig-33ccf7946334abad)\n\nrunning 1 test\ntest tests::staging_last_untracked_file_refreshes_synthetic_main_parent ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 23 filtered out; finished in 3.31s\n\n"
+      },
+      {
+        "command": "rustup run 1.81.0 cargo clippy --locked --all-targets -- -D warnings",
+        "exit_code": 0,
+        "output": "    Checking tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.64s\n"
+      },
+      {
+        "command": "rustup run 1.81.0 cargo build --locked --release --bins",
+        "exit_code": 0,
+        "output": "   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-main-navigation)\n    Finished `release` profile [optimized] target(s) in 15.70s\n"
+      }
+    ],
+    "scope": "Directed regression only. Prior original pairing and broad PTY results above remain attributed to 3ae580f8; they were not rerun for this fix."
+  }
 }
