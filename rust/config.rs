@@ -79,7 +79,14 @@ fn split_words(line: &str, allow_unclosed: bool) -> Result<Vec<String>, String> 
 
 pub fn normalize_key(key: &str) -> Result<String, String> {
     if key.starts_with('^') && key.chars().count() > 1 {
-        return Err("Control/escape key mappings must use <Ctrl-X> or <Esc> notation".into());
+        return Err(if let Some(combo) = key.strip_prefix("^[") {
+            format!("Escape key combo must now use '<Esc>{combo}' instead of '{key}'")
+        } else {
+            format!(
+                "Control key mapping must now use '<Ctrl-{}>' instead of '{key}'",
+                &key[1..]
+            )
+        });
     }
     let mut out = String::new();
     let mut remaining = key;
@@ -90,7 +97,9 @@ pub fn normalize_key(key: &str) -> Result<String, String> {
             return Err("Key sequence exceeds 16 keys".into());
         }
         if remaining.starts_with('<') {
-            let end = remaining.find('>').ok_or("Missing > in key name")?;
+            let end = remaining
+                .find('>')
+                .ok_or_else(|| format!("Missing '>' from key mapping: {remaining}"))?;
             let name = remaining[1..end].to_ascii_lowercase();
             let normalized = match name.as_str() {
                 "hash" => "#",
@@ -563,6 +572,37 @@ impl Config {
         match args[0].as_str() {
             "set" if args.len() >= 3 && matches!(args[2].as_str(), "=" | "+=") => {
                 let name = args[1].to_ascii_lowercase().replace('_', "-");
+                if name == "status-untracked-dirs" {
+                    let mut mapped = args.to_vec();
+                    mapped[1] = "status-show-untracked-dirs".into();
+                    self.apply(&mapped, stack)?;
+                    return Err(
+                        "status-untracked-dirs has been renamed to status-show-untracked-dirs"
+                            .into(),
+                    );
+                }
+                let obsolete_column = match name.as_str() {
+                    "author-width" | "show-author" => Some("author"),
+                    "filename-width" | "show-filename" => Some("file-name"),
+                    "line-number-interval" | "show-line-numbers" => Some("line-number"),
+                    "show-date" => Some("date"),
+                    "show-file-size" => Some("file-size"),
+                    "show-id" => Some("id"),
+                    "show-refs" | "show-rev-graph" => Some("commit-title"),
+                    "title-overflow" => Some("commit-title and text"),
+                    _ => None,
+                };
+                if let Some(column) = obsolete_column {
+                    return Err(format!("{name} is obsolete; see tigrc(5) for how to set the {column} column option"));
+                }
+                if name == "read-git-colors" {
+                    return Err(
+                        "read-git-colors has been obsoleted by the git-colors option".into(),
+                    );
+                }
+                if name == "cmdline-args" {
+                    return Err("cmdline-args is obsolete; use view-specific options instead, e.g. main-options".into());
+                }
                 if name.contains("-view-") && option_type(&name).is_none() {
                     if args[2] == "+=" {
                         return Err(format!("Option {name} does not support +="));
@@ -603,6 +643,44 @@ impl Config {
                 }
                 let key = normalize_key(&args[2])?;
                 let action = args[3].to_ascii_lowercase().replace('_', "-");
+                let replacement = match action.as_str() {
+                    "view-branch" => Some("view-refs"),
+                    "stage-next" => Some(":/^@@"),
+                    "diff-context-down" => Some(":toggle diff-context -1"),
+                    "diff-context-up" => Some(":toggle diff-context +1"),
+                    "status-untracked-dirs" | "toggle-untracked-dirs" => {
+                        Some(":toggle status-show-untracked-dirs")
+                    }
+                    "toggle-author" => Some(":toggle author"),
+                    "toggle-changes" | "toggle-show-changes" => Some(":toggle show-changes"),
+                    "toggle-commit-order" => Some(":toggle show-commit-order"),
+                    "toggle-date" => Some(":toggle date"),
+                    "toggle-files" | "toggle-file-filter" => Some(":toggle file-filter"),
+                    "toggle-rev-filter" => Some(":toggle rev-filter"),
+                    "toggle-file-size" => Some(":toggle file-size"),
+                    "toggle-filename" => Some(":toggle filename"),
+                    "toggle-graphic" => Some(":toggle show-graphic"),
+                    "toggle-id" => Some(":toggle id"),
+                    "toggle-ignore-space" => Some(":toggle show-ignore-space"),
+                    "toggle-lineno" => Some(":toggle line-number"),
+                    "toggle-refs" => Some(":toggle commit-title-refs"),
+                    "toggle-rev-graph" => Some(":toggle commit-title-graph"),
+                    "toggle-sort-field" => Some(":toggle sort-field"),
+                    "toggle-sort-order" => Some(":toggle sort-order"),
+                    "toggle-title-overflow" => Some(":toggle commit-title-overflow"),
+                    "toggle-vertical-split" => Some(":toggle show-vertical-split"),
+                    _ => None,
+                };
+                if let Some(replacement) = replacement {
+                    let mut mapped = args[..3].to_vec();
+                    mapped.extend(replacement.split_whitespace().map(String::from));
+                    self.apply(&mapped, stack)?;
+                    return Err(if action == "view-branch" {
+                        format!("{action} has been renamed to {replacement}")
+                    } else {
+                        format!("{action} has been replaced by `{replacement}'")
+                    });
+                }
                 let request = known_request(&action);
                 if !request && !args[3].starts_with([':', '!', '?', '@', '<', '+', '>']) {
                     return Err(format!(
@@ -631,8 +709,63 @@ impl Config {
             }
             "bind" => return Err("Invalid key binding: bind keymap key action".into()),
             "color" if args.len() >= 4 => {
+                let (prefix, name) = if args[1].starts_with(['\'', '"']) {
+                    (None, args[1].as_str())
+                } else {
+                    args[1]
+                        .split_once('.')
+                        .map_or((None, args[1].as_str()), |(prefix, name)| {
+                            (Some(prefix), name)
+                        })
+                };
+                let name = name.to_ascii_lowercase().replace('_', "-");
+                let replacement = match name.as_str() {
+                    "main-revgraph" => return Err(format!("{} is obsolete", args[1])),
+                    "acked" => Some("'    Acked-by'"),
+                    "diff-copy-from" => Some("'copy from '"),
+                    "diff-copy-to" => Some("'copy to '"),
+                    "diff-deleted-file-mode" => Some("'deleted file mode '"),
+                    "diff-dissimilarity" => Some("'dissimilarity '"),
+                    "diff-rename-from" => Some("'rename from '"),
+                    "diff-rename-to" => Some("'rename to '"),
+                    "diff-tree" => Some("'diff-tree '"),
+                    "filename" => Some("file"),
+                    "help-keymap" => Some("help.section"),
+                    "pp-adate" => Some("'AuthorDate: '"),
+                    "pp-author" => Some("'Author: '"),
+                    "pp-cdate" => Some("'CommitDate: '"),
+                    "pp-commit" => Some("'Commit: '"),
+                    "pp-date" => Some("'Date: '"),
+                    "reviewed" => Some("'    Reviewed-by'"),
+                    "signoff" => Some("'    Signed-off-by'"),
+                    "stat-head" => Some("status.header"),
+                    "stat-section" => Some("status.section"),
+                    "tested" => Some("'    Tested-by'"),
+                    "tree-dir" => Some("tree.directory"),
+                    "tree-file" => Some("tree.file"),
+                    "tree-head" => Some("tree.header"),
+                    _ => None,
+                };
                 validate_colors(&args[2..])?;
-                self.colors.insert(args[1].clone(), args[2..].to_vec());
+                let target = match (prefix, replacement) {
+                    (Some(prefix), Some(replacement)) => {
+                        let prefix = if prefix == "branch" { "refs" } else { prefix };
+                        if !is_view(prefix) && !matches!(prefix, "generic" | "search") {
+                            return Err(format!("Unknown key map: {prefix}"));
+                        }
+                        // An explicit view overrides the replacement's default view.
+                        let area = replacement
+                            .split_once('.')
+                            .map_or(replacement, |(_, area)| area);
+                        format!("{prefix}.{area}")
+                    }
+                    (_, Some(replacement)) => replacement.into(),
+                    _ => args[1].clone(),
+                };
+                self.colors.insert(target, args[2..].to_vec());
+                if let Some(replacement) = replacement {
+                    return Err(format!("{name} has been replaced by {replacement}"));
+                }
             }
             "color" => {
                 return Err("Invalid color mapping: color area fgcolor bgcolor [attrs]".into())
@@ -657,7 +790,7 @@ impl Config {
         }
         let column = column_names()
             .find(|c| suffix == *c || suffix.starts_with(&format!("{c}-")))
-            .ok_or_else(|| format!("Unknown view column: {suffix}"))?;
+            .ok_or_else(|| format!("Failed to parse view column type: {}", values[0]))?;
         let old = self
             .settings
             .get(&base)
@@ -666,6 +799,19 @@ impl Config {
             .iter()
             .position(|s| s.split(':').next() == Some(column))
             .ok_or_else(|| format!("The {view} view does not have a {column} column configured"))?;
+        // C updates an existing date column before returning its enum diagnostic.
+        // Whole-view replacement remains transactional in validate_setting.
+        if column == "date" && matches!(suffix, "date" | "date-display") {
+            let value = if suffix == "date" {
+                values[0].split(',').next().unwrap()
+            } else {
+                &values[0]
+            };
+            if let Err(error) = validate_column_value("date", "display", value) {
+                self.set_column(&format!("{view}-view-date-display"), &["default".into()])?;
+                return Err(error);
+            }
+        }
         let mut specs = old.clone();
         let original = specs[index].split_once(':').map_or("yes", |(_, s)| s);
         let mut fields: Vec<String> = original.split(',').map(String::from).collect();
@@ -939,6 +1085,16 @@ fn column_type(column: &str, option: &str) -> Option<&'static str> {
 }
 fn validate_scalar(name: &str, kind: &str, value: &str) -> Result<(), String> {
     if let Some(kind) = kind.strip_prefix("enum ") {
+        if kind == "date" && normalize_enum(kind, value).is_err() {
+            let hint = match value.to_ascii_lowercase().as_str() {
+                "local" => ", use the 'date-local' column option",
+                "short" => ", use the 'custom' display mode and set 'date-format'",
+                _ => "",
+            };
+            return Err(format!(
+                "'{value}' is no longer supported for date-display{hint}"
+            ));
+        }
         return normalize_enum(kind, value).map(|_| ());
     }
     match kind {
@@ -1323,12 +1479,30 @@ mod tests {
             assert!(c.apply_command(command).is_err());
             assert_eq!(c.settings, before);
         }
-        // Column recovery is outside this slice: never apply the global fallback.
-        for value in ["local", "short"] {
-            c.parse(&format!("set main-view-date-display = {value}"));
-            assert_eq!(c.settings, before);
-            assert!(c.diagnostics.last().unwrap().contains("Invalid date value"));
+        // Invalid scoped date displays recover even when they report an error.
+        for suffix in ["date", "date-display"] {
+            for value in ["local", "short", "LOCAL", "invalid"] {
+                c.apply_command("set main-view-date = custom,format=%Y,width=12")
+                    .unwrap();
+                c.diagnostics.clear();
+                c.parse(&format!("set main-view-{suffix} = {value}"));
+                assert_eq!(c.diagnostics.len(), 1);
+                assert!(c.diagnostics[0].contains("is no longer supported for date-display"));
+                assert!(c.settings["main-view"].contains(&"date:default,format=%Y,width=12".into()));
+                c.apply_command("set main-view-date = custom").unwrap();
+                assert!(c
+                    .apply_command(&format!("set main-view-{suffix} = {value}"))
+                    .is_err());
+                assert!(c.settings["main-view"].contains(&"date:default,format=%Y,width=12".into()));
+            }
         }
+        // Whole-view replacement builds fresh columns; a failure discards them.
+        c.apply_command("set main-view-date = custom").unwrap();
+        let before = c.settings.clone();
+        assert!(c
+            .apply_command("set main-view = date:local commit-title")
+            .is_err());
+        assert_eq!(c.settings, before);
     }
 
     #[test]
@@ -1395,6 +1569,69 @@ mod tests {
         fs::remove_dir_all(dir).unwrap();
     }
     #[test]
+    fn original_compatibility_diagnostics_apply_supported_replacements() {
+        let fixture = include_str!("../test/tigrc/compat-error-test");
+        let text = fixture
+            .split("tigrc <<EOF\n")
+            .nth(1)
+            .unwrap()
+            .split("\nEOF")
+            .next()
+            .unwrap();
+        let mut c = Config::defaults();
+        c.parse(text);
+        let expected: Vec<_> = fixture
+            .split("assert_equals stderr <<EOF\n")
+            .nth(1)
+            .unwrap()
+            .lines()
+            .take_while(|line| line.starts_with("tig warning: ~/.tigrc:"))
+            .map(|line| {
+                line.replace("tig warning: ~/.tigrc:", "<input>:")
+                    .replace("\\`", "`")
+            })
+            .collect();
+        assert_eq!(c.diagnostics, expected);
+        assert_eq!(c.value("status-show-untracked-dirs"), Some("true"));
+        assert_eq!(
+            c.action("stage", "["),
+            Some([":toggle".into(), "diff-context".into(), "-1".into()].as_slice())
+        );
+        assert!(c.colors.contains_key("tree.header"));
+        assert!(!c.colors.contains_key("main-revgraph"));
+    }
+    #[test]
+    fn prefixed_legacy_colors_keep_the_callers_view() {
+        let mut c = Config::defaults();
+        for (area, canonical) in [
+            ("tree.tree-head", "tree.header"),
+            ("diff.tree-head", "diff.header"),
+            ("tree.tree-dir", "tree.directory"),
+        ] {
+            assert_eq!(
+                c.apply_command(&format!("color {area} yellow default"))
+                    .unwrap_err(),
+                format!(
+                    "{} has been replaced by {}",
+                    area.split_once('.').unwrap().1,
+                    if area.ends_with("tree-dir") {
+                        "tree.directory"
+                    } else {
+                        "tree.header"
+                    }
+                )
+            );
+            assert_eq!(c.colors[canonical], ["yellow", "default"]);
+            assert!(!c.colors.contains_key(area));
+        }
+        assert_eq!(
+            c.apply_command("color main.main-revgraph yellow default")
+                .unwrap_err(),
+            "main.main-revgraph is obsolete"
+        );
+        assert!(!c.colors.contains_key("main.main-revgraph"));
+    }
+    #[test]
     fn original_view_column_fixture_and_atomic_errors() {
         let fixture = include_str!("../test/tigrc/view-column-test");
         let text = fixture
@@ -1406,7 +1643,15 @@ mod tests {
             .unwrap();
         let mut c = Config::defaults();
         c.parse(text);
-        assert_eq!(c.diagnostics.len(), 4, "{:?}", c.diagnostics);
+        assert_eq!(
+            c.diagnostics,
+            [
+                "<input>:20: The main view does not have a id column configured",
+                "<input>:21: The main view does not have a id column configured",
+                "<input>:22: Failed to parse view column type: short",
+                "<input>:23: Failed to parse view column type: short",
+            ]
+        );
         let columns = c.settings.get("main-view").unwrap();
         assert!(columns.contains(&"date:custom,format=%Y-%m-%d".into()));
         assert!(columns.contains(&"line-number:yes,interval=3".into()));

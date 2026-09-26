@@ -1,0 +1,35 @@
+   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/tig-trace-status)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.66s
+     Running unittests rust/lib.rs (target/debug/deps/tig_rs-5e4c9ca2cfbe52d4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 56 filtered out; finished in 0.00s
+
+     Running unittests rust/bin/test-graph.rs (target/debug/deps/test_graph-b5e0d8f8108b1d6b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests rust/main.rs (target/debug/deps/tig-33ccf7946334abad)
+
+running 1 test
+test tests::staging_last_untracked_file_refreshes_synthetic_main_parent ... FAILED
+
+failures:
+
+---- tests::staging_last_untracked_file_refreshes_synthetic_main_parent stdout ----
+thread 'tests::staging_last_untracked_file_refreshes_synthetic_main_parent' panicked at rust/main.rs:3513:13:
+assertion `left == right` failed: auto-advance must preserve the pane layout
+  left: true
+ right: false
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    tests::staging_last_untracked_file_refreshes_synthetic_main_parent
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 19 filtered out; finished in 2.70s
+
+error: test failed, to rerun pass `--bin tig`

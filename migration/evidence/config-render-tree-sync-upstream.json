@@ -1,0 +1,1597 @@
+{
+  "schema": 1,
+  "source_commit": "7979862af0570c965d2f9f6530ff4b23017c00e8",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "BLOCKED",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/tigrc/command-value-long-test",
+          "script_sha256": "00a3630170cc80a4b7f2a709688e8fb0456fd19d849d5e03ba6f2205ac43e522",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "pager.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/command-value-long-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n  [OK] pager.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/compat-error-test",
+          "script_sha256": "7e66f4237377d77d7a19103341b35b6faae3425909430cbb2ff34eb1d29359c3",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/compat-error-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/escape-var-test",
+          "script_sha256": "8ac261a47c2b3fdc0b1647df9cebc8f11ede82e7a442ed828c31b675adb19900",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "shell-command.txt#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/escape-var-test/.test-result",
+          "receipt": "  [OK] shell-command.txt assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/quote-test",
+          "script_sha256": "9039c2c6365ae453ddae606b7135555f111f0d8ef02cd03a8420badd3e978f9d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "shell-command.txt#1",
+              "status": "OK"
+            },
+            {
+              "id": "quoted-prompt-with-spaces.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mid-quoted-prompt-with-spaces.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "single-quoted-arg-with-escaped-chars.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "double-quoted-arg-with-escaped-chars.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/quote-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n  [OK] shell-command.txt assertion\n  [OK] quoted-prompt-with-spaces.screen assertion\n  [OK] mid-quoted-prompt-with-spaces.screen assertion\n  [OK] single-quoted-arg-with-escaped-chars.screen assertion\n  [OK] double-quoted-arg-with-escaped-chars.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/truncation-test",
+          "script_sha256": "3925d602106e49ba7b388cc55c45f30d02231296813629e7658d0db9bc3de8e5",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 14
+          },
+          "assertions": [
+            {
+              "id": "delimiter-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-default.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-literal.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-literal.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-quoted-literal.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-quoted-literal.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-empty-fallback.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-empty-fallback.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-too-long-fallback.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-too-long-fallback.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-special-value.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-special-value.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-utf8-literal.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-utf8-literal.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/truncation-test/.test-result",
+          "receipt": "  [OK] delimiter-default.screen assertion\n  [OK] delimiter-default.stderr assertion\n  [OK] delimiter-literal.screen assertion\n  [OK] delimiter-literal.stderr assertion\n  [OK] delimiter-quoted-literal.screen assertion\n  [OK] delimiter-quoted-literal.stderr assertion\n  [OK] delimiter-empty-fallback.screen assertion\n  [OK] delimiter-empty-fallback.stderr assertion\n  [OK] delimiter-too-long-fallback.screen assertion\n  [OK] delimiter-too-long-fallback.stderr assertion\n  [OK] delimiter-special-value.screen assertion\n  [OK] delimiter-special-value.stderr assertion\n  [OK] delimiter-utf8-literal.screen assertion\n  [OK] delimiter-utf8-literal.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/view-column-test",
+          "script_sha256": "15ffaff11afe2deb88962c614cbf2099a1493a46e4df716b61d3028fe38959a6",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main-view.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/view-column-test/.test-result",
+          "receipt": "  [OK] main-view.screen assertion\n  [OK] stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/chdir-test",
+          "script_sha256": "168a6399b9f4b02774f284993da4e389a3af6fce8313b61975ef94eab47ad475",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "tree-top.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-one.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-two.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-three.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-seven.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cdup-depth-six.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cdup-depth-five.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cdup-depth-four.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/chdir-test/.test-result",
+          "receipt": "  [OK] tree-top.screen assertion\n  [OK] tree-cd-depth-one.screen assertion\n  [OK] tree-cd-depth-two.screen assertion\n  [OK] tree-cd-depth-three.screen assertion\n  [OK] tree-cd-depth-seven.screen assertion\n  [OK] tree-cdup-depth-six.screen assertion\n  [OK] tree-cdup-depth-five.screen assertion\n  [OK] tree-cdup-depth-four.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/default-test",
+          "script_sha256": "23e23dcb558030646b8df5455822274ce3ee201fc4c37f76a7109fcd264b93fa",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 7
+          },
+          "assertions": [
+            {
+              "id": "tree-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-author.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-file-size.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-mode.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-common.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-d8-stubs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/default-test/.test-result",
+          "receipt": "  [OK] tree-default.screen assertion\n  [OK] tree-default-author.screen assertion\n  [OK] tree-default-date.screen assertion\n  [OK] tree-default-file-size.screen assertion\n  [OK] tree-default-mode.screen assertion\n  [OK] tree-common.screen assertion\n  [OK] tree-d8-stubs.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/file-name-test",
+          "script_sha256": "92f13ad7be65e397e220fd1ceb9aa8effbcb873d7697b42a552d411506a18e35",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "root-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-child-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "second-child-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "second-child-dir-first-file.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/file-name-test/.test-result",
+          "receipt": "  [OK] root-dir.screen assertion\n  [OK] first-child-dir.screen assertion\n  [OK] second-child-dir.screen assertion\n  [OK] second-child-dir-first-file.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/recurse-test",
+          "script_sha256": "3b280320cafaf4628e2cec041cb12cfdc0eba41b09f6e6cf06fe8535c7792a8f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "tree-recurse.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/recurse-test/.test-result",
+          "receipt": "  [OK] tree-recurse.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/submodule-editor-test",
+          "script_sha256": "f7062c9c27baa6dbb67cde15e0779c5961664f66a01185d90dbc42bc1909c3e7",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench-common-src.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/submodule-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] bench-common-src.screen assertion\n  [OK] bench.screen assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/worktree-editor-test",
+          "script_sha256": "28bb4386d315ee6b2940ab8660152d21e66de48a909a986a4eb4f2ebc2951393",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench-common-src.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/worktree-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] bench-common-src.screen assertion\n  [OK] bench.screen assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/config-render-parity-task-clone/src/tig",
+          "sha256": "9b76f2e712590a2a824f2b88a0ad1275a23062f6f9d408b1aa3da4fb85ed3e50"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/config-render-parity-task-clone/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 12
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/config-render-parity-task-clone/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/config-render-parity-task-clone/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/config-render-parity-task-clone/target/release/test-graph\"\n    Blocking waiting for file lock on build directory\n    Finished `release` profile [optimized] target(s) in 0.54s\n",
+      "results": [
+        {
+          "script": "test/tigrc/command-value-long-test",
+          "script_sha256": "00a3630170cc80a4b7f2a709688e8fb0456fd19d849d5e03ba6f2205ac43e522",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 1,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "pager.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/command-value-long-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n[FAIL] pager.screen != expected/pager.screen\n\u001b[1mdiff --git a/expected/pager.screen b/pager.screen\u001b[m\n\u001b[1mindex bdb60e9..682ca30 100644\u001b[m\n\u001b[1m--- a/expected/pager.screen\u001b[m\n\u001b[1m+++ b/pager.screen\u001b[m\n\u001b[36m@@ -1,19 +1,19 @@\u001b[m\n\u001b[31m-00000000000000000000000000000000000000000000000000000000000000000000000000000000\u001b[m\n\u001b[31m-11111111111111111111111111111111111111111111111111111111111111111111111111111111\u001b[m\n\u001b[31m-22222222222222222222222222222222222222222222222222222222222222222222222222222222\u001b[m\n\u001b[31m-33333333333333333333333333333333333333333333333333333333333333333333333333333333\u001b[m\n\u001b[31m-44444444444444444444444444444444444444444444444444444444444444444444444444444444\u001b[m\n\u001b[31m-55555555555555555555555555555555555555555555555555555555555555555555555555555555\u001b[m\n\u001b[31m-66666666666666666666666666666666666666666666666666666666666666666666666666666666\u001b[m\n\u001b[31m-77777777777777777777777777777777777777777777777777777777777777777777777777777777\u001b[m\n\u001b[31m-88888888888888888888888888888888888888888888888888888888888888888888888888888888\u001b[m\n\u001b[31m-99999999999999999999999999999999999999999999999999999999999999999999999999999999\u001b[m\n\u001b[31m-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u001b[m\n\u001b[31m-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\u001b[m\n\u001b[31m-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC\u001b[m\n\u001b[31m-DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\u001b[m\n\u001b[31m-EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\u001b[m\n\u001b[31m-FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-[pager] sh -c echo 00000000000000000000000000000000000000000000000000000000 100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32mInitial commit\u001b[m\n\u001b[32m+\u001b[m\u001b[32mChanges to be committed:\u001b[m\n\u001b[32m+\u001b[m\u001b[32m  (no files)\u001b[m\n\u001b[32m+\u001b[m\u001b[32mChanges not staged for commit:\u001b[m\n\u001b[32m+\u001b[m\u001b[32m  (no files)\u001b[m\n\u001b[32m+\u001b[m\u001b[32mUntracked files:\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? blame/default-test/.gitconfig\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? blame/default-test/.test-result\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? blame/default-test/.tigrc\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? blame/default-test/bin/assert-var\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? blame/default-test/bin/vim\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? blame/default-test/blame-default.screen\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? blame/default-test/blame-with-diff-no-file-filter.screen\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? blame/default-test/blame-with-diff.screen\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? blame/default-test/expected/blame-default.screen\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? blame/default-test/expected/blame-parent-of-74537d9.screen\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? blame/default-test/expected/blame-with-diff-no-file-filter.screen\u001b[m\n\u001b[32m+\u001b[m\u001b[32m? blame/default-test/expected/blame-with-diff.screen\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[status] Nothing to update                                                    1%\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 2 test(s)\r\n|   [OK] stderr assertion\r\n| [FAIL] pager.screen != expected/pager.screen\r\n| \u001b[1mdiff --git a/expected/pager.screen b/pager.screen\u001b[m\r\n| \u001b[1mindex bdb60e9..682ca30 100644\u001b[m\r\n| \u001b[1m--- a/expected/pager.screen\u001b[m\r\n| \u001b[1m+++ b/pager.screen\u001b[m\r\n| \u001b[36m@@ -1,19 +1,19 @@\u001b[m\r\n| \u001b[31m-00000000000000000000000000000000000000000000000000000000000000000000000000000000\u001b[m\r\n| \u001b[31m-11111111111111111111111111111111111111111111111111111111111111111111111111111111\u001b[m\r\n| \u001b[31m-22222222222222222222222222222222222222222222222222222222222222222222222222222222\u001b[m\r\n| \u001b[31m-33333333333333333333333333333333333333333333333333333333333333333333333333333333\u001b[m\r\n| \u001b[31m-44444444444444444444444444444444444444444444444444444444444444444444444444444444\u001b[m\r\n| \u001b[31m-55555555555555555555555555555555555555555555555555555555555555555555555555555555\u001b[m\r\n| \u001b[31m-66666666666666666666666666666666666666666666666666666666666666666666666666666666\u001b[m\r\n| \u001b[31m-77777777777777777777777777777777777777777777777777777777777777777777777777777777\u001b[m\r\n| \u001b[31m-88888888888888888888888888888888888888888888888888888888888888888888888888888888\u001b[m\r\n| \u001b[31m-99999999999999999999999999999999999999999999999999999999999999999999999999999999\u001b[m\r\n| \u001b[31m-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u001b[m\r\n| \u001b[31m-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\u001b[m\r\n| \u001b[31m-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC\u001b[m\r\n| \u001b[31m-DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\u001b[m\r\n| \u001b[31m-EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\u001b[m\r\n| \u001b[31m-FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-[pager] sh -c echo 00000000000000000000000000000000000000000000000000000000 100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mInitial commit\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mChanges to be committed:\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m  (no files)\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mChanges not staged for commit:\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m  (no files)\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mUntracked files:\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? blame/default-test/.gitconfig\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? blame/default-test/.test-result\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? blame/default-test/.tigrc\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? blame/default-test/bin/assert-var\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? blame/default-test/bin/vim\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? blame/default-test/blame-default.screen\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? blame/default-test/blame-with-diff-no-file-filter.screen\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? blame/default-test/blame-with-diff.screen\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? blame/default-test/expected/blame-default.screen\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? blame/default-test/expected/blame-parent-of-74537d9.screen\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? blame/default-test/expected/blame-with-diff-no-file-filter.screen\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m? blame/default-test/expected/blame-with-diff.screen\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[status] Nothing to update                                                    1%\u001b[m\r\n"
+        },
+        {
+          "script": "test/tigrc/compat-error-test",
+          "script_sha256": "7e66f4237377d77d7a19103341b35b6faae3425909430cbb2ff34eb1d29359c3",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/compat-error-test/.test-result",
+          "receipt": "  [OK] stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/escape-var-test",
+          "script_sha256": "8ac261a47c2b3fdc0b1647df9cebc8f11ede82e7a442ed828c31b675adb19900",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 2
+          },
+          "assertions": [
+            {
+              "id": "shell-command.txt#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/escape-var-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] shell-command.txt not found\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 2 out of 2 test(s)\r\n| [stderr] tig: Unsupported command variable: refname\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] shell-command.txt not found\r\n"
+        },
+        {
+          "script": "test/tigrc/quote-test",
+          "script_sha256": "9039c2c6365ae453ddae606b7135555f111f0d8ef02cd03a8420badd3e978f9d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "FAIL": 6,
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "shell-command.txt#1",
+              "status": "OK"
+            },
+            {
+              "id": "quoted-prompt-with-spaces.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "mid-quoted-prompt-with-spaces.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "single-quoted-arg-with-escaped-chars.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "double-quoted-arg-with-escaped-chars.screen#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/quote-test/.test-result",
+          "receipt": "[FAIL] unexpected status code: 1 (should be 0)\n[FAIL] stderr != expected/stderr\n\u001b[1mdiff --git a/expected/stderr b/stderr\u001b[m\n\u001b[1mindex e69de29..32bcdac 100644\u001b[m\n\u001b[1m--- a/expected/stderr\u001b[m\n\u001b[1m+++ b/stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig: Unclosed command variable\u001b[m\n  [OK] shell-command.txt assertion\n[FAIL] quoted-prompt-with-spaces.screen not found\n[FAIL] mid-quoted-prompt-with-spaces.screen not found\n[FAIL] single-quoted-arg-with-escaped-chars.screen not found\n[FAIL] double-quoted-arg-with-escaped-chars.screen not found\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 6 out of 7 test(s)\r\n| [FAIL] unexpected status code: 1 (should be 0)\r\n| [FAIL] stderr != expected/stderr\r\n| \u001b[1mdiff --git a/expected/stderr b/stderr\u001b[m\r\n| \u001b[1mindex e69de29..32bcdac 100644\u001b[m\r\n| \u001b[1m--- a/expected/stderr\u001b[m\r\n| \u001b[1m+++ b/stderr\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig: Unclosed command variable\u001b[m\r\n|   [OK] shell-command.txt assertion\r\n| [FAIL] quoted-prompt-with-spaces.screen not found\r\n| [FAIL] mid-quoted-prompt-with-spaces.screen not found\r\n| [FAIL] single-quoted-arg-with-escaped-chars.screen not found\r\n| [FAIL] double-quoted-arg-with-escaped-chars.screen not found\r\n"
+        },
+        {
+          "script": "test/tigrc/truncation-test",
+          "script_sha256": "3925d602106e49ba7b388cc55c45f30d02231296813629e7658d0db9bc3de8e5",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 14
+          },
+          "assertions": [
+            {
+              "id": "delimiter-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-default.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-literal.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-literal.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-quoted-literal.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-quoted-literal.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-empty-fallback.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-empty-fallback.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-too-long-fallback.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-too-long-fallback.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-special-value.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-special-value.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-utf8-literal.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "delimiter-utf8-literal.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/truncation-test/.test-result",
+          "receipt": "  [OK] delimiter-default.screen assertion\n  [OK] delimiter-default.stderr assertion\n  [OK] delimiter-literal.screen assertion\n  [OK] delimiter-literal.stderr assertion\n  [OK] delimiter-quoted-literal.screen assertion\n  [OK] delimiter-quoted-literal.stderr assertion\n  [OK] delimiter-empty-fallback.screen assertion\n  [OK] delimiter-empty-fallback.stderr assertion\n  [OK] delimiter-too-long-fallback.screen assertion\n  [OK] delimiter-too-long-fallback.stderr assertion\n  [OK] delimiter-special-value.screen assertion\n  [OK] delimiter-special-value.stderr assertion\n  [OK] delimiter-utf8-literal.screen assertion\n  [OK] delimiter-utf8-literal.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tigrc/view-column-test",
+          "script_sha256": "15ffaff11afe2deb88962c614cbf2099a1493a46e4df716b61d3028fe38959a6",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main-view.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tigrc/view-column-test/.test-result",
+          "receipt": "  [OK] main-view.screen assertion\n  [OK] stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/chdir-test",
+          "script_sha256": "168a6399b9f4b02774f284993da4e389a3af6fce8313b61975ef94eab47ad475",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "tree-top.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-one.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-two.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-three.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cd-depth-seven.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cdup-depth-six.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cdup-depth-five.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-cdup-depth-four.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/chdir-test/.test-result",
+          "receipt": "  [OK] tree-top.screen assertion\n  [OK] tree-cd-depth-one.screen assertion\n  [OK] tree-cd-depth-two.screen assertion\n  [OK] tree-cd-depth-three.screen assertion\n  [OK] tree-cd-depth-seven.screen assertion\n  [OK] tree-cdup-depth-six.screen assertion\n  [OK] tree-cdup-depth-five.screen assertion\n  [OK] tree-cdup-depth-four.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/default-test",
+          "script_sha256": "23e23dcb558030646b8df5455822274ce3ee201fc4c37f76a7109fcd264b93fa",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 7
+          },
+          "assertions": [
+            {
+              "id": "tree-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-author.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-file-size.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-default-mode.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-common.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "tree-d8-stubs.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/default-test/.test-result",
+          "receipt": "  [OK] tree-default.screen assertion\n  [OK] tree-default-author.screen assertion\n  [OK] tree-default-date.screen assertion\n  [OK] tree-default-file-size.screen assertion\n  [OK] tree-default-mode.screen assertion\n  [OK] tree-common.screen assertion\n  [OK] tree-d8-stubs.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/file-name-test",
+          "script_sha256": "92f13ad7be65e397e220fd1ceb9aa8effbcb873d7697b42a552d411506a18e35",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 3,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "root-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-child-dir.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "second-child-dir.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "second-child-dir-first-file.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/file-name-test/.test-result",
+          "receipt": "  [OK] root-dir.screen assertion\n[FAIL] first-child-dir.screen != expected/first-child-dir.screen\n\u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\n\u001b[1mindex 0a482af..53d6b42 100644\u001b[m\n\u001b[1m--- a/expected/first-child-dir.screen\u001b[m\n\u001b[1m+++ b/first-child-dir.screen\u001b[m\n\u001b[36m@@ -1,7 +1,7 @@\u001b[m\n Directory path /-- foo bar/\u001b[m\n drwxr-xr-x                                    ..\u001b[m\n -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\n\u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n  [OK] second-child-dir.screen assertion\n  [OK] second-child-dir-first-file.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 4 test(s)\r\n|   [OK] root-dir.screen assertion\r\n| [FAIL] first-child-dir.screen != expected/first-child-dir.screen\r\n| \u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\r\n| \u001b[1mindex 0a482af..53d6b42 100644\u001b[m\r\n| \u001b[1m--- a/expected/first-child-dir.screen\u001b[m\r\n| \u001b[1m+++ b/first-child-dir.screen\u001b[m\r\n| \u001b[36m@@ -1,7 +1,7 @@\u001b[m\r\n|  Directory path /-- foo bar/\u001b[m\r\n|  drwxr-xr-x                                    ..\u001b[m\r\n|  -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\r\n| \u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|   [OK] second-child-dir.screen assertion\r\n|   [OK] second-child-dir-first-file.screen assertion\r\n"
+        },
+        {
+          "script": "test/tree/recurse-test",
+          "script_sha256": "3b280320cafaf4628e2cec041cb12cfdc0eba41b09f6e6cf06fe8535c7792a8f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "tree-recurse.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/recurse-test/.test-result",
+          "receipt": "  [OK] tree-recurse.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/submodule-editor-test",
+          "script_sha256": "f7062c9c27baa6dbb67cde15e0779c5961664f66a01185d90dbc42bc1909c3e7",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench-common-src.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/submodule-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] bench-common-src.screen assertion\n  [OK] bench.screen assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/tree/worktree-editor-test",
+          "script_sha256": "28bb4386d315ee6b2940ab8660152d21e66de48a909a986a4eb4f2ebc2951393",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench-common-src.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "bench.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "editor.log#1",
+              "status": "OK"
+            },
+            {
+              "id": "exec-env#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/tree/worktree-editor-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] bench-common-src.screen assertion\n  [OK] bench.screen assertion\n  [OK] editor.log assertion\n  [OK] exec-env assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/config-render-parity-task-clone/target/release/tig",
+          "sha256": "feec07e31047036ab5ed28ea42212c81145443c9833ff46e4d4a97ec25afaa01"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/config-render-parity-task-clone/target/release/test-graph",
+          "sha256": "7f1141a62bb1438bc51326642f8acf239b853ef84e39c0dbfc2b97e84156f1d4"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "fail": 4,
+        "pass": 8
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/tigrc/command-value-long-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "pager.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/tigrc/compat-error-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tigrc/escape-var-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "shell-command.txt#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/tigrc/quote-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "shell-command.txt#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "quoted-prompt-with-spaces.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "mid-quoted-prompt-with-spaces.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "single-quoted-arg-with-escaped-chars.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "double-quoted-arg-with-escaped-chars.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/tigrc/truncation-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "delimiter-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "delimiter-default.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "delimiter-literal.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "delimiter-literal.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "delimiter-quoted-literal.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "delimiter-quoted-literal.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "delimiter-empty-fallback.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "delimiter-empty-fallback.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "delimiter-too-long-fallback.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "delimiter-too-long-fallback.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "delimiter-special-value.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "delimiter-special-value.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "delimiter-utf8-literal.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "delimiter-utf8-literal.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tigrc/view-column-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-view.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/chdir-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "tree-top.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-cd-depth-one.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-cd-depth-two.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-cd-depth-three.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-cd-depth-seven.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-cdup-depth-six.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-cdup-depth-five.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-cdup-depth-four.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/default-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "tree-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-default-author.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-default-date.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-default-file-size.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-default-mode.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-common.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "tree-d8-stubs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/file-name-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "root-dir.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "first-child-dir.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "second-child-dir.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "second-child-dir-first-file.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/recurse-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "tree-recurse.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/submodule-editor-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bench-common-src.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bench.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "editor.log#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "exec-env#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/tree/worktree-editor-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bench-common-src.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "bench.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "editor.log#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "exec-env#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ],
+  "source_manifest": {
+    "Cargo.lock": "4dff74ef4ccdb94d739984c33d6b06c217c12144f4095dde5e16bf10902ebbb5",
+    "Cargo.toml": "9c0a27f7f353f722308d07664ba1645e9dc6dfe35a94201839f7b4cd93752c69",
+    "include/tig/apps.h": "e0d6e87c700abd65d3eacdb76b2f36391b467aae9ebcd18ad68e8269d20fd377",
+    "include/tig/argv.h": "e3fc263832c89cb45a6990f81e18efde74008f4531c3dc332b03e6c02e8bcb86",
+    "include/tig/blame.h": "314fd50e62281b9ed0ad63cdf685a33f8ecf41b4fac37643e9ee486bcf87f6f3",
+    "include/tig/blob.h": "99ac1cc6ed697521a3ee00c059463fc7c9d5e7fff2fca2c850c099d3ce7d1162",
+    "include/tig/diff.h": "1f6b143c35a328f41d0e6d7ccfe991b3f761e3137c70b59461dda549af952dbb",
+    "include/tig/display.h": "ef9c9cffdf2affb38576ecfb51ae3e6ed5f9f8528577819982c6863aaf7f5931",
+    "include/tig/draw.h": "ff2cc0bdaa825f017a3cf496ccc161266613b49997b68f6bbe4a068e89a6b481",
+    "include/tig/git.h": "1767a1943902c2d8592c47ee33817e9439d9fc1bcc53d1a3f32993dafe872d7a",
+    "include/tig/graph.h": "8da8aa8407ee991857246f23fd1640341c148b7d04ec1d03283364c6bc838c99",
+    "include/tig/grep.h": "b70cdaf20cfa5134219bcdae7fc157d7667ffd67955feae0c4df12c3942cb464",
+    "include/tig/help.h": "c207541276bd32c3c68ed1decd07d8399bd3e4ce78c0945980af84d4523bdc83",
+    "include/tig/io.h": "7526c1aa5e9baab9eecb94c62736e6c672d6e3127a98e3414e6091dafcebcfa0",
+    "include/tig/keys.h": "350c09f59056d1deef5fa3f067531eaa6364218382f8683e47908074be054f48",
+    "include/tig/line.h": "a51a49d0d887040c2d04828f6994a8cdf4f695279c18c501009e8f96ba27b065",
+    "include/tig/log.h": "9c36935d2e2aa5f61be527ecbcd39d581a86771341e4b915d80ac60ec067e63f",
+    "include/tig/main.h": "636ab53bb8bd6c9d85395bacc3becfe24796faefa304ca5ddc27fac4200b0148",
+    "include/tig/map.h": "f82984977ac43229173def29eb0a63a9381120c9c2e33eb83a268fee4b002732",
+    "include/tig/options.h": "8004c7e68a1c0a0b795cc8bba3f14d91e135cdac8890c10fc51585a59084565e",
+    "include/tig/pager.h": "328a10d9c497d6885327a8abd66450ff9ae361b72be92c74121e5390118942d9",
+    "include/tig/parse.h": "003e5b93048fde1a775072b8fc4281ea4ace09ca76f6ff4a9c06a27f0e97700d",
+    "include/tig/prompt.h": "4c9a1409c12e6a896fdb657d7ef18fbbe2e300cde89c23db39ce85b26e795ca0",
+    "include/tig/refdb.h": "0fd97c7d6c3f378610bb4b0f4a312e00cc850d6f3ba0976535caa8a3e1eaa043",
+    "include/tig/reflog.h": "1cc4329d09111312224ca188f66f15719d72c1b36ff621d4fcc57f46a2b0eb68",
+    "include/tig/refs.h": "b0685945b686de381a568dc4d66382157a5068f2441b2cd4c2c6b429b15b9c52",
+    "include/tig/repo.h": "e5d2a44ec82fc06276f82e352e6d4d43c4d5db344a69deff4285e4fed938f1e5",
+    "include/tig/request.h": "65f5dfce8fca028ff87f86949de623e30d4bf66d2eca0708893355b42c006b93",
+    "include/tig/search.h": "59c6f342f00cb2f6790664100b8edc7417f7f277cb9cbc9489c0da8c252eda36",
+    "include/tig/stage.h": "5e3cedbfb1b812ce477fbac9c76d89e03dde3eef00a8af4dca74cafe0dbcabc1",
+    "include/tig/stash.h": "166b9d3cac24cdcacff019300872df45aea9e9eeb1d7770ef969e599f4e57809",
+    "include/tig/status.h": "6be20029eb8c53f3795b8324535dcb7239d7187b3649a64faff27dae496ca186",
+    "include/tig/string.h": "28ea2fdb3078fe641f465cba24ec4fdb91507ec83d78502f1341587f9d90d223",
+    "include/tig/tig.h": "b3bd68b0ec52236e15750d37b41e8ba7e304e22733b1a7d863ff5e7fba604620",
+    "include/tig/tree.h": "4cecaeff99be0ccb23134d25fb9b447a5c334bbe0d10f0883d0f54e2777be159",
+    "include/tig/types.h": "1103d4116a0454991462173f0a60e37030233a30a2f9a0539065dfbeb862321f",
+    "include/tig/ui.h": "cf647c2364c24d83fb0712946e0bba43145776946a2f64db865f6fe439c6a68a",
+    "include/tig/util.h": "9dc77bf677d1d03e5fa655202f2c690702c0894f6f61561434527dcd1250d1f8",
+    "include/tig/view.h": "fefa46c91dfba697688d8f56c4e8139a9a4582355c7a230ed32d825ce8f42f3b",
+    "include/tig/watch.h": "ee834d19effee9360a2480d3087172ff7eeb8084d28ce6fd6216e9a9ec341141",
+    "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
+    "rust/commands.rs": "d277d85bab05c246bb5ed0ca18e62c8b1058780b2e60e38357691bd083cc2944",
+    "rust/config.rs": "2818658ce690aa15596b13040bfbfba812fecf8ba83dcb93671650ee7585d623",
+    "rust/date.rs": "1efe556b4746b2c220949673a40add71ce8bda44aaa68ae0b04f49d9c4f371c7",
+    "rust/git.rs": "68eef5c3ed2ba31ee8b6faadcc17fe180b740d4e9a44a2488c96e49706804370",
+    "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
+    "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+    "rust/help_view.rs": "029b06cf5c7c88523fe4fb4f3374f737f7fbffd7807169dcd8b8f207cf87b158",
+    "rust/lib.rs": "91d7fefb621f5c5abfdba0f03a8f1e494f906fb495335fafeba4a12972e7403c",
+    "rust/main.rs": "c086f28a9dffc12bea73a04ba19ed7f01bdfdf7c8c1b623c95b8cf7184d5e27a",
+    "rust/model.rs": "5771eceed341a5ace3db7772b70db092d3f1e2038aaaed85afa8c91ec9a844b7",
+    "rust/patch.rs": "c2219dd3a28d15d811f1f1de2ca1c5d3b20162d32d48f53e1778ff9639040152",
+    "rust/refs_view.rs": "38c310d91de37f22d0e29f6a3ce1c9a8f90a21a28f267895cd95c2a9259ad8bb",
+    "rust/render.rs": "1bc60f2b64b936df92fed75625baa212bba033fd6514f8fa997ef63b98426fa9",
+    "rust/tests/config-recovery.py": "0bd908d544c7ea3cb94a9a4e109b9b81dfdaf626e25e795ceed0eb87c829851a",
+    "rust/tests/date-compatibility.py": "730fb29be21cd0eab61e97d7789116505227d4d58fe70640af4d9acff2c205fa",
+    "rust/tests/date-percent-s.py": "3a837e0703587ba8f9909d630d700bd17f14bfc34b1e1fe105201e7600df6c4c",
+    "rust/tests/diff-input.py": "a3b5c4ab386484e78f959b469c76a16e53ebbaa69983ad7f157104fa0f3474c3",
+    "rust/tests/diff-navigation.py": "ac38d3cb56fc1bad1b628465cc85d67446e0439e6317d25a3e723c621b99e639",
+    "rust/tests/graph-differential.py": "666efeca9ee6cd79cb8bd70cf5639f00438a6b6dff7135ad03f98e53de8d7c8e",
+    "rust/tests/graph-v1-differential.py": "9e144d33dd228875d5a90b8068871102139ce3989324d98e6ffc5ce7d8830ace",
+    "rust/tests/terminal-smoke.py": "43ee4a59cd86a88a08fe5bb286d61421594983d613f0efd2076e9189c4f7deea",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "rust/tree_view.rs": "d4df2b1328e521c3e6b61257bdced40ba047bc10080018822c3fb0562793e48e",
+    "test/API.adoc": "4e8e014ac984368c1bd8ff0d2c4ef614bf03501bd3cf9e99ec1da16126c0f938",
+    "test/README.adoc": "0c396cf68694ad5bf7d13107a67a862411c0f51bba9882a62692d4f909f65830",
+    "test/blame/blob-blame-test": "a932f97f6963a0962c69b2064371d897bba836ce4a3a93a454b7d994b62b55e6",
+    "test/blame/default-test": "79bb404e69aeaf2c1d7ebe1b248bcb94454284bdbd854490b747b8e34f0c4a5d",
+    "test/blame/initial-diff-test": "13f0d337f1954eb9f30b30d9009862fb24f69753cf4cc6a62f4ab998b5cbd193",
+    "test/blame/navigation-parent-test": "3cb5b99c305ca3c2d44defdf7a8a74dfc47cdbdffa148a1c3019d812e38cbc10",
+    "test/blame/revargs-test": "05be7f205f0ee2687b231892da52af3c1517712d8aab2de874e39e39d8cc2f3d",
+    "test/blame/start-on-line-test": "a567fd6137af1ea7dc38f7cdf5a55cb82440ec87a52e5086b88867fe3c9edd13",
+    "test/blame/stash-test": "b402fe7909895fd01ceb41d020889731e350c78d0cf58d45c89b55351e1079ac",
+    "test/blob/wrap-lines-test": "2c4414a548db2b1d6d92855a7262220feeb8c25d31b492275c02f8a92983cc24",
+    "test/diff/commit-title-wrap-test": "6437ec94ca5c3689ed6c0c1199a74957dfc57a744dc61543bf3df9b96167183d",
+    "test/diff/diff-context-test": "70d66cc7fbbace58b14cf4c12613de5bc00f084e3ed9d043e2b886daad275dd4",
+    "test/diff/diff-highlight-color-test": "b77a1d9d2f386e0bb3ace67fd36d0086437571f21ef04cd8788c41d293afa924",
+    "test/diff/diff-highlight-test": "eab9213bd2b38ed296eb372ed16d7f9397538ffb3b54f0bb1b36d7ccc7040b02",
+    "test/diff/diff-stat-split-test": "a1fb6dcee04518578a18ae1f5b6ec160aca21960093d970afeeb09433a1adea8",
+    "test/diff/diff-stat-test": "2e3504a253b87cb00c42babbf7014ca384fbe2951bba56232a10ef5a688e151d",
+    "test/diff/diff-stdin-test": "254d04fcf06b75967b9d47904b78110ef7c8f0b211609a345093549b35a18568",
+    "test/diff/diff-wdiff-context-test": "a494649318b6f871a86ba78525850005ac81104bfe7296dc27f7bfcfe477d88b",
+    "test/diff/editor-test": "2eb49eea8dacad57a98b5cf1c8b304e8bad7521eca40ca80261348e19c6e2434",
+    "test/diff/line-number-test": "4f169e7dbcd1ec8d8958c12e64fc4c030c0a3093100492a3c7af9c4e41036e72",
+    "test/diff/maximized-navigation-test": "f6374b754da38f426afd74a770566cf91a3fd21c4714ed0efe090e89b2e24d5c",
+    "test/diff/open-after-split-test": "e5b590b8db0cdbd92776301e1fbbc9faefef2aa3ab11a3952de12ff45c153333",
+    "test/diff/start-on-line-test": "ba5847daea6b42732a27ffba9e6c440b1192c00128ba5a062cb1b217d9269d31",
+    "test/diff/submodule-editor-diffstat-test": "182d44c44303d8558e6f2c64901e280f2e78f1edddffe1256c335e666f5449b3",
+    "test/diff/submodule-editor-test": "2badbbefeed0ee5b02a987a6b48ffa93554d6d8a59d5d1dac61920b96b238a4b",
+    "test/diff/worktree-editor-test": "9ef4bf6fcaae3012e39756792c16edf8541ad42a898909289927d2674d38c074",
+    "test/diff/wrap-lines-test": "4a68cfaf5c4231853b50799b217f130d445b4b873fdec577f60290e8d5237072",
+    "test/files/refs-repo.tgz": "455569e9610b5cb1e55a643f4c1086b15b87ee3c7a907838d97dc04169c7d7c1",
+    "test/files/repo-authornamechange.tgz": "831a76da03fda60054aa9dcffc24a955d3be8007dfd77953dd319f4de9c0d9ed",
+    "test/files/repo-one.tgz": "e49d18a21765d4f3a5013b932cc6938654fcaf5f79d0f2507cb8a3efdecf114f",
+    "test/files/repo-two.tgz": "7d6dc370c161e0e26445676643eece8bc1042483b019cd450ebd0bbca0570bfe",
+    "test/files/scala-js-benchmarks.tgz": "48bf529d77a160f0d59afea212a0cb1e952b84e8b681587ac9add37224f9fbb4",
+    "test/graph/00-simple-test": "3749ecf4d4cdeb5b99ef9a2df4e88e1990e7bd350e0fd4cd9b1fb9dac287313e",
+    "test/graph/01-merge-from-left-test": "954da4f1a35d618408fecc25fbe4637997c7a9867e58b684f55a0b1431d6bcd4",
+    "test/graph/02-duplicate-parent-test": "fd8a980f4a5fd84c9962de92e4edd6b2e30f73e4721e4a79822110f0ab29e185",
+    "test/graph/03-octo-merge-test": "c3a7e333cd1a1304b5926523a9e85d3326e175435208ec12a6ff01e81790a9c5",
+    "test/graph/04-missing-bar-test": "cae68ae89b66b83206549d4ff71bde2713a27e1e49c923118017e2bec83e726b",
+    "test/graph/05-extra-pipe-test": "790bbb5542861c0912d9f909980213a0e27d3c5a58c1594c09fe8581484127f0",
+    "test/graph/06-extra-bars-test": "2b1b26c2adc817d719fb45b242f5b6934ae2aca4084b9600fff48cdb9fcc2d35",
+    "test/graph/07-multi-collapse-test": "c0408ecef450c3a6f9067df3b4e10f9de99d353eebadbe0d67a566d40a06330a",
+    "test/graph/08-multi-collapse-2-test": "135c50bc21773b84a9c86519ca077ca19455535a633cb83337cb6dae4a05034f",
+    "test/graph/09-parallel-siblings-test": "3ed18377b39387d6990ec64bd2cfc1c5d8e01c9b86b1c980c856658eaea217b2",
+    "test/graph/10-shorter-merge-than-branch-test": "3e9bd1a95d2c722ff8564568d7a10386f64e5b32f36f8a481f6bbc0b2374396a",
+    "test/graph/11-new-branch-in-middle-test": "6107edec49f48baa4ce7eb232441ce920ce00dbf22c40098c9783dc7fd84e17d",
+    "test/graph/12-cross-over-collapse-test": "6b115d70679457830c0d105c9bf9515095da0e2474e30c628b6e8a50980f2f21",
+    "test/graph/13-collapse-parallel-branches-with-different-middle-branch-test": "7b88aef88b8163a865dd0ce5db0bebc056bbf0421bf25ca26200396a865cb848",
+    "test/graph/14-long-collapse-line-test": "f690039bc950643bdbc77c078b33d53d9e379f45bc9170e8c4306286e89c848a",
+    "test/graph/15-many-merges-test": "609d9d209339059c8387f2f0d1ae49b8cfa4c41df72d13c46aa1458da1e05864",
+    "test/graph/16-changes-test": "12c2e9f751ea4fd7f29150ac5e1db28e2316abe4780391eb5e673e68a70d1865",
+    "test/graph/17-more-merges-test": "003c606d10ab66b9e4222356cf0d6b2553336731d4f63a0dc58795224568311b",
+    "test/graph/18-tig-test": "3064a04e86bf8cf512ee2a3ade9cb01723b7d98ca7e642be5c3ccaf4f2fd549e",
+    "test/graph/19-tig-all-test": "a7ae74bb0967777b696aec2f3896bb0a68036e818bc3ab3d937807efb5ef860b",
+    "test/graph/20-tig-all-long-test": "ad88c3cabf2919ea3568faddc7040ee3f2ae89613c3d894c2d0af69a3ac1864a",
+    "test/graph/20-tig-all-long-test.in": "43d01d2dd65f677381e5017a12e2fbfeaca6b4195230dc83ca526d78f4f9f0f1",
+    "test/graph/gh-490-heap-buffer-overflow-test": "4c3f8d49414d56f2d10a640a7795a348a0523d654d04cbbc15cd8071c8bd785c",
+    "test/graph/gh-490-heap-buffer-overflow-test.gz": "ef2cd85fb98949d75416ea6b7b11ac36b9e45835c61bd882b0dd27efb195beb3",
+    "test/graph/regression/horizontal-artifact-test": "acef8c4ca0736644367ece5da8bbfe0bb6eefcf6f533b3adca7d5e2ff6420e28",
+    "test/graph/regression/horizontal-bar-wrong-2-test": "ba2d3af47909b42a11a6c040dc17f0b8c2a6d990302179d38d2c383a9077b9c6",
+    "test/grep/default-test": "b1851b78638060c7bf6456d1e135346155e3b1b8ccc6061870de1d95b09a3acc",
+    "test/grep/editor-test": "56a4d55eca2219a12c2ef14ca62585f34f0ff4d96fcbe8cea887cb176991089a",
+    "test/grep/refspec-test": "b6157d8b16a2f3b3b45d89a5b148b28d28518ece49d640f1692e67253623b455",
+    "test/grep/start-on-line-test": "7562768e9629a5e7b7ec142e57a01a6d2afcb7d6a7cf1a6f89d6374ae9fce5a6",
+    "test/help/all-keybindings-test": "d172e362ab249eb226a7280208aef4021145bb0f75e99f085aedc32061b6e006",
+    "test/help/all-keybindings-test.expected": "5d7e3bc92eff84b80779f2717be49379f076e09da396941246446cfa54c48cda",
+    "test/help/default-test": "0044e01f0fa489d763cb5b1bee2a6d11fba5dbe5ed82d45b56cb31b7b72f0f11",
+    "test/help/user-command-test": "626ed5e18deb267653eddcd4d8115f474810b45329ac9a45af32fc0a58f79c2f",
+    "test/log/diff-stat-test": "c315cbf3e114e901c2694ac64cabc1106c9751e03f5f5803ef2780bc7fb2f2b6",
+    "test/log/log-graph-test": "00ead28a91fff660b42ff158a90aac70b66642e4d9ed6c30d5475387cef0cf52",
+    "test/log/pretty-format-test": "fef3b9a3e6ead1c9cc199f7978a6cdc1f7620825b547e72234a23e89eea24922",
+    "test/log/start-on-line-test": "ac043b2f88440d38873705d0c1c3dded4da1191507a4dda0196fb66e15eadcc7",
+    "test/log/submodule-test": "c674fa891da51458f71bf89ee16691b8b7d4d871a07b32028298e9d1c3d046f9",
+    "test/main/all-arg-test": "75f118364ab7237a1719bce081b672599097d9820d5bf959ec7238731492a60c",
+    "test/main/author-name-change-test": "cf98937433b79471867f6fe6526b2d932e17a5019ca8fc8a2f69995dc6bcc38f",
+    "test/main/boundary-test": "74e2e050399801013310584dee78409edf18779f387853bd1df039e8d697fb07",
+    "test/main/branch-var-test": "2ed95c116b403b74c4389b9940dd5b928572db92a1de25ca1c3f6e4c3e969aa4",
+    "test/main/commit-order-edge-case-test": "305a58baac2652a97ffd98afa2d10638c65e13be778867a23d0897c0a6acac24",
+    "test/main/commit-order-edge-case-test.tgz": "00c0681e15e11184536dd87d2c436cfbdd97193b496e6447ab3d52f7f89dcad1",
+    "test/main/commit-title-overflow-test": "6725bacb3bf45a7d4465bab47aaa916fc6ddc013492174d5ab94dc8550b62f54",
+    "test/main/date-test": "b050de02b7fcb48d19e400aa43e9ac5256450674b2555717ecfff6497873f955",
+    "test/main/date-test.in": "cb9c72a9eba824cf85fa772a40aa217b21e5f662f0e4fd631ebc0beaa52f9a01",
+    "test/main/default-test": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+    "test/main/emoji-test": "51ed42b7aba3e56404e0dee7b1a9a18f1cee925419feb2a665f103572853764f",
+    "test/main/escape-control-characters-test": "f0afbbd19bf33724e569022ba500c4e159857aab1a4680bf293c443e25c431e3",
+    "test/main/escape-control-characters-test.in": "150914055103c3d2b627ad09ebb68613e3d1b4fe5e4c1464039a6710b12e08ef",
+    "test/main/filter-args-test": "71a55ff435f3cd25168a004233b7ea6c34e71137c9483a91e921aaae49e3c9c4",
+    "test/main/git-alias-test": "6376a028dd925590fdb854ef9b7b979e032c7a05e2d265b2c30c53f0105b3155",
+    "test/main/goto-test": "2ec9c12269d3ffd14b14e643a8a328096a7ff04a768c8cdf2948b5a4e3238ff0",
+    "test/main/graph-argument-test": "dec2e0ff1c54fbc34224b177df4e30d786473f12bde2800dd9f6b278a30675db",
+    "test/main/jump-ends-test": "72446dd77ed40b9215b369c063233e7daa934f3ce106f1fedbe01fb644dcbd5c",
+    "test/main/mailmap-test": "83d27512940a1a35f0d9089321a5fbf5267ae55a6c636da9b6406f4448ed1b1c",
+    "test/main/main-options-test": "dddb92e5a6a90488359c6a2f47eb84415b22308e52940f206bca268593db4fe0",
+    "test/main/merge-test": "57723b9fd6ed6157ecaeaa6efd30ad1ead43a4ccf039eec3ec6971351cab7d71",
+    "test/main/no-matching-commmits-test": "e1bf5d04ecaf3a855b65548e2a6ebe1697bc787597cfa5b97927acec79ed7bfe",
+    "test/main/no-merges-test": "dce74d5e289a5e7830f96e1ccede6b85bb17a5b5d7da32ba72789e0857e82a47",
+    "test/main/pretty-raw-test": "03a00e6802091e2f011df0e405fa3f586dcd37e868a42145734e6b75932d3c94",
+    "test/main/refresh-periodic-test": "f7d8f6eb6ae2ba733d210d52f5140d14ce23a765961fa8a8c561dfe257e5446c",
+    "test/main/refresh-test": "299ee5ce1fc8fd738059aa30604c50411c876e8c0a7035684056f85b94b79111",
+    "test/main/search-preload-test": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
+    "test/main/search-test": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
+    "test/main/show-changes-after-rename-test": "667f4b735c4588dff1445d4901d899c1bbfdfc278713d54c1b38182d725ef2b4",
+    "test/main/show-changes-test": "243aabd40fe83a59940f0289d19596d94d1cd7fccc088e3f1116f79b0e13b709",
+    "test/main/start-on-line-test": "09118ca562b3167b5ced4913185fe7e8b99062f40e7ce4a9a97091a92219187d",
+    "test/main/stdin-test": "5b3882f86125941300e9d641670dba620ee0a2bfa69af5405e240f1f0a15eda7",
+    "test/main/submodule-test": "ae7a945fee6bf5676a0435fb3335e92ca8c2f61f823e9a188ed06f36f91c340b",
+    "test/main/unbind-default-quit-key-test": "7853b856078605aebae6dd66f193eefb32320c2439ab3077020deac54bf4baf3",
+    "test/main/untracked-test": "1903b8792865653883d9590fcd7f876a94823fa89e350b7e1d81c32d365ea13f",
+    "test/main/update-unstaged-changes-test": "241f169bbd0c507256bb23b2a56963cd1dafd3325a642693d7f21c5ef871ce8c",
+    "test/main/util.sh": "422b99e8cded63a0cf10edef531e0afffa68553ff44feefb42f00240a0b532cd",
+    "test/main/vertical-lines-test": "70db7c2628291db5ea02a0a15759bcf547790067ea981b15e068c6ea738fd5fc",
+    "test/main/view-split-test": "1893d1cec14ce3191fe06aca35c9f3e71891bb61f40b8cedb645bc52b82a16f4",
+    "test/prompt/exec-test": "9a755be87f6937665502bb136649b505fa4e6c081a2c638fce4d19bb0ff7732a",
+    "test/reflog/default-test": "700459540642c895a717fa943a46a0df031eb4b135dec7b63562009e26d4a89e",
+    "test/refs/branch-checkout-test": "90cdd097756de3865295522f27b5919fd5e84f9dd9b1a7f0991edbbb7057d3d1",
+    "test/refs/branch-tag-test": "4759456f345044d023f8d542128bdcbea9fb5d22f3c8ebcfaefe605a218502bc",
+    "test/refs/branch-var-test": "bc039b2d994df5e32261605e8fc9320cd5b22dedf2cc83b1a4d325884eac1066",
+    "test/refs/default-test": "fa6f469aa8cceb5487604f8d8e9ca02154eb6190592a533470bd729918fefcb5",
+    "test/refs/filter-test": "a1f75f010b847def15a56cb1ef134be855bee05825aa1b898492103f8d06ae75",
+    "test/refs/refresh-test": "96400babf8380c040d74c79aa707ce39985b813f179d385ce6620302c382080c",
+    "test/refs/replace-test": "a18e6d147af235955df8f41888e07c27211a3c8bd711bc61c7cd20b1aaa6697c",
+    "test/refs/start-on-line-test": "e518cd18ff4891b3099f76d3ee8f09e60de1431af603740b09bdbcef034b9f11",
+    "test/refs/worktree-test": "52e7a5bb711284896590077360af4a1708abb8bb990fe64685338d454ccbfb86",
+    "test/regressions/github-1136-test": "b575998f86183937ea1307dedd899204f83e43a634a9872a2fe9c9b2f583f7f0",
+    "test/regressions/github-370-test": "f38e1d3a77680394d8a1c49c1d3e1950bd9b5fc9902f7da641611968ecc3d654",
+    "test/regressions/github-390-test": "b3f7f52a19bdcc9d9f0ae3c9fcf180770d65a153afa70f7f767408fd06b6fa2e",
+    "test/regressions/github-434-test": "15e743199c03998a888fa22334e5c0c7789ed2fb9de611923f2c0e9d62bbf55a",
+    "test/script/comment-test": "f997e37feeb882409c5a36fde1bac118338ed0527c40a311aaa029e4e4ccd428",
+    "test/script/default-test": "245916f9bb4a2281cbab6bad51a3511bb05a1605028ed3c69bb6f16cf03c4008",
+    "test/stage/default-test": "d58bba43a0248c8c2bea7551e41f8c8dec4dfd993dd8dbb156f8325d895d7493",
+    "test/stage/gh-410-test": "6cace115203d853e9db07dc5abb28ce2adb5ba897227da1d0966ac16e0dd4334",
+    "test/stage/maximized-unstaged-changes-test": "c99eda695fff484318792ca50fcb135d4a05d4c0754c1d696d998116ee3e509e",
+    "test/stage/split-chunk-test": "0aa8614f911de18145b25164645805cc89b7eba159349bdb8181a7284c8c6969",
+    "test/stage/update-part-test": "57949ae5596c712dcfeedf32d7535b805177823814b0a648e9ecf72354723bbb",
+    "test/stash/start-on-line-test": "e457e5a5e298db8d6d337ada5f5b6bfbe2a4e7026ba2ee51b249c87b3f95847d",
+    "test/status/file-filter-test": "ada6618b55d4a2c054e4858f336bf67b389b17b98a11cb5404bd93ac9d818c80",
+    "test/status/file-name-test": "2f1f9fea59a3a08f7bdf5d2fa6b767c72c94e922bc51167ab73bc84e28ee70c1",
+    "test/status/file-var-test": "2e23ee40b15e443f4953a3e3319a886cd7912cc64c488476d5a76b9e7471a960",
+    "test/status/on-branch-test": "775b495bf60d2e373109c6fc8d194b3f84ecb2b2db9d1ac8fc9d54c8402d4508",
+    "test/status/on-branch-tracking-info-test": "9ad1fafc5b022748b11d2382663d330f0715dfefa92c413d9324c36e86dd5efe",
+    "test/status/refresh-test": "8da82f46fb86373992e5546fadbff84a17eaef025b7d0f39966dd005025dd6a5",
+    "test/status/repo-var-test": "6163b10a7e99c242c60f2a08ed1b7022ea19784d286ad28eb8599b79a8b5566d",
+    "test/status/start-on-line-test": "ad71655911fcedb5f33ee3de20c0ac945fdcc5ca210ee8c47651fdc90ad837dc",
+    "test/status/submodule-editor-test": "037dcd5a7c53d40da6126ec07c5ac7d6f3307526168f664900687ae5c9f3b4a6",
+    "test/status/untracked-files-test": "b3c1c5362794ea95ee0a476662eb534b411a12e52aa4409c659f480a1a585aba",
+    "test/status/worktree-editor-test": "65959faa68b69b6ff2dadb4437ab1f12d9ca83241e4d02d102529baa05257f71",
+    "test/status/worktree-test": "f80c49d8bf02d02b5b75438bb5551592949214f0fb09444c68e3db031a1c9f19",
+    "test/tigrc/append-option-test": "546c25bf07c2f5752f284cc8ad5044a29e13d088bda94b07aeb94ad47140cf5e",
+    "test/tigrc/builtin-error-test": "f027ec6d4633ac10c3ca7748810c14cb3d4b43bff6673e09cf039964f1205fac",
+    "test/tigrc/builtin-save-test": "ff85928014ef52b015e2c567847e7fc2b3b092004d6d246685872466e3fe40cd",
+    "test/tigrc/command-value-long-test": "00a3630170cc80a4b7f2a709688e8fb0456fd19d849d5e03ba6f2205ac43e522",
+    "test/tigrc/compat-error-test": "7e66f4237377d77d7a19103341b35b6faae3425909430cbb2ff34eb1d29359c3",
+    "test/tigrc/contrib-tigrc-test": "49a9c450f7cc5cc4f2d34c27c5c449364cb01dfff553b6fe0cefcb4929ed5943",
+    "test/tigrc/env-vars-test": "eae01cc481f3c078ebd82403b39eeeb2a5cd7f0db6317e3d4751b890609c89c2",
+    "test/tigrc/escape-var-test": "8ac261a47c2b3fdc0b1647df9cebc8f11ede82e7a442ed828c31b675adb19900",
+    "test/tigrc/parse-test": "2bc78ab5dd494bf6d813ef12b844a850da3ebaa76d121c5f1852edbf1b42cbc5",
+    "test/tigrc/quote-test": "9039c2c6365ae453ddae606b7135555f111f0d8ef02cd03a8420badd3e978f9d",
+    "test/tigrc/save-option-test": "c08dfc0d9e8d50be5f5dd059d51efd503f9dcf2eff5d10805a492a5b637c504d",
+    "test/tigrc/source-test": "64d4e34e20f77c4f36e188a3b26abc08b90d173f9953339f5629b269a32f57da",
+    "test/tigrc/tigrc-manpage-examples-test": "c0fdeb0008f3ae4bcb06c7798cba94a3c1ed4c39db074fcd7a5e015c88016de8",
+    "test/tigrc/truncation-test": "3925d602106e49ba7b388cc55c45f30d02231296813629e7658d0db9bc3de8e5",
+    "test/tigrc/view-column-test": "15ffaff11afe2deb88962c614cbf2099a1493a46e4df716b61d3028fe38959a6",
+    "test/tigrc/width-test": "b893753253d0737b26930b0853cc2164c39268c4c0a935b4618740f4e62067c7",
+    "test/tigrc/xdg-config-home-test": "3599b2442a39dc536764651d56b4d9a68fb6b84d58d07a0699b59529ff4cc866",
+    "test/tools/libgit.sh": "2c8e0dcabc27fd1f4ceb6a87cb7827c5ff3c55f9756867ac2ac8a380b35c6819",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "test/tools/setup-conflict.sh": "c0882f23018e2a088c6d27ecf3ae8edcdd92a22886e73adc0aa905db6fc54511",
+    "test/tools/show-results.sh": "1c86d153f268e4cd5a9c645cc72f7a99d932232b57d54285420ee312bcf1d7b9",
+    "test/tools/test-graph.c": "b05f8dd9b08c018b392cc64dd264bf31ec78dfe1a3a5fcdf1ea1c9369099b92d",
+    "test/tools/valgrind-Darwin.supp": "a209f6838271db1d2eb018aaad962e679b27ff9df7569d4f8fec80654d458697",
+    "test/tree/chdir-test": "168a6399b9f4b02774f284993da4e389a3af6fce8313b61975ef94eab47ad475",
+    "test/tree/default-test": "23e23dcb558030646b8df5455822274ce3ee201fc4c37f76a7109fcd264b93fa",
+    "test/tree/file-name-test": "92f13ad7be65e397e220fd1ceb9aa8effbcb873d7697b42a552d411506a18e35",
+    "test/tree/recurse-test": "3b280320cafaf4628e2cec041cb12cfdc0eba41b09f6e6cf06fe8535c7792a8f",
+    "test/tree/submodule-editor-test": "f7062c9c27baa6dbb67cde15e0779c5961664f66a01185d90dbc42bc1909c3e7",
+    "test/tree/worktree-editor-test": "28bb4386d315ee6b2940ab8660152d21e66de48a909a986a4eb4f2ebc2951393",
+    "tigrc": "aa897801785995fec07f43cedb3dee06cf2124e5bd1475d6e22ba7badfcded5b"
+  }
+}

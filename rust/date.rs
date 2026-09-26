@@ -69,9 +69,8 @@ fn native_format(seconds: i64, format: &str, local: bool) -> Result<String, Stri
     if !local {
         command.env("TZ", "UTC");
     }
-    let output = command
-        .arg(format!("+{format}"))
-        .output()
+    command.arg(format!("+{format}"));
+    let output = crate::trace::output(&mut command)
         .map_err(|error| format!("Could not run date: {error}"))?;
     if !output.status.success() {
         return Err(format!(
