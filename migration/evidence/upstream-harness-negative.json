@@ -84,5 +84,9 @@
   {
     "injection": "foreign-helper",
     "status": "rejected"
+  },
+  {
+    "injection": "missing-make-with-stale-pass-report",
+    "status": "rejected and stale report removed"
   }
 ]

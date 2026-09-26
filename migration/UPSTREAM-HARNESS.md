@@ -72,7 +72,7 @@ checks the physical PTY size, and verifies missing-assertion mapping.
 ## Known semantic gaps
 
 * Rust does not produce the `TIG_TRACE` required by
-  `test/main/filter-args-test`. C reaches three assertions; Rust exits at the
+  `test/main/filter-args-test` and `test/status/file-filter-test`. C reaches three assertions; Rust exits at the
   first trace read. The runner reports this failure and maps the three
   assertions as `NOT_REACHED`; it never manufactures an empty/fake trace.
 * A Rust graph helper exists and is now selected explicitly. Successful
@@ -83,3 +83,72 @@ checks the physical PTY size, and verifies missing-assertion mapping.
 * This adapter does not implement missing UI/config/trace semantics and
   does not convert the original receipt counts into a migration percentage.
   Raw failure details and skipped cases remain in the paired JSON.
+
+## Recorded verification
+
+The full paired snapshot is `migration/evidence/upstream-rust-only.json`,
+executed at **91fb1a3** (the harness on top of main **47f1a2b**, including
+PR #1). This commit remains in the branch history so its source and harness
+hashes can be checked. macOS arm64, Rust/Cargo 1.81.0, Apple Clang 21.0.0.
+
+| Full snapshot | C | Rust only |
+|---|---:|---:|
+| Scripts attempted | 154 | 154 |
+| Passed / failed / skipped scripts | 152 / 0 / 2 | 77 / 74 / 3 |
+| Passed actual assertions | 572 | 403 |
+| Failed actual assertions | 0 | 152 |
+| Assertions not reached relative to C | — | 17 |
+| Additional failed runtime/setup checks | 0 | 34 |
+
+Thus the legacy total of **186 failures / 589 checks** is not an assertion
+count: 555 assertions were reached, and 34 additional runtime failures were
+recorded. The strict script verdict also includes `main/filter-args-test`,
+which exited 1 without a receipt. C's 17 assertions not reached by Rust map
+to `main/all-arg-test` (4), `main/branch-var-test` (2),
+`main/filter-args-test` (3), `main/search-preload-test` (2),
+`refs/branch-var-test` (2), and `status/file-filter-test` (4).
+All **23 non-sanitizer graph scripts** passed with the Rust helper; the
+sanitizer-only application script is explicitly skipped. The parity gate
+is **BLOCKED**, and the full run correctly exits 1.
+
+After that snapshot, this branch merged main **3e8f4b8** (configuration
+PR #2) without conflicts. The follow-up receipt is
+`migration/evidence/upstream-harness-after-sync.json`: C first, then Rust,
+for all `test/tigrc/*-test` scripts plus graph, help, default/emoji main,
+both trace-dependent scripts, and both diff-context scripts. The full
+snapshot above predates PR #2; it is not a claim about the latest full-suite
+failure count.
+
+A follow-up guard clears the previous report before running, so an
+unexpected runner/build crash cannot leave an old PASS report behind. The
+negative self-check deliberately removes `make` from PATH and verifies
+nonzero exit plus removal of a seeded PASS report. Empty test selections
+also fail. These reporting guards and all earlier negative injections were
+rerun after synchronization; original assertions remain unchanged.
+
+Follow-up results are deliberately separate:
+
+| Receipt / source | C scripts | Rust scripts | Rust actual assertions |
+|---|---|---|---|
+| `upstream-harness-after-sync.json` / **e5cc5b1**, on main **3e8f4b8** | 25 pass | 14 pass, 11 fail | 129 pass, 19 fail; 7 not reached |
+| `upstream-harness-after-blame-sync.json` / **7dbceb0**, on main **a28f69d** (PR #4) | 10 pass | 4 pass, 6 fail | 13 pass, 11 fail; none missing |
+
+The second follow-up runs all seven original blame scripts plus graph,
+help, and default main. Remaining blame failures are `blob-blame-test`,
+`default-test`, `initial-diff-test`, `navigation-parent-test`, `revargs-test`,
+and `stash-test`; they remain failed rather than being reinterpreted as
+adapter success. Both follow-up runners exit 1 with `BLOCKED`. They are not
+a full-suite rerun after either merge.
+
+`upstream-harness-route.json` records an additional Make-route check at
+**e5cc5b1**: temporarily move aside both C executables, run
+`make RUST_ONLY=1 test/graph/00-simple-test test/help/default-test`, confirm
+both scripts and all four original assertions pass without recreating a C
+executable, then restore the C files. This proves the ordinary Make route
+can run both the application and helper tests without those C binaries.
+
+On the latest synchronized code (**7dbceb0**, main **a28f69d**), formatting,
+all **64 Rust unit tests** (46 library + 18 application), Clippy with warnings
+denied, and the release build pass. No original assertion or harness library
+was edited. All substantive commits made after the attribution instruction
+use the requested Codex author and retain the user's committer identity.
