@@ -10,10 +10,12 @@ use crossterm::{
 };
 use regex::RegexBuilder;
 use std::{
-    env, fs,
+    env,
+    ffi::OsString,
+    fs,
     io::{self, IsTerminal, Write},
-    path::PathBuf,
-    process::Command,
+    path::{Component, PathBuf},
+    process::{Command, Stdio},
 };
 use tig_rs::{
     config::{Cli, Config},
@@ -32,7 +34,228 @@ enum Item {
     Status(StatusEntry, bool),
     Tree(TreeEntry),
     Ref(String, Option<String>),
+    Grep(GrepLine),
     Text,
+}
+#[derive(Clone)]
+struct GrepLine {
+    label: String,
+    path: PathBuf,
+    revision: Option<String>,
+    line: usize,
+    text: String,
+}
+
+fn safe_grep_path(path: &std::path::Path) -> bool {
+    !path.as_os_str().is_empty()
+        && path
+            .components()
+            .all(|part| matches!(part, Component::Normal(_)))
+}
+
+fn grep_revision_args(args: &[String]) -> Vec<String> {
+    let before_paths: Vec<&String> = args.iter().take_while(|arg| arg.as_str() != "--").collect();
+    if before_paths.iter().any(|arg| arg.starts_with('-')) {
+        return Vec::new();
+    }
+    before_paths.into_iter().skip(1).cloned().collect()
+}
+
+fn grep_has_leading_delimiter(args: &[String]) -> bool {
+    let mut pattern_seen = false;
+    let mut pattern_next = false;
+    for arg in args {
+        if pattern_next {
+            if arg == "--" {
+                return true;
+            }
+            pattern_seen = true;
+            pattern_next = false;
+        } else if arg == "--" {
+            return !pattern_seen;
+        } else if matches!(arg.as_str(), "-e" | "--regexp" | "-f" | "--file") {
+            pattern_next = true;
+        } else if arg.starts_with("-e")
+            || arg.starts_with("--regexp=")
+            || arg.starts_with("-f")
+            || arg.starts_with("--file=")
+            || !arg.starts_with('-')
+        {
+            pattern_seen = true;
+        }
+    }
+    false
+}
+
+fn grep_tree_oid(repo: &Repository, revision: &str) -> Result<String> {
+    let object = repo.command(["rev-parse", "--verify", "--end-of-options", revision])?;
+    let object = std::str::from_utf8(&object)?.trim();
+    let tree = repo.command([
+        "rev-parse",
+        "--verify",
+        "--end-of-options",
+        &format!("{object}^{{tree}}"),
+    ])?;
+    Ok(std::str::from_utf8(&tree)?.trim().to_owned())
+}
+
+fn unsupported_grep_option(args: &[String]) -> Option<&str> {
+    let mut pattern_next = false;
+    for arg in args.iter().take_while(|arg| arg.as_str() != "--") {
+        if pattern_next {
+            pattern_next = false;
+            continue;
+        }
+        if matches!(arg.as_str(), "-e" | "--regexp" | "-f" | "--file") {
+            pattern_next = true;
+            continue;
+        }
+        if arg.starts_with('-')
+            && !matches!(
+                arg.as_str(),
+                "-i" | "--ignore-case"
+                    | "-w"
+                    | "--word-regexp"
+                    | "-v"
+                    | "--invert-match"
+                    | "-F"
+                    | "--fixed-strings"
+                    | "-E"
+                    | "--extended-regexp"
+                    | "-P"
+                    | "--perl-regexp"
+                    | "-G"
+                    | "--basic-regexp"
+            )
+            && !arg.starts_with("-e")
+            && !arg.starts_with("--regexp=")
+            && !arg.starts_with("-f")
+            && !arg.starts_with("--file=")
+        {
+            return Some(arg);
+        }
+    }
+    None
+}
+
+fn ambiguous_grep_ref(hits: &[GrepLine], args: &[String]) -> bool {
+    let optioned = args
+        .iter()
+        .take_while(|arg| arg.as_str() != "--")
+        .any(|arg| arg.starts_with('-'));
+    optioned
+        && hits.iter().any(|hit| {
+            args.iter()
+                .take_while(|arg| arg.as_str() != "--")
+                .any(|arg| {
+                    hit.label
+                        .strip_prefix(arg)
+                        .is_some_and(|rest| rest.starts_with(':'))
+                })
+        })
+}
+
+fn grep_rows(bytes: &[u8], revisions: &[String]) -> Result<Vec<GrepLine>> {
+    let mut rows = Vec::new();
+    let mut rest = bytes;
+    while !rest.is_empty() {
+        let file_end = rest
+            .iter()
+            .position(|&byte| byte == 0)
+            .ok_or("Incomplete git grep filename")?;
+        let file = &rest[..file_end];
+        rest = &rest[file_end + 1..];
+        let line_end = rest
+            .iter()
+            .position(|&byte| byte == 0)
+            .ok_or("Incomplete git grep line number")?;
+        let line = std::str::from_utf8(&rest[..line_end])?.parse::<usize>()?;
+        if line == 0 {
+            return Err("Invalid git grep line number".into());
+        }
+        rest = &rest[line_end + 1..];
+        let text_end = rest
+            .iter()
+            .position(|&byte| byte == b'\n')
+            .ok_or("Incomplete git grep match text")?;
+        let text = String::from_utf8_lossy(&rest[..text_end]).into_owned();
+        rest = &rest[text_end + 1..];
+        let (revision, path) = revisions
+            .iter()
+            .filter_map(|rev| {
+                file.strip_prefix(rev.as_bytes())
+                    .and_then(|rest| rest.strip_prefix(b":"))
+                    .map(|path| (rev, path))
+            })
+            .max_by_key(|(rev, _)| rev.len())
+            .map(|(rev, path)| (Some(rev.clone()), path))
+            .unwrap_or((None, file));
+        #[cfg(unix)]
+        let path = {
+            use std::os::unix::ffi::OsStringExt;
+            PathBuf::from(std::ffi::OsString::from_vec(path.to_vec()))
+        };
+        #[cfg(not(unix))]
+        let path = PathBuf::from(String::from_utf8(path.to_vec())?);
+        rows.push(GrepLine {
+            label: String::from_utf8_lossy(file).into_owned(),
+            path,
+            revision,
+            line,
+            text,
+        });
+    }
+    Ok(rows)
+}
+
+fn grep_columns(config: &Config) -> (bool, Option<usize>, Option<usize>, bool, usize) {
+    let mut show_file = false;
+    let mut file_width = None;
+    let mut file_maxwidth = None;
+    let mut show_line = true;
+    let mut interval = 1;
+    if let Some(columns) = config.settings.get("grep-view") {
+        for spec in columns {
+            let mut parts = spec.split([':', ',']);
+            match parts.next() {
+                Some("file-name") => {
+                    for part in parts {
+                        if part == "yes" || part == "always" {
+                            show_file = true;
+                        } else if part == "no" {
+                            show_file = false;
+                        } else if let Some(width) = part.strip_prefix("width=") {
+                            file_width = width.parse().ok();
+                        } else if let Some(width) = part.strip_prefix("maxwidth=") {
+                            file_maxwidth = width.parse().ok();
+                        }
+                    }
+                }
+                Some("line-number") => {
+                    for part in parts {
+                        if part == "no" {
+                            show_line = false;
+                        } else if let Some(value) = part.strip_prefix("interval=") {
+                            interval = value.parse::<usize>().unwrap_or(1).max(1);
+                        }
+                    }
+                }
+                _ => (),
+            }
+        }
+    }
+    (show_file, file_width, file_maxwidth, show_line, interval)
+}
+
+fn grep_filename(label: &str, width: usize) -> String {
+    let count = label.chars().count();
+    if count > width {
+        let mut text: String = label.chars().take(width.saturating_sub(1)).collect();
+        text.push('~');
+        text
+    } else {
+        format!("{label}{}", " ".repeat(width.saturating_sub(count)))
+    }
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum ChangeKind {
@@ -471,7 +694,86 @@ impl App {
                     );
                 }
             }
-            "reflog" | "stash" | "grep" => {
+            "grep" => {
+                if grep_has_leading_delimiter(&self.args) {
+                    return Err(
+                        "Git grep '--' before or as a pattern is not supported in the Rust view"
+                            .into(),
+                    );
+                }
+                if let Some(option) = unsupported_grep_option(&self.args) {
+                    return Err(format!(
+                        "Git grep option '{option}' is not supported in the Rust view"
+                    )
+                    .into());
+                }
+                let output = Command::new("git")
+                    .current_dir(&repo.root)
+                    .args(["--no-pager", "--literal-pathspecs", "-c", "color.ui=false"])
+                    .args(["grep", "--no-color", "-n", "-z", "--full-name", "-I"])
+                    .args(&self.args)
+                    .env("GIT_TERMINAL_PROMPT", "0")
+                    .env("LC_ALL", "C")
+                    .stdin(Stdio::null())
+                    .output()?;
+                if !output.status.success() && output.status.code() != Some(1) {
+                    return Err(format!(
+                        "git grep exited with {}: {}",
+                        output.status,
+                        String::from_utf8_lossy(&output.stderr).trim()
+                    )
+                    .into());
+                }
+                let revisions = grep_revision_args(&self.args);
+                let hits = grep_rows(&output.stdout, &revisions)?;
+                if ambiguous_grep_ref(&hits, &self.args) {
+                    return Err(
+                        "Grep revision paths with options are not supported in the Rust view"
+                            .into(),
+                    );
+                }
+                let (show_file, width, maxwidth, show_line, interval) = grep_columns(&self.config);
+                let width = width
+                    .unwrap_or_else(|| {
+                        hits.iter()
+                            .map(|hit| hit.label.chars().count())
+                            .max()
+                            .unwrap_or(0)
+                    })
+                    .min(maxwidth.unwrap_or(usize::MAX));
+                let line_width = hits
+                    .iter()
+                    .map(|hit| hit.line.to_string().len())
+                    .max()
+                    .unwrap_or(3)
+                    .max(3);
+                let mut last_file = None;
+                for hit in hits {
+                    if !show_file && last_file.as_deref() != Some(hit.label.as_str()) {
+                        let mut header = hit.clone();
+                        header.line = 1;
+                        header.text.clear();
+                        v.push(hit.label.clone(), Item::Grep(header));
+                    }
+                    let mut row = String::new();
+                    if show_file {
+                        row.push_str(&grep_filename(&hit.label, width));
+                        row.push(' ');
+                    }
+                    if show_line {
+                        if hit.line == 1 || hit.line % interval == 0 {
+                            row.push_str(&format!("{:>line_width$}", hit.line));
+                        } else {
+                            row.push_str(&" ".repeat(line_width));
+                        }
+                        row.push_str("| ");
+                    }
+                    row.push_str(&hit.text);
+                    last_file = Some(hit.label.clone());
+                    v.push(row, Item::Grep(hit));
+                }
+            }
+            "reflog" | "stash" => {
                 let mut args = vec![name.to_string()];
                 if name == "stash" {
                     args.push("list".into());
@@ -492,6 +794,29 @@ impl App {
     fn open(&mut self, name: &str) -> Result<()> {
         let next = self.load(name)?;
         self.previous.push(std::mem::replace(&mut self.view, next));
+        Ok(())
+    }
+    fn grep_query(&mut self, query: &str) -> Result<()> {
+        let args: Vec<String> = query.split_whitespace().map(str::to_owned).collect();
+        if args.is_empty() {
+            return Ok(());
+        }
+        let previous_args = std::mem::replace(&mut self.args, args);
+        let next = match self.load("grep") {
+            Ok(next) => next,
+            Err(error) => {
+                self.args = previous_args;
+                return Err(error);
+            }
+        };
+        if self.view.name == "grep" {
+            self.view = next;
+        } else {
+            self.previous.push(std::mem::replace(&mut self.view, next));
+        }
+        if self.view.rows.is_empty() {
+            self.message = "No matches found".into();
+        }
         Ok(())
     }
     fn refresh_main_parent(&mut self) -> Result<()> {
@@ -544,6 +869,16 @@ impl App {
             Item::Ref(id, _) => self.revision = id,
             Item::Tree(e) => self.path = e.path,
             Item::Status(e, _) => self.path = e.path,
+            Item::Grep(hit) => {
+                self.path = if safe_grep_path(&hit.path)
+                    && !hit.revision.as_deref().is_some_and(|rev| rev.contains(':'))
+                {
+                    hit.path
+                } else {
+                    PathBuf::new()
+                };
+                self.revision = hit.revision.unwrap_or_else(|| "HEAD".into());
+            }
             Item::Text => (),
         }
     }
@@ -653,13 +988,48 @@ impl App {
                 }
                 self.previous.push(std::mem::replace(&mut self.view, view));
             }
+            Item::Grep(hit) => {
+                if !safe_grep_path(&hit.path) {
+                    return Err("Invalid grep result path".into());
+                }
+                let bytes = if let Some(rev) = &hit.revision {
+                    let oid = grep_tree_oid(self.repo()?, rev)?;
+                    let mut spec = OsString::from(format!("{oid}:"));
+                    spec.push(hit.path.as_os_str());
+                    self.repo()?.command(vec![
+                        OsString::from("cat-file"),
+                        OsString::from("blob"),
+                        spec,
+                    ])?
+                } else {
+                    fs::read(self.repo()?.root.join(&hit.path))?
+                };
+                self.path = if hit.revision.as_deref().is_some_and(|rev| rev.contains(':')) {
+                    PathBuf::new()
+                } else {
+                    hit.path.clone()
+                };
+                self.revision = hit.revision.unwrap_or_else(|| "HEAD".into());
+                let mut view = View::text("blob", &String::from_utf8_lossy(&bytes));
+                view.path = self.path.clone();
+                view.revision = self.revision.clone();
+                view.selected = hit
+                    .line
+                    .saturating_sub(1)
+                    .min(view.rows.len().saturating_sub(1));
+                self.previous.push(std::mem::replace(&mut self.view, view));
+            }
             Item::Text => (),
         }
         if self.previous.len() > depth {
+            let from_grep = parent.name == "grep";
             self.previous.truncate(depth);
             self.other = Some(parent);
             self.split = true;
             self.parent_focused = false;
+            if from_grep {
+                self.center_selection();
+            }
         }
         Ok(())
     }
@@ -750,6 +1120,15 @@ impl App {
             },
             "tree" => match self.selected() {
                 Item::Tree(entry) if entry.kind != "tree" => Some((entry.path, 0)),
+                _ => None,
+            },
+            "grep" => match self.selected() {
+                Item::Grep(hit)
+                    if safe_grep_path(&hit.path)
+                        && !hit.revision.as_deref().is_some_and(|rev| rev.contains(':')) =>
+                {
+                    Some((hit.path, hit.line))
+                }
                 _ => None,
             },
             "blob" | "blame" => Some((self.view.path.clone(), self.view.selected + 1)),
@@ -1107,6 +1486,14 @@ impl App {
             "parent" if self.view.name == "tree" => self.tree_parent()?,
             "screen-redraw" => (),
             _ if action.starts_with("view-") => {
+                if action == "view-tree"
+                    && (self.revision.contains(':')
+                        || matches!(self.selected(), Item::Grep(hit) if hit.revision.as_deref().is_some_and(|rev| rev.contains(':'))))
+                {
+                    return Err(
+                        "Tree view for a subdirectory grep revision is not supported safely".into(),
+                    );
+                }
                 self.select_context();
                 self.open(&action[5..])?;
             }
@@ -1188,12 +1575,18 @@ impl App {
         lines
     }
     fn script(&mut self, path: &str) -> Result<()> {
+        let mut grep_prompt = false;
         for raw in fs::read_to_string(path)?.lines() {
             let line = raw.trim();
             if line.is_empty() || line.starts_with('#') {
                 continue;
             }
-            if let Some(path) = line.strip_prefix(":save-display ") {
+            if grep_prompt {
+                self.grep_query(line.strip_suffix("<Enter>").unwrap_or(line))?;
+                grep_prompt = false;
+            } else if matches!(line, ":g" | ":view-grep") {
+                grep_prompt = true;
+            } else if let Some(path) = line.strip_prefix(":save-display ") {
                 let mut screen = self.screen();
                 screen.pop();
                 fs::write(path, format!("{}\n", screen.join("\n")))?;
@@ -1650,6 +2043,7 @@ fn pane_screen(view: &mut View, width: usize, visible: usize) -> Vec<String> {
             }
         }
         Some(Item::Ref(id, _)) if matches!(view.name.as_str(), "log" | "refs") => id.clone(),
+        Some(Item::Grep(hit)) => hit.label.clone(),
         _ if view.name == "refs" => "All references".into(),
         Some(Item::Status(e, staged)) => format!(
             "Press u to {} '{}'{}",
@@ -2011,6 +2405,9 @@ fn run() -> Result<()> {
             }
         }
         app.view = app.load(&cli.view)?;
+        if cli.view == "grep" && app.view.rows.is_empty() {
+            app.message = "No matches found".into();
+        }
     }
     if cli.line > 0 {
         app.view.selected = cli.line.min(app.view.rows.len().saturating_sub(1));
@@ -2058,9 +2455,23 @@ fn run() -> Result<()> {
                 }
                 app.find(action == "search-back");
             }
+        } else if action == "view-grep" {
+            if let Some(s) = terminal.prompt(&mut app, "grep: ")? {
+                if let Err(e) = app.grep_query(&s) {
+                    app.message = e.to_string();
+                }
+            }
         } else if action == "prompt" {
             if let Some(s) = terminal.prompt(&mut app, ":")? {
-                match app.action(&s) {
+                let result = if matches!(s.as_str(), "g" | "view-grep") {
+                    terminal
+                        .prompt(&mut app, "grep: ")?
+                        .map_or(Ok(()), |query| app.grep_query(&query))
+                        .map(|()| true)
+                } else {
+                    app.action(&s)
+                };
+                match result {
                     Ok(false) => break,
                     Ok(true) => (),
                     Err(e) => app.message = e.to_string(),
@@ -2141,6 +2552,196 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn grep_nul_fields_preserve_colons_newlines_and_revision_paths() {
+        let bytes = b"name:part.txt\x003\0worktree\n--\nfile\x005\0separator-like name\nBinary file strange matches\nname.txt\x006\0binary-like name\nodd\nname.txt\x007\0newline\nHEAD:src:name.rs\x008\0revision\n";
+        let hits = grep_rows(bytes, &["HEAD".into()]).unwrap();
+        assert_eq!(hits.len(), 5);
+        assert_eq!(hits[0].path, PathBuf::from("name:part.txt"));
+        assert_eq!(hits[0].revision, None);
+        assert_eq!(hits[1].path, PathBuf::from("--\nfile"));
+        assert_eq!(
+            hits[2].path,
+            PathBuf::from("Binary file strange matches\nname.txt")
+        );
+        assert_eq!(hits[3].path, PathBuf::from("odd\nname.txt"));
+        assert_eq!(hits[4].path, PathBuf::from("src:name.rs"));
+        assert_eq!(hits[4].revision.as_deref(), Some("HEAD"));
+        let nested = grep_rows(
+            b"HEAD:subdir:file.txt\x009\0nested\n",
+            &["HEAD".into(), "HEAD:subdir".into()],
+        )
+        .unwrap();
+        assert_eq!(nested[0].revision.as_deref(), Some("HEAD:subdir"));
+        assert_eq!(nested[0].path, PathBuf::from("file.txt"));
+        assert!(grep_rows(b"partial\x001\0no newline", &[]).is_err());
+    }
+
+    #[test]
+    fn grep_options_never_turn_pattern_or_option_values_into_revisions() {
+        assert!(grep_has_leading_delimiter(&[
+            "--".into(),
+            "foo".into(),
+            "HEAD".into()
+        ]));
+        assert!(grep_has_leading_delimiter(&[
+            "-i".into(),
+            "--".into(),
+            "foo".into(),
+            "HEAD".into()
+        ]));
+        assert!(grep_has_leading_delimiter(&[
+            "-e".into(),
+            "--".into(),
+            "HEAD".into()
+        ]));
+        assert!(!grep_has_leading_delimiter(&[
+            "foo".into(),
+            "HEAD".into(),
+            "--".into(),
+            "file".into()
+        ]));
+        assert_eq!(
+            grep_revision_args(&["foo".into(), "HEAD".into()]),
+            vec!["HEAD"]
+        );
+        assert_eq!(
+            grep_revision_args(&["foo".into(), "HEAD^{tree}".into(), "HEAD:sub".into()]),
+            ["HEAD^{tree}", "HEAD:sub"]
+        );
+        assert!(
+            grep_revision_args(&["-e".into(), "foo".into(), "-e".into(), "HEAD".into()]).is_empty()
+        );
+        assert!(grep_revision_args(&["-m".into(), "1".into(), "foo".into()]).is_empty());
+        let hit = grep_rows(b"HEAD:foo\x003\0match\n", &[]).unwrap();
+        assert!(ambiguous_grep_ref(
+            &hit,
+            &["-e".into(), "foo".into(), "-e".into(), "HEAD".into()]
+        ));
+        let tree_hit = grep_rows(b"HEAD:sub:file\x003\0match\n", &[]).unwrap();
+        assert!(ambiguous_grep_ref(
+            &tree_hit,
+            &["-e".into(), "foo".into(), "HEAD:sub".into()]
+        ));
+        assert_eq!(
+            unsupported_grep_option(&["foo".into(), "-C1".into()]),
+            Some("-C1")
+        );
+        assert_eq!(
+            unsupported_grep_option(&["-e".into(), "--heading".into()]),
+            None
+        );
+    }
+
+    #[test]
+    fn failed_grep_query_keeps_previous_arguments() {
+        let mut app = App {
+            repo: None,
+            config: Config::defaults(),
+            view: View::new("grep"),
+            previous: vec![],
+            pending_command: None,
+            other: None,
+            split: false,
+            parent_focused: false,
+            revision: "HEAD".into(),
+            path: PathBuf::new(),
+            args: vec!["old".into()],
+            message: String::new(),
+            search: String::new(),
+            width: 80,
+            height: 20,
+        };
+        assert!(app.grep_query("new").is_err());
+        assert_eq!(app.args, ["old"]);
+        assert_eq!(app.view.name, "grep");
+    }
+
+    #[test]
+    fn grep_tree_expression_reads_blob_from_its_own_tree() {
+        let root = env::temp_dir().join(format!(
+            "tig-grep-tree-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        fs::create_dir_all(root.join("sub")).unwrap();
+        Command::new("git")
+            .current_dir(&root)
+            .args(["init", "-q"])
+            .status()
+            .unwrap();
+        let repo = Repository::discover(&root).unwrap();
+        repo.command(["config", "user.name", "Test"]).unwrap();
+        repo.command(["config", "user.email", "test@example.invalid"])
+            .unwrap();
+        repo.command(["config", "commit.gpgsign", "false"]).unwrap();
+        fs::write(root.join("sub/file.txt"), "needle in sub\n").unwrap();
+        fs::write(root.join("file.txt"), "wrong root file\n").unwrap();
+        repo.command(["add", "."]).unwrap();
+        repo.command(["commit", "-qm", "base"]).unwrap();
+        let output = repo
+            .command([
+                "grep",
+                "--no-color",
+                "-n",
+                "-z",
+                "--full-name",
+                "needle",
+                "HEAD:sub",
+            ])
+            .unwrap();
+        let hits = grep_rows(&output, &["HEAD:sub".into()]).unwrap();
+        assert_eq!(hits.len(), 1);
+        assert_eq!(hits[0].path, PathBuf::from("file.txt"));
+        assert_eq!(hits[0].revision.as_deref(), Some("HEAD:sub"));
+        let tree = grep_tree_oid(&repo, "HEAD:sub").unwrap();
+        let blob = repo
+            .command(["cat-file", "blob", &format!("{tree}:file.txt")])
+            .unwrap();
+        assert_eq!(blob, b"needle in sub\n");
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn nested_grep_tree_cannot_open_root_relative_tree_view() {
+        let mut view = View::new("grep");
+        view.push(
+            "hit".into(),
+            Item::Grep(GrepLine {
+                label: "HEAD:sub:file.txt".into(),
+                path: PathBuf::from("file.txt"),
+                revision: Some("HEAD:sub".into()),
+                line: 1,
+                text: "hit".into(),
+            }),
+        );
+        let mut app = App {
+            repo: None,
+            config: Config::defaults(),
+            view,
+            previous: vec![],
+            pending_command: None,
+            other: None,
+            split: false,
+            parent_focused: false,
+            revision: "HEAD".into(),
+            path: PathBuf::new(),
+            args: vec![],
+            message: String::new(),
+            search: String::new(),
+            width: 80,
+            height: 20,
+        };
+        assert!(app.action("view-tree").is_err());
+        assert_eq!(app.edit_target(), None);
+        app.view = View::new("blob");
+        app.revision = "HEAD:sub".into();
+        assert!(app.action("view-tree").is_err());
+    }
     #[test]
     fn staging_last_untracked_file_refreshes_synthetic_main_parent() {
         let root = env::temp_dir().join(format!(

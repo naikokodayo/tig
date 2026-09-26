@@ -44,6 +44,10 @@ License: GPL-2.0-or-later; original history, COPYING and copyright notices retai
 - Search now uses the maintained `regex` crate for pattern matching, case
   options and optional wraparound. This is not yet a POSIX ERE compatibility
   claim; syntax and which hidden fields are searchable still need comparison.
+- The grep view now parses NUL-delimited Git hits, groups results by file,
+  supports configured widths, and opens worktree or revision-tree blobs at the
+  selected line. Ambiguous revision/path forms fail closed; context and other
+  output-changing Git grep options remain unsupported in this Rust view.
 
 First-party Rust uses `forbid(unsafe_code)` through the crate and Cargo lint.
 This does **not** mean dependencies, the OS or Git are unsafe-free. Crossterm,
@@ -223,3 +227,29 @@ log. The graph helper still routes through C under `SYSTEM_TIG=1`; these
 numbers are not a Rust completion percentage. The `grep` view, other view
 actions, and broader compatibility remain open, so the end-to-end benchmark
 is still gated.
+
+## Sixth checkpoint verification
+
+The Rust grep view now handles file headers, line hits, configured width,
+interactive `g` queries, refspec blobs, and edit/command context for paths
+that map safely to the worktree. Direct Git argv and NUL fields preserve
+filenames containing colons and newlines. Revision-tree expressions, including
+`HEAD:subdir`, resolve to their own tree for blob navigation. When a nested
+tree cannot map back to a worktree-root path, editing and file-context commands
+are disabled; ambiguous optioned ref paths and output-changing grep options
+fail explicitly. `line-graphics=auto` now honors locale-variable precedence,
+including non-UTF-8 values.
+
+The four unchanged original grep scripts pass all 14 assertions. The original
+width script passes 53 of 54 assertions; its remaining failure is the refs
+`maxwidth` case. Formatting, all 45 Rust unit tests, Clippy with warnings
+denied, release build, and 108 real PTY checks pass. An independent path-safety
+review found no remaining concrete high-priority wrong-file route in this grep
+slice.
+
+The sixth full upstream run attempted all 154 recipes and reported **263 of
+594 assertions failed**, in 150 tests with 3 skips and 1 recipe without a
+result receipt. See `migration/evidence/rust-upstream-sixth.json` and its raw
+log. The graph helper still routes through C under `SYSTEM_TIG=1`; early
+exits alter assertion totals. These counts are not a migration-completion
+percentage. Full parity and the end-to-end benchmark remain gated.

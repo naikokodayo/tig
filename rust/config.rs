@@ -651,10 +651,12 @@ fn normalize_enum(kind: &str, value: &str) -> Result<String, String> {
     if kind == "graphic" && value == "auto" {
         let locale = ["LC_ALL", "LC_CTYPE", "LANG"]
             .iter()
-            .filter_map(|key| std::env::var(key).ok())
+            .filter_map(std::env::var_os)
             .find(|value| !value.is_empty())
             .unwrap_or_default();
-        return Ok(if locale.contains("UTF") || locale.contains("utf") {
+        return Ok(if locale.to_string_lossy().contains("UTF")
+            || locale.to_string_lossy().contains("utf")
+        {
             "utf-8"
         } else {
             "default"

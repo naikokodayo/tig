@@ -474,6 +474,59 @@ mod tests {
         }
     }
     #[test]
+    fn auto_graphics_respects_locale_precedence() {
+        const CHILD: &str = "TIG_TEST_AUTO_GRAPHICS_EXPECTED";
+        if let Ok(expected) = std::env::var(CHILD) {
+            let mut config = Config::defaults();
+            config.apply_command("set line-graphics = auto").unwrap();
+            assert_eq!(config.value("line-graphics"), Some(expected.as_str()));
+            assert_eq!(
+                graph_text("∙◎●◯".into(), &config),
+                if expected == "utf-8" {
+                    "∙◎●◯"
+                } else {
+                    "oIMo"
+                }
+            );
+            config.apply_command("toggle line-graphics").unwrap();
+            assert_eq!(
+                config.value("line-graphics"),
+                Some(if expected == "utf-8" {
+                    "ascii"
+                } else {
+                    "utf-8"
+                })
+            );
+            return;
+        }
+        // Separate processes avoid racing other tests through global locale state.
+        for (all, ctype, lang, expected) in [
+            ("C", "en_US.UTF-8", "en_US.UTF-8", "default"),
+            ("", "en_US.utf8", "C", "utf-8"),
+            ("", "C", "en_US.UTF-8", "default"),
+            ("", "", "en_US.UTF-8", "utf-8"),
+            ("", "", "en_US.Utf8", "default"),
+            ("", "", "", "default"),
+        ] {
+            let output = std::process::Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "render::tests::auto_graphics_respects_locale_precedence",
+                ])
+                .env(CHILD, expected)
+                .env("LC_ALL", all)
+                .env("LC_CTYPE", ctype)
+                .env("LANG", lang)
+                .output()
+                .unwrap();
+            assert!(
+                output.status.success(),
+                "{}",
+                String::from_utf8_lossy(&output.stdout)
+            );
+        }
+    }
+    #[test]
     fn upstream_width_fixture() {
         let mut config = Config::defaults();
         config.parse("set line-graphics = ascii\nset main-view = id:yes,width=5 line-number:yes,interval=5,width=5 date:default,width=5 author:full,width=5 commit-title:yes,graph,refs,overflow=no");
