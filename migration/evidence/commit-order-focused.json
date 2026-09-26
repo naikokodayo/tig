@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "f0e496fdac8c643eb5eff3aa05b29d357688938b",
+  "source_commit": "158078e443a16177e3069d2d4a97227f40db54ce",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -76,7 +76,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.03s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.04s\n",
       "results": [
         {
           "script": "test/main/commit-order-edge-case-test",
@@ -108,11 +108,11 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/target/release/tig",
-          "sha256": "c2bac02fa13a64b12192a7a3fb7495959ffd2e354cd29b338c3af5fb9df04d46"
+          "sha256": "9be9f92e5b2ced4c827d2a16e29c21cffbb09a86dd974f2c9f1388860304f575"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/work/graph-visual-parity/target/release/test-graph",
-          "sha256": "4ccd7a88c7816202274b63e3478cba6ad2211628bb2f464baa610a431b20ad56"
+          "sha256": "4e1d579205ae79e5e4f7eaed85c10eeaf13fc006218f3a0de460e6402e5ae7b2"
         }
       },
       "binaries_unchanged": true,
@@ -140,10 +140,12 @@
       ]
     }
   ],
+  "base_commit": "37e3a4ee602ca75fa4eb6b08b9c5301809f9f3d0",
   "source_files_sha256": {
     "rust/git.rs": "94b40d911cdfd719ac34ad393320ce66acbb32dfcf1c1bd9ef4e00a875611c07",
-    "rust/main.rs": "a27b8e5cd6a9f8ebeba84e1513cf655f1014e8952b052949042e01e23ca9eadb",
-    "rust/render.rs": "9c3632ad0815c603c606876ce5111b0e8ada47a65f291e66203e0faba8fabd94"
+    "rust/main.rs": "aa134922ad67b7f6c7ab2b663ce3f635e1d493618fe4de3ab1308ce8007cc901",
+    "rust/render.rs": "ff17568b15595f7125321b5c5987ccdce3fe9bb684189774380ce98511177922",
+    "rust/tests/commit-order-filter.py": "6ef83a18283dcfa477c15af9d158e67360c0d255d17b26dd35feaa28ca97033d"
   },
   "before": {
     "source_commit": "5f7ac639f23ee2d825d73c93619f7d7b01b4f556",
@@ -177,9 +179,28 @@
       "receipt": "  [OK] ensure-topo-order-with-graph.screen assertion\n[FAIL] graph-supports-date-order.screen != expected/graph-supports-date-order.screen\n\u001b[1mdiff --git a/expected/graph-supports-date-order.screen b/graph-supports-date-order.screen\u001b[m\n\u001b[1mindex a051568..4ab93fd 100644\u001b[m\n\u001b[1m--- a/expected/graph-supports-date-order.screen\u001b[m\n\u001b[1m+++ b/graph-supports-date-order.screen\u001b[m\n\u001b[36m@@ -1,6 +1,6 @@\u001b[m\n 2014-02-01 22:36 -0600 Benjamin Bergman ●─╮ Merge branch 'feature_branch'\u001b[m\n\u001b[31m-2014-02-01 22:36 -0600 Benjamin Bergman ∙ │ More master\u001b[m\n 2014-02-01 22:35 -0600 Benjamin Bergman │ ∙ More featuresA\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2014-02-01 22:36 -0600 Benjamin Bergman ∙ │ More master\u001b[m\n 2014-02-01 22:21 -0600 Benjamin Bergman ●─│─╮ Merge branch 'feature_branch'\u001b[m\n 2014-02-01 23:00 -0600 Benjamin Bergman │ ∙─╯ Add feature\u001b[m\n 2014-02-01 22:21 -0600 Benjamin Bergman ∙ │ Add to master\u001b[m\n"
     }
   },
+  "filtered_auto": {
+    "script": "rust/tests/commit-order-filter.py",
+    "script_sha256": "6ef83a18283dcfa477c15af9d158e67360c0d255d17b26dd35feaa28ca97033d",
+    "arguments": [
+      "--no-merges"
+    ],
+    "configured_commit_order": "auto",
+    "configured_main_graph": "yes",
+    "c_rows": [
+      "2014-02-01 22:35 -0600 Benjamin Bergman More featuresA",
+      "2014-02-01 22:36 -0600 Benjamin Bergman More master"
+    ],
+    "rust_rows": [
+      "2014-02-01 22:35 -0600 Benjamin Bergman More featuresA",
+      "2014-02-01 22:36 -0600 Benjamin Bergman More master"
+    ],
+    "assertion": "More featuresA before More master",
+    "status": "pass"
+  },
   "validation": {
     "cargo_fmt_check": "pass",
-    "cargo_test_all_targets": "84 passed",
+    "cargo_test_all_targets": "85 passed",
     "cargo_clippy_all_targets_deny_warnings": "pass"
   }
 }
