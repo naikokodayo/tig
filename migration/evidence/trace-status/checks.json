@@ -1,0 +1,40 @@
+{
+  "source_commit": "d351cb6506d0799ba88d502122e7caa0203d9e2d",
+  "scope": "Local fmt/unit/clippy validation, not upstream parity",
+  "checks": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--check"
+      ],
+      "log": "fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--locked"
+      ],
+      "log": "unit.log",
+      "sha256": "436e0584a7c535ec316d165a87840c70117addf479e5139ac8332cb6f0fe3c6e",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "log": "clippy.log",
+      "sha256": "c92508a29848820f033cd2ea015c85dde0953c88b07cc967ce34b7c08f610549",
+      "exit_code": 0
+    }
+  ]
+}

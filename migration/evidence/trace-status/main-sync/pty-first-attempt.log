@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "rust/tests/terminal-smoke.py", line 328, in main
+    finish(termination.name + ' exit', send=None, expected_exit=1)
+  File "rust/tests/terminal-smoke.py", line 304, in finish
+    assert before == after, 'termios attributes were not restored'
+AssertionError: termios attributes were not restored
