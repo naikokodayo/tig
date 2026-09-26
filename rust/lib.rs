@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 #![forbid(unsafe_code)]
 
+mod line;
+
 pub mod config;
 pub mod date;
 pub mod git;

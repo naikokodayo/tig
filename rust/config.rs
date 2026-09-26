@@ -254,15 +254,7 @@ impl Config {
                 .map_or((String::new(), area.as_str()), |(prefix, name)| {
                     (format!("{prefix}."), name)
                 });
-            let named = include_str!("../include/tig/line.h").lines().any(|line| {
-                line.trim()
-                    .strip_prefix("_(")
-                    .and_then(|s| s.split(',').next())
-                    .is_some_and(|s| {
-                        s.to_ascii_lowercase().replace('_', "-")
-                            == name.to_ascii_lowercase().replace('_', "-")
-                    })
-            });
+            let named = crate::line::is_named(name);
             let mut name = config_arguments(&[name.into()])?;
             // C distinguishes named areas from literal/regex prefixes by quotes.
             if !named && !name.starts_with('"') {
