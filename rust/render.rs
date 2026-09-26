@@ -244,7 +244,11 @@ pub fn render_blame(
     let show_filename = lines
         .first()
         .is_some_and(|first| lines.iter().any(|line| line.filename != first.filename));
-    let ascii = config.value("line-graphics") == Some("ascii");
+    let separator = match config.value("line-graphics") {
+        Some("ascii") => "| ",
+        Some("utf-8") => "│ ",
+        _ => "x ", // Tig's default ACS vertical line is `x` in the test terminal.
+    };
     let mut rows = vec![String::new(); lines.len()];
     for spec in specs {
         let (name, rest) = spec.split_once(':').unwrap_or((spec, "yes"));
@@ -355,7 +359,7 @@ pub fn render_blame(
             if name == "line-number" {
                 row.push_str(&padding);
                 row.push_str(&clipped);
-                row.push_str(if ascii { "| " } else { "│ " });
+                row.push_str(separator);
             } else {
                 row.push_str(&clipped);
                 row.push_str(&padding);
