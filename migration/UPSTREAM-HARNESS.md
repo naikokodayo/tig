@@ -14,7 +14,7 @@ POSIX (macOS/Linux), Python 3.9+, Git, make, a C compiler and Cargo are required
 
 ```sh
 python3 rust/tests/upstream-suite.py --self-test
-python3 rust/tests/upstream-suite.py --output migration/evidence/upstream-rust-only.json
+python3 rust/tests/upstream-suite.py --output migration/evidence/upstream-rust-only-current.json
 ```
 
 The default runner enumerates the tracked original `test/*-test` scripts.
@@ -87,7 +87,8 @@ checks the physical PTY size, and verifies missing-assertion mapping.
 
 ## Recorded verification
 
-The full paired snapshot is `migration/evidence/upstream-rust-only.json`,
+The current full paired snapshot is `migration/evidence/upstream-rust-only-current.json`.
+The [archived initial snapshot](https://github.com/naikokodayo/tig/blob/72f107f2a22c129bf1688f9140d6fa6e308d8b6a/migration/evidence/upstream-rust-only.json) below was
 executed at **91fb1a3** (the harness on top of main **47f1a2b**, including
 PR #1). This commit remains in the branch history so its source and harness
 hashes can be checked. macOS arm64, Rust/Cargo 1.81.0, Apple Clang 21.0.0.

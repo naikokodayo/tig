@@ -38,3 +38,6 @@ tig.cygport
 tools/doc-gen
 tig.dSYM
 /target/
+/migration/evidence/graph-differential.json
+/migration/evidence/graph-differential-second.json
+/migration/evidence/upstream-rust-only.json

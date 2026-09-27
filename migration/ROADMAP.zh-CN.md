@@ -4,7 +4,7 @@
 
 ## 当前阶段门
 
-最新严格配对快照固定在已合并源码 `fc2402ff`：154 个未改动的原版脚本在 C 与 Rust 两侧均实际尝试，Rust 应用与图形辅助程序均由 Rust 构建。C 为 152 通过、0 失败、2 跳过；Rust 为 **147 通过、4 失败、3 跳过**，较[上一份实际已提交、绑定 `d59e2d52` 的快照](https://github.com/naikokodayo/tig/blob/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence/upstream-rust-only-current.json)新增 6 个通过。Rust 真实断言为 564 通过、6 失败，另有 2 条相对 C 未执行。完整二进制哈希、原始输出和逐脚本映射见[当前严格配对证据](evidence/upstream-rust-only-current.json)。此前文档误将 147 通过标为 `44b0bf42` 的已提交结果，现按收据中的源码版本纠正。阶段门仍未通过，最终应用 benchmark 延后。
+最新严格配对快照固定在已合并源码 `72f107f2`：154 个未改动的原版脚本在 C 与 Rust 两侧均实际尝试，Rust 应用与图形辅助程序均由 Rust 构建。C 为 152 通过、0 失败、2 跳过；Rust 为 **147 通过、4 失败、3 跳过**，与[上一份绑定 `fc2402ff` 的快照](https://github.com/naikokodayo/tig/blob/d9a59387f518f8b9cfdd2111c81fae9a824a9a63/migration/evidence/upstream-rust-only-current.json)相同。Rust 真实断言为 564 通过、6 失败，另有 2 条相对 C 未执行。完整二进制哈希、原始输出和逐脚本映射见[当前严格配对证据](evidence/upstream-rust-only-current.json)。新增的暂存、rename 和提示输入功能有独立的真实终端/索引回归，但原版脚本未覆盖全部场景。阶段门仍未通过，最终应用 benchmark 延后。
 
 ## 并行任务与合并顺序
 

@@ -32,7 +32,7 @@ Unstripped helper size: C 442,088 bytes; Rust 482,824 bytes (+9.2%).
 ## 证据与复现
 
 - [原始计时、哈希及二进制信息](evidence/benchmark-second.json)
-- [图形差分完整记录](evidence/graph-differential-second.json)
+- [图形差分完整记录（历史提交）](https://github.com/naikokodayo/tig/blob/72f107f2a22c129bf1688f9140d6fa6e308d8b6a/migration/evidence/graph-differential-second.json)
 - [原版 C 测试基线](evidence/c-baseline.json)
 - [真实 PTY 检查](evidence/terminal-smoke.json)
 

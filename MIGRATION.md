@@ -660,9 +660,9 @@ the executable hashes and individual transcripts. This is 17 more passing
 Rust scripts than the preceding `86ce7680` snapshot. The parity gate remains
 **OPEN**; completed follow-up slices must be retested against their merged source.
 
-### Current strict paired snapshot after prompt editing and mode-only staging
+### Current strict paired snapshot after prompt and staging integration
 
-At merged source `fc2402ff0cd145d386f53a5a3e503090127cbb08`, the runner
+At merged source `72f107f2a22c129bf1688f9140d6fa6e308d8b6a`, the runner
 attempted all 154 unchanged scripts with separately hashed C and Rust-only
 application/graph binaries. C passed 152, failed none, and skipped two. Rust
 passed 147, failed four, and skipped three: 564 actual assertions passed, six
@@ -691,7 +691,11 @@ The current tree keeps the latest strict paired receipt instead of duplicating
 those superseded runs.
 The prior copy of this section quoted the 147-pass result at `44b0bf42`, but
 that commit's checked-in receipt was still bound to `d59e2d52` (141 passes).
-This run is the first checked-in strict receipt bound to the later merged source.
+The `fc2402ff` run was the first checked-in strict receipt bound to the later merged source.
+Recent focused checks cover mode-only staging, partial unstage of deleted
+regular files, text renames, inputrc cursor bindings and action-name Tab
+completion. These additions do not change the inherited script count; their
+scoped receipts are separate from the 154-script gate.
 
 ### Non-local `%s` follow-up
 
