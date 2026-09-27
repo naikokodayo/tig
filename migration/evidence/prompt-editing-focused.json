@@ -1,0 +1,51 @@
+{
+  "scope": "Rust prompt cursor editing; original search scripts run unchanged through C/Rust strict adapter",
+  "tested_source_commit": "43baf57be6316eb8c64cb069e8818fc07b9c00c8",
+  "sha256": {
+    "src/prompt.c": "6f358c75f49a784403462b09f67a25112545bb92d455e7b77e71dd293d9df203",
+    "rust/main.rs": "7f7aee826bc33a45ce341a5ac1288c825b62af9eafa035a0ecbc141d20520baa",
+    "rust/tests/prompt-history-pty.py": "c7a264bb375202aef59788f1e7400d9a3a7cffe801fc8591e97254d487382b49",
+    "test/main/search-preload-test": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
+    "test/main/search-test": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "C tig binary": "8673b0c2688da4e890598f5a69237175a9a13b0074353b9f3217583a039a7b7a",
+    "Rust tig binary": "072a735367b0d868008919bdf9265bbfa44e456472df921e4e5038a93d25bbd1"
+  },
+  "checks": {
+    "cargo fmt --check": "pass",
+    "cargo test -q": "95 passed; 0 failed",
+    "cargo clippy --all-targets -- -D warnings": "pass",
+    "cargo build --release -q": "pass",
+    "python3 rust/tests/prompt-history-pty.py": "pass: live middle insertion, Unicode backspace, Ctrl-A/E, Right/Delete; existing preload/history safety cases",
+    "original_scripts": {
+      "c": {
+        "main/search-preload-test": {
+          "status": "pass",
+          "assertions_passed": 2
+        },
+        "main/search-test": {
+          "status": "pass",
+          "assertions_passed": 8
+        }
+      },
+      "rust": {
+        "main/search-preload-test": {
+          "status": "skip",
+          "assertions_passed": 0
+        },
+        "main/search-test": {
+          "status": "pass",
+          "assertions_passed": 8
+        }
+      }
+    },
+    "rust_preload_raw_skip": "[skipped] The test requires a tig compiled with readline"
+  },
+  "readline_gap": {
+    "C_source": "src/prompt.c: readline_init/read_prompt provide inputrc keymaps, terminal mode and SIGINT integration, action/option/variable/filename completion, redisplay, and history",
+    "Rust_milestone": "cursor-aware editing in the existing crossterm prompt; persistent history already present",
+    "remaining": "GNU Readline-compatible completion, inputrc/keymaps, kill/yank and other editing commands, and terminal/signal behavior require further parity work",
+    "version_claim_readline": false,
+    "parity_gate": "BLOCKED: original test_require readline remains skipped on Rust"
+  }
+}
