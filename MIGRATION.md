@@ -667,7 +667,7 @@ Rust scripts than the preceding `86ce7680` snapshot. The parity gate remains
 
 ### Current strict paired snapshot
 
-At merged source `6f029183b43d166271526e45d8f227ab430ce073`, the runner
+At merged source `3fb382781cd117dd80050872cc66bb94835755bc`, the runner
 attempted all 154 unchanged scripts with separately hashed C and Rust-only
 application/graph binaries. C passed 152, failed none, and skipped two. Rust
 passed 148, failed four, and skipped two: 566 actual assertions passed and six
