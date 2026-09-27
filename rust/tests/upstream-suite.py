@@ -8,11 +8,14 @@ Do not run concurrently with another upstream suite in this checkout (test/tmp).
 """
 import argparse
 from collections import Counter
+from concurrent.futures import ProcessPoolExecutor, as_completed
 import errno
 import fcntl
 import hashlib
+from itertools import islice
 import json
 import math
+import multiprocessing
 import os
 from pathlib import Path
 import pty
@@ -229,6 +232,8 @@ def main():
     parser.add_argument('scripts', nargs='*', type=Path)
     parser.add_argument('--output', type=Path, default=ROOT / 'migration/evidence/upstream-rust-only.json')
     parser.add_argument('--script-timeout', type=float, default=120)
+    parser.add_argument('--jobs', type=int, default=4,
+                        help='number of independent test scripts to run at once (default: 4)')
     parser.add_argument('--self-test', action='store_true')
     args = parser.parse_args()
     if args.self_test:
@@ -236,6 +241,8 @@ def main():
         return 0
     if not math.isfinite(args.script_timeout) or args.script_timeout <= 0:
         parser.error('--script-timeout must be positive')
+    if args.jobs < 1:
+        parser.error('--jobs must be positive')
     # A crashed build/runner must not leave a previous passing report in place.
     args.output.unlink(missing_ok=True)
     tracked = subprocess.check_output(['git', 'ls-files', '-z', 'test/*-test'], cwd=ROOT).decode().split('\0')
@@ -246,6 +253,13 @@ def main():
     for script in scripts:
         if script not in originals or not script.is_file():
             parser.error(f'Not an original test script: {script}')
+    if args.jobs > 1 and len(scripts) > 1:
+        # libtest.sh lazily initializes this shared dummy repo; do it once before workers race.
+        temporary = ROOT / 'test/tmp'
+        temporary.mkdir(parents=True, exist_ok=True)
+        if not (temporary / '.git').is_dir():
+            subprocess.run(['git', 'init', '-q', '--', str(temporary)],
+                           cwd=ROOT, env=environment([]), check=True)
     report = {'schema': 1, 'source_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
               'scope': 'Original scripts and assertions; C baseline followed by Rust application AND graph helper',
               'harness_sha256': {name: sha256(ROOT / name) for name in ('Makefile', 'test/tools/libtest.sh', 'rust/tests/upstream-suite.py')},
@@ -266,10 +280,30 @@ def main():
         if built.returncode:
             break
         run['binaries'] = routing(env, expected)
-        for script in scripts:
-            result = run_script(script, env, args.script_timeout)
-            run['results'].append(result)
-            print(f"{mode}: {result['status']:7} {result['script']}", flush=True)
+        if args.jobs == 1 or len(scripts) == 1:
+            for script in scripts:
+                result = run_script(script, env, args.script_timeout)
+                run['results'].append(result)
+                print(f"{mode}: {result['status']:7} {result['script']}", flush=True)
+        else:
+            results = {}
+            workers = min(args.jobs, len(scripts))
+            with ProcessPoolExecutor(max_workers=workers,
+                                     mp_context=multiprocessing.get_context('spawn')) as pool:
+                remaining = iter(scripts)
+                pending = {pool.submit(run_script, script, env, args.script_timeout): script
+                           for script in islice(remaining, workers)}
+                while pending:
+                    future = next(as_completed(pending))
+                    result = future.result()
+                    results[pending[future]] = result
+                    print(f"{mode}: {result['status']:7} {result['script']}", flush=True)
+                    del pending[future]
+                    next_script = next(remaining, None)
+                    if next_script is not None:
+                        pending[pool.submit(run_script, next_script, env,
+                                            args.script_timeout)] = next_script
+            run['results'] = [results[script] for script in scripts]
         run['binaries_unchanged'] = routing(env, expected) == run['binaries']
         run['summary'] = dict(Counter(r['status'] for r in run['results']))
     if all(report['runs'].get(mode, {}).get('binaries_unchanged') for mode in ('c', 'rust')):
