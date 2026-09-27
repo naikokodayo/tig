@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "f3b469d15a9b4bc75cf706f78bc273af008e9d6c",
+  "source_commit": "b1cdc3be4711b119bfc85e122a0d0f2a10ca7c86",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -118,7 +118,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 32.39s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 33.39s\n",
       "results": [
         {
           "script": "test/diff/diff-highlight-test",
@@ -195,7 +195,7 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/target/release/tig",
-          "sha256": "db0a7bfbc6ec2e01b6ef875d466477f66b917b11c0a18ff6888a5573fa413a45"
+          "sha256": "79a261d9d2c1ae90b684650264ccd19662cf34569fe68d29292e0593dffbeaa0"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/target/release/test-graph",
