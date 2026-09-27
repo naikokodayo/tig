@@ -3,6 +3,7 @@
 
 mod line;
 mod options_catalog;
+pub use options_catalog::completion_names as completion_option_names;
 mod request;
 pub use request::request_info;
 

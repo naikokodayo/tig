@@ -95,7 +95,7 @@ pub(super) fn inputrc_motion() -> std::collections::HashMap<char, bool> {
     }
     motions
 }
-pub(super) fn complete_prompt_action(value: &mut String, point: &mut usize) {
+pub(super) fn complete_prompt(value: &mut String, point: &mut usize) -> Vec<String> {
     const ACTIONS: &[&str] = &[
         "!",
         "source",
@@ -110,30 +110,201 @@ pub(super) fn complete_prompt_action(value: &mut String, point: &mut usize) {
         "echo",
         "none",
     ];
-    if value.is_empty() || value.chars().any(char::is_whitespace) {
-        return;
+    // Offer only variables currently supplied by Rust command expansion.
+    const VARIABLES: &[&str] = &[
+        "%(commit)",
+        "%(branch)",
+        "%(directory)",
+        "%(file)",
+        "%(head)",
+        "%(lineno)",
+        "%(ref)",
+        "%(remote)",
+        "%(tag)",
+        "%(refname)",
+        "%(repo:head)",
+        "%(repo:head-id)",
+        "%(repo:remote)",
+        "%(repo:upstream)",
+        "%(repo:cdup)",
+        "%(repo:prefix)",
+        "%(repo:git-dir)",
+        "%(repo:worktree)",
+        "%(repo:exec-dir)",
+        "%(repo:is-inside-work-tree)",
+        "%(revargs)",
+        "%(fileargs)",
+        "%(cmdlineargs)",
+    ];
+    if *point > value.len() || !value.is_char_boundary(*point) {
+        return Vec::new();
     }
-    let mut matches = ACTIONS
-        .iter()
-        .map(|action| (*action).to_string())
-        .chain(tig_rs::request_info().into_iter().map(|(_, name, _)| name))
-        .filter(|action| action.starts_with(&*value));
-    let Some(mut common) = matches.next() else {
-        return;
+    let before = &value[..*point];
+    let mut start = 0;
+    let mut escaped = false;
+    let mut quote = None;
+    for (i, ch) in before.char_indices() {
+        if escaped {
+            escaped = false;
+        } else if ch == '\\' {
+            escaped = true;
+        } else if quote == Some(ch) {
+            quote = None;
+            start = i + ch.len_utf8();
+        } else if quote.is_none() && (ch == '\'' || ch == '"') {
+            quote = Some(ch);
+            start = i + ch.len_utf8();
+        } else if quote.is_none() && " \t\n'`@$><=;|&{".contains(ch) {
+            start = i + ch.len_utf8();
+        }
+    }
+    let word = &before[start..];
+    let mut file_mode = false;
+    let mut lookup = word.to_string();
+    let (options, toggles) = tig_rs::completion_option_names();
+    let candidates: Vec<String> = if start == 0 {
+        ACTIONS
+            .iter()
+            .map(|s| (*s).to_string())
+            .chain(tig_rs::request_info().into_iter().map(|(_, name, _)| name))
+            .collect()
+    } else if before.starts_with("toggle ") {
+        toggles
+    } else if before.starts_with("set ") && !before.contains('=') {
+        options
+            .into_iter()
+            .map(|name| format!("{name} = "))
+            .collect()
+    } else if word.starts_with("%(") {
+        VARIABLES.iter().map(|s| (*s).to_string()).collect()
+    } else {
+        file_mode = true;
+        lookup = unescape(word);
+        file_candidates(&lookup)
     };
-    for action in matches {
+    if start == 0 && candidates.iter().any(|candidate| candidate == word) {
+        return Vec::new();
+    }
+    let mut matches: Vec<String> = candidates
+        .into_iter()
+        .filter(|s| s.starts_with(&lookup) && s != &lookup)
+        .collect();
+    matches.sort();
+    matches.dedup();
+    let Some(mut common) = matches.first().cloned() else {
+        return Vec::new();
+    };
+    for candidate in &matches[1..] {
         let shared = common
-            .bytes()
-            .zip(action.bytes())
+            .chars()
+            .zip(candidate.chars())
             .take_while(|(a, b)| a == b)
-            .count();
+            .map(|(ch, _)| ch.len_utf8())
+            .sum();
         common.truncate(shared);
     }
-    if common.len() > value.len() {
-        value.clear();
-        value.push_str(&common);
-        *point = value.len();
+    if common.len() > lookup.len() {
+        let mut end = value.len();
+        let mut right_escaped = false;
+        for (offset, ch) in value[*point..].char_indices() {
+            if right_escaped {
+                right_escaped = false;
+            } else if ch == '\\' {
+                right_escaped = true;
+            } else if quote == Some(ch) || (quote.is_none() && " \t\n\"'`@$><=;|&{".contains(ch)) {
+                end = *point + offset;
+                break;
+            }
+        }
+        let replacement = if file_mode {
+            let quote_char = quote.unwrap_or('"');
+            let mut escaped = common
+                .replace('\\', "\\\\")
+                .replace(quote_char, &format!("\\{quote_char}"));
+            let done = matches.len() == 1
+                && !common.ends_with('/')
+                && !(quote.is_some() && value[end..].starts_with(quote_char));
+            if quote.is_some() {
+                if done {
+                    escaped.push(quote_char);
+                }
+                escaped
+            } else if common.chars().any(char::is_whitespace)
+                || common.contains('"')
+                || common.contains('\'')
+                || common.contains('\\')
+            {
+                format!("\"{escaped}{}", if done { "\"" } else { "" })
+            } else {
+                common
+            }
+        } else {
+            common
+        };
+        value.replace_range(start..end, &replacement);
+        *point = start + replacement.len();
     }
+    matches
+}
+
+fn unescape(word: &str) -> String {
+    let mut result = String::new();
+    let mut chars = word.chars();
+    while let Some(ch) = chars.next() {
+        result.push(if ch == '\\' {
+            chars.next().unwrap_or(ch)
+        } else {
+            ch
+        });
+    }
+    result
+}
+
+fn file_candidates(word: &str) -> Vec<String> {
+    if word == "~" && env::var_os("HOME").is_some() {
+        return vec!["~/".into()];
+    }
+    let expanded = word
+        .strip_prefix("~/")
+        .and_then(|rest| env::var_os("HOME").map(|home| PathBuf::from(home).join(rest)));
+    let path = expanded
+        .as_deref()
+        .unwrap_or_else(|| std::path::Path::new(word));
+    let (parent, prefix) = if word.ends_with('/') {
+        (path, "")
+    } else {
+        (
+            path.parent()
+                .filter(|parent| !parent.as_os_str().is_empty())
+                .unwrap_or_else(|| std::path::Path::new(".")),
+            path.file_name()
+                .and_then(|name| name.to_str())
+                .unwrap_or(""),
+        )
+    };
+    let parent_text = if word.ends_with('/') {
+        word
+    } else {
+        word.strip_suffix(prefix).unwrap_or("")
+    };
+    let Some(directory) = fs::read_dir(parent).ok() else {
+        return Vec::new();
+    };
+    directory
+        .filter_map(Result::ok)
+        .filter_map(|entry| {
+            let name = entry.file_name().into_string().ok()?;
+            if !name.starts_with(prefix) || (name.starts_with('.') && !prefix.starts_with('.')) {
+                return None;
+            }
+            let mut candidate = format!("{parent_text}{name}");
+            if entry.file_type().ok()?.is_dir() || entry.metadata().is_ok_and(|meta| meta.is_dir())
+            {
+                candidate.push('/');
+            }
+            Some(candidate)
+        })
+        .collect()
 }
 pub(super) struct PromptHistory {
     path: Option<PathBuf>,
@@ -250,5 +421,60 @@ impl PromptHistory {
             let _ = fs::remove_file(temporary);
         }
         result
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::complete_prompt;
+
+    fn complete(input: &str, point: usize) -> (String, usize, Vec<String>) {
+        let mut value = input.to_string();
+        let mut point = point;
+        let matches = complete_prompt(&mut value, &mut point);
+        (value, point, matches)
+    }
+
+    #[test]
+    fn completes_actions_options_variables_and_paths() {
+        assert_eq!(complete("tog", 3).0, "toggle");
+        assert_eq!(complete("togXYZ", 3).0, "toggle");
+        assert_eq!(complete("view-close", "view-close".len()).0, "view-close");
+        assert_eq!(
+            complete("set history-s", "set history-s".len()).0,
+            "set history-size = "
+        );
+        assert_eq!(
+            complete("toggle wrap-s", "toggle wrap-s".len()).0,
+            "toggle wrap-search"
+        );
+        assert_eq!(
+            complete("exec %(repo:head-i", "exec %(repo:head-i".len()).0,
+            "exec %(repo:head-id)"
+        );
+        let directory = std::env::temp_dir().join(format!("tig-prompt-{}", std::process::id()));
+        std::fs::create_dir_all(&directory).unwrap();
+        std::fs::write(directory.join("a file"), b"").unwrap();
+        std::fs::write(directory.join("quote's"), b"").unwrap();
+        let input = format!("source {}/a", directory.display());
+        let (value, point, _) = complete(&input, input.len());
+        assert_eq!(value, format!("source \"{}/a file\"", directory.display()));
+        assert_eq!(point, value.len());
+        assert_eq!(
+            tig_rs::config::words(&value).unwrap()[1],
+            directory.join("a file").to_string_lossy()
+        );
+        let escaped = format!("source {}/a\\ f", directory.display());
+        assert_eq!(complete(&escaped, escaped.len()).0, value);
+        let quoted = format!("source \"{}/a f\"", directory.display());
+        let cursor = quoted.len() - 2;
+        assert_eq!(complete(&quoted, cursor).0, value);
+        let apostrophe = format!("source {}/quo", directory.display());
+        let completed = complete(&apostrophe, apostrophe.len()).0;
+        assert_eq!(
+            tig_rs::config::words(&completed).unwrap()[1],
+            directory.join("quote's").to_string_lossy()
+        );
+        std::fs::remove_dir_all(directory).unwrap();
     }
 }

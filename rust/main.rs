@@ -9,7 +9,7 @@ use crossterm::{
     style::{Attribute, SetAttribute},
     terminal::{self, Clear, ClearType},
 };
-use prompt::{clip_prompt, complete_prompt_action, inputrc_motion, prompt_text, PromptHistory};
+use prompt::{clip_prompt, complete_prompt, inputrc_motion, prompt_text, PromptHistory};
 use regex::RegexBuilder;
 use std::{
     env,
@@ -3734,6 +3734,7 @@ impl Terminal {
         let mut point = 0;
         let mut position = self.history.entries.len();
         let mut draft = String::new();
+        let mut tab_armed = false;
         loop {
             let line = prompt_text(&format!("{prefix}{value}"));
             let caret = UnicodeWidthStr::width(
@@ -3763,6 +3764,9 @@ impl Terminal {
             )?;
             self.out.flush()?;
             let event = self.read()?;
+            if !matches!(&event, Event::Key(key) if key.code == KeyCode::Tab) {
+                tab_armed = false;
+            }
             if let Event::Key(k) = &event {
                 if let KeyCode::Char(key) = k.code {
                     if key != 'c' && k.modifiers.contains(KeyModifiers::CONTROL) {
@@ -3796,8 +3800,31 @@ impl Terminal {
                         queue!(self.out, cursor::Hide)?;
                         return Ok(None);
                     }
-                    KeyCode::Tab if prefix == ":" && point == value.len() => {
-                        complete_prompt_action(&mut value, &mut point);
+                    KeyCode::Tab => {
+                        let old = value.clone();
+                        let matches = complete_prompt(&mut value, &mut point);
+                        if tab_armed && value == old && matches.len() > 1 {
+                            queue!(
+                                self.out,
+                                cursor::MoveTo(0, app.height.saturating_sub(1) as u16),
+                                Clear(ClearType::CurrentLine)
+                            )?;
+                            write!(
+                                self.out,
+                                "{}",
+                                clip_prompt(
+                                    &prompt_text(&format!("matches: {}", matches.join(" "))),
+                                    0,
+                                    app.width
+                                )
+                            )?;
+                            self.out.flush()?;
+                            if let Event::Resize(w, h) = self.read()? {
+                                app.width = w as usize;
+                                app.height = h as usize;
+                            }
+                        }
+                        tab_armed = matches.len() > 1;
                     }
                     KeyCode::Up if position > 0 => {
                         if position == self.history.entries.len() {
@@ -3936,7 +3963,7 @@ fn run() -> Result<()> {
     }
     if cli.version {
         println!(
-            "tig-rs {} (upstream Tig 2.6.1; migration in progress)",
+            "tig-rs {} (upstream Tig 2.6.1; migration in progress; readline-style prompt history and completion)",
             env!("CARGO_PKG_VERSION")
         );
         return Ok(());
