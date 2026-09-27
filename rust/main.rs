@@ -201,6 +201,7 @@ struct View {
     raw_patch: Vec<u8>,
     blob_data: Option<Vec<u8>>,
     from_stdin: bool,
+    show_file_args: bool,
     forwarded_stdin: Option<Vec<String>>,
     sort_field: Option<String>,
     sort_reverse: bool,
@@ -236,6 +237,7 @@ impl View {
             raw_patch: Vec::new(),
             blob_data: None,
             from_stdin: false,
+            show_file_args: false,
             forwarded_stdin: None,
             sort_field: None,
             sort_reverse: false,
@@ -469,6 +471,7 @@ impl App {
             view.sort_reverse = self.view.sort_reverse;
         }
         view.args = self.args.clone();
+        view.show_file_args = name == "diff" && self.view.show_file_args;
         if name != "diff" && name != "tree" && !(name == "blob" && view.grep_source.is_none()) {
             view.revision = self.revision.clone();
         }
@@ -928,9 +931,17 @@ impl App {
                     self.config.usize_value("diff-context", 3),
                     word_diff_enabled(&self.config),
                     diff_options,
-                    (self.config.bool_value("file-filter", true)
-                        && !self.path.as_os_str().is_empty())
-                    .then_some(self.path.as_path()),
+                    (
+                        (self.config.bool_value("file-filter", true)
+                            && !self.view.show_file_args
+                            && !self.path.as_os_str().is_empty())
+                        .then_some(self.path.as_path()),
+                        if self.view.show_file_args {
+                            self.file_filter()
+                        } else {
+                            &[]
+                        },
+                    ),
                     width,
                 )?;
                 let shown = highlight_diff(&self.config, text.as_bytes());
@@ -4977,6 +4988,7 @@ fn run() -> Result<()> {
         }
         if cli.view == "diff" {
             app.revision = cli.diff_revision().to_owned();
+            app.view.show_file_args = true;
         }
         app.view = app.load(&cli.view).map_err(|error| {
             if cli.view == "main"
