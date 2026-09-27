@@ -1,6 +1,6 @@
 # Main refresh cancellation — bounded receipt
 
-Tested source: `deee688500f49d317887ff5727ad6e7b44aedcc1`, rebased onto `44ad2139a4f029a7639648d15f6db41d9913ea98` (PR #68 integrated without conflicts).
+Tested source: `db59cfa924b1bb40c7ce0cd01ad4288c9b633262`, rebased onto `0d2b54ff9e65e33d8e2191e2774e3ca65c0501aa` (PRs #68 and #70 integrated without conflicts).
 Host: Darwin arm64; no dependencies or unsafe code added.
 
 ## Scope
@@ -28,7 +28,7 @@ Existing Git argv construction, parsing, decoration and row rendering are reused
 - `python3 rust/tests/main-refresh-pty.py target/release/tig`: pass.
   The wrapper fills stderr with 256 KiB and writes 1024 copies of history output before
   announcing its PID, proving both pipes drain. It then sleeps for 30 seconds.
-  Navigation leaves that child alive. `z` responds in 0.082 s (2 s deadline),
+  Navigation leaves that child alive. `z` responds in 0.080 s (2 s deadline),
   PID is gone, retained old rows remain and pending new rows never appear.
   Next `R` succeeds; exit-23 refresh retains the last successful rows;
   `Q` during another delayed refresh reaps its child.
@@ -40,16 +40,19 @@ Existing Git argv construction, parsing, decoration and row rendering are reused
 - PR #68 integration: `python3 rust/tests/file-blame.py` passes all 31 checks;
   tracked index/worktree remain unchanged.
 - Unmodified original scripts, C and Rust paired: **7/7 scripts, 29/29 assertions
-  each**, no skips or unreached assertions. No full 154-script run claimed.
+  each**, with the new runner’s default 4 workers; no skips or unreached assertions. No full 154-script run claimed.
 
 Reproduce the pair:
 
 ```sh
-python3 rust/tests/upstream-suite.py test/main/default-test test/main/refresh-test test/main/refresh-periodic-test test/main/graph-argument-test test/main/main-options-test test/main/view-split-test test/blame/blob-blame-test --output work/main-refresh-pair.json
+python3 rust/tests/upstream-suite.py test/main/default-test test/main/refresh-test test/main/refresh-periodic-test test/main/graph-argument-test test/main/main-options-test test/main/view-split-test test/blame/blob-blame-test --jobs 4 --output work/main-refresh-pair.json
 ```
 
 Independent read-only review before this rebase: no material findings.
-This conflict-free rebase was inspected and all checks above rerun on the combined source.
+After PR #68, all checks above were rerun. PR #70 changes only the runner and
+its evidence: application/source hashes remain identical. The 7-script C/Rust
+pair and cancellation PTY were rerun after #70; prior Rust, options-menu and
+file-blame results remain applicable to the unchanged application source.
 Earlier findings about in-view navigation and maximized child views were fixed.
 
 ## SHA-256
@@ -60,7 +63,7 @@ Earlier findings about in-view navigation and maximized child views were fixed.
 - `rust/git.rs`: `78a8f085553a2321be26a0237d49333cb62f9937e43951fb781325385461d17c`
 - `rust/main.rs`: `6a5f34be14426573f4a170d81582c50a2ff68a7c7e3ce83a98b40ff16b1afcaa`
 - Focused PTY check: `45b1f5fe8159484611ca6e21d5759f9fec389be0bf71ebba29fb6681ad8210a1`
-- Strict original-script runner: `8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702`
+- Strict original-script runner: `40f68213956d46c2611e10ac1ebe48c72d1bb6a24443705a2db452d92d1a7663`
 
 One Markdown receipt is retained; generated paired JSON and build logs stay in
 local scratch storage. Original C tests and their assertions are unchanged.
