@@ -482,15 +482,16 @@ impl Repository {
     }
     /// Paths after -- are root-relative; implicit paths use the discovery directory.
     pub fn history(&self, revisions: &[String], limit: usize) -> Result<Vec<Commit>> {
-        self.history_ordered(revisions, limit, "topo")
+        self.history_ordered(revisions, limit, "topo", "no")
     }
     pub fn history_ordered(
         &self,
         revisions: &[String],
         limit: usize,
         order: &str,
+        notes: &str,
     ) -> Result<Vec<Commit>> {
-        self.history_with_input(revisions, limit, order, None)
+        self.history_with_input(revisions, limit, order, None, notes)
     }
     pub fn history_from_stdin(
         &self,
@@ -498,7 +499,7 @@ impl Repository {
         input: &[u8],
         order: &str,
     ) -> Result<Vec<Commit>> {
-        self.history_with_input(revisions, 0, order, Some(input))
+        self.history_with_input(revisions, 0, order, Some(input), "no")
     }
     fn history_with_input(
         &self,
@@ -506,6 +507,7 @@ impl Repository {
         limit: usize,
         order: &str,
         input: Option<&[u8]>,
+        notes: &str,
     ) -> Result<Vec<Commit>> {
         let options = HistoryOptions::parse(revisions)?;
         let order_arg = match order {
@@ -516,14 +518,22 @@ impl Repository {
             "reverse" => Some("--reverse"),
             _ => return Err(GitError(format!("Invalid commit order: {order}"))),
         };
+        let show_notes = !matches!(notes, "no" | "false" | "0");
+        let notes_format = if show_notes { "%N" } else { "" };
         let mut args = vec![
             "log".to_owned(),
             "--parents".into(),
             "--no-show-signature".into(),
             "--decorate=full".into(),
-            "--format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI".into(),
+            format!("--format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI%x00{notes_format}"),
             "-z".into(),
         ];
+        if show_notes {
+            args.push(match notes {
+                "yes" | "true" | "1" | "" => "--show-notes".into(),
+                reference => format!("--show-notes={reference}"),
+            });
+        }
         if let Some(order_arg) = order_arg {
             args.push(order_arg.into());
         }
@@ -597,6 +607,7 @@ impl Repository {
                 metadata.extend_from_slice(field);
                 metadata.push(0);
             }
+            metadata.push(0); // Reflog rows do not carry main-view annotations.
             selectors.push(text(row[10]));
         }
         let mut commits = parse_history(&metadata)?;
@@ -1150,13 +1161,14 @@ pub fn parse_tree(bytes: &[u8]) -> Result<Vec<TreeEntry>> {
 }
 pub fn parse_history(bytes: &[u8]) -> Result<Vec<Commit>> {
     let f: Vec<_> = records(bytes)?.collect();
-    if f.len() % 10 != 0 {
+    if f.len() % 11 != 0 {
         return Err(GitError("Malformed history fields".into()));
     }
-    Ok(f.chunks_exact(10)
+    Ok(f.chunks_exact(11)
         .map(|f| Commit {
             oid: text(f[0]).trim_start_matches(['-', '>', '<']).into(),
             boundary: f[0].starts_with(b"-"),
+            annotated: !f[10].is_empty(),
             parents: text(f[1]).split_whitespace().map(str::to_owned).collect(),
             author: text(f[2]),
             date: text(f[3]),
@@ -1222,6 +1234,7 @@ pub fn parse_raw_history(input: &str) -> Result<Vec<Commit>> {
             let mut commit = Commit {
                 oid: oid.into(),
                 boundary,
+                annotated: false,
                 parents,
                 author: String::new(),
                 date: String::new(),
@@ -1450,7 +1463,7 @@ mod tests {
         assert!(refs[0].current);
         assert_eq!(refs[2].target, oid);
         let commit = |id: &str| {
-            parse_history(format!("{id}\0\0Author\02020-01-01T00:00:00+00:00\0Title\0stale\0a@b\0Author\0a@b\02020-01-01T00:00:00+00:00\0").as_bytes()).unwrap().remove(0)
+            parse_history(format!("{id}\0\0Author\02020-01-01T00:00:00+00:00\0Title\0stale\0a@b\0Author\0a@b\02020-01-01T00:00:00+00:00\0\0").as_bytes()).unwrap().remove(0)
         };
         let mut commits = vec![commit(&oid), commit(&replaced)];
         decorate_history(&mut commits, &refs, "");
@@ -1537,7 +1550,7 @@ mod tests {
             .success());
         let repo = fixture.repo();
         let subjects = |order| {
-            repo.history_ordered(&[], 0, order)
+            repo.history_ordered(&[], 0, order, "no")
                 .unwrap()
                 .into_iter()
                 .map(|commit| commit.subject)
@@ -1545,7 +1558,7 @@ mod tests {
         };
         assert_eq!(subjects("topo")[1..3], ["More featuresA", "More master"]);
         assert_eq!(subjects("date")[1..3], ["More master", "More featuresA"]);
-        assert!(repo.history_ordered(&[], 0, "other").is_err());
+        assert!(repo.history_ordered(&[], 0, "other", "no").is_err());
     }
     #[test]
     fn blame_porcelain_keeps_dates_and_historical_path() {
@@ -1610,6 +1623,40 @@ mod tests {
         assert!(repo
             .history(&["--grep".into(), "before\nafter".into()], 0)
             .is_ok());
+    }
+    #[test]
+    fn history_notes_follow_selected_ref_without_leaking_into_fields() {
+        let f = Fixture::new();
+        let repo = f.repo();
+        repo.command(["commit", "--allow-empty", "-qm", "base"])
+            .unwrap();
+        repo.command(["commit", "--allow-empty", "-qm", "noted"])
+            .unwrap();
+        repo.command(["notes", "add", "-m", "review\n\ncommit fake\n\u{3}text"])
+            .unwrap();
+        repo.command(["notes", "--ref=review", "add", "-m", "custom", "HEAD^"])
+            .unwrap();
+        for (notes, expected) in [
+            ("yes", [true, false]),
+            ("no", [false, false]),
+            ("false", [false, false]),
+            ("0", [false, false]),
+            ("refs/notes/review", [true, true]),
+            ("refs/notes/missing", [true, false]),
+        ] {
+            let commits = repo.history_ordered(&[], 0, "topo", notes).unwrap();
+            assert_eq!(
+                commits.iter().map(|c| c.annotated).collect::<Vec<_>>(),
+                expected
+            );
+            assert_eq!(
+                commits
+                    .iter()
+                    .map(|c| c.subject.as_str())
+                    .collect::<Vec<_>>(),
+                ["noted", "base"]
+            );
+        }
     }
     #[test]
     fn filtered_status_preserves_paths_renames_and_conflicts() {

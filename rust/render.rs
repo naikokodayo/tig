@@ -792,6 +792,7 @@ mod tests {
         Commit {
             oid: "ee912870202200a0b9cf4fd86ba57243212d341e".into(),
             boundary: false,
+            annotated: false,
             parents: vec!["parent".into()],
             author: "Jonas Fonseca".into(),
             author_email: "jonas@example.com".into(),

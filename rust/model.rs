@@ -6,6 +6,7 @@ use std::path::PathBuf;
 pub struct Commit {
     pub oid: String,
     pub boundary: bool,
+    pub annotated: bool,
     pub parents: Vec<String>,
     pub author: String,
     pub date: String,

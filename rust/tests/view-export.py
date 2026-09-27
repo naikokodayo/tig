@@ -208,20 +208,37 @@ with tempfile.TemporaryDirectory(prefix='tig-general-export-') as temporary:
             process.wait(timeout=5)
 
     if not a.before:
-        # C retains Git-note annotations; Rust's existing Commit model does not.
-        # Record this separately from parity passes, without another metadata query.
-        git('notes', 'add', '-m', 'review note')
-        config.write_text('set show-changes = no\n')
-        captures = {}
-        for mode, binary in [('c', ROOT / 'src/tig'), ('rust', ROOT / 'target/release/tig')]:
-            target = directory / ('notes-' + mode)
-            script.write_text(f':save-view {target}\n:quit\n')
-            code, timed_out, transcript = h.terminal([str(binary), '-C', str(repo)], env, 15)
-            assert code == 0 and not timed_out, transcript
-            captures[mode] = target.read_text()
-        assert 'type=main-annotated selected=1' in captures['c'], captures
-        assert 'type=main-commit selected=1' in captures['rust'], captures
-        known_differences['annotated-commit-type'] = captures
+        # Main annotations come from the same log stream, including selected refs.
+        git('notes', 'add', '-m', 'review note\n\ncommit fake\nmore note text')
+        git('notes', '--ref=review', 'add', '-m', 'custom note', 'HEAD^')
+        for name, setting, steps, annotated in [
+            ('default', '', '', [0]),
+            ('disabled', 'no', '', []),
+            ('custom', 'refs/notes/review', '', [0, 1]),
+            ('missing', 'refs/notes/missing', '', [0]),
+            ('toggle-off', 'yes', ':toggle show-notes\n', []),
+            ('toggle-on', 'no', ':toggle show-notes\n', [0]),
+            ('refresh', 'yes', ':refresh\n', [0]),
+        ]:
+            config.write_text('set show-changes = no\n' +
+                              (f'set show-notes = {setting}\n' if setting else ''))
+            captures = {}
+            screens = {}
+            for mode, binary in [('c', ROOT / 'src/tig'), ('rust', ROOT / 'target/release/tig')]:
+                target = directory / f'notes-{name}-{mode}'
+                screen = directory / f'notes-{name}-{mode}.screen'
+                script.write_text(steps + f':save-display {screen}\n:save-view {target}\n:quit\n')
+                code, timed_out, transcript = h.terminal([str(binary), '-C', str(repo)], env, 15)
+                assert code == 0 and not timed_out, transcript
+                captures[mode] = target.read_text()
+                screens[mode] = screen.read_text()
+            expected = ['main-commit', 'main-commit']
+            for index in annotated:
+                expected[index] = 'main-annotated'
+            for index, kind in enumerate(expected):
+                assert f'line[{index:3}] type={kind} selected={int(index == 0)}' in captures['c'], captures
+            results['notes-' + name] = dict(passed=captures['rust'] == captures['c'] and
+                                           screens['rust'] == screens['c'], captures=captures, screens=screens)
 
         git('update-index', '--add', '--cacheinfo', '160000,' + git('rev-parse', 'HEAD') + ',nested')
         git('commit', '-qm', 'gitlink')
