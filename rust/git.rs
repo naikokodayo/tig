@@ -1021,6 +1021,46 @@ impl Repository {
         }
         self.command(["cat-file", "blob", oid])
     }
+    /// Locate an index line in HEAD without attributing newly staged text.
+    pub fn index_line_in_head(&self, file: &Path, line: usize) -> Result<(PathBuf, usize)> {
+        valid_path(file)?;
+        let path = self
+            .status_filtered(&[], false)?
+            .into_iter()
+            .find(|entry| entry.path == file)
+            .and_then(|entry| entry.original_path)
+            .unwrap_or_else(|| file.to_path_buf());
+        let mut old = OsString::from("HEAD:");
+        old.push(&path);
+        let mut new = OsString::from(":");
+        new.push(file);
+        let raw = self.command(vec![
+            "diff".into(),
+            "--no-ext-diff".into(),
+            "--no-textconv".into(),
+            "--no-color".into(),
+            "-U0".into(),
+            old,
+            new,
+            "--".into(),
+        ])?;
+        let mut number = line;
+        if !raw.is_empty() {
+            let patch = crate::patch::Patch::parse(&raw)?;
+            for hunk in patch.files.iter().flat_map(|file| &file.hunks) {
+                let new_start = hunk.new_start + usize::from(hunk.new_count == 0);
+                if line < new_start {
+                    break;
+                }
+                if line < new_start + hunk.new_count {
+                    return Err(GitError("No committed source for the selected line".into()));
+                }
+                let old_end = hunk.old_start + hunk.old_count + usize::from(hunk.old_count == 0);
+                number = old_end + (line - new_start - hunk.new_count);
+            }
+        }
+        Ok((path, number))
+    }
     pub fn blame(
         &self,
         revision: Option<&str>,
