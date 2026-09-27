@@ -987,15 +987,14 @@ impl Repository {
         &self,
         revision: Option<&str>,
         file: &Path,
-        lower_bound: Option<&str>,
+        options: &[String],
     ) -> Result<Vec<BlameLine>> {
         valid_path(file)?;
-        let mut args: Vec<OsString> = vec!["blame".into(), "--line-porcelain".into()];
-        if let Some(revision) = revision {
+        let mut args: Vec<OsString> = vec!["blame".into()];
+        args.extend(crate::blame_options::arguments(self, options)?);
+        args.extend(["--no-textconv".into(), "--line-porcelain".into()]);
+        if let Some(revision) = revision.filter(|value| !value.is_empty()) {
             args.push(self.revision(revision)?.into());
-        }
-        if let Some(lower_bound) = lower_bound {
-            args.push(format!("^{}", self.revision(lower_bound)?).into());
         }
         args.push("--".into());
         args.push(file.into());
@@ -2008,7 +2007,7 @@ mod tests {
         let tree = repo.tree("HEAD", Path::new("")).unwrap();
         assert_eq!(repo.blob(&tree[0].oid).unwrap(), b"first\nsecond\n");
         let blame = repo
-            .blame(Some("HEAD"), Path::new(":(glob)*"), None)
+            .blame(Some("HEAD"), Path::new(":(glob)*"), &[])
             .unwrap();
         assert_eq!(blame.len(), 2);
         assert_eq!(blame[1].line, 2);
