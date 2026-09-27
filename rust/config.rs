@@ -13,6 +13,7 @@ use std::{
 #[derive(Clone, Debug, Default)]
 pub struct Config {
     pub settings: BTreeMap<String, Vec<String>>,
+    pub word_diff_cli_seen: bool,
     pub bindings: BTreeMap<(String, String), Vec<String>>,
     /// Successful bind assignments in parse order; help needs their order.
     pub binding_updates: Vec<(String, String)>,
@@ -355,6 +356,9 @@ impl Config {
                     .map(|n| ("diff-context", n.to_string())),
             };
             if let Some((name, value)) = setting {
+                if name == "word-diff" {
+                    self.word_diff_cli_seen = true;
+                }
                 self.settings.insert(name.into(), vec![value]);
                 false
             } else {

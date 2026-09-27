@@ -16,6 +16,20 @@ impl fmt::Display for GitError {
 }
 impl std::error::Error for GitError {}
 pub type Result<T> = std::result::Result<T, GitError>;
+pub fn validate_diff_options(options: &[String]) -> Result<()> {
+    if let Some(option) = options.iter().find(|option| {
+        matches!(
+            option.as_str(),
+            "--" | "--end-of-options" | "--output" | "-o" | "--ext-diff" | "--textconv"
+        ) || option.starts_with("--output=")
+            || option.starts_with("--ext-diff=")
+            || option.starts_with("--textconv=")
+            || (option.starts_with("-o") && !option.starts_with("--"))
+    }) {
+        return Err(GitError(format!("Unsupported diff option: {option}")));
+    }
+    Ok(())
+}
 
 #[derive(Clone, Debug)]
 pub struct Repository {
@@ -558,9 +572,11 @@ impl Repository {
         revision: &str,
         context: usize,
         word_diff: bool,
+        diff_options: &[String],
         file: Option<&Path>,
         width: usize,
     ) -> Result<String> {
+        validate_diff_options(diff_options)?;
         let oid = self.revision(revision)?;
         let mut args: Vec<OsString> = [
             "show",
@@ -571,17 +587,24 @@ impl Repository {
             &format!("--stat={width}"),
             "--patch",
             &format!("-U{context}"),
-            if word_diff {
-                "--word-diff=plain"
-            } else {
-                "--word-diff=none"
-            },
             &oid,
             "--",
         ]
         .into_iter()
         .map(OsString::from)
         .collect();
+        args.splice(
+            args.len() - 2..args.len() - 2,
+            diff_options.iter().map(OsString::from).chain([
+                OsString::from(if word_diff {
+                    "--word-diff=plain"
+                } else {
+                    "--word-diff=none"
+                }),
+                OsString::from("--no-ext-diff"),
+                OsString::from("--no-textconv"),
+            ]),
+        );
         if let Some(file) = file {
             valid_path(file)?;
             args.push(file.into());
@@ -1740,7 +1763,7 @@ mod tests {
         repo.command(["commit", "-qam", "change"]).unwrap();
         for context in [0, 3, 4, 5, 8] {
             for word in [false, true] {
-                let show = repo.show("HEAD", context, word, None, 80).unwrap();
+                let show = repo.show("HEAD", context, word, &[], None, 80).unwrap();
                 let span = if context == 0 {
                     "10".into()
                 } else {
@@ -1754,6 +1777,18 @@ mod tests {
                 }));
             }
         }
+        repo.command(["config", "diff.external", "false"]).unwrap();
+        assert!(repo
+            .show("HEAD", 3, false, &["--src-prefix".into()], None, 80)
+            .unwrap()
+            .contains("-line 10\n+changed 10"));
+        assert!(repo
+            .show("HEAD", 3, false, &["--ext-diff".into()], None, 80)
+            .is_err());
+        assert!(repo
+            .show("HEAD", 3, true, &["--word-diff=none".into()], None, 80)
+            .unwrap()
+            .contains("[-line-]{+changed+} 10"));
         assert_eq!(repo.history(&[], 0).unwrap().len(), 2);
     }
 
@@ -1815,7 +1850,7 @@ mod tests {
         assert_eq!(blame.len(), 2);
         assert_eq!(blame[1].line, 2);
         assert!(repo
-            .show("HEAD", 3, false, None, 80)
+            .show("HEAD", 3, false, &[], None, 80)
             .unwrap()
             .contains("initial"));
         fs::rename(f.0.join(":(glob)*"), f.0.join("renamed")).unwrap();
@@ -1839,7 +1874,7 @@ mod tests {
                 original_path: None
             })
             .is_err());
-        assert!(repo.show("--output=oops", 3, false, None, 80).is_err());
+        assert!(repo.show("--output=oops", 3, false, &[], None, 80).is_err());
         assert!(repo.history(&["--format=oops".into()], 1).is_err());
     }
 }

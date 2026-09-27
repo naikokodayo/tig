@@ -1,0 +1,90 @@
+{
+  "schema": 2,
+  "scope": "focused C/Rust diff pipeline parity, not the full migration gate",
+  "tested_source_commit": "4d09f47fbec45b4b62b23734e870e0000d9db6c1",
+  "source_sha256": {
+    "rust/config.rs": "adf1be06bea100489c8087d06da4ee6ffe6723ec1abedb03ceb47099cde24eab",
+    "rust/main.rs": "395ee3e6a5bf7a006a6841de1356759f2c38b50628ea93d24738643466559c95",
+    "rust/git.rs": "34cb7ad944dec1e42a2e6b54d9bc7b574685a0fd214ca842ebf0f7bf71863e20",
+    "rust/tests/diff-pipeline.py": "a41f9d885d13bce4cafca7ca384fc872162ecc0e0342cc8c7fd94f6cd699214b"
+  },
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "binary_sha256": {
+    "c": "687fbb3569b2f629730ed57fa65a044b5ec8f806b485cd27844649f343ae43fd",
+    "rust": "b34929eb09d6cd543dcc77d5e7421ba8875287babcb7b5e1747951604466d180"
+  },
+  "binary_routes_verified": true,
+  "original_script_command": "python3 rust/tests/upstream-suite.py --output /Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/work/diff-final-full.json test/diff/diff-highlight-test test/main/submodule-test",
+  "original_scripts": [
+    {
+      "script": "test/diff/diff-highlight-test",
+      "script_sha256": "eab9213bd2b38ed296eb372ed16d7f9397538ffb3b54f0bb1b36d7ccc7040b02",
+      "c": {
+        "status": "pass",
+        "passed": 6,
+        "failed": 0
+      },
+      "rust": {
+        "status": "fail",
+        "passed": 4,
+        "failed": 2
+      }
+    },
+    {
+      "script": "test/main/submodule-test",
+      "script_sha256": "ae7a945fee6bf5676a0435fb3335e92ca8c2f61f823e9a188ed06f36f91c340b",
+      "c": {
+        "status": "pass",
+        "passed": 2,
+        "failed": 0
+      },
+      "rust": {
+        "status": "pass",
+        "passed": 2,
+        "failed": 0
+      }
+    }
+  ],
+  "assertions": {
+    "c_passed": 8,
+    "rust_passed": 6,
+    "rust_failed": 2,
+    "not_reached": 0,
+    "runtime_failures": 0
+  },
+  "rust_failed_assertions": [
+    "diff-highlight-misconfigured.screen#1",
+    "diff-highlight-misconfigured.stderr#1"
+  ],
+  "raw_failure_excerpt": {
+    "expected_screen_first_line": "",
+    "actual_screen_first_line": "commit a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff",
+    "expected_screen_footer": "[diff]                                                                        0%",
+    "actual_screen_footer": "[diff] a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff - line 1 of 24              100%",
+    "expected_stderr": "",
+    "actual_stderr": "tig warning: Failed to run the diff-highlight program: program-that-does-not-exist"
+  },
+  "paired_regression": {
+    "command": "python3 rust/tests/diff-pipeline.py",
+    "cases": [
+      "inferred-word",
+      "forced-word",
+      "decorated-filter",
+      "cli-word-override"
+    ],
+    "result": "4 exact C/Rust screen comparisons passed"
+  },
+  "rust_checks": {
+    "fmt": "pass",
+    "cargo_test": "95 passed",
+    "clippy_D_warnings": "pass",
+    "release_build": "pass"
+  },
+  "strict_verdict": "BLOCKED",
+  "intentional_difference": "C drops all diff output when the highlighter cannot start; Rust preserves the unfiltered diff and warns.",
+  "rust_complete": false
+}
