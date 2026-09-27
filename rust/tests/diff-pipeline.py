@@ -33,6 +33,7 @@ with tempfile.TemporaryDirectory(prefix='tig-diff-pipeline-') as temporary:
         'inferred-word': 'set word-diff = no\nset diff-options = --word-diff=plain\nset diff-highlight = wc\n',
         'forced-word': 'set word-diff = yes\nset diff-options = --word-diff=none\nset diff-highlight = wc\n',
         'decorated-filter': 'set diff-highlight = wc\n',
+        'cli-word-override': 'set diff-options = --word-diff=plain\nset diff-highlight = wc\n',
     }
     for name, config in cases.items():
         (directory / 'tigrc').write_text(config)
@@ -42,12 +43,13 @@ with tempfile.TemporaryDirectory(prefix='tig-diff-pipeline-') as temporary:
             (directory / 'steps').write_text(f':save-display {screen}\n:quit\n')
             run_env = {**env, 'TIGRC_USER': str(directory / 'tigrc'),
                        'TIG_SCRIPT': str(directory / 'steps')}
+            args = ['--word-diff=none'] if name == 'cli-word-override' else []
             code, timed_out, transcript = h.terminal(
-                [str(binary), '-C', str(repo), 'show', 'HEAD'], run_env, 10)
+                [str(binary), '-C', str(repo), 'show', 'HEAD', *args], run_env, 10)
             assert code == 0 and not timed_out, (name, mode, code, transcript)
             screens[mode] = screen.read_text()
         assert screens['rust'] == screens['c'], (name, screens)
-        if name == 'decorated-filter':
+        if name in ('decorated-filter', 'cli-word-override'):
             assert 'Refs:' not in screens['c'] and '[diff] HEAD - line 1 of 1' in screens['c']
         else:
             assert '[-old-]{+new+} line' in screens['c'], (name, screens['c'])

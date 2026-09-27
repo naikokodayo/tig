@@ -37,12 +37,13 @@ fn diff_options(config: &Config) -> Result<&[String]> {
 }
 fn word_diff_enabled(config: &Config) -> bool {
     config.bool_value("word-diff", false)
-        || config.settings.get("diff-options").is_some_and(|options| {
-            options.iter().any(|option| {
-                matches!(option.as_str(), "--word-diff" | "--word-diff=plain")
-                    || option.starts_with("--word-diff-regex=")
-            })
-        })
+        || (!config.word_diff_cli_seen
+            && config.settings.get("diff-options").is_some_and(|options| {
+                options.iter().any(|option| {
+                    matches!(option.as_str(), "--word-diff" | "--word-diff=plain")
+                        || option.starts_with("--word-diff-regex=")
+                })
+            }))
 }
 fn highlight_diff(config: &Config, input: &[u8]) -> String {
     let program = match config.value("diff-highlight") {
