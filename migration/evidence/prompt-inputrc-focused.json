@@ -3,12 +3,12 @@
   "base_commit": "3d98923716e92d944c2319a702e8eeabfc287baa",
   "sha256": {
     "src/prompt.c": "6f358c75f49a784403462b09f67a25112545bb92d455e7b77e71dd293d9df203",
-    "rust/main.rs": "f6511a108a301e847f26590e34534dfc3b32fa26ac8da4a29f98d7ce78f09e25",
-    "rust/tests/prompt-history-pty.py": "6ff135549af0b13ddfdead28efb55b1bb0a6409e1578066c597d4473b6659ed5",
+    "rust/main.rs": "94570a2a62c018e7c78845120501e75830f9ee1936f5a6f45938d26f92a6404d",
+    "rust/tests/prompt-history-pty.py": "f3e73fb59567e8bdaf48f20820f636e6b6358bbf6cc184056dca45fc0238dbef",
     "test/main/search-preload-test": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
     "test/main/search-test": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
     "src/tig": "8673b0c2688da4e890598f5a69237175a9a13b0074353b9f3217583a039a7b7a",
-    "target/release/tig": "4e8887fee2c0585063e132f3cac7e61cefefafe626dfeafb9ae8d7897f9f9a65"
+    "target/release/tig": "06f583c1eec3ee81d6e31376d986dce10f68b726352c4e6b8b944939dedb34ce"
   },
   "behavior": [
     {
@@ -23,6 +23,12 @@
       "keys": "/ab, Ctrl-E, X, Enter",
       "C": "Xab",
       "Rust_after": "Xab"
+    },
+    {
+      "inputrc": "$if tig; \"\\C-c\": end-of-line",
+      "keys": "/ab, Ctrl-C, X, Enter",
+      "C": "prompt canceled; history unchanged",
+      "Rust_after": "prompt canceled; history unchanged"
     }
   ],
   "checks": {
@@ -55,5 +61,5 @@
       }
     }
   },
-  "boundary": "Only quoted Ctrl-key bindings to beginning-of-line/end-of-line, in unconditional lines or $if tig application sections, are applied. Other Readline editing, completion, keymaps and condition types remain unsupported; Rust --version does not claim readline. The unchanged search-preload-test remains skipped on Rust, so its original assertions are unverified there and the parity gate is BLOCKED."
+  "boundary": "Only quoted Ctrl-key bindings to beginning-of-line/end-of-line, in unconditional lines or $if tig application sections, are applied; Ctrl-C retains prompt cancellation even when bound in inputrc. Other Readline editing, completion, keymaps and condition types remain unsupported; Rust --version does not claim readline. The unchanged search-preload-test remains skipped on Rust, so its original assertions are unverified there and the parity gate is BLOCKED."
 }

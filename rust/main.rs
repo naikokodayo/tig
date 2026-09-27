@@ -3780,7 +3780,7 @@ impl Terminal {
             let event = self.read()?;
             if let Event::Key(k) = &event {
                 if let KeyCode::Char(key) = k.code {
-                    if k.modifiers.contains(KeyModifiers::CONTROL) {
+                    if key != 'c' && k.modifiers.contains(KeyModifiers::CONTROL) {
                         if let Some(&end) = self.inputrc_motion.get(&key) {
                             point = if end { value.len() } else { 0 };
                             continue;

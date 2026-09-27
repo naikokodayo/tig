@@ -119,6 +119,10 @@ def main():
         (home / ".inputrc").write_text('$if tig\n"\\C-e": beginning-of-line\n$endif\n')
         run(binary, repo, home, keys=b"/ab\x05X\rQQQ")
         assert history.read_text().splitlines()[-1] == "Xab"
+        saved_history = history.read_bytes()
+        (home / ".inputrc").write_text('$if tig\n"\\C-c": end-of-line\n$endif\n')
+        run(binary, repo, home, keys=b"/ab\x03X\rQQQQQ")
+        assert history.read_bytes() == saved_history
 
 
 if __name__ == "__main__":
