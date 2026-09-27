@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "62d518c7be3d561eed6eef69bd08e2684a41ef52",
+  "source_commit": "01c36f27e748a813ee8e92fa35952de9a3242dc6",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -5105,7 +5105,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 11.29s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 18.89s\n",
       "results": [
         {
           "script": "test/blame/blob-blame-test",
@@ -7580,15 +7580,26 @@
           "script_sha256": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
           "exit_code": 0,
           "timed_out": false,
-          "status": "skip",
+          "status": "pass",
           "reasons": [],
-          "checks": {},
-          "assertions": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            }
+          ],
           "receipt_path": "test/tmp/main/search-preload-test/.test-result",
-          "receipt": "",
-          "skip": "The test requires a tig compiled with readline\n",
+          "receipt": "  [OK] main.screen assertion\n  [OK] stderr assertion\n",
+          "skip": "",
           "skipped_cases": {},
-          "transcript": "[skipped] The test requires a tig compiled with readline\r\n"
+          "transcript": ""
         },
         {
           "script": "test/main/search-test",
@@ -10166,17 +10177,17 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig",
-          "sha256": "7352e633f968702fc9ec7ccefa8efc302a60a16dff096249204c6a1d67441bce"
+          "sha256": "ca08fb3dc1e344057e02a8f919d37dab764015eaa46d96c77306724716427bd8"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph",
-          "sha256": "2466a47d12d87ba2004caadd09ac357d96eeeece8e3d28f30dcdd6cf2b896a40"
+          "sha256": "ebe1aeda231615eeb57bf49a42722db42b4c393bf9ba28faf9e94dd9643a1887"
         }
       },
       "binaries_unchanged": true,
       "summary": {
-        "pass": 147,
-        "skip": 3,
+        "pass": 148,
+        "skip": 2,
         "fail": 4
       }
     }
@@ -11966,17 +11977,17 @@
     {
       "script": "test/main/search-preload-test",
       "c_status": "pass",
-      "rust_status": "skip",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "main.screen#1",
           "c": "OK",
-          "rust": "NOT_REACHED"
+          "rust": "OK"
         },
         {
           "id": "stderr#1",
           "c": "OK",
-          "rust": "NOT_REACHED"
+          "rust": "OK"
         }
       ]
     },

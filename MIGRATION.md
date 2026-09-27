@@ -18,7 +18,8 @@ License: GPL-2.0-or-later; original history, COPYING and copyright notices retai
   Returned filenames use lossless Unix paths; modifying commands use literal
   pathspecs and do not invoke a shell.
 - `rust/patch.rs`: byte-preserving text hunk/line staging and reverse unstaging,
-  checked index-only application, explicit rejection of unsupported patch forms.
+  checked index-only application, and confirmed single-hunk worktree revert
+  with an unchanged index and recovery copy. Unsupported patch forms fail closed.
   Canonical diff path prefixes are forced and regression-tested against user
   `diff.noprefix` settings to avoid modifying a similarly named wrong path.
 - `rust/render.rs`: configurable main columns, widths, author/committer metadata,
@@ -82,6 +83,11 @@ but creates a larger terminal-compatibility verification obligation.
 
 ## Evidence and verification
 
+- Current integrated 154-script checkpoint at `01c36f27`: C 152 pass / 2 skip;
+  Rust 148 pass / 4 fail / 2 skip. All 572 Rust assertions were reached:
+  566 pass, 6 fail. `main/search-preload-test` now passes; the four remaining
+  failing scripts are unchanged. See
+  [`migration/evidence/upstream-rust-only-current.json`](migration/evidence/upstream-rust-only-current.json).
 - C baseline: 572 assertions passed, 152 tests executed, 2 skipped. The ordinary
   shell inherited `init.defaultBranch=main`, causing 57 failures; rerunning with
   a command-scoped `master` override passed without changing assertions.
