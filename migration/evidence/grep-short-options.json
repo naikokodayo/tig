@@ -1,0 +1,166 @@
+{
+  "schema": 1,
+  "slice": "grep combined short options through CLI, source navigation and refresh",
+  "base_commit": "84116786f4adf9db5757f9afdf17a9519b2f401d",
+  "source_sha256": "6f8a3b0844c4645506bb6d0263054a1e9add6748430d638aae1b3fd24dc01648",
+  "source_hash_algorithm": "SHA-256 of sorted nonempty git ls-files -z -- Cargo.toml Cargo.lock Makefile tigrc rust src include compat test entries: path bytes + NUL + file bytes + NUL",
+  "binaries_sha256": {
+    "src/tig": "1b0e456ea062992bb353884527434dae1404157c7570cb155cf48301cb9e2cbf",
+    "target/release/tig": "634b87fee3269665a69a698481ded38565d8515e08691c2a921d38da18dd3440",
+    "target/release/test-graph": "0ab66ca46f75e9207ca5166e1dfbbf2cab22e1012e0e574485e04266f0d88e9c"
+  },
+  "toolchain": "Rust 1.81.0; macOS arm64",
+  "checks": [
+    {
+      "command": "rustup run 1.81.0 cargo fmt --all -- --check",
+      "exit": 0
+    },
+    {
+      "command": "rustup run 1.81.0 cargo test --locked --all-targets",
+      "exit": 0,
+      "passed": 110,
+      "failed": 0
+    },
+    {
+      "command": "rustup run 1.81.0 cargo clippy --locked --all-targets -- -D warnings",
+      "exit": 0
+    },
+    {
+      "command": "rustup run 1.81.0 cargo build --locked --release",
+      "exit": 0
+    },
+    {
+      "command": "python3 rust/tests/grep-revisions.py",
+      "exit": 0,
+      "passed": 36,
+      "paired_c_rust": 23,
+      "rust_safety_oracles": 13,
+      "scope": "Combined matching flags, attached/separate pattern files, -e suffix, -m, -A/-B/-C and numeric context; revision/index blob selection and refresh; existing colon/newline/separator-like path cases retained."
+    },
+    {
+      "command": "rustup run 1.81.0 python3 rust/tests/upstream-suite.py test/grep/default-test test/grep/editor-test test/grep/refspec-test test/grep/start-on-line-test --output ../grep-upstream.json",
+      "exit": 0,
+      "verdict": "PASS_SELECTED_SCRIPTS",
+      "runs": {
+        "c": {
+          "scripts": 4,
+          "passed_assertions": 14,
+          "failed_assertions": 0,
+          "skips": 0,
+          "results": [
+            {
+              "script": "test/grep/default-test",
+              "script_sha256": "b1851b78638060c7bf6456d1e135346155e3b1b8ccc6061870de1d95b09a3acc",
+              "status": "pass",
+              "checks": {
+                "OK": 9
+              }
+            },
+            {
+              "script": "test/grep/editor-test",
+              "script_sha256": "56a4d55eca2219a12c2ef14ca62585f34f0ff4d96fcbe8cea887cb176991089a",
+              "status": "pass",
+              "checks": {
+                "OK": 2
+              }
+            },
+            {
+              "script": "test/grep/refspec-test",
+              "script_sha256": "b6157d8b16a2f3b3b45d89a5b148b28d28518ece49d640f1692e67253623b455",
+              "status": "pass",
+              "checks": {
+                "OK": 2
+              }
+            },
+            {
+              "script": "test/grep/start-on-line-test",
+              "script_sha256": "7562768e9629a5e7b7ec142e57a01a6d2afcb7d6a7cf1a6f89d6374ae9fce5a6",
+              "status": "pass",
+              "checks": {
+                "OK": 1
+              }
+            }
+          ]
+        },
+        "rust": {
+          "scripts": 4,
+          "passed_assertions": 14,
+          "failed_assertions": 0,
+          "skips": 0,
+          "results": [
+            {
+              "script": "test/grep/default-test",
+              "script_sha256": "b1851b78638060c7bf6456d1e135346155e3b1b8ccc6061870de1d95b09a3acc",
+              "status": "pass",
+              "checks": {
+                "OK": 9
+              }
+            },
+            {
+              "script": "test/grep/editor-test",
+              "script_sha256": "56a4d55eca2219a12c2ef14ca62585f34f0ff4d96fcbe8cea887cb176991089a",
+              "status": "pass",
+              "checks": {
+                "OK": 2
+              }
+            },
+            {
+              "script": "test/grep/refspec-test",
+              "script_sha256": "b6157d8b16a2f3b3b45d89a5b148b28d28518ece49d640f1692e67253623b455",
+              "status": "pass",
+              "checks": {
+                "OK": 2
+              }
+            },
+            {
+              "script": "test/grep/start-on-line-test",
+              "script_sha256": "7562768e9629a5e7b7ec142e57a01a6d2afcb7d6a7cf1a6f89d6374ae9fce5a6",
+              "status": "pass",
+              "checks": {
+                "OK": 1
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "before": {
+    "source_commit": "84116786f4adf9db5757f9afdf17a9519b2f401d",
+    "binary_sha256": "d4bd1bde87499723234b48a9272f6af7d1d7d2d80c97cb0e3096868fd821fa79",
+    "command": "python3 rust/tests/grep-revisions.py --rust-binary ../grep-baseline/target/release/tig",
+    "exit": 1,
+    "argv": [
+      "grep",
+      "-inw",
+      "needle",
+      "HEAD",
+      "--",
+      "file.txt"
+    ],
+    "result": "C screen/blob check passed; original Rust rejected the first new scenario as expected.",
+    "raw_diagnostic": "tig: Git grep option '-inw' is not supported in the Rust view\r\n"
+  },
+  "c_contract": "src/grep.c grep_read requires filename NUL line-number NUL text. Count/list outputs lack these fields and quiet produces no rows; none is newly accepted.",
+  "remaining_boundaries": [
+    "Function context, heading, column and break remain unsupported; this slice adds short clusters only.",
+    "Count/list/quiet, external pager/textconv, no-index, and unsupported flags remain rejected even within clusters.",
+    "Context still accepts only nonnegative decimal counts; only-matching plus context remains rejected. Numeric context is supported at a cluster tail; forms such as -1i remain rejected.",
+    "Existing literal paths, revision validation and blob safety checks are unchanged. No dependency or unsafe code added; no main.rs or other shared modules changed.",
+    "No full 154-script, cross-platform, benchmark or complete migration parity claim."
+  ],
+  "reviews": [
+    {
+      "reviewer": "grep_safety_review",
+      "context": "fresh, independent, read-only",
+      "result": "No material findings; checked Unicode slicing, argument/value/positional boundaries, rejection and unchanged path/object flow."
+    },
+    {
+      "reviewer": "grep_behavior_review",
+      "context": "fresh, independent, read-only",
+      "result": "No material findings; independent Git equivalence experiments, C view contract, PTY coverage and simplification review."
+    }
+  ],
+  "verdict": "PASS_SCOPED_FUNCTIONAL_SLICE",
+  "source_commit": "66a48596a4b6ec8199b9381700a7b595fc4f8d8f"
+}
