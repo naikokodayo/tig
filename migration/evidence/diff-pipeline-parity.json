@@ -1,0 +1,268 @@
+{
+  "schema": 1,
+  "source_commit": "f3b469d15a9b4bc75cf706f78bc273af008e9d6c",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "BLOCKED",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/diff/diff-highlight-test",
+          "script_sha256": "eab9213bd2b38ed296eb372ed16d7f9397538ffb3b54f0bb1b36d7ccc7040b02",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "diff-highlight-true.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-true.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-custom.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-custom.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-misconfigured.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-misconfigured.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/diff-highlight-test/.test-result",
+          "receipt": "  [OK] diff-highlight-true.screen assertion\n  [OK] diff-highlight-true.stderr assertion\n  [OK] diff-highlight-custom.screen assertion\n  [OK] diff-highlight-custom.stderr assertion\n  [OK] diff-highlight-misconfigured.screen assertion\n  [OK] diff-highlight-misconfigured.stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/submodule-test",
+          "script_sha256": "ae7a945fee6bf5676a0435fb3335e92ca8c2f61f823e9a188ed06f36f91c340b",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main-submodule.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-submodule-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/submodule-test/.test-result",
+          "receipt": "  [OK] main-submodule.screen assertion\n  [OK] main-submodule-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/src/tig",
+          "sha256": "687fbb3569b2f629730ed57fa65a044b5ec8f806b485cd27844649f343ae43fd"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 2
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 32.39s\n",
+      "results": [
+        {
+          "script": "test/diff/diff-highlight-test",
+          "script_sha256": "eab9213bd2b38ed296eb372ed16d7f9397538ffb3b54f0bb1b36d7ccc7040b02",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 4,
+            "FAIL": 2
+          },
+          "assertions": [
+            {
+              "id": "diff-highlight-true.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-true.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-custom.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-custom.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-misconfigured.screen#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "diff-highlight-misconfigured.stderr#1",
+              "status": "FAIL"
+            }
+          ],
+          "receipt_path": "test/tmp/diff/diff-highlight-test/.test-result",
+          "receipt": "  [OK] diff-highlight-true.screen assertion\n  [OK] diff-highlight-true.stderr assertion\n  [OK] diff-highlight-custom.screen assertion\n  [OK] diff-highlight-custom.stderr assertion\n[FAIL] diff-highlight-misconfigured.screen != expected/diff-highlight-misconfigured.screen\n\u001b[1mdiff --git a/expected/diff-highlight-misconfigured.screen b/diff-highlight-misconfigured.screen\u001b[m\n\u001b[1mindex e314d0b..f89c059 100644\u001b[m\n\u001b[1m--- a/expected/diff-highlight-misconfigured.screen\u001b[m\n\u001b[1m+++ b/diff-highlight-misconfigured.screen\u001b[m\n\u001b[36m@@ -1,29 +1,29 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthor:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthorDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommit:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommitDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\n \u001b[m\n\u001b[32m+\u001b[m\u001b[32m    Add type parameter for js.Dynamic\u001b[m\n\u001b[32m+\u001b[m\u001b[32m---\u001b[m\n\u001b[32m+\u001b[m\u001b[32m common/src/main/scala/org/scalajs/benchmark/Benchmark.scala | 2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[m\n \u001b[m\n\u001b[32m+\u001b[m\u001b[32mdiff --git a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala b/commo\u001b[m\n\u001b[32m+\u001b[m\u001b[32mindex 65f914a..3aa4320 100644\u001b[m\n\u001b[32m+\u001b[m\u001b[32m--- a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+++ b/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -15,7 +15,7 @@ object Benchmark {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   val benchmarks = js.Array[Benchmark]()\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   val benchmarkApps = js.Array[BenchmarkApp]()\u001b[m\n  \u001b[m\n\u001b[32m+\u001b[m\u001b[32m-  val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+  val global = js.Dynamic.global.asInstanceOf[js.Dictionary[js.Any]]\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   global(\"runScalaJSBenchmarks\") = runBenchmarks _\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   global(\"initScalaJSBenchmarkApps\") = initBenchmarkApps _\u001b[m\n  \u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-[diff]                                                                        0%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[diff] a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff - line 1 of 24              100%\u001b[m\n[FAIL] diff-highlight-misconfigured.stderr != expected/diff-highlight-misconfigured.stderr\n\u001b[1mdiff --git a/expected/diff-highlight-misconfigured.stderr b/diff-highlight-misconfigured.stderr\u001b[m\n\u001b[1mindex e69de29..f69c014 100644\u001b[m\n\u001b[1m--- a/expected/diff-highlight-misconfigured.stderr\u001b[m\n\u001b[1m+++ b/diff-highlight-misconfigured.stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig warning: Failed to run the diff-highlight program: program-that-does-not-exist\u001b[m\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 2 out of 6 test(s)\r\n| [stderr] [diff-highlight-misconfigured] tig warning: Failed to run the diff-highlight program: program-that-does-not-exist\r\n|   [OK] diff-highlight-true.screen assertion\r\n|   [OK] diff-highlight-true.stderr assertion\r\n|   [OK] diff-highlight-custom.screen assertion\r\n|   [OK] diff-highlight-custom.stderr assertion\r\n| [FAIL] diff-highlight-misconfigured.screen != expected/diff-highlight-misconfigured.screen\r\n| \u001b[1mdiff --git a/expected/diff-highlight-misconfigured.screen b/diff-highlight-misconfigured.screen\u001b[m\r\n| \u001b[1mindex e314d0b..f89c059 100644\u001b[m\r\n| \u001b[1m--- a/expected/diff-highlight-misconfigured.screen\u001b[m\r\n| \u001b[1m+++ b/diff-highlight-misconfigured.screen\u001b[m\r\n| \u001b[36m@@ -1,29 +1,29 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mAuthor:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mAuthorDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mCommit:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mCommitDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\r\n|  \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    Add type parameter for js.Dynamic\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m---\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m common/src/main/scala/org/scalajs/benchmark/Benchmark.scala | 2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[m\r\n|  \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdiff --git a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala b/commo\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mindex 65f914a..3aa4320 100644\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m--- a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+++ b/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m@@ -15,7 +15,7 @@ object Benchmark {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   val benchmarks = js.Array[Benchmark]()\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   val benchmarkApps = js.Array[BenchmarkApp]()\u001b[m\r\n|   \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-  val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+  val global = js.Dynamic.global.asInstanceOf[js.Dictionary[js.Any]]\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   global(\"runScalaJSBenchmarks\") = runBenchmarks _\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   global(\"initScalaJSBenchmarkApps\") = initBenchmarkApps _\u001b[m\r\n|   \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-[diff]                                                                        0%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[diff] a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff - line 1 of 24              100%\u001b[m\r\n| [FAIL] diff-highlight-misconfigured.stderr != expected/diff-highlight-misconfigured.stderr\r\n| \u001b[1mdiff --git a/expected/diff-highlight-misconfigured.stderr b/diff-highlight-misconfigured.stderr\u001b[m\r\n| \u001b[1mindex e69de29..f69c014 100644\u001b[m\r\n| \u001b[1m--- a/expected/diff-highlight-misconfigured.stderr\u001b[m\r\n| \u001b[1m+++ b/diff-highlight-misconfigured.stderr\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig warning: Failed to run the diff-highlight program: program-that-does-not-exist\u001b[m\r\n"
+        },
+        {
+          "script": "test/main/submodule-test",
+          "script_sha256": "ae7a945fee6bf5676a0435fb3335e92ca8c2f61f823e9a188ed06f36f91c340b",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main-submodule.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-submodule-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/submodule-test/.test-result",
+          "receipt": "  [OK] main-submodule.screen assertion\n  [OK] main-submodule-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/target/release/tig",
+          "sha256": "db0a7bfbc6ec2e01b6ef875d466477f66b917b11c0a18ff6888a5573fa413a45"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/outputs/tig/target/release/test-graph",
+          "sha256": "5eff3ac0b6321cda01a7f12dad1b29405a3bd822e6dc57a136fee547b4479a2b"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "fail": 1,
+        "pass": 1
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/diff/diff-highlight-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "diff-highlight-true.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-highlight-true.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-highlight-custom.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-highlight-custom.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-highlight-misconfigured.screen#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "diff-highlight-misconfigured.stderr#1",
+          "c": "OK",
+          "rust": "FAIL"
+        }
+      ]
+    },
+    {
+      "script": "test/main/submodule-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-submodule.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-submodule-diff.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ]
+}
