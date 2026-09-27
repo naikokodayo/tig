@@ -1099,7 +1099,14 @@ pub fn diff_view_data(rows: &[String], selected: usize) -> String {
                     }
                 }
             }
-            vec![row.as_str()]
+            // Git appends this delimiter to space-containing filenames for patch.
+            // C removes it from file-header cells, but never from hunk contents.
+            let text = if matches!(kind, "diff-add-file" | "diff-del-file") {
+                row.strip_suffix('\t').unwrap_or(row)
+            } else {
+                row
+            };
+            vec![text]
         });
         crate::view_export::line(&mut output, index, kind, index == selected, Some(&cells));
     }
@@ -1159,4 +1166,21 @@ fn diff_stat_cells_preserve_paths_and_binary_boundaries() {
     assert!(data.contains("line[  7] cells=2 text=[@@ -1 +1 @@][]"));
     assert!(data.contains("line[  8] type=default"));
     assert!(data.contains("line[  9] type=diff-del"));
+}
+
+#[test]
+fn diff_export_drops_only_file_header_tab_delimiters() {
+    let rows = [
+        "--- a/space name\t",
+        "+++ b/space name\t",
+        "@@ -1 +1 @@",
+        "--- old\t",
+        "+++ new\t",
+    ]
+    .map(str::to_owned);
+    let data = diff_view_data(&rows, 0);
+    assert!(data.contains("text=[--- a/space name]\n"));
+    assert!(data.contains("text=[+++ b/space name]\n"));
+    assert!(data.contains("text=[--- old\t]\n"));
+    assert!(data.contains("text=[+++ new\t]\n"));
 }
