@@ -841,14 +841,14 @@ impl App {
                         "--stat",
                         "--patch",
                         &context,
+                    ];
+                    args.extend(diff_options.iter().map(String::as_str));
+                    args.extend([
                         if word_diff_enabled(&self.config) {
                             "--word-diff=plain"
                         } else {
                             "--word-diff=none"
                         },
-                    ];
-                    args.extend(diff_options.iter().map(String::as_str));
-                    args.extend([
                         "--no-ext-diff",
                         "--no-textconv",
                         base.as_str(),
@@ -878,37 +878,42 @@ impl App {
                 } else {
                     "HEAD".into()
                 };
-                if let Some(commit) = repo.history(&[oid, "--".into()], 1)?.first() {
-                    let mut refs = tig_rs::render::refs(&self.config, &commit.decorations, ", ");
-                    // C creates an empty Refs line only when annotated tags exist.
-                    let describe = !refs.is_empty()
-                        || (commit.decorations.is_empty()
-                            && repo.refs().is_ok_and(|refs| {
-                                refs.iter().any(|reference| {
-                                    reference.name.starts_with("refs/tags/")
-                                        && !reference.target.is_empty()
-                                })
-                            }));
-                    if describe
-                        && !commit
-                            .decorations
-                            .split(", ")
-                            .any(|r| r.starts_with("tag: "))
-                    {
-                        if let Ok(description) = repo.command(["describe", "--tags", &commit.oid]) {
-                            let description = String::from_utf8_lossy(&description);
-                            if !description.trim().is_empty() {
-                                if !refs.is_empty() {
-                                    refs.push_str(", ");
+                if shown.starts_with("commit ") {
+                    if let Some(commit) = repo.history(&[oid, "--".into()], 1)?.first() {
+                        let mut refs =
+                            tig_rs::render::refs(&self.config, &commit.decorations, ", ");
+                        // C creates an empty Refs line only when annotated tags exist.
+                        let describe = !refs.is_empty()
+                            || (commit.decorations.is_empty()
+                                && repo.refs().is_ok_and(|refs| {
+                                    refs.iter().any(|reference| {
+                                        reference.name.starts_with("refs/tags/")
+                                            && !reference.target.is_empty()
+                                    })
+                                }));
+                        if describe
+                            && !commit
+                                .decorations
+                                .split(", ")
+                                .any(|r| r.starts_with("tag: "))
+                        {
+                            if let Ok(description) =
+                                repo.command(["describe", "--tags", &commit.oid])
+                            {
+                                let description = String::from_utf8_lossy(&description);
+                                if !description.trim().is_empty() {
+                                    if !refs.is_empty() {
+                                        refs.push_str(", ");
+                                    }
+                                    refs.push_str(description.trim());
                                 }
-                                refs.push_str(description.trim());
                             }
                         }
-                    }
-                    if !refs.is_empty() && !view.rows.is_empty() {
-                        view.rows.insert(1, format!("Refs: {refs}"));
-                        view.items.insert(1, Item::Text);
-                        view.line_numbers = (1..=view.rows.len()).collect();
+                        if !refs.is_empty() && !view.rows.is_empty() {
+                            view.rows.insert(1, format!("Refs: {refs}"));
+                            view.items.insert(1, Item::Text);
+                            view.line_numbers = (1..=view.rows.len()).collect();
+                        }
                     }
                 }
                 return Ok(view);

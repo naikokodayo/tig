@@ -587,11 +587,6 @@ impl Repository {
             &format!("--stat={width}"),
             "--patch",
             &format!("-U{context}"),
-            if word_diff {
-                "--word-diff=plain"
-            } else {
-                "--word-diff=none"
-            },
             &oid,
             "--",
         ]
@@ -601,6 +596,11 @@ impl Repository {
         args.splice(
             args.len() - 2..args.len() - 2,
             diff_options.iter().map(OsString::from).chain([
+                OsString::from(if word_diff {
+                    "--word-diff=plain"
+                } else {
+                    "--word-diff=none"
+                }),
                 OsString::from("--no-ext-diff"),
                 OsString::from("--no-textconv"),
             ]),
@@ -1785,6 +1785,10 @@ mod tests {
         assert!(repo
             .show("HEAD", 3, false, &["--ext-diff".into()], None, 80)
             .is_err());
+        assert!(repo
+            .show("HEAD", 3, true, &["--word-diff=none".into()], None, 80)
+            .unwrap()
+            .contains("[-line-]{+changed+} 10"));
         assert_eq!(repo.history(&[], 0).unwrap().len(), 2);
     }
 
