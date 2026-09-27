@@ -661,4 +661,43 @@ mod tests {
         );
         assert!(annotate(&mut entries, Path::new(""), false, b"\0not-an-oid\0").is_err());
     }
+
+    #[test]
+    fn quoted_git_path_keeps_unicode_name_and_history() {
+        let fixture = Fixture::new();
+        assert!(Command::new("git")
+            .args(["init", "-q"])
+            .arg(&fixture.0)
+            .status()
+            .unwrap()
+            .success());
+        let directory = "-- foo bar";
+        let name = "as测试asd";
+        fs::create_dir(fixture.0.join(directory)).unwrap();
+        fs::write(fixture.0.join(directory).join(name), "data\n").unwrap();
+        let repo = Repository::discover(&fixture.0).unwrap();
+        repo.command(["config", "user.name", "Tree Fixture"])
+            .unwrap();
+        repo.command(["config", "user.email", "tree@example.invalid"])
+            .unwrap();
+        repo.command(["add", "."]).unwrap();
+        repo.command(["commit", "-qm", "base"]).unwrap();
+
+        let rows = load(
+            &repo,
+            &Config::defaults(),
+            "HEAD",
+            Path::new(directory),
+            80,
+            None,
+            false,
+        )
+        .unwrap();
+        let row = rows.iter().find(|row| row.text.contains(name)).unwrap();
+        assert_eq!(
+            row.entry.as_ref().unwrap().path,
+            Path::new(directory).join(name)
+        );
+        assert!(row.commit.is_some());
+    }
 }
