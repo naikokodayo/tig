@@ -6,7 +6,7 @@ use crossterm::{
     cursor,
     event::{self, Event, KeyCode, KeyModifiers, MouseButton, MouseEvent, MouseEventKind},
     execute, queue,
-    style::{Attribute, SetAttribute},
+    style::{Attribute, Color, SetAttribute, SetBackgroundColor, SetForegroundColor},
     terminal::{self, Clear, ClearType},
 };
 use prompt::{clip_prompt, complete_prompt, inputrc_motion, prompt_text, PromptHistory};
@@ -204,6 +204,8 @@ struct View {
     history: Vec<(usize, usize, usize)>,
     command_title: String,
     grep_source: Option<GrepLine>,
+    search_regex: Option<regex::Regex>,
+    search_fields: Vec<Vec<String>>,
 }
 impl View {
     fn new(name: &str) -> Self {
@@ -236,7 +238,22 @@ impl View {
             history: Vec::new(),
             command_title: String::new(),
             grep_source: None,
+            search_regex: None,
+            search_fields: Vec::new(),
         }
+    }
+    fn search_matches(&self, index: usize) -> bool {
+        self.search_regex.as_ref().is_some_and(|regex| {
+            if let Some(fields) = self.search_fields.get(index) {
+                fields
+                    .iter()
+                    .any(|text| !text.is_empty() && regex.is_match(text))
+            } else {
+                self.rows
+                    .get(index)
+                    .is_some_and(|row| !row.is_empty() && regex.is_match(row))
+            }
+        })
     }
     fn push(&mut self, text: String, item: Item) {
         self.line_numbers.push(self.rows.len() + 1);
@@ -357,6 +374,7 @@ impl View {
             .insert("main-view-commit-title-graph".into(), vec!["no".into()]);
         (self.rows, self.commit_fields) =
             tig_rs::render::render_commit_fields(&config, &commits, width)?;
+        self.search_fields = tig_rs::render::main_search_fields(&config, &commits)?;
         self.commit_row_widths = vec![width; self.rows.len()];
         Ok(())
     }
@@ -665,6 +683,7 @@ impl App {
         }
         let (rows, fields) = tig_rs::render::render_commit_fields(&config, &display, width)?;
         v.commit_fields = fields;
+        v.search_fields = tig_rs::render::main_search_fields(&config, &display)?;
         v.commit_row_widths = vec![width; rows.len()];
         for (row, item) in rows.into_iter().zip(items) {
             let kind = match &item {
@@ -1655,9 +1674,6 @@ impl App {
             self.message = "No previous search".into();
             return;
         }
-        if count == 0 {
-            return;
-        }
         let ignore_case = match self.config.value("ignore-case") {
             Some("yes") => true,
             Some("smart-case") => !self.search.chars().any(char::is_uppercase),
@@ -1669,32 +1685,39 @@ impl App {
         {
             Ok(regex) => regex,
             Err(error) => {
+                self.view.search_regex = None;
                 self.message = format!("Search failed: {error}");
                 return;
             }
         };
         let wrap = self.config.bool_value("wrap-search", true);
-        let search_full_refs =
-            self.view.name == "main" && tig_rs::render::main_refs_searchable(&self.config);
-        for offset in 1..=count {
-            let i = if backwards {
-                (self.view.selected + count - offset) % count
-            } else {
-                (self.view.selected + offset) % count
-            };
-            if !wrap
-                && ((backwards && i >= self.view.selected)
-                    || (!backwards && i <= self.view.selected))
-            {
-                break;
-            }
-            let ref_match = search_full_refs
-                && matches!(self.view.items.get(i), Some(Item::Commit(commit)) if regex.is_match(&commit.decorations));
-            if regex.is_match(&self.view.rows[i]) || ref_match {
-                self.view.selected = i;
-                self.center_selection();
-                return;
-            }
+        self.view.search_regex = Some(regex);
+        let matches: Vec<_> = (0..count)
+            .filter(|&i| self.view.search_matches(i))
+            .collect();
+        let next = if backwards {
+            matches
+                .iter()
+                .rposition(|&i| i < self.view.selected)
+                .or_else(|| wrap.then(|| matches.len().checked_sub(1)).flatten())
+        } else {
+            matches
+                .iter()
+                .position(|&i| i > self.view.selected)
+                .or_else(|| (wrap && !matches.is_empty()).then_some(0))
+        };
+        if let Some(ordinal) = next {
+            let line = matches[ordinal];
+            self.view.selected = line;
+            self.center_selection();
+            self.message = format!(
+                "Line {} matches '{}' ({} of {})",
+                line + 1,
+                self.search,
+                ordinal + 1,
+                matches.len()
+            );
+            return;
         }
         self.message = format!("No match found for '{}'", self.search);
     }
@@ -4023,6 +4046,44 @@ fn clip(text: &str, skip: usize, width: usize) -> String {
     }
     out
 }
+// C searches successive rendered suffixes and stops at an empty match.
+fn search_spans(regex: &regex::Regex, text: &str) -> Vec<std::ops::Range<usize>> {
+    let mut spans = Vec::new();
+    let mut offset = 0;
+    while offset < text.len() {
+        let Some(found) = regex.find(&text[offset..]) else {
+            break;
+        };
+        if found.is_empty() {
+            break;
+        }
+        spans.push(offset + found.start()..offset + found.end());
+        offset += found.end();
+    }
+    spans
+}
+
+fn search_color(value: &str) -> Color {
+    let value = value.to_ascii_lowercase();
+    let index = match value.as_str() {
+        "default" => return Color::Reset,
+        "black" => 0,
+        "red" => 1,
+        "green" => 2,
+        "yellow" => 3,
+        "blue" => 4,
+        "magenta" => 5,
+        "cyan" => 6,
+        "white" => 7,
+        _ => value
+            .strip_prefix("color")
+            .unwrap_or(&value)
+            .parse()
+            .unwrap_or(0),
+    };
+    Color::AnsiValue(index)
+}
+
 struct Terminal {
     out: fs::File,
     stop: std::sync::Arc<std::sync::atomic::AtomicBool>,
@@ -4114,7 +4175,90 @@ impl Terminal {
                 queue!(self.out, SetAttribute(Attribute::Reset))?;
             }
         }
+        self.draw_search(&app.view, &app.config, &lines, (x, y, width, visible))?;
+        if app.split {
+            if let Some(other) = &app.other {
+                let (vertical, parent, child) = app.pane_sizes();
+                let (ox, oy, ow, oh) = if vertical {
+                    (
+                        if app.parent_focused { parent + 1 } else { 0 },
+                        0,
+                        if app.parent_focused { child } else { parent },
+                        visible,
+                    )
+                } else {
+                    (
+                        0,
+                        if app.parent_focused { parent } else { 0 },
+                        app.width,
+                        (if app.parent_focused { child } else { parent }).saturating_sub(1),
+                    )
+                };
+                self.draw_search(other, &app.config, &lines, (ox, oy, ow, oh))?;
+            }
+        }
         self.out.flush()?;
+        Ok(())
+    }
+    fn draw_search(
+        &mut self,
+        view: &View,
+        config: &Config,
+        lines: &[String],
+        area: (usize, usize, usize, usize),
+    ) -> Result<()> {
+        let (x, y, width, visible) = area;
+        let Some(regex) = &view.search_regex else {
+            return Ok(());
+        };
+        for row in 0..visible {
+            if !view.search_matches(view.top + row) {
+                continue;
+            }
+            let Some(line) = lines.get(y + row) else {
+                break;
+            };
+            let text = clip(line, x, width);
+            for span in search_spans(regex, text.trim_end()) {
+                queue!(
+                    self.out,
+                    cursor::MoveTo((x + text[..span.start].width()) as u16, (y + row) as u16)
+                )?;
+                let colors = config
+                    .colors
+                    .get(&format!("{}.search-result", view.name))
+                    .or_else(|| config.colors.get("search-result"));
+                let foreground = colors
+                    .and_then(|c| c.first())
+                    .map_or("black", String::as_str);
+                let background = colors
+                    .and_then(|c| c.get(1))
+                    .map_or("yellow", String::as_str);
+                queue!(self.out, SetAttribute(Attribute::Reset))?;
+                if env::var_os("NO_COLOR").map_or(true, |value| value.is_empty()) {
+                    queue!(
+                        self.out,
+                        SetForegroundColor(search_color(foreground)),
+                        SetBackgroundColor(search_color(background))
+                    )?;
+                }
+                for attr in colors.into_iter().flatten().skip(2) {
+                    queue!(
+                        self.out,
+                        SetAttribute(match attr.to_ascii_lowercase().as_str() {
+                            "bold" => Attribute::Bold,
+                            "dim" => Attribute::Dim,
+                            "blink" => Attribute::SlowBlink,
+                            "reverse" | "standout" => Attribute::Reverse,
+                            "underline" => Attribute::Underlined,
+                            _ => Attribute::NormalIntensity,
+                        })
+                    )?;
+                }
+                write!(self.out, "{}", &text[span])?;
+                queue!(self.out, SetAttribute(Attribute::Reset))?;
+            }
+        }
         Ok(())
     }
     fn find_file(&mut self, app: &mut App) -> Result<()> {
@@ -4984,6 +5128,21 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn search_highlights_rendered_suffixes_without_empty_match_loops() {
+        for (pattern, text, spans) in [
+            ("needle", "needle needle", vec![0..6, 7..13]),
+            ("^a", "aaa", vec![0..1, 1..2, 2..3]),
+            ("a*", "ba", vec![]),
+            ("作者", "x作者作者", vec![1..7, 7..13]),
+        ] {
+            assert_eq!(
+                search_spans(&regex::Regex::new(pattern).unwrap(), text),
+                spans
+            );
+        }
+    }
 
     #[test]
     fn failed_highlighter_keeps_the_original_diff() {
