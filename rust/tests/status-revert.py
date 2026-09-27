@@ -140,4 +140,40 @@ if not IS_C:
             backups = list((root / '.git/tig-revert').glob('*/worktree'))
             assert len(backups) == 1 and backups[0].read_bytes() == original
             checks.append('conflict-' + side + '-then-stage')
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        fixture(root)
+        git(root, 'checkout', '-qb', 'side')
+        (root / 'file').write_bytes(b'theirs\n')
+        git(root, 'commit', '-qam', 'theirs')
+        git(root, 'checkout', '-q', '-')
+        (root / 'file').write_bytes(b'ours\n')
+        git(root, 'commit', '-qam', 'ours')
+        git(root, 'merge', 'side', ok=False)
+        git(root, 'config', 'merge.tool', 'tig-test')
+        git(root, 'config', 'mergetool.tig-test.cmd', 'printf "resolved\\n" > "$MERGED"')
+        git(root, 'config', 'mergetool.tig-test.trustExitCode', 'true')
+        git(root, 'config', 'mergetool.prompt', 'false')
+        original = (root / 'file').read_bytes()
+        script = root / 'script'
+        script.write_text('/^U file\n:status-merge\n:quit\n')
+        scripted = subprocess.run([BINARY, '-C', str(root), 'status'],
+            env=dict(os.environ, TIG_SCRIPT=str(script), TIGRC_SYSTEM=str(Path(__file__).resolve().parents[2] / 'tigrc'), TIGRC_USER='/dev/null'),
+            capture_output=True, timeout=10)
+        assert scripted.returncode != 0 and (root / 'file').read_bytes() == original
+        assert git(root, 'ls-files', '--unmerged')
+        app = Terminal(root)
+        app.send(b'/^U file\rM')
+        assert b'Run ' in app.output and b'mergetool' in app.output, app.output
+        app.send(b'n\r')
+        assert (root / 'file').read_bytes() == original
+        app.send(b'My\r')
+        deadline = time.monotonic() + 5
+        while app.output.count(b'\x1b[?1049h') < 2 and time.monotonic() < deadline:
+            app.drain()
+        assert app.output.count(b'\x1b[?1049h') >= 2, app.output
+        app.close()
+        assert (root / 'file').read_bytes() == b'resolved\n'
+        assert not git(root, 'ls-files', '--unmerged')
+        checks.append('mergetool-confirmation-and-script-refusal')
 print({'binary': BINARY, 'checks': checks, 'passed': len(checks)})

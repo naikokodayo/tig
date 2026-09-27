@@ -1654,6 +1654,41 @@ impl App {
             return Ok(true);
         }
         let action = action.strip_prefix(':').unwrap_or(action);
+        if action == "status-merge" {
+            if self.view.name != "status" {
+                return Err("Merging is available in the status view".into());
+            }
+            let Item::Status(entry, _) = self.selected() else {
+                return Err("Select an unmerged file".into());
+            };
+            if !entry.conflicted() {
+                return Err("Merging only possible for files with unmerged status ('U')".into());
+            }
+            if entry.path.as_os_str().is_empty()
+                || !entry
+                    .path
+                    .components()
+                    .all(|part| matches!(part, Component::Normal(_)))
+                || !self.repo()?.status_filtered(&[], true)?.contains(&entry)
+            {
+                return Err("Conflict changed; refresh the status view".into());
+            }
+            self.pending_command = Some(tig_rs::commands::PreparedCommand {
+                argv: vec![
+                    "git".into(),
+                    "--literal-pathspecs".into(),
+                    "mergetool".into(),
+                    "--".into(),
+                    entry.path.into_os_string(),
+                ],
+                silent: false,
+                confirm: true,
+                exit: false,
+                echo: false,
+                quick: true,
+            });
+            return Ok(true);
+        }
         if action.split_whitespace().next() == Some("status-revert") {
             use tig_rs::status_ops::{RevertAction, RevertPlan};
             if self.view.name != "status" {
