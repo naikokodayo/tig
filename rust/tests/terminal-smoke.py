@@ -325,7 +325,8 @@ def main():
             expect('+2 selects second row after working changes', [f'[main] {newest} - commit 1 of 2'])
             finish('+2 session quit')
             before, selector = start(('blame', '--', 'fixture.txt'))
-            expect('blame -- file', ['first line', 'second line', f'[blame] {oldest}:fixture.txt - line 1 of 2'])
+            expect('blame -- file', ['first line', 'second line', 'unstaged fixture',
+                                    'second added fixture', f'[blame] {oldest}:fixture.txt - line 1 of 4'])
             finish('blame session quit')
             before, selector = start(cwd=repo / 'nested')
             expect('subdirectory main opens', ['[main]'])
