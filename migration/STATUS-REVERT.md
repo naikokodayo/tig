@@ -33,8 +33,8 @@ rust/tests/status-revert.py target/release/tig` exercise the actual terminal.
 The same probe's `--c` option covers ordinary upstream confirmation/cancellation.
 Original status filename, refresh, and worktree scripts remain unchanged.
 
-Mergetool implementation `e7ec7411ab83dd13b49832f8eaa4d6d7787224c5` builds
-`tig` SHA-256 `275c4bb71a6d01aea0d1fd819f13a39b392199dd7a6f207fb1b8102d5eb5ace1`.
+Mergetool implementation `6abffd59d51f0bc8d488ae2d10e9e5a56fd3acb3` builds
+`tig` SHA-256 `476b6cb23e49ec73c757e077298a534c4af96b08977f8f847487d67c98a7ec3c`.
 Rust formatting, 114 unit tests, Clippy, release build, and nine status PTY
 checks passed. The three unchanged original status scripts `file-name`,
 `refresh`, and `worktree` passed 17/17 assertions in both C and Rust.
