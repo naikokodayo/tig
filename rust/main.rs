@@ -639,8 +639,13 @@ impl App {
                 }
             }
             "blame" => {
-                let lower_bound = self.args.iter().find_map(|arg| arg.strip_prefix('^'));
-                let blame = repo.blame(Some(&self.revision), &self.path, lower_bound)?;
+                let options = self
+                    .config
+                    .settings
+                    .get("blame-options")
+                    .map(Vec::as_slice)
+                    .unwrap_or_default();
+                let blame = repo.blame(Some(&self.revision), &self.path, options)?;
                 for (row, line) in tig_rs::render::render_blame(&self.config, &blame, self.width)?
                     .into_iter()
                     .zip(blame)
@@ -1214,7 +1219,7 @@ impl App {
         };
         let origin = self
             .repo()?
-            .blame(Some(&revision), &path, None)?
+            .blame(Some(&revision), &path, &[])?
             .into_iter()
             .find(|line| line.line == number)
             .ok_or("No blame for selected line")?;
@@ -3926,36 +3931,14 @@ fn run() -> Result<()> {
         }
     } else {
         if cli.view == "blame" {
-            if let Some(path) = app.args.pop() {
-                app.path = path.into();
-            }
-            app.args.retain(|arg| arg != "--");
-            if app.args.len() > 1 || app.args.first().is_some_and(|arg| arg.starts_with('-')) {
-                return Err("Rust blame currently supports [revision] -- path only".into());
-            }
-            if let Some(rev) = app.args.first().cloned() {
-                if let Some((lower, upper)) = rev.split_once("..") {
-                    if upper.starts_with('.') {
-                        return Err("Blame requires a two-dot revision range".into());
-                    }
-                    app.revision =
-                        app.repo()?
-                            .revision(if upper.is_empty() { "HEAD" } else { upper })?;
-                    app.args = vec![format!(
-                        "^{}",
-                        app.repo()?
-                            .revision(if lower.is_empty() { "HEAD" } else { lower })?
-                    )];
-                } else {
-                    app.revision = rev;
-                    app.args.clear();
-                }
-            }
-            if let Some(repo) = &app.repo {
-                let cwd = env::current_dir()?;
-                let absolute = cwd.join(&app.path);
-                app.path = absolute.strip_prefix(&repo.root)?.to_path_buf();
-            }
+            let invocation =
+                tig_rs::blame_options::Invocation::parse(app.repo()?, &app.args, &app.config)?;
+            app.revision = invocation.revision;
+            app.path = invocation.path;
+            app.config
+                .settings
+                .insert("blame-options".into(), invocation.options);
+            app.args.clear();
         }
         if cli.view == "diff" {
             app.revision = cli.diff_revision().to_owned();

@@ -77,7 +77,7 @@ impl Invocation {
         let (before, files) = match args.iter().position(|arg| arg == "--") {
             Some(split) => (&args[..split], &args[split + 1..]),
             None if !args.is_empty() => (&args[..args.len() - 1], &args[args.len() - 1..]),
-            None => (&args[..], &args[..]),
+            None => (args, args),
         };
         if files.len() != 1 || files[0].is_empty() {
             return Err(GitError("Blame requires exactly one file".into()));

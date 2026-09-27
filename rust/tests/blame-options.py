@@ -76,7 +76,11 @@ def main():
         pair('reverse CLI', ['--reverse', f'{copied}..HEAD', '--', 'copy name'])
         pair('reverse config', [f'{copied}..HEAD', '--', 'copy name'], 'set commit-order = reverse\n')
         pair('CLI order overrides reverse config', ['--topo-order', f'{copied}..HEAD', '--', 'copy name'], 'set commit-order = reverse\n')
+        pair('line range', ['-L2,5', 'HEAD', '--', 'copy name'])
+        pair('ignore revision', [f'--ignore-rev={head}', 'HEAD', '--', 'copy name'])
         pair('age bound', ['--max-age=1', 'HEAD', '--', 'copy name'])
+        result = pair('revision flags retain configured copy detection', ['--first-parent', '--max-age=1', 'HEAD', '--', 'copy name'], 'set blame-options = -C -C\n')
+        assert 'source' in result
         pair('bounds retained when navigating parent', [f'{copied}..HEAD', '--', 'copy name'], steps=':4\n:parent')
         (repo / 'copy name').write_text(content.replace('line 04', 'line FOUR').replace('line 08', 'uncommitted'))
         result = pair('implicit revision includes worktree', ['copy name'])
