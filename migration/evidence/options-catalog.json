@@ -1,0 +1,231 @@
+{
+  "scope": "20 unchanged original help/tigrc scripts; C, pre-change Rust and post-change Rust",
+  "base_commit": "ef491a4dfd764db6cbf10594410e42e23cdc95e5",
+  "code_commit": "bcf6177872fee96e9d45cc0d4db557a06352e1b6",
+  "source_manifest_sha256": {
+    "before": "9b5064e9efc05676a2abe81c257366e639ad3b395293ac2d6cc03beacff145e1",
+    "after": "fef03d950f893a665e50e5e964dd22aefcc3b8879264fc3d86655c6e28e85b36"
+  },
+  "changed_source_sha256": {
+    "rust/config.rs": "1089fbcf91ad9eae69402de1a0c599b2004d239220964c50973ee3d0231029ea",
+    "rust/lib.rs": "59ea3df9608a98f7b064f7164fcbb5bdd76dbaac13045b3041c0f42b0c7ef9dc",
+    "rust/options_catalog.rs": "e914dd441803230f2b327a6eac49c8575ffd8c0f0a05f9829ec1b6748c21f162"
+  },
+  "reference_sha256": {
+    "include/tig/options.h": "8004c7e68a1c0a0b795cc8bba3f14d91e135cdac8890c10fc51585a59084565e",
+    "include/tig/types.h": "1103d4116a0454991462173f0a60e37030233a30a2f9a0539065dfbeb862321f",
+    "tigrc": "aa897801785995fec07f43cedb3dee06cf2124e5bd1475d6e22ba7badfcded5b"
+  },
+  "runner_sha256": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+  "binary_sha256": {
+    "c": {
+      "tig": "c8056787a2ad278bc27d1f453a438cb635093a95ea46093c8f6a1949e0d5dca7",
+      "test-graph": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+    },
+    "before_rust": {
+      "tig": "6637f5ed7c3ca81f8bd421c8e46bfc6f79d7d8f74c59a4532595edaa4ef24587",
+      "test-graph": "5c0526ecfd6ab29644d70b436be35212995c6c99593959fd9d4c4c55c2b1af5a"
+    },
+    "after_rust": {
+      "tig": "a8fbc76a9455f7aaa94af0d0a1049e37a76bbfc9f92ddea3bb1f2cb8c823a077",
+      "test-graph": "5c0526ecfd6ab29644d70b436be35212995c6c99593959fd9d4c4c55c2b1af5a"
+    }
+  },
+  "commands": {
+    "paired": "python3 rust/tests/upstream-suite.py test/help/*-test test/tigrc/*-test --output <receipt>; builds C and Rust release binaries",
+    "before_rust": "make rust-test-binaries; upstream-suite.py environment/routing/run_script for same selected scripts",
+    "rust": [
+      "cargo fmt --check",
+      "cargo test",
+      "cargo clippy --all-targets -- -D warnings",
+      "make rust-test-binaries"
+    ]
+  },
+  "checks": {
+    "rust_library_unit_tests": 67,
+    "rust_application_unit_tests": 25,
+    "fmt": "pass",
+    "clippy": "pass",
+    "release": "pass"
+  },
+  "results": {
+    "c": {
+      "scripts_passed": 20,
+      "assertions_passed": 115
+    },
+    "before_rust": {
+      "scripts_passed": 20,
+      "assertions_passed": 115
+    },
+    "after_rust": {
+      "scripts_passed": 20,
+      "assertions_passed": 115
+    }
+  },
+  "scripts": [
+    {
+      "path": "test/help/all-keybindings-test",
+      "sha256": "d172e362ab249eb226a7280208aef4021145bb0f75e99f085aedc32061b6e006",
+      "assertions": 1,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/help/default-test",
+      "sha256": "0044e01f0fa489d763cb5b1bee2a6d11fba5dbe5ed82d45b56cb31b7b72f0f11",
+      "assertions": 3,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/help/user-command-test",
+      "sha256": "626ed5e18deb267653eddcd4d8115f474810b45329ac9a45af32fc0a58f79c2f",
+      "assertions": 1,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/append-option-test",
+      "sha256": "546c25bf07c2f5752f284cc8ad5044a29e13d088bda94b07aeb94ad47140cf5e",
+      "assertions": 2,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/builtin-error-test",
+      "sha256": "f027ec6d4633ac10c3ca7748810c14cb3d4b43bff6673e09cf039964f1205fac",
+      "assertions": 1,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/builtin-save-test",
+      "sha256": "ff85928014ef52b015e2c567847e7fc2b3b092004d6d246685872466e3fe40cd",
+      "assertions": 1,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/command-value-long-test",
+      "sha256": "00a3630170cc80a4b7f2a709688e8fb0456fd19d849d5e03ba6f2205ac43e522",
+      "assertions": 2,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/compat-error-test",
+      "sha256": "7e66f4237377d77d7a19103341b35b6faae3425909430cbb2ff34eb1d29359c3",
+      "assertions": 1,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/contrib-tigrc-test",
+      "sha256": "49a9c450f7cc5cc4f2d34c27c5c449364cb01dfff553b6fe0cefcb4929ed5943",
+      "assertions": 1,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/env-vars-test",
+      "sha256": "eae01cc481f3c078ebd82403b39eeeb2a5cd7f0db6317e3d4751b890609c89c2",
+      "assertions": 2,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/escape-var-test",
+      "sha256": "8ac261a47c2b3fdc0b1647df9cebc8f11ede82e7a442ed828c31b675adb19900",
+      "assertions": 1,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/parse-test",
+      "sha256": "2bc78ab5dd494bf6d813ef12b844a850da3ebaa76d121c5f1852edbf1b42cbc5",
+      "assertions": 2,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/quote-test",
+      "sha256": "9039c2c6365ae453ddae606b7135555f111f0d8ef02cd03a8420badd3e978f9d",
+      "assertions": 6,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/save-option-test",
+      "sha256": "c08dfc0d9e8d50be5f5dd059d51efd503f9dcf2eff5d10805a492a5b637c504d",
+      "assertions": 2,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/source-test",
+      "sha256": "64d4e34e20f77c4f36e188a3b26abc08b90d173f9953339f5629b269a32f57da",
+      "assertions": 10,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/tigrc-manpage-examples-test",
+      "sha256": "c0fdeb0008f3ae4bcb06c7798cba94a3c1ed4c39db074fcd7a5e015c88016de8",
+      "assertions": 1,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/truncation-test",
+      "sha256": "3925d602106e49ba7b388cc55c45f30d02231296813629e7658d0db9bc3de8e5",
+      "assertions": 14,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/view-column-test",
+      "sha256": "15ffaff11afe2deb88962c614cbf2099a1493a46e4df716b61d3028fe38959a6",
+      "assertions": 2,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/width-test",
+      "sha256": "b893753253d0737b26930b0853cc2164c39268c4c0a935b4618740f4e62067c7",
+      "assertions": 54,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    },
+    {
+      "path": "test/tigrc/xdg-config-home-test",
+      "sha256": "3599b2442a39dc536764651d56b4d9a68fb6b84d58d07a0699b59529ff4cc866",
+      "assertions": 8,
+      "c": "pass",
+      "before_rust": "pass",
+      "after_rust": "pass"
+    }
+  ],
+  "assertion_comparison": "Identical assertion IDs and OK statuses for C, pre-change Rust and post-change Rust in each selected script.",
+  "runtime_c_header_dependencies": 0,
+  "remaining_c_header_reads": "rust/options_catalog.rs metadata_matches_reference test only; remove reference oracle when C sources are pruned.",
+  "full_parity_claim": false
+}

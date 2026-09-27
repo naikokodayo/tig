@@ -2,6 +2,7 @@
 #![forbid(unsafe_code)]
 
 mod line;
+mod options_catalog;
 mod request;
 
 pub mod config;

@@ -904,18 +904,8 @@ fn expand_home(path: &Path) -> Result<PathBuf, String> {
         Ok(path.into())
     }
 }
-fn option_type(name: &str) -> Option<&'static str> {
-    include_str!("../include/tig/options.h")
-        .split("#define DEFINE_OPTION_EXTERNS")
-        .next()?
-        .lines()
-        .find_map(|line| {
-            let mut parts = line.trim().strip_prefix("_(")?.split(',');
-            (parts.next()?.trim().replace('_', "-") == name)
-                .then(|| parts.next().map(str::trim))
-                .flatten()
-        })
-}
+use crate::options_catalog::{column_names, column_type, enum_values, option_type};
+
 fn toggled_value(name: &str, kind: &str, old: &str, args: &[String]) -> Result<String, String> {
     if args.len() > 1 {
         return Err(format!("Too many arguments for :toggle {name}"));
@@ -1010,29 +1000,6 @@ fn toggled_value(name: &str, kind: &str, old: &str, args: &[String]) -> Result<S
     validate_scalar(name, kind, &value)?;
     Ok(value)
 }
-fn enum_values(kind: &str) -> Vec<String> {
-    let marker = format!("#define {}_ENUM(_) ", kind.to_ascii_uppercase());
-    include_str!("../include/tig/types.h")
-        .split(&marker)
-        .nth(1)
-        .unwrap_or("")
-        .split("\n\n")
-        .next()
-        .unwrap_or("")
-        .lines()
-        .filter_map(|line| {
-            let (_, value) = line.trim().strip_prefix("_(")?.split_once(',')?;
-            Some(
-                value
-                    .split(')')
-                    .next()?
-                    .trim()
-                    .to_ascii_lowercase()
-                    .replace('_', "-"),
-            )
-        })
-        .collect()
-}
 fn normalize_enum(kind: &str, value: &str) -> Result<String, String> {
     let values = enum_values(kind);
     let value = value.to_ascii_lowercase().replace('_', "-");
@@ -1062,49 +1029,6 @@ fn normalize_enum(kind: &str, value: &str) -> Result<String, String> {
     index
         .and_then(|i| values.get(i).cloned())
         .ok_or_else(|| format!("Invalid {kind} value: {value}"))
-}
-fn column_names() -> impl Iterator<Item = &'static str> {
-    [
-        "author",
-        "committer",
-        "commit-title",
-        "date",
-        "file-name",
-        "file-size",
-        "id",
-        "line-number",
-        "mode",
-        "ref",
-        "section",
-        "status",
-        "text",
-    ]
-    .into_iter()
-}
-fn column_type(column: &str, option: &str) -> Option<&'static str> {
-    let column = if column == "committer" {
-        "author"
-    } else {
-        column
-    };
-    let marker = format!(
-        "#define {}_COLUMN_OPTIONS(_) ",
-        column.to_ascii_uppercase().replace('-', "_")
-    );
-    include_str!("../include/tig/options.h")
-        .split(&marker)
-        .nth(1)?
-        .split("\n\n")
-        .next()?
-        .lines()
-        .find_map(|line| {
-            let mut fields = line.trim().strip_prefix("_(")?.split(',');
-            if fields.next()?.trim().replace('_', "-") == option {
-                fields.next().map(str::trim)
-            } else {
-                None
-            }
-        })
 }
 fn validate_scalar(name: &str, kind: &str, value: &str) -> Result<(), String> {
     if let Some(kind) = kind.strip_prefix("enum ") {
