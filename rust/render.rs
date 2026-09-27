@@ -1119,8 +1119,13 @@ pub(crate) fn diff_stat_cells(text: &str) -> Option<Vec<&str>> {
 use crate::line::builtin_line_type;
 
 /// Diagnostic text/cell export for ordinary diffs (the C save-view contract).
-pub fn diff_view_data(rows: &[String], selected: usize) -> String {
+pub fn diff_view_data(
+    rows: &[String],
+    selected: usize,
+    wrapping: Option<(&[String], &[(usize, bool)])>,
+) -> Result<String, &'static str> {
     let mut output = String::new();
+    let mut displayed = 0;
     let mut after_diff = false;
     let mut in_chunk = false;
     let mut combined = false;
@@ -1179,9 +1184,45 @@ pub fn diff_view_data(rows: &[String], selected: usize) -> String {
             };
             vec![text]
         });
-        crate::view_export::line(&mut output, index, kind, index == selected, Some(&cells));
+        if let Some((display_rows, source_indices)) = wrapping {
+            let start = displayed;
+            while source_indices
+                .get(displayed)
+                .is_some_and(|line| line.0 == index)
+            {
+                displayed += 1;
+            }
+            if start == displayed || (displayed - start > 1 && cells.len() > 1) {
+                return Err("save-view cannot export wrapped multi-cell diff rows");
+            }
+            for line in start..displayed {
+                let part = display_rows
+                    .get(line)
+                    .ok_or("save-view has invalid wrapped diff rows")?;
+                let part_cell = part.as_str();
+                let part_cells = if displayed - start == 1 {
+                    cells.as_slice()
+                } else {
+                    std::slice::from_ref(&part_cell)
+                };
+                crate::view_export::line(
+                    &mut output,
+                    line,
+                    kind,
+                    line == selected
+                        || (line == 0
+                            && rows.first().is_some_and(|row| row.starts_with("commit "))),
+                    Some(part_cells),
+                );
+            }
+        } else {
+            crate::view_export::line(&mut output, index, kind, index == selected, Some(&cells));
+        }
     }
-    output
+    if wrapping.is_some_and(|(_, indices)| displayed != indices.len()) {
+        return Err("save-view has invalid wrapped diff rows");
+    }
+    Ok(output)
 }
 
 #[test]
@@ -1231,7 +1272,7 @@ fn diff_stat_cells_preserve_paths_and_binary_boundaries() {
         " context | 0",
         "---deleted",
     ];
-    let data = diff_view_data(&rows.map(str::to_owned), 4);
+    let data = diff_view_data(&rows.map(str::to_owned), 4, None).unwrap();
     assert!(data.contains("line[  2] type=default"));
     assert!(data.contains("line[  4] type=diff-stat selected=1"));
     assert!(data.contains("line[  7] cells=2 text=[@@ -1 +1 @@][]"));
@@ -1249,7 +1290,7 @@ fn diff_export_drops_only_file_header_tab_delimiters() {
         "+++ new\t",
     ]
     .map(str::to_owned);
-    let data = diff_view_data(&rows, 0);
+    let data = diff_view_data(&rows, 0, None).unwrap();
     assert!(data.contains("text=[--- a/space name]\n"));
     assert!(data.contains("text=[+++ b/space name]\n"));
     assert!(data.contains("text=[--- old\t]\n"));

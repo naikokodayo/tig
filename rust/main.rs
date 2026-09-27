@@ -2212,6 +2212,7 @@ impl App {
                 return Err("save-view does not support word diff views yet".into());
             }
             if text_view
+                && self.view.name != "diff"
                 && (self.config.bool_value("wrap-lines", false) || self.view.wrapping.is_some())
             {
                 return Err(format!(
@@ -2249,18 +2250,37 @@ impl App {
             } else {
                 self.other.as_ref()
             };
+            let mut reference = view_reference(&self.view);
+            if self.view.name == "diff" && self.view.wrapping.is_some() && self.view.selected == 0 {
+                if let Some(id) = self
+                    .view
+                    .rows
+                    .first()
+                    .and_then(|row| row.strip_prefix("commit "))
+                {
+                    reference = id.into();
+                }
+            }
             let mut data = tig_rs::view_export::header(
                 &self.view.name,
                 previous.map(|view| view.name.as_str()),
                 parent.map(|view| view.name.as_str()),
-                &view_reference(&self.view),
+                &reference,
                 (width, height),
                 (self.view.top, self.view.left, self.view.selected),
             );
             match self.view.name.as_str() {
-                "diff" | "pager" | "stage" if !self.view.untracked => data.push_str(
-                    &tig_rs::render::diff_view_data(&self.view.rows, self.view.selected),
-                ),
+                "diff" | "pager" | "stage" if !self.view.untracked => {
+                    let wrapped = (self.view.name == "diff")
+                        .then(|| self.view.wrapping.as_ref())
+                        .flatten()
+                        .map(|wrap| (self.view.rows.as_slice(), wrap.lines.as_slice()));
+                    data.push_str(&tig_rs::render::diff_view_data(
+                        self.view.source_rows(),
+                        self.view.selected,
+                        wrapped,
+                    )?);
+                }
                 "log" => data.push_str(&tig_rs::view_export::log_data(
                     &self.view.rows,
                     self.view.selected,
