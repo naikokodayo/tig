@@ -1,0 +1,84 @@
+{
+  "schema": "tig-history-args-focused-v1",
+  "source_commit": "f732e86283eafe87d59bf5c2aff7ed38cdd00407",
+  "base_commit": "647ed220",
+  "binary_sha256": {
+    "c_tig": "687fbb3569b2f629730ed57fa65a044b5ec8f806b485cd27844649f343ae43fd",
+    "rust_tig": "b33381c481834cf0557e670d31757e394bfb198d7e98a1a55286b762d0fa0a93"
+  },
+  "harness_sha256": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+  "command": "python3 rust/tests/upstream-suite.py test/main/main-options-test test/main/filter-args-test test/status/file-filter-test test/main/escape-control-characters-test test/main/pretty-raw-test test/main/default-test",
+  "route": "original scripts, C src/tig then Rust target/release/tig; original assertions unchanged",
+  "before": {
+    "source_commit": "d59e2d52f719ef5b43ff501cadd8852119f2a61e",
+    "rust_binary_sha256": "966929474b11c4425a389132962ac30d3b88eb46af7338a347df2abad4c42449",
+    "target_assertions": {
+      "main/filter-args-test": "1/3",
+      "main/main-options-test": "0/1",
+      "status/file-filter-test": "5/6"
+    },
+    "c_target_assertions": {
+      "main/filter-args-test": "3/3",
+      "main/main-options-test": "1/1",
+      "status/file-filter-test": "6/6"
+    }
+  },
+  "after": {
+    "target_assertions": {
+      "main/filter-args-test": "1/3",
+      "main/main-options-test": "1/1",
+      "status/file-filter-test": "5/6"
+    },
+    "six_script_summary": {
+      "main/default-test": {
+        "c": "6/6",
+        "rust": "6/6"
+      },
+      "main/escape-control-characters-test": {
+        "c": "1/1",
+        "rust": "1/1"
+      },
+      "main/filter-args-test": {
+        "c": "3/3",
+        "rust": "1/3"
+      },
+      "main/main-options-test": {
+        "c": "1/1",
+        "rust": "1/1"
+      },
+      "main/pretty-raw-test": {
+        "c": "1/1",
+        "rust": "1/1"
+      },
+      "status/file-filter-test": {
+        "c": "6/6",
+        "rust": "5/6"
+      }
+    },
+    "scripts": {
+      "c": "6/6",
+      "rust": "4/6"
+    },
+    "assertions": {
+      "c": "18/18",
+      "rust": "15/18"
+    }
+  },
+  "regressions": {
+    "control_byte_0x03_subject": "PASS: real Git history unit test",
+    "multiline_grep_value": "PASS: real Git history unit test",
+    "newline_path": "PASS: existing real Git filtered-status unit test",
+    "original_pretty_raw": "PASS: C and Rust original scripts"
+  },
+  "verification": {
+    "cargo_fmt_check": "PASS",
+    "cargo_test": "69 library + 25 application passed",
+    "cargo_clippy_all_targets_deny_warnings": "PASS"
+  },
+  "remaining_raw_trace_diffs": {
+    "main/filter-args-test:rev-parse.trace": "-git rev-parse --no-revs --no-flags -- common tracer\n-git rev-parse --flags --no-revs -- common tracer\n-git rev-parse --symbolic --revs-only -- common tracer\n-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\n+git rev-parse --absolute-git-dir \n+git rev-parse --is-bare-repository \n+git rev-parse --show-toplevel \n+git rev-parse --symbolic-full-name @{upstream} \n+git rev-parse --verify --end-of-options HEAD^{commit} ",
+    "main/filter-args-test:log.trace": "-git log --encoding=UTF-8 --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all --date=raw --parents --no-color --show-notes --pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s%x00%N%x03 -- common tracer\n+git log --parents --no-show-signature --decorate=full --format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI -z --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all -- common tracer ",
+    "status/file-filter-test:rev-parse.trace": "-git rev-parse --no-revs --no-flags subdir\n-git rev-parse --flags --no-revs subdir\n-git rev-parse --symbolic --revs-only subdir\n-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\n+git rev-parse --absolute-git-dir \n+git rev-parse --is-bare-repository \n+git rev-parse --show-toplevel \n+git rev-parse --verify --end-of-options HEAD^{commit} "
+  },
+  "verdict": "BLOCKED: three exact C Git command trace assertions remain; screens and non-trace assertions in scope pass"
+}
