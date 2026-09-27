@@ -64,15 +64,21 @@ def main():
         home = root / "home"
         home.mkdir()
         history = home / ".tig_history"
-        history.write_text("needle\n")
+        history.write_text("old\nneedle\nneedle\n")
+        (home / ".tigrc").write_text("set history-size = 2\n")
         display = root / "display"
         script = root / "script"
         script.write_text(f":find-next\n:save-display {display}\n")
         run(binary, repo, home, script=script)
         screen = display.read_text()
         assert "commit 2 of 3" in screen and "needle" in screen, screen
+        assert history.read_text().splitlines() == ["needle"], history.read_text()
         run(binary, repo, home, keys=b"/\x1b[Ax\rQ")
         assert history.read_text().splitlines() == ["needle", "needlex"], history.read_text()
+        damaged = b"valid\n\xff\n"
+        history.write_bytes(damaged)
+        run(binary, repo, home, keys=b"Q")
+        assert history.read_bytes() == damaged
 
 
 if __name__ == "__main__":

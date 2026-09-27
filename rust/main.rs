@@ -13,7 +13,8 @@ use std::{
     env,
     ffi::OsString,
     fs,
-    io::{self, IsTerminal, Write},
+    io::{self, BufRead, IsTerminal, Write},
+    os::unix::fs::OpenOptionsExt,
     path::{Component, PathBuf},
     process::{Command, Stdio},
 };
@@ -3407,7 +3408,7 @@ impl PromptHistory {
                 home.as_ref()
                     .map(|home| home.join(".local/share/tig/history"))
             });
-        let path = preferred
+        let mut path = preferred
             .and_then(|path| {
                 if env::var_os("XDG_DATA_HOME").is_some_and(|value| !value.is_empty()) {
                     if let Some(parent) = path.parent() {
@@ -3423,33 +3424,67 @@ impl PromptHistory {
                     .ok()
             })
             .or_else(|| home.map(|home| home.join(".tig_history")));
-        let entries = path
-            .as_ref()
-            .and_then(|path| fs::read_to_string(path).ok())
-            .map(|text| text.lines().map(str::to_owned).collect::<Vec<_>>())
-            .unwrap_or_default()
-            .into_iter()
-            .rev()
-            .take(limit)
-            .collect::<Vec<_>>()
-            .into_iter()
-            .rev()
-            .collect();
+        let mut entries = std::collections::VecDeque::new();
+        if let Some(file) = path.as_ref().map(fs::File::open) {
+            match file {
+                Ok(file) => {
+                    for line in io::BufReader::new(file).lines() {
+                        match line {
+                            Ok(line) => {
+                                if entries.len() == limit {
+                                    entries.pop_front();
+                                }
+                                entries.push_back(line);
+                            }
+                            Err(_) => {
+                                path = None;
+                                break;
+                            }
+                        }
+                    }
+                }
+                Err(_) => path = None,
+            }
+        }
         Self {
             path,
-            entries,
+            entries: entries.into(),
             limit,
         }
     }
-    fn append(&self, value: &str) {
-        if let Some(path) = &self.path {
-            // ponytail: append keeps old entries on disk; compact atomically if file growth matters.
-            let _ = fs::OpenOptions::new()
-                .append(true)
-                .create(true)
-                .open(path)
-                .and_then(|mut file| writeln!(file, "{value}"));
+    fn save(&self) -> io::Result<()> {
+        let Some(path) = &self.path else {
+            return Ok(());
+        };
+        let temporary = path.with_extension(format!("tig-rs-{}.tmp", std::process::id()));
+        let mut file = fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .open(&temporary)?;
+        let result = (|| {
+            if let Ok(metadata) = fs::metadata(path) {
+                fs::set_permissions(&temporary, metadata.permissions())?;
+            }
+            let mut seen = std::collections::HashSet::new();
+            let mut entries = self
+                .entries
+                .iter()
+                .rev()
+                .filter(|entry| seen.insert(*entry))
+                .collect::<Vec<_>>();
+            entries.reverse();
+            for entry in entries {
+                writeln!(file, "{entry}")?;
+            }
+            file.sync_all()?;
+            drop(file);
+            fs::rename(&temporary, path)
+        })();
+        if result.is_err() {
+            let _ = fs::remove_file(temporary);
         }
+        result
     }
 }
 impl Terminal {
@@ -3567,7 +3602,6 @@ impl Terminal {
                             if self.history.entries.len() > self.history.limit {
                                 self.history.entries.remove(0);
                             }
-                            self.history.append(&value);
                         }
                         return Ok(Some(value));
                     }
@@ -3603,6 +3637,7 @@ impl Terminal {
 }
 impl Drop for Terminal {
     fn drop(&mut self) {
+        let _ = self.history.save();
         let _ = execute!(
             self.out,
             SetAttribute(Attribute::Reset),
@@ -3872,7 +3907,9 @@ fn run() -> Result<()> {
     app.view.restore_status_selection();
     if let Ok(script) = env::var("TIG_SCRIPT") {
         app.center_selection();
-        return app.script(&script);
+        let result = app.script(&script);
+        let _ = history.save();
+        return result;
     }
     app.center_selection();
     let mut terminal = Terminal::open(&app.config)?;
