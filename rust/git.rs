@@ -934,6 +934,48 @@ impl Repository {
         file: Option<&Path>,
         filters: &[String],
     ) -> Result<Vec<u8>> {
+        self.worktree_diff_options(file, filters, &[])
+    }
+    pub fn blame_diff(&self, file: &Path, has_parent: bool, options: &[String]) -> Result<Vec<u8>> {
+        validate_diff_options(options)?;
+        if has_parent {
+            return self.worktree_diff_options(Some(file), &[], options);
+        }
+        valid_path(file)?;
+        let mut args: Vec<OsString> = [
+            "diff",
+            "--no-index",
+            "--no-color",
+            "--patch-with-stat",
+            "--no-ext-diff",
+            "--no-textconv",
+        ]
+        .iter()
+        .map(OsString::from)
+        .collect();
+        args.extend(options.iter().map(OsString::from));
+        args.extend([
+            OsString::from("--"),
+            OsString::from("/dev/null"),
+            file.into(),
+        ]);
+        let output = crate::trace::output(&mut git_command(&self.root, args)?)
+            .map_err(|e| GitError(e.to_string()))?;
+        if !output.status.success() && output.status.code() != Some(1) {
+            return Err(GitError(format!(
+                "git diff exited with {}: {}",
+                output.status,
+                text(&output.stderr).trim()
+            )));
+        }
+        Ok(output.stdout)
+    }
+    fn worktree_diff_options(
+        &self,
+        file: Option<&Path>,
+        filters: &[String],
+        options: &[String],
+    ) -> Result<Vec<u8>> {
         if let Some(file) = file {
             valid_path(file)?;
         }
@@ -948,6 +990,7 @@ impl Repository {
         .iter()
         .map(OsString::from)
         .collect();
+        args.extend(options.iter().map(OsString::from));
         // `diff-files` does not apply diff.noprefix by itself; Tig passes it explicitly.
         if self
             .command(["config", "--bool", "--get", "diff.noprefix"])

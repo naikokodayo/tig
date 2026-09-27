@@ -193,6 +193,7 @@ struct View {
     staged: bool,
     diff_base: Option<String>,
     stash_diff: bool,
+    blame_diff_parent: Option<bool>,
     untracked: bool,
     raw_patch: Vec<u8>,
     blob_data: Option<Vec<u8>>,
@@ -227,6 +228,7 @@ impl View {
             staged: false,
             diff_base: None,
             stash_diff: false,
+            blame_diff_parent: None,
             untracked: false,
             raw_patch: Vec::new(),
             blob_data: None,
@@ -808,6 +810,32 @@ impl App {
             }
             "diff" => {
                 let diff_options = diff_options(&self.config)?;
+                if !self.revision.is_empty() && self.revision.bytes().all(|b| b == b'0') {
+                    let has_parent = match self.selected() {
+                        Item::Blame(line) => line.previous.is_some(),
+                        _ => self.view.blame_diff_parent.ok_or("No blame diff context")?,
+                    };
+                    let mut options = diff_options.to_vec();
+                    options.push(format!("-U{}", self.config.usize_value("diff-context", 3)));
+                    options.push(if word_diff_enabled(&self.config) {
+                        "--word-diff=plain".into()
+                    } else {
+                        "--word-diff=none".into()
+                    });
+                    if let Some(space) = match self.config.value("ignore-space") {
+                        Some("all") => Some("--ignore-all-space"),
+                        Some("some") => Some("--ignore-space-change"),
+                        Some("at-eol") => Some("--ignore-space-at-eol"),
+                        _ => None,
+                    } {
+                        options.push(space.into());
+                    }
+                    let raw = repo.blame_diff(&self.path, has_parent, &options)?;
+                    let mut view = View::text(name, &highlight_diff(&self.config, &raw));
+                    view.revision = self.revision.clone();
+                    view.blame_diff_parent = Some(has_parent);
+                    return Ok(view);
+                }
                 let oid = repo.revision(&self.revision)?;
                 if self.view.name == "stash" || self.view.stash_diff {
                     let context = format!("-U{}", self.config.usize_value("diff-context", 3));
@@ -1558,7 +1586,10 @@ impl App {
             Item::Blame(line) => {
                 self.revision = line.oid;
                 self.path = line.filename.clone();
-                self.open("diff", child_width)?;
+                if let Err(error) = self.open("diff", child_width) {
+                    self.sync_context();
+                    return Err(error);
+                }
                 let start = self
                     .view
                     .source_rows()
@@ -1570,9 +1601,12 @@ impl App {
                             == Some((line.filename.clone(), 0)))
                         .then_some(index)
                     });
-                if let Some(selected) = start.and_then(|start| {
-                    diff_line_at(self.view.source_rows(), start, line.original_line)
-                }) {
+                if let Some(selected) = start
+                    .filter(|_| self.view.blame_diff_parent.is_none())
+                    .and_then(|start| {
+                        diff_line_at(self.view.source_rows(), start, line.original_line)
+                    })
+                {
                     self.view.selected = self.view.display_index(selected);
                 }
             }
@@ -2784,6 +2818,45 @@ impl App {
                     .min(self.view.rows.len().saturating_sub(1));
                 self.center_selection();
             }
+            "view-main" if self.view.name == "blame" => {
+                let config = self.config.clone();
+                self.select_context();
+                let target = self.revision.clone();
+                self.args.clear();
+                self.path.clear();
+                for filter in ["file-filter", "rev-filter"] {
+                    self.config
+                        .settings
+                        .insert(filter.into(), vec!["no".into()]);
+                }
+                if let Err(error) = self.open("main", self.width) {
+                    self.config = config;
+                    self.sync_context();
+                    return Err(error);
+                }
+                if let Some(index) =
+                    self.view.items.iter().position(
+                        |item| matches!(item, Item::Commit(commit) if commit.oid == target),
+                    )
+                {
+                    self.view.selected = index;
+                    self.center_selection();
+                }
+            }
+            "view-blob" if self.view.name == "blame" => {
+                if let Item::Blame(line) = self.selected() {
+                    self.revision = if line.oid.bytes().all(|b| b == b'0') {
+                        "HEAD".into()
+                    } else {
+                        line.oid
+                    };
+                    self.path = line.filename;
+                    if let Err(error) = self.open("blob", self.width) {
+                        self.sync_context();
+                        return Err(error);
+                    }
+                }
+            }
             "screen-redraw" => (),
             "view-diff" if self.view.name == "diff" => {
                 if let Some(parent) = self.other.take() {
@@ -3467,7 +3540,7 @@ mod editor_tests {
     }
 
     #[test]
-    fn blame_history_path_is_not_a_worktree_edit_target() {
+    fn blame_context_preserves_worktree_path_and_failed_navigation() {
         let raw = format!("{} 1 1\nfilename old/file\n\tcontent\n", "a".repeat(40));
         let line = tig_rs::git::parse_blame(raw.as_bytes()).unwrap().remove(0);
         let mut view = View::new("blame");
@@ -3499,6 +3572,17 @@ mod editor_tests {
             height: 20,
         };
         assert_eq!(app.edit_target(), None);
+        app.view.args = vec!["old-revision".into(), "--".into(), "new/file".into()];
+        app.sync_context();
+        for action in ["view-main", "view-blob", "enter"] {
+            assert!(app.action(action).is_err());
+            assert_eq!(app.path, app.view.path);
+            assert_eq!(app.revision, app.view.revision);
+            assert_eq!(app.args, app.view.args);
+            assert!(app.config.bool_value("file-filter", true));
+            assert!(app.config.bool_value("rev-filter", true));
+            assert!(app.previous.is_empty());
+        }
         app.view.items[0] = Item::Blame(tig_rs::model::BlameLine {
             filename: "new/file".into(),
             ..line
