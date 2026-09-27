@@ -101,6 +101,7 @@ fn annotate(
             commit = Some(Commit {
                 oid: String::from_utf8_lossy(token).into_owned(),
                 boundary: false,
+                annotated: false,
                 parents: Vec::new(),
                 author: text(0),
                 author_email: text(1),

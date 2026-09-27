@@ -90,6 +90,7 @@ fn empty_commit() -> Commit {
     Commit {
         oid: String::new(),
         boundary: false,
+        annotated: false,
         parents: vec![],
         author: String::new(),
         date: "1970-01-01T00:00:00+00:00".into(),
@@ -134,9 +135,9 @@ pub fn load(
     // Reuse the history record parser, but refs metadata has its own mailmap
     // setting and does not need main-view decorations or revision filtering.
     let format = if config.bool_value("mailmap", true) {
-        "--format=%H%x00%P%x00%aN%x00%aI%x00%s%x00%x00%aE%x00%cN%x00%cE%x00%cI"
+        "--format=%H%x00%P%x00%aN%x00%aI%x00%s%x00%x00%aE%x00%cN%x00%cE%x00%cI%x00"
     } else {
-        "--format=%H%x00%P%x00%an%x00%aI%x00%s%x00%x00%ae%x00%cn%x00%ce%x00%cI"
+        "--format=%H%x00%P%x00%an%x00%aI%x00%s%x00%x00%ae%x00%cn%x00%ce%x00%cI%x00"
     };
     let history = parse_history(&repo.command([
         "log",

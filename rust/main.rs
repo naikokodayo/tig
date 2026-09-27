@@ -148,6 +148,7 @@ fn changes_commit(kind: ChangeKind, parent: String, date: &str, oid: &str) -> Co
     Commit {
         oid: oid.into(),
         boundary: false,
+        annotated: false,
         parents: vec![parent],
         author: "Not Committed Yet".into(),
         date: date.into(),
@@ -513,7 +514,12 @@ impl App {
                 } else {
                     order
                 };
-                let commits = repo.history_ordered(&args, 0, order)?;
+                let commits = repo.history_ordered(
+                    &args,
+                    0,
+                    order,
+                    self.config.value("show-notes").unwrap_or("yes"),
+                )?;
                 if !graph || order == "reverse" {
                     config
                         .settings
@@ -566,10 +572,11 @@ impl App {
                 v.commit_fields = fields;
                 v.commit_row_widths = vec![width; rows.len()];
                 for (row, item) in rows.into_iter().zip(items) {
-                    let kind = match item {
+                    let kind = match &item {
                         Item::Changes(ChangeKind::Untracked) => "stat-untracked",
                         Item::Changes(ChangeKind::Unstaged) => "stat-unstaged",
                         Item::Changes(ChangeKind::Staged) => "stat-staged",
+                        Item::Commit(commit) if commit.annotated => "main-annotated",
                         _ => "main-commit",
                     };
                     v.push_typed(row, item, kind);
