@@ -104,21 +104,64 @@ fn validate_apply_paths(patch: &Patch) -> Result<()> {
             )?;
             (old, new)
         };
-        let (path, quoted) = match (old, new) {
-            (Some(old), Some(new)) if old == new => old,
-            (Some(old), None) | (None, Some(old)) => old,
-            _ => return Err(error("Renamed or missing patch paths are unsupported")),
+        let (old, new) = match (old, new) {
+            (Some(old), Some(new)) => (old, new),
+            (Some(path), None) | (None, Some(path)) => (path, path),
+            _ => return Err(error("Missing patch paths")),
         };
-        let mut expected = if quoted {
-            b"diff --git \"a/".to_vec()
-        } else {
-            b"diff --git a/".to_vec()
-        };
-        expected.extend_from_slice(path);
-        expected.extend_from_slice(if quoted { b"\" \"b/" } else { b" b/" });
-        expected.extend_from_slice(path);
-        if quoted {
-            expected.push(b'"');
+        if file.headers.iter().any(|h| h.starts_with(b"copy ")) {
+            return Err(error(
+                "Partial copy changes are unsupported; stage the whole file",
+            ));
+        }
+        let renamed = file.headers.iter().any(|h| h.starts_with(b"rename "));
+        if old.0 != new.0 || renamed {
+            let mut indexes = file.headers.iter().filter(|h| h.starts_with(b"index "));
+            let mode = indexes.next().and_then(|h| h.rsplit(|b| *b == b' ').next());
+            if old.0 == new.0
+                || !matches!(mode, Some(b"100644" | b"100755"))
+                || indexes.next().is_some()
+                || file
+                    .headers
+                    .iter()
+                    .any(|h| h.starts_with(b"old mode ") || h.starts_with(b"new mode "))
+            {
+                return Err(error(
+                    "Only unchanged-mode regular-file text renames are supported",
+                ));
+            }
+            for (marker, path) in [
+                (b"rename from ".as_slice(), old.0),
+                (b"rename to ".as_slice(), new.0),
+            ] {
+                let mut headers = file.headers.iter().filter(|h| h.starts_with(marker));
+                let header = headers.next().ok_or_else(|| error("Missing rename path"))?;
+                if headers.next().is_some()
+                    || canonical_path(header, marker, b"")?.map(|(p, _)| p) != Some(path)
+                {
+                    return Err(error("Rename metadata does not match its patch path"));
+                }
+            }
+        } else if file
+            .headers
+            .iter()
+            .any(|h| h.starts_with(b"similarity index "))
+        {
+            return Err(error("Similarity metadata requires matching rename paths"));
+        }
+        let mut expected = b"diff --git ".to_vec();
+        for (i, (path, quoted)) in [old, new].into_iter().enumerate() {
+            if i != 0 {
+                expected.push(b' ');
+            }
+            if quoted {
+                expected.push(b'"');
+            }
+            expected.extend_from_slice(if i == 0 { b"a/" } else { b"b/" });
+            expected.extend_from_slice(path);
+            if quoted {
+                expected.push(b'"');
+            }
         }
         if file.headers.first() != Some(&expected) {
             return Err(error("Patch file header does not match its path"));
@@ -463,13 +506,9 @@ impl Patch {
             .hunks
             .get(hunk)
             .ok_or_else(|| error("Hunk index out of range"))?;
-        if file.headers.iter().any(|l| {
-            [b"rename ".as_slice(), b"copy ", b"similarity index "]
-                .iter()
-                .any(|p| l.starts_with(p))
-        }) {
+        if file.headers.iter().any(|l| l.starts_with(b"copy ")) {
             return Err(error(
-                "Partial rename and copy changes are unsupported; stage the whole file",
+                "Partial copy changes are unsupported; stage the whole file",
             ));
         }
         // C carries executable-bit changes with the selected text. Keep Git's
@@ -1087,6 +1126,73 @@ mod tests {
             assert!(added.select(0, 0, Some(0), reverse).is_err());
             assert!(added.select_part(0, 0, 0, reverse).is_err());
         }
+    }
+    #[test]
+    fn text_rename_selection_validates_both_paths_and_preserves_index_on_failure() {
+        let f = Fixture::new();
+        let old = f.root.join("space name");
+        let new = f.root.join("new name");
+        let working = b"alpha\nselected\nbeta\ngamma\ndelta\nepsilon\nzeta\neta\ntheta\niota\nremaining\nkappa\n";
+        fs::rename(&old, &new).unwrap();
+        fs::write(&new, working).unwrap();
+        f.repo.command(["add", "-A"]).unwrap();
+        let raw = f
+            .repo
+            .command(["diff", "--cached", "--find-renames"])
+            .unwrap();
+        let patch = Patch::parse(&raw).unwrap();
+        let row = patch.files[0].hunks[0]
+            .lines
+            .iter()
+            .position(|l| l == b"+selected")
+            .unwrap();
+        let selected = patch.select(0, 0, Some(row), true).unwrap();
+        apply_cached(&f.repo, &selected, true).unwrap();
+        assert_eq!(
+            f.index(),
+            String::from_utf8_lossy(working)
+                .replace("selected\n", "")
+                .as_bytes()
+        );
+        assert!(f.repo.command(["show", ":new name"]).is_err());
+        apply_cached(&f.repo, &selected, false).unwrap();
+        assert_eq!(f.repo.command(["show", ":new name"]).unwrap(), working);
+        let before = fs::read(f.root.join(".git/index")).unwrap();
+        assert!(apply_cached(&f.repo, &selected, false).is_err());
+        assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), before);
+        for (from, to) in [
+            ("rename from space name", "rename from ../victim"),
+            ("rename to new name", "rename to other"),
+            (
+                "rename to new name",
+                "rename to new name\nrename to new name",
+            ),
+            (
+                "diff --git a/space name b/new name",
+                "diff --git a/space name b/other",
+            ),
+            ("100644", "120000"),
+            (
+                "similarity index",
+                "old mode 100644\nnew mode 100755\nsimilarity index",
+            ),
+            ("rename", "copy"),
+        ] {
+            let invalid = String::from_utf8_lossy(&selected).replace(from, to);
+            assert_ne!(invalid.as_bytes(), selected);
+            assert!(apply_cached(&f.repo, invalid.as_bytes(), true).is_err());
+            assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), before);
+        }
+        let oid = f.repo.command(["rev-parse", "HEAD:space name"]).unwrap();
+        let entry = format!("100644,{},space name", String::from_utf8_lossy(&oid).trim());
+        f.repo
+            .command(["update-index", "--add", "--cacheinfo", &entry])
+            .unwrap();
+        let before = fs::read(f.root.join(".git/index")).unwrap();
+        assert!(apply_cached(&f.repo, &selected, true).is_err());
+        assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), before);
+        assert!(!old.exists());
+        assert_eq!(fs::read(&new).unwrap(), working);
     }
     #[test]
     fn malformed_and_unsupported_patches_fail() {

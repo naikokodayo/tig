@@ -112,3 +112,35 @@ Formatting, 98 Rust tests, Clippy, and two unchanged original scripts
 (`stage/default-test`, `stage/update-part-test`; 19 assertions per binary)
 pass. The compact source/binary-bound receipt is
 `migration/evidence/deleted-line.json`. The full migration parity gate stays open.
+
+## Text-rename partial selection (base `e8fc0a48`)
+
+The aggregate staged view exposes both rename paths. In real C index probes,
+line/block unstage moves the destination back to the source and reverses the
+selected text, retaining unselected text at that old path. Rust now supports
+that behavior for text renames of regular files with unchanged mode
+`100644` or `100755`. The same checked cached apply remains the only writer;
+no application dispatch change is needed.
+
+Validation compares the diff header, both text paths, and unique rename
+from/to metadata using the existing canonical path restrictions. It rejects
+contradictory paths, traversal, copy metadata, nonregular or changing modes,
+and relies on Git's checked atomic application to reject stale patches and
+existing destination collisions. The superseded blanket rename refusal is
+removed. A source-modified copy/text fixture made no C index change; copies
+remain explicitly refused rather than being treated as supported renames.
+
+`rust/tests/rename-selection.py` checks line/block unstage across modes 644
+and 755 on C and Rust, with adjacent added rows distinguishing line from
+block selection: all 8 cases check exact index content, both path
+identities, and unchanged worktree content/mode. The unit regression covers
+the forward roundtrip, stale/collision failures, and forged headers with
+byte-for-byte index preservation. Two unchanged staging scripts run before
+and after (19 assertions per executable); mode-only public checks also rerun
+because they share path validation. Final hashes and counts are in the compact
+`migration/evidence/rename-selection.json` receipt.
+
+Pure renames without text hunks, mode-changing renames, copies, and Git-escaped
+paths remain refused. A single-path stage view can still present a rename as
+an added destination; use the aggregate staged view for this supported slice.
+The full migration parity gate remains open.
