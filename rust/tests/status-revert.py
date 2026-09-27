@@ -21,14 +21,14 @@ def git(root, *args, ok=True):
     return result.stdout
 
 class Terminal:
-    def __init__(self, root):
+    def __init__(self, root, user_config='/dev/null'):
         self.master, slave = pty.openpty()
         fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 30, 140, 0, 0))
         def tty():
             os.setsid()
             fcntl.ioctl(0, termios.TIOCSCTTY, 0)
         env = dict(os.environ, TERM='xterm-256color', TIGRC_SYSTEM=str(Path(__file__).resolve().parents[2] / 'tigrc'),
-                   TIGRC_USER='/dev/null', GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='/dev/null')
+                   TIGRC_USER=str(user_config), GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='/dev/null')
         env.pop('TIG_SCRIPT', None)
         self.process = subprocess.Popen([BINARY, '-C', str(root), 'status'], env=env,
             stdin=slave, stdout=slave, stderr=slave, preexec_fn=tty)
@@ -162,16 +162,31 @@ if not IS_C:
             capture_output=True, timeout=10)
         assert scripted.returncode != 0 and (root / 'file').read_bytes() == original
         assert git(root, 'ls-files', '--unmerged')
-        app = Terminal(root)
+        settings = root / 'tigrc'
+        settings.write_text('set refresh-mode = manual\n')
+        app = Terminal(root, settings)
         app.send(b'/^U file\rM')
         assert b'Run ' in app.output and b'mergetool' in app.output, app.output
         app.send(b'n\r')
         assert (root / 'file').read_bytes() == original
+        app.send(b'M')
+        (root / 'file').write_bytes(b'changed after selection\n')
+        app.send(b'y\r')
+        assert b'Conflict changed; refresh and confirm again' in app.output
+        assert (root / 'file').read_bytes() == b'changed after selection\n'
+        assert git(root, 'ls-files', '--unmerged')
+        (root / 'file').write_bytes(original)
         app.send(b'My\r')
         deadline = time.monotonic() + 5
         while app.output.count(b'\x1b[?1049h') < 2 and time.monotonic() < deadline:
             app.drain()
         assert app.output.count(b'\x1b[?1049h') >= 2, app.output
+        while time.monotonic() < deadline:
+            screen = app.output.rsplit(b'\x1b[1;1H\x1b[2J', 1)[-1]
+            if b'[status]' in screen and b'U file' not in screen:
+                break
+            app.drain()
+        assert b'[status]' in screen and b'U file' not in screen, screen
         app.close()
         assert (root / 'file').read_bytes() == b'resolved\n'
         assert not git(root, 'ls-files', '--unmerged')

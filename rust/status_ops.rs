@@ -31,6 +31,12 @@ pub struct RevertPlan {
     before: Snapshot,
     target_present: bool,
 }
+#[derive(Debug)]
+pub struct MergetoolPlan {
+    root: PathBuf,
+    path: PathBuf,
+    before: Snapshot,
+}
 fn error(message: impl Into<String>) -> GitError {
     GitError(message.into())
 }
@@ -80,6 +86,25 @@ fn private_dir(path: &Path) -> Result<()> {
         builder.mode(0o700);
     }
     builder.create(path).map_err(|e| error(e.to_string()))
+}
+impl MergetoolPlan {
+    pub fn prepare(repo: &Repository, entry: &StatusEntry) -> Result<Self> {
+        if !entry.conflicted() {
+            return Err(error("Select an unmerged file"));
+        }
+        Ok(Self {
+            root: repo.root.clone(),
+            path: entry.path.clone(),
+            before: snapshot(repo, &entry.path)?,
+        })
+    }
+
+    pub fn check(&self, repo: &Repository) -> Result<()> {
+        if repo.root != self.root || snapshot(repo, &self.path)? != self.before {
+            return Err(error("Conflict changed; refresh and confirm again"));
+        }
+        Ok(())
+    }
 }
 impl RevertPlan {
     /// Read-only preparation. `staged` identifies the selected status section.
