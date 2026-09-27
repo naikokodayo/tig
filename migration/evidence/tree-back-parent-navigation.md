@@ -17,3 +17,14 @@ C routes tree `REQ_BACK` and `REQ_PARENT` to the parent directory and closes the
 ## Remaining differences
 
 None observed in the selected C/Rust tree-navigation cases. The full paired suite was not run, so this does not establish repository-wide parity.
+
+## Final hash receipt
+
+- Base commit: `67978a7b71d1138ef5ca084b79e1bdf3c036377f`
+- Source commit: `90c6b97b6606a0c2be881498e6f9b32d2ad8ecfc`
+- `rust/main.rs`: `da083caf7aecec3d16613d37664ad0cca007dc335f61cf5af6968e50e8ade487`
+- Rust release `target/release/tig`: `72659fef269ab0a6dca6aba76d5b7fa2d5b64fb3770176fd8f3aa5051ed5137c`
+- C `src/tig`: `969c12e7b663c39686e88b71c774c35ec0923f6c1de430a8138179e35a9706b0`
+- Original `test/tree/chdir-test`: `168a6399b9f4b02774f284993da4e389a3af6fce8313b61975ef94eab47ad475`
+
+All listed hashes are SHA-256. The working source hash matches the `rust/main.rs` blob in the source commit; `cargo build --release` reported the tested release binary up to date.
