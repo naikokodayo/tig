@@ -140,19 +140,19 @@ The following work is required before calling the migration complete:
    workloads and correctness. Component measurements cannot close parity.
 
 The first full upstream-harness attempt is preserved in
-`migration/evidence/rust-upstream-initial.json` and its log. It failed and ran
+[migration/evidence/rust-upstream-initial.json](https://github.com/naikokodayo/tig/blob/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence/rust-upstream-initial.json) and its log. It failed and ran
 before column rendering and partial-stage integration. Its mixed helper routes
 and early exits cannot be interpreted as a Rust test pass percentage.
 
 First pushed checkpoint (`e0bcbbf4`) upstream-harness result: **571 of 647 assertions failed**,
-150 tests reported and 3 skipped; see `migration/evidence/rust-upstream-suite.json`
+150 tests reported and 3 skipped; see [migration/evidence/rust-upstream-suite.json](https://github.com/naikokodayo/tig/blob/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence/rust-upstream-suite.json)
 for the attempted-target ledger and exact caveats. This mixed route still uses
 the C graph helper, so even successful assertions are not all Rust results.
 The migration is not complete.
 
 A second full harness run attempted all 154 recipes and reported **462 of 643
 assertions failed**, 150 tests and 3 skips. See
-`migration/evidence/rust-upstream-second.json` and its raw log. That run predates
+[migration/evidence/rust-upstream-second.json](https://github.com/naikokodayo/tig/blob/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence/rust-upstream-second.json) and its raw log. That run predates
 final command-context, named-goto, notes-toggle and locale fixes; its binary hash
 is retained rather than relabelled as final-source evidence. Different assertion
 counts reflect early exits, not a completion percentage. Final-source focused
@@ -190,7 +190,7 @@ on the unresolved compatibility requirements above.
 
 The third full upstream run attempted all 154 recipes and reported **412 of 638
 assertions failed**, 150 tests and 3 skips. See
-`migration/evidence/rust-upstream-third.json`; it uses the same mixed C graph
+[migration/evidence/rust-upstream-third.json](https://github.com/naikokodayo/tig/blob/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence/rust-upstream-third.json); it uses the same mixed C graph
 helper route and predates the final log-header parser tightening. The final
 binary has a regression test for indented commit-message text plus the focused
 application/PTY checks. Do not infer a completion percentage from these counts.
@@ -206,7 +206,7 @@ screens still expose diff/stage and synthetic main-state differences.
 
 The fourth full upstream run attempted all 154 recipes and reported **345 of
 610 assertions failed**, 150 tests, 3 skips and 1 recipe with no result receipt.
-See `migration/evidence/rust-upstream-fourth.json` and its raw log. Different
+See [migration/evidence/rust-upstream-fourth.json](https://github.com/naikokodayo/tig/blob/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence/rust-upstream-fourth.json) and its raw log. Different
 assertion totals reflect early exits, not a completion percentage. This remains
 a mixed route with the C graph helper. This full run predates a final guard
 against editing the prior commit's file from a later commit header; that guard
@@ -231,7 +231,7 @@ checkpoint.
 
 The fifth full upstream run attempted all 154 recipes and reported **316 of
 609 assertions failed**, in 150 tests with 3 skips and 1 recipe without a
-result receipt. See `migration/evidence/rust-upstream-fifth.json` and the raw
+result receipt. See [migration/evidence/rust-upstream-fifth.json](https://github.com/naikokodayo/tig/blob/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence/rust-upstream-fifth.json) and the raw
 log. The graph helper still routes through C under `SYSTEM_TIG=1`; these
 numbers are not a Rust completion percentage. The `grep` view, other view
 actions, and broader compatibility remain open, so the end-to-end benchmark
@@ -258,7 +258,7 @@ slice.
 
 The sixth full upstream run attempted all 154 recipes and reported **263 of
 594 assertions failed**, in 150 tests with 3 skips and 1 recipe without a
-result receipt. See `migration/evidence/rust-upstream-sixth.json` and its raw
+result receipt. See [migration/evidence/rust-upstream-sixth.json](https://github.com/naikokodayo/tig/blob/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence/rust-upstream-sixth.json) and its raw
 log. The graph helper still routes through C under `SYSTEM_TIG=1`; early
 exits alter assertion totals. These counts are not a migration-completion
 percentage. Full parity and the end-to-end benchmark remain gated.
@@ -294,10 +294,10 @@ unsupported until path-stripping semantics can be implemented and verified.
 
 Formatting, all **51 Rust unit tests**, Clippy with warnings denied, release
 build and **108 real PTY checks** pass. The final binary SHA-256 is recorded in
-`migration/evidence/rust-upstream-eighth.json`. The unchanged full upstream
+[migration/evidence/rust-upstream-eighth.json](https://github.com/naikokodayo/tig/blob/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence/rust-upstream-eighth.json). The unchanged full upstream
 suite attempted all 154 recipes and reported **220 of 593 assertions failed**
 in 150 tests, 3 skips and 1 recipe without a result receipt. The raw log is
-`migration/evidence/rust-upstream-eighth.log`. `SYSTEM_TIG=1` still routes the
+[migration/evidence/rust-upstream-eighth.log](https://github.com/naikokodayo/tig/blob/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence/rust-upstream-eighth.log). `SYSTEM_TIG=1` still routes the
 graph helper through C, and early exits change assertion denominators; these
 numbers are not a Rust completion percentage. Full parity and the application
 benchmark remain gated.
@@ -316,7 +316,7 @@ The final binary passed formatting, **53 Rust unit tests**, Clippy with
 warnings denied, release build, and **108 real PTY checks**. The full
 upstream suite attempted all 154 recipes and reported **207 of 590
 assertions failed** in 150 tests, with 3 skips and 1 recipe without a result
-receipt. See `migration/evidence/rust-upstream-ninth.json` and its raw log for
+receipt. See [migration/evidence/rust-upstream-ninth.json](https://github.com/naikokodayo/tig/blob/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence/rust-upstream-ninth.json) and its raw log for
 the exact binary hash and failures. The graph helper still routes through C
 under `SYSTEM_TIG=1`; early exits change assertion totals, so this is not a
 completion percentage. Full parity and the application benchmark remain gated.
@@ -334,7 +334,7 @@ After merge, formatting, **57 Rust unit tests**, Clippy with warnings denied,
 release build and **108 PTY checks** pass. The full original suite attempted
 all 154 recipes and reported **186 FAIL records among 589 OK/FAIL records** in 150 tests,
 with 3 skips and 1 missing receipt. See
-`migration/evidence/rust-upstream-tenth.json` and its raw log. This is still a
+[migration/evidence/rust-upstream-tenth.json](https://github.com/naikokodayo/tig/blob/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence/rust-upstream-tenth.json) and its raw log. This is still a
 mixed helper route and early exits change the denominator, so the parity
 gate remains open and the end-to-end application benchmark remains gated.
 The FAIL total also includes process errors and timeouts, not only behavioral
@@ -347,7 +347,7 @@ is merged. Formatting, 61 Rust unit tests, Clippy with warnings denied,
 release build, and 108 PTY checks pass. The unchanged full original suite
 attempted all 154 recipes and reported **184 FAIL records among 589 OK/FAIL
 records** in 150 tests, with 3 skips and 1 missing receipt. See
-`migration/evidence/rust-upstream-eleventh.json` and its raw log. This run was
+[migration/evidence/rust-upstream-eleventh.json](https://github.com/naikokodayo/tig/blob/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence/rust-upstream-eleventh.json) and its raw log. This run was
 on `3e8f4b8e`, before the subsequently merged blame PR #4. The FAIL total
 includes process errors and timeouts, so it is not solely a count of
 behavioral assertion mismatches. The graph helper still routes through C;
@@ -681,6 +681,11 @@ evidence of C index data loss in this script. A release build from only
 `Cargo.toml`, `Cargo.lock`, `rust/`, and `tigrc` succeeded without the C source
 tree; original tests and C remain the parity reference. The gate remains **BLOCKED**;
 the end-to-end C/Rust benchmark has not begun.
+
+Earlier mixed-route full-suite JSON and raw logs are archived at the fixed
+[`44b0bf42` source commit](https://github.com/naikokodayo/tig/tree/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence).
+The current tree keeps the latest strict paired receipt instead of duplicating
+those superseded runs.
 
 ### Non-local `%s` follow-up
 
