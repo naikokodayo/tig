@@ -39,6 +39,7 @@ const TOGGLES: &[(char, &str, &str)] = &[
 #[derive(Clone, Debug)]
 pub struct HelpRow {
     pub text: String,
+    pub line_type: &'static str,
     /// Present only on a section heading; `all` is the collapse/expand heading.
     pub section: Option<&'static str>,
 }
@@ -119,7 +120,7 @@ impl HelpView {
                     continue;
                 }
                 if group != previous_group {
-                    content.push(row(group.clone()));
+                    content.push(row(group.clone(), "help-group"));
                     previous_group = group;
                 }
                 let key = keys.join(", ");
@@ -127,7 +128,7 @@ impl HelpView {
                     keys_width = keys_width.max(key.len());
                     name_width = name_width.max(action.len());
                 }
-                content.push(row(format!("\0{key}\0{action}\0{description}")));
+                content.push(row(format!("\0{key}\0{action}\0{description}"), "default"));
             }
             for (category, heading) in [
                 ("toggle", "Option toggling:"),
@@ -143,14 +144,14 @@ impl HelpView {
                         continue;
                     }
                     if !group_started {
-                        content.push(row(heading.into()));
+                        content.push(row(heading.into(), "help-group"));
                         group_started = true;
                     }
                     let key = key_name(binding.key);
                     if visible {
                         keys_width = keys_width.max(key.len());
                     }
-                    content.push(row(format!("\0{key}\0{command}")));
+                    content.push(row(format!("\0{key}\0{command}"), "default"));
                 }
             }
             if !content.is_empty() {
@@ -161,7 +162,7 @@ impl HelpView {
         self.name_width = name_width;
         let key_field = keys_width + 2;
         self.rows = vec![
-            row("Quick reference for tig keybindings:".into()),
+            row("Quick reference for tig keybindings:".into(), "header"),
             HelpRow {
                 text: format!(
                     "[{}] {} all sections",
@@ -172,14 +173,16 @@ impl HelpView {
                         "Collapse"
                     }
                 ),
+                line_type: "section",
                 section: Some("all"),
             },
-            row(String::new()),
+            row(String::new(), "default"),
         ];
         for (map, content) in sections {
             let collapsed = self.collapsed.contains(map);
             self.rows.push(HelpRow {
                 text: format!("[{}] {map} bindings", if collapsed { '+' } else { '-' }),
+                line_type: "section",
                 section: Some(map),
             });
             if collapsed {
@@ -203,28 +206,34 @@ impl HelpView {
         let collapsed = self.collapsed.contains("toggle");
         self.rows.push(HelpRow {
             text: format!("[{}] toggle bindings", if collapsed { '+' } else { '-' }),
+            line_type: "section",
             section: Some("toggle"),
         });
         if !collapsed {
-            self.rows.push(row("Toggle keys (enter: o <key>):".into()));
+            self.rows
+                .push(row("Toggle keys (enter: o <key>):".into(), "help-group"));
             let toggle_width = TOGGLES
                 .iter()
                 .map(|(_, name, _)| name.len())
                 .max()
                 .unwrap_or(0);
             for (key, name, description) in TOGGLES {
-                self.rows.push(row(format!(
-                    "{:>key_field$} {:<toggle_width$} Toggle {description}",
-                    key, name
-                )));
+                self.rows.push(row(
+                    format!(
+                        "{:>key_field$} {:<toggle_width$} Toggle {description}",
+                        key, name
+                    ),
+                    "help-toggle",
+                ));
             }
         }
     }
 }
 
-fn row(text: String) -> HelpRow {
+fn row(text: String, line_type: &'static str) -> HelpRow {
     HelpRow {
         text,
+        line_type,
         section: None,
     }
 }

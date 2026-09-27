@@ -1007,7 +1007,7 @@ mod tests {
 
 /// Diffstat cells follow Git's text boundaries, not filename bytes or display width.
 /// Keep the last pipe: filenames can themselves contain pipes, pluses and minuses.
-fn diff_stat_cells(text: &str) -> Option<Vec<&str>> {
+pub(crate) fn diff_stat_cells(text: &str) -> Option<Vec<&str>> {
     let (name, stat) = text.rsplit_once('|')?;
     if name.trim().is_empty()
         || !(stat.ends_with(['+', '-'])
@@ -1044,7 +1044,6 @@ use crate::line::builtin_line_type;
 
 /// Diagnostic text/cell export for ordinary diffs (the C save-view contract).
 pub fn diff_view_data(rows: &[String], selected: usize) -> String {
-    use std::fmt::Write;
     let mut output = String::new();
     let mut after_diff = false;
     let mut in_chunk = false;
@@ -1097,17 +1096,7 @@ pub fn diff_view_data(rows: &[String], selected: usize) -> String {
             }
             vec![row.as_str()]
         });
-        writeln!(
-            output,
-            "line[{index:3}] type={kind} selected={}",
-            usize::from(index == selected)
-        )
-        .unwrap();
-        write!(output, "line[{index:3}] cells={} text=", cells.len()).unwrap();
-        for cell in cells {
-            write!(output, "[{cell}]").unwrap();
-        }
-        output.push('\n');
+        crate::view_export::line(&mut output, index, kind, index == selected, Some(&cells));
     }
     output
 }

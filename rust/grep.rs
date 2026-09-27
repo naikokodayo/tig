@@ -360,7 +360,7 @@ pub(crate) fn context_rows(
 pub fn render_rows(
     hits: Vec<Option<GrepLine>>,
     config: &Config,
-) -> Vec<(String, Option<GrepLine>)> {
+) -> Vec<(String, Option<GrepLine>, &'static str)> {
     let mut rows = Vec::new();
     let (show_file, width, maxwidth, show_line, interval) = grep_columns(config);
     let width = width
@@ -382,14 +382,14 @@ pub fn render_rows(
     let mut last_file = None;
     for entry in hits {
         let Some(hit) = entry else {
-            rows.push(("--".into(), None));
+            rows.push(("--".into(), None, "delimiter"));
             continue;
         };
         if !show_file && last_file.as_deref() != Some(hit.label.as_str()) {
             let mut header = hit.clone();
             header.line = 1;
             header.text.clear();
-            rows.push((hit.label.clone(), Some(header)));
+            rows.push((hit.label.clone(), Some(header), "file"));
         }
         let mut row = String::new();
         if show_file {
@@ -406,7 +406,7 @@ pub fn render_rows(
         }
         row.push_str(&hit.text);
         last_file = Some(hit.label.clone());
-        rows.push((row, Some(hit)));
+        rows.push((row, Some(hit), "default"));
     }
     rows
 }

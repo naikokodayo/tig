@@ -172,6 +172,7 @@ struct WrappedText {
 struct View {
     name: String,
     rows: Vec<String>,
+    row_types: Vec<&'static str>,
     commit_fields: Vec<tig_rs::render::CommitField>,
     commit_row_widths: Vec<usize>,
     rendered_top: usize,
@@ -200,6 +201,7 @@ impl View {
         Self {
             name: name.into(),
             rows: vec![],
+            row_types: vec![],
             commit_fields: vec![],
             commit_row_widths: vec![],
             rendered_top: 0,
@@ -228,6 +230,11 @@ impl View {
         self.line_numbers.push(self.rows.len() + 1);
         self.rows.push(text);
         self.items.push(item);
+        self.row_types.push("default");
+    }
+    fn push_typed(&mut self, text: String, item: Item, kind: &'static str) {
+        self.push(text, item);
+        *self.row_types.last_mut().unwrap() = kind;
     }
     fn text(name: &str, text: &str) -> Self {
         let mut v = Self::new(name);
@@ -308,6 +315,7 @@ impl View {
             self.top = self.display_index(top);
         }
         self.items = vec![Item::Text; self.rows.len()];
+        self.row_types = vec!["default"; self.rows.len()];
     }
     fn redraw_stdin(&mut self, config: &Config, width: usize) -> Result<()> {
         let commits: Vec<_> = self
@@ -434,7 +442,7 @@ impl App {
         v.untracked = untracked_only;
         v.args = self.args.clone();
         v.revision = self.revision.clone();
-        v.push(header, Item::Text);
+        v.push_typed(header, Item::Text, "header");
         for (group, title) in [
             (0, "Changes to be committed:"),
             (1, "Changes not staged for commit:"),
@@ -443,22 +451,24 @@ impl App {
             if untracked_only && group != 2 {
                 continue;
             }
-            v.push(title.into(), Item::Text);
+            let kind = ["stat-staged", "stat-unstaged", "stat-untracked"][group];
+            v.push_typed(title.into(), Item::Text, kind);
             if group == 2 && !show_untracked {
-                v.push("  (not shown)".into(), Item::Text);
+                v.push_typed("  (not shown)".into(), Item::Text, "stat-none");
                 continue;
             }
             let start = v.rows.len();
             for e in &entries {
                 if let Some(mark) = status_mark(e, group) {
-                    v.push(
+                    v.push_typed(
                         format!("{} {}", mark, e.path.display()),
                         Item::Status(e.clone(), group == 0),
+                        kind,
                     );
                 }
             }
             if v.rows.len() == start {
-                v.push("  (no files)".into(), Item::Text);
+                v.push_typed("  (no files)".into(), Item::Text, "stat-none");
             }
         }
         Ok(v)
@@ -471,7 +481,7 @@ impl App {
                 .clone()
                 .unwrap_or_else(|| HelpView::new(&self.config, &self.view.name));
             for row in help.rows {
-                v.push(row.text, Item::Text);
+                v.push_typed(row.text, Item::Text, row.line_type);
             }
             return Ok(v);
         }
@@ -556,7 +566,13 @@ impl App {
                 v.commit_fields = fields;
                 v.commit_row_widths = vec![width; rows.len()];
                 for (row, item) in rows.into_iter().zip(items) {
-                    v.push(row, item);
+                    let kind = match item {
+                        Item::Changes(ChangeKind::Untracked) => "stat-untracked",
+                        Item::Changes(ChangeKind::Unstaged) => "stat-unstaged",
+                        Item::Changes(ChangeKind::Staged) => "stat-staged",
+                        _ => "main-commit",
+                    };
+                    v.push_typed(row, item, kind);
                 }
             }
             "status" => return self.status_view(self.view.name == "status" && self.view.untracked),
@@ -576,7 +592,17 @@ impl App {
                     sort,
                     self.view.name == name && self.view.sort_reverse,
                 )? {
-                    v.push(row.text, row.entry.map(Item::Tree).unwrap_or(Item::Text));
+                    let kind = match &row.entry {
+                        None => "header",
+                        Some(entry) if entry.kind == "tree" => "directory",
+                        Some(entry) if entry.kind == "blob" => "file",
+                        Some(_) => "default",
+                    };
+                    v.push_typed(
+                        row.text,
+                        row.entry.map(Item::Tree).unwrap_or(Item::Text),
+                        kind,
+                    );
                 }
                 let headers = 1 + usize::from(!self.path.as_os_str().is_empty());
                 v.line_numbers = (0..v.items.len())
@@ -705,6 +731,7 @@ impl App {
                         if !refs.is_empty() && !view.rows.is_empty() {
                             view.rows.insert(1, format!("Refs: {refs}"));
                             view.items.insert(1, Item::Text);
+                            view.row_types.insert(1, "pp-refs");
                             view.line_numbers = (1..=view.rows.len()).collect();
                         }
                     }
@@ -804,8 +831,8 @@ impl App {
             }
             "grep" => {
                 let hits = repo.grep(&self.args)?;
-                for (row, hit) in tig_rs::grep::render_rows(hits, &self.config) {
-                    v.push(row, hit.map_or(Item::Text, Item::Grep));
+                for (row, hit, kind) in tig_rs::grep::render_rows(hits, &self.config) {
+                    v.push_typed(row, hit.map_or(Item::Text, Item::Grep), kind);
                 }
             }
             "stash" | "reflog" => {
@@ -822,7 +849,7 @@ impl App {
                 v.commit_fields = fields;
                 v.commit_row_widths = vec![width; rows.len()];
                 for ((row, commit), selector) in rows.into_iter().zip(commits).zip(selectors) {
-                    v.push(row, Item::Ref(commit.oid, Some(selector)));
+                    v.push_typed(row, Item::Ref(commit.oid, Some(selector)), "main-commit");
                 }
             }
             _ => return Err(format!("Unsupported view: {name}").into()),
@@ -1221,6 +1248,7 @@ impl App {
                 if help.toggle_section(self.view.selected, &self.config) {
                     self.view.rows = help.rows.iter().map(|row| row.text.clone()).collect();
                     self.view.items = vec![Item::Text; self.view.rows.len()];
+                    self.view.row_types = help.rows.iter().map(|row| row.line_type).collect();
                     self.view.line_numbers = (1..=self.view.rows.len()).collect();
                     self.view.selected = self
                         .view
@@ -1705,16 +1733,27 @@ impl App {
         if action.split_whitespace().next() == Some("save-view") {
             let args = tig_rs::config::words(action)?;
             let path = args.get(1).map_or("tig-view.txt", String::as_str);
-            // Export only the text model whose cell semantics are implemented.
-            if self.view.name != "diff" || self.config.bool_value("word-diff", false) {
-                return Err("save-view currently supports ordinary diff views only".into());
+            if args.len() > 2 || path.is_empty() {
+                return Err("save-view expects one nonempty path".into());
             }
-            // Wrapped rows lack retained line/cell types; never reclassify fragments.
-            if self.config.bool_value("wrap-lines", false) || self.view.wrapping.is_some() {
-                return Err("save-view does not support wrapped diff views yet".into());
+            let text_view = matches!(self.view.name.as_str(), "diff" | "stage" | "pager" | "log");
+            if text_view && word_diff_enabled(&self.config) {
+                return Err("save-view does not support word diff views yet".into());
             }
-            if self.config.color_commands != Config::defaults().color_commands {
+            if text_view
+                && (self.config.bool_value("wrap-lines", false) || self.view.wrapping.is_some())
+            {
+                return Err(format!(
+                    "save-view does not support wrapped {} views yet",
+                    self.view.name
+                )
+                .into());
+            }
+            if text_view && self.config.color_commands != Config::defaults().color_commands {
                 return Err("save-view does not support custom color rules yet".into());
+            }
+            if text_view && self.view.rows.iter().any(|row| row.contains('\x1b')) {
+                return Err("save-view does not support ANSI-highlighted cells yet".into());
             }
             self.screen(false);
             let (vertical, parent, child) = self.pane_sizes();
@@ -1728,32 +1767,55 @@ impl App {
             } else {
                 (self.width, self.height.saturating_sub(2))
             };
-            let mut data = format!("View: {}\n", self.view.name);
+
             let previous = if self.parent_focused {
                 self.previous.last()
             } else {
                 self.other.as_ref().or_else(|| self.previous.last())
             };
-            if let Some(previous) = previous {
-                data.push_str(&format!("Prev: {}\n", previous.name));
-            }
-            if !self.parent_focused {
-                if let Some(parent) = &self.other {
-                    data.push_str(&format!("Parent: {}\n", parent.name));
+            let parent = if self.parent_focused {
+                None
+            } else {
+                self.other.as_ref()
+            };
+            let mut data = tig_rs::view_export::header(
+                &self.view.name,
+                previous.map(|view| view.name.as_str()),
+                parent.map(|view| view.name.as_str()),
+                &view_reference(&self.view),
+                (width, height),
+                (self.view.top, self.view.left, self.view.selected),
+            );
+            match self.view.name.as_str() {
+                "diff" | "pager" | "stage" if !self.view.untracked => data.push_str(
+                    &tig_rs::render::diff_view_data(&self.view.rows, self.view.selected),
+                ),
+                "log" => data.push_str(&tig_rs::view_export::log_data(
+                    &self.view.rows,
+                    self.view.selected,
+                )),
+                _ => {
+                    for (index, row) in self.view.rows.iter().enumerate() {
+                        let text = self.view.name == "blob"
+                            || (self.view.name == "stage" && self.view.untracked);
+                        let kind = if text {
+                            "default"
+                        } else {
+                            self.view.row_types.get(index).copied().unwrap_or("default")
+                        };
+                        tig_rs::view_export::line(
+                            &mut data,
+                            index,
+                            kind,
+                            index == self.view.selected,
+                            text.then_some(&[row.as_str()][..]),
+                        );
+                    }
                 }
             }
-            data.push_str(&format!(
-                "Ref: {}\nDimensions: height={height} width={width}\nPosition: offset={} column={} lineno={}\n",
-                self.view.revision, self.view.top, self.view.left, self.view.selected,
-            ));
-            data.push_str(&tig_rs::render::diff_view_data(
-                &self.view.rows,
-                self.view.selected,
-            ));
-            self.message = match fs::write(path, data) {
-                Ok(()) => format!("Saved view to {path}"),
-                Err(_) => format!("Failed to save view to {path}"),
-            };
+            tig_rs::view_export::save(std::path::Path::new(path), &data)
+                .map_err(|error| format!("Failed to save view to {path}: {error}"))?;
+            self.message = format!("Saved view to {path}");
             return Ok(true);
         }
         if action.split_whitespace().next() == Some("save-options") {
@@ -2160,6 +2222,7 @@ impl App {
                             self.view.items = vec![Item::Text; rows.len()];
                             self.view.line_numbers = (1..=rows.len()).collect();
                             self.view.rows = rows;
+                            self.view.row_types = vec!["default"; self.view.rows.len()];
                             self.view.raw_patch = raw;
                             return Ok(true);
                         }
@@ -3082,6 +3145,79 @@ fn pager_line_numbers(config: &Config, view: &View) -> Option<(usize, usize)> {
     Some((width, interval))
 }
 
+fn view_reference(view: &View) -> String {
+    match view.items.get(view.selected) {
+        Some(Item::Commit(c)) => c.oid.clone(),
+        Some(Item::Changes(kind)) => kind.title().into(),
+        Some(Item::Tree(e)) if view.name == "tree" => {
+            if e.path == view.path.parent().unwrap_or(std::path::Path::new(""))
+                && !view.path.as_os_str().is_empty()
+            {
+                "Open parent directory".into()
+            } else {
+                e.oid.clone()
+            }
+        }
+        Some(Item::Ref(_, Some(selector))) if matches!(view.name.as_str(), "stash" | "reflog") => {
+            selector.clone()
+        }
+        Some(Item::Ref(id, _)) if matches!(view.name.as_str(), "log" | "refs") => id.clone(),
+        Some(Item::Grep(hit)) => hit.label.clone(),
+        Some(Item::Blame(line)) if view.name == "blame" => {
+            if line.oid.bytes().all(|byte| byte == b'0') {
+                line.filename.display().to_string()
+            } else {
+                format!("{}:{}", line.oid, line.filename.display())
+            }
+        }
+        _ if view.name == "tree" => format!("Files in /{}", view.path.display()),
+        _ if view.name == "pager" => view.command_title.clone(),
+        _ if view.name == "refs" => "All references".into(),
+        Some(Item::Status(e, staged)) => format!(
+            "Press u to {} '{}'{}",
+            if *staged { "unstage" } else { "stage" },
+            e.path.display(),
+            if e.index == '?' {
+                " for addition"
+            } else {
+                " for commit"
+            }
+        ),
+        _ if view.name == "status" => "Nothing to update".into(),
+        _ if view.name == "diff"
+            && diff_stat_header(view.source_rows(), view.source_index(view.selected)).is_some() =>
+        {
+            "Press '<Enter>' to jump to file diff".into()
+        }
+        _ if view.name == "diff" => {
+            diff_edit_target(view.source_rows(), view.source_index(view.selected))
+                .map(|(path, _)| format!("Changes to '{}'", path.display()))
+                .unwrap_or_else(|| view.revision.clone())
+        }
+        _ if view.name == "stage"
+            && !view.untracked
+            && stage_stat_header(&view.rows, view.selected).is_some() =>
+        {
+            "Press '<Enter>' to jump to file diff".into()
+        }
+        _ if view.name == "stage" && view.untracked => {
+            format!("Untracked file {}", view.path.display())
+        }
+        _ if view.name == "stage" => {
+            let kind = if view.staged { "Staged" } else { "Unstaged" };
+            if view.path.as_os_str().is_empty() {
+                diff_edit_target(view.source_rows(), view.source_index(view.selected))
+                    .map(|(path, _)| format!("{kind} changes to '{}'", path.display()))
+                    .unwrap_or_else(|| format!("{kind} changes"))
+            } else {
+                format!("{kind} changes to '{}'", view.path.display())
+            }
+        }
+        _ if view.name == "blob" || view.name == "blame" => view.path.display().to_string(),
+        _ => String::new(),
+    }
+}
+
 fn pane_screen(
     view: &mut View,
     config: &Config,
@@ -3165,75 +3301,7 @@ fn pane_screen(
             }
         })
         .collect();
-    let reference = match view.items.get(view.selected) {
-        Some(Item::Commit(c)) => c.oid.clone(),
-        Some(Item::Changes(kind)) => kind.title().into(),
-        Some(Item::Tree(e)) if view.name == "tree" => {
-            if e.path == view.path.parent().unwrap_or(std::path::Path::new(""))
-                && !view.path.as_os_str().is_empty()
-            {
-                "Open parent directory".into()
-            } else {
-                e.oid.clone()
-            }
-        }
-        Some(Item::Ref(_, Some(selector))) if matches!(view.name.as_str(), "stash" | "reflog") => {
-            selector.clone()
-        }
-        Some(Item::Ref(id, _)) if matches!(view.name.as_str(), "log" | "refs") => id.clone(),
-        Some(Item::Grep(hit)) => hit.label.clone(),
-        Some(Item::Blame(line)) if view.name == "blame" => {
-            if line.oid.bytes().all(|byte| byte == b'0') {
-                line.filename.display().to_string()
-            } else {
-                format!("{}:{}", line.oid, line.filename.display())
-            }
-        }
-        _ if view.name == "pager" => view.command_title.clone(),
-        _ if view.name == "refs" => "All references".into(),
-        Some(Item::Status(e, staged)) => format!(
-            "Press u to {} '{}'{}",
-            if *staged { "unstage" } else { "stage" },
-            e.path.display(),
-            if e.index == '?' {
-                " for addition"
-            } else {
-                " for commit"
-            }
-        ),
-        _ if view.name == "status" => "Nothing to update".into(),
-        _ if view.name == "diff"
-            && diff_stat_header(view.source_rows(), view.source_index(view.selected)).is_some() =>
-        {
-            "Press '<Enter>' to jump to file diff".into()
-        }
-        _ if view.name == "diff" => {
-            diff_edit_target(view.source_rows(), view.source_index(view.selected))
-                .map(|(path, _)| format!("Changes to '{}'", path.display()))
-                .unwrap_or_else(|| view.revision.clone())
-        }
-        _ if view.name == "stage"
-            && !view.untracked
-            && stage_stat_header(&view.rows, view.selected).is_some() =>
-        {
-            "Press '<Enter>' to jump to file diff".into()
-        }
-        _ if view.name == "stage" && view.untracked => {
-            format!("Untracked file {}", view.path.display())
-        }
-        _ if view.name == "stage" => {
-            let kind = if view.staged { "Staged" } else { "Unstaged" };
-            if view.path.as_os_str().is_empty() {
-                diff_edit_target(view.source_rows(), view.source_index(view.selected))
-                    .map(|(path, _)| format!("{kind} changes to '{}'", path.display()))
-                    .unwrap_or_else(|| format!("{kind} changes"))
-            } else {
-                format!("{kind} changes to '{}'", view.path.display())
-            }
-        }
-        _ if view.name == "blob" || view.name == "blame" => view.path.display().to_string(),
-        _ => String::new(),
-    };
+    let reference = view_reference(view);
     let mut title = format!("[{}]", view.name);
     if !reference.is_empty() {
         title.push_str(&format!(" {reference}"));
@@ -3842,7 +3910,8 @@ fn run() -> Result<()> {
             app.view = View::new("main");
             app.view.from_stdin = true;
             for commit in commits {
-                app.view.push(String::new(), Item::Commit(commit));
+                app.view
+                    .push_typed(String::new(), Item::Commit(commit), "main-commit");
             }
             app.view.redraw_stdin(&app.config, app.width)?;
         } else {
