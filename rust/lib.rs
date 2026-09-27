@@ -4,6 +4,7 @@
 mod line;
 mod options_catalog;
 mod request;
+pub use request::request_info;
 
 pub mod config;
 pub mod date;

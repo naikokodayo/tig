@@ -123,6 +123,14 @@ def main():
         (home / ".inputrc").write_text('$if tig\n"\\C-c": end-of-line\n$endif\n')
         run(binary, repo, home, keys=b"/ab\x03X\rQQQQQ")
         assert history.read_bytes() == saved_history
+        run(binary, repo, home, keys=b":tog\t author\rQQQ")
+        assert history.read_text().splitlines()[-1] == "toggle author"
+        run(binary, repo, home, keys=b":ech\t hello\rQQQ")
+        assert history.read_text().splitlines()[-1] == "echo hello"
+        run(binary, repo, home, keys=b":refr\t\rQQQ")
+        assert history.read_text().splitlines()[-1] == "refresh"
+        run(binary, repo, home, keys=b":e\t\rQQQ")
+        assert history.read_text().splitlines()[-1] == "e"
 
 
 if __name__ == "__main__":

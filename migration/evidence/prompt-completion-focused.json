@@ -1,0 +1,121 @@
+{
+  "scope": "Unique first-word action completion in the Rust colon prompt",
+  "base_commit": "e8fc0a48dc66b795c37eaae09c6aa6ba4f8a8692",
+  "sha256": {
+    "src/prompt.c": "6f358c75f49a784403462b09f67a25112545bb92d455e7b77e71dd293d9df203",
+    "rust/main.rs": "c32e804128c99a1184bd18ee9b6445845ef734d2315c413ed6f63f7ddde639b9",
+    "rust/tests/prompt-history-pty.py": "d28963b952ccc6d22a79d6b8bc1f189a7d3b47b80abc3768e39b9da89b0f4886",
+    "test/main/search-preload-test": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
+    "test/main/search-test": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
+    "src/tig": "8673b0c2688da4e890598f5a69237175a9a13b0074353b9f3217583a039a7b7a",
+    "target/release/tig": "edb2bfa05c4b958b11a758fa893dec5cb55900a6f8ead1cbd4ae571738781f58",
+    "rust/lib.rs": "738efb934c1d412a9fa085c7dea1a1acfe7e78dd0b17ab3c6f151c74bfd5cf86",
+    "rust/request.rs": "d86fb0b900878ea116c17bd6a431b450d34999fd113770b6f9e0cb39ff88deb8"
+  },
+  "C_Rust_probe": [
+    {
+      "keys": ":tog, Tab, space, author, Enter",
+      "C": "toggle author",
+      "Rust_before": "tog author",
+      "Rust_after": "toggle author"
+    },
+    {
+      "keys": ":ech, Tab, space, hello, Enter",
+      "C": "echo hello",
+      "Rust_after": "echo hello"
+    },
+    {
+      "keys": ":refr, Tab, Enter",
+      "C": "refresh",
+      "Rust_after": "refresh"
+    },
+    {
+      "keys": ":e, Tab, Enter",
+      "C": "e",
+      "Rust_after": "e"
+    }
+  ],
+  "checks": {
+    "cargo_fmt": "pass",
+    "cargo_test": "98 passed",
+    "cargo_clippy_all_targets_D_warnings": "pass",
+    "cargo_release_build": "pass",
+    "prompt_history_pty": "pass",
+    "original_scripts": {
+      "c": {
+        "test/main/search-preload-test": {
+          "status": "pass",
+          "assertions_passed": 2
+        },
+        "test/main/search-test": {
+          "status": "pass",
+          "assertions_passed": 8
+        }
+      },
+      "rust": {
+        "test/main/search-preload-test": {
+          "status": "skip",
+          "assertions_passed": 0,
+          "skip_transcript": "[skipped] The test requires a tig compiled with readline"
+        },
+        "test/main/search-test": {
+          "status": "pass",
+          "assertions_passed": 8
+        }
+      }
+    }
+  },
+  "minimum_readline_claim_matrix": [
+    {
+      "area": "editing and keymaps",
+      "required": "C-equivalent Emacs/vi commands, kill/yank, undo, UTF-8 cursor behavior",
+      "current": "partial"
+    },
+    {
+      "area": "history",
+      "required": "preload, navigation, persistent size/dedupe, history search",
+      "current": "partial; direct PTY preload passes; original gated test skips"
+    },
+    {
+      "area": "inputrc",
+      "required": "bindings, macros, set directives, conditionals and keymap selection",
+      "current": "partial; quoted Ctrl cursor motions only"
+    },
+    {
+      "area": "completion",
+      "required": "action, set/toggle options, variables, filenames and ambiguous-match display",
+      "current": "partial; unique first-word C action names only; option/variable/file and ambiguous display missing"
+    },
+    {
+      "area": "terminal and signals",
+      "required": "status-line redraw, resize, Ctrl-C and terminal restoration parity",
+      "current": "partial"
+    },
+    {
+      "area": "public gate",
+      "required": "unchanged search-preload-test executes and passes 2 assertions on Rust",
+      "current": "skip; 0 assertions; BLOCKED"
+    }
+  ],
+  "library_check": {
+    "linefeed_0.6.0": "GNU inputrc parser; built with rustc 1.81, but custom status-line terminal needs TerminalReader unsafe methods and default terminal owns rendering; not adopted",
+    "reedline_0.51.0": "crates.io rust_version 1.95.0; not compatible with required 1.81",
+    "rustyline_18.0.1": "project MSRV policy is latest stable; standalone readline loop, no direct Crossterm status-line adapter; not adopted"
+  },
+  "verdict": "BLOCKED: Rust --version does not claim readline; unchanged original preload script skips. This PR adds a bounded completion path, not a full readline replacement.",
+  "route": "C and Rust binaries through real PTY; unchanged original scripts through rust/tests/upstream-suite.py strict adapter",
+  "commands": [
+    "cargo fmt --check",
+    "cargo test --locked --quiet",
+    "cargo clippy --locked --all-targets -- -D warnings",
+    "cargo build --release --locked --quiet",
+    "python3 rust/tests/prompt-history-pty.py target/release/tig",
+    "python3 rust/tests/upstream-suite.py test/main/search-preload-test test/main/search-test --output /Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/work/readline-completion-reviewed.json",
+    "cargo check --manifest-path /Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/work/linefeed-msrv/Cargo.toml"
+  ],
+  "library_sources": {
+    "linefeed": "https://docs.rs/linefeed/0.6.0/linefeed/",
+    "reedline": "https://crates.io/api/v1/crates/reedline/0.51.0",
+    "rustyline": "https://github.com/kkawakam/rustyline"
+  }
+}
