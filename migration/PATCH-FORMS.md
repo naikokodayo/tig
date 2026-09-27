@@ -1,4 +1,4 @@
-# Partial patch forms: executable mode with text
+# Partial patch forms: executable modes
 
 At base `5fb47149` (same Rust/C sources as `a62eaa5b`), the C implementation
 copies every file header before applying a selected line, block, or hunk
@@ -33,7 +33,7 @@ successful index operation; index snapshots decide the observation.
 - Binary and mode-only forms have no selectable text hunk: the C line request
   made no index change; Rust explicitly refused it. A reviewer additionally
   checked mode-only `status-update` from the stage view: C stages/unstages the
-  mode, while Rust refuses the no-hunk patch. That preexisting gap remains.
+  mode, while Rust refused the no-hunk patch. The follow-up below closes it.
   Whole-file status staging
   uses `Repository::stage` / `unstage` and is outside partial-patch selection.
 - Regular executable-mode change plus text: C and new Rust stage/unstage the
@@ -58,3 +58,30 @@ both before and after. Formatting, 96 Rust tests, and Clippy with warnings
 denied pass. Independent read-only review found no new safety issue and identified the
 preexisting mode-only stage-view gap above.
 This is scoped evidence; the full migration parity gate remains open.
+
+## Mode-only follow-up (base `97a8630c`)
+
+Mode-only `status-update` now uses the existing patch selection and checked
+cached apply path, without an application-dispatch change or another index
+writer. Parsing admits only the exact regular-file `100644` ↔ `100755`
+header pair with identical canonical paths. Line/block selection and split
+still refuse a mode-only patch; binary, rename/copy, and file-type-only
+patches remain unsupported.
+
+Git returns success with a warning for a stale executable mode. Preflight
+now refuses diagnostics before the write. Git retains responsibility for
+locking and atomically updating the index; worktree bytes and permissions
+are not written. The mode-only patch preserves index content rather than
+staging unrelated worktree text. A mode-only Git diff carries no blob ID:
+independently changed index text is retained, not compared against a snapshot.
+The refusal covered here is a stale mode, not any possible index change.
+
+`rust/tests/mode-only.py --output <receipt.json>` checks both mode transitions
+and stage/unstage against C (8 checks), plus 4 Rust stale-index refusals. The
+stale cases change the real index immediately before the first Git apply
+preflight and verify byte-for-byte preservation afterward; they are safety
+checks, not C parity claims. The unit regression also rejects malformed paths,
+non-regular modes, and line/block/split requests without hunks. Formatting,
+97 Rust tests, Clippy, the 12 preceding mode-plus-text cases, and the same
+three unchanged original staging scripts (21 assertions per binary) pass.
+The compact source/binary-bound receipt is `migration/evidence/mode-only.json`.

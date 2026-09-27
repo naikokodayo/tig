@@ -70,22 +70,40 @@ fn canonical_path<'a>(
 }
 fn validate_apply_paths(patch: &Patch) -> Result<()> {
     for file in &patch.files {
-        let old = canonical_path(
-            file.headers
-                .iter()
-                .find(|line| line.starts_with(b"--- "))
-                .ok_or_else(|| error("Missing old file header"))?,
-            b"--- ",
-            b"a/",
-        )?;
-        let new = canonical_path(
-            file.headers
-                .iter()
-                .find(|line| line.starts_with(b"+++ "))
-                .ok_or_else(|| error("Missing new file header"))?,
-            b"+++ ",
-            b"b/",
-        )?;
+        let (old, new) = if file.hunks.is_empty() {
+            // A mode-only diff has no ---/+++ paths. Its two canonical paths
+            // must be identical, so their encoded lengths are equal, even with
+            // spaces or quotes. The exact header comparison below checks both.
+            let paths = file.headers[0]
+                .strip_prefix(b"diff --git ")
+                .ok_or_else(|| error("Missing patch file header"))?;
+            let middle = paths.len() / 2;
+            if paths.get(middle) != Some(&b' ') {
+                return Err(error("Malformed mode-only patch paths"));
+            }
+            (
+                canonical_path(&paths[..middle], b"", b"a/")?,
+                canonical_path(&paths[middle + 1..], b"", b"b/")?,
+            )
+        } else {
+            let old = canonical_path(
+                file.headers
+                    .iter()
+                    .find(|line| line.starts_with(b"--- "))
+                    .ok_or_else(|| error("Missing old file header"))?,
+                b"--- ",
+                b"a/",
+            )?;
+            let new = canonical_path(
+                file.headers
+                    .iter()
+                    .find(|line| line.starts_with(b"+++ "))
+                    .ok_or_else(|| error("Missing new file header"))?,
+                b"+++ ",
+                b"b/",
+            )?;
+            (old, new)
+        };
         let (path, quoted) = match (old, new) {
             (Some(old), Some(new)) if old == new => old,
             (Some(old), None) | (None, Some(old)) => old,
@@ -247,7 +265,16 @@ impl Patch {
         }
         for file in &files {
             if file.hunks.is_empty() {
-                return Err(error("Patch has no text hunks"));
+                if file.headers.len() != 3
+                    || !matches!(
+                        (file.headers[1].as_slice(), file.headers[2].as_slice()),
+                        (b"old mode 100644", b"new mode 100755")
+                            | (b"old mode 100755", b"new mode 100644")
+                    )
+                {
+                    return Err(error("Unsupported patch without text hunks"));
+                }
+                continue;
             }
             if !file.headers.iter().any(|l| l.starts_with(b"--- "))
                 || !file.headers.iter().any(|l| l.starts_with(b"+++ "))
@@ -424,6 +451,14 @@ impl Patch {
             .files
             .get(file)
             .ok_or_else(|| error("File index out of range"))?;
+        if file.hunks.is_empty() {
+            if hunk != 0 || lines.is_some() {
+                return Err(error("Mode-only patches have no text lines"));
+            }
+            let mut output = file.headers.join(&b'\n');
+            output.push(b'\n');
+            return Ok(output);
+        }
         let source = file
             .hunks
             .get(hunk)
@@ -564,7 +599,9 @@ fn apply_once(repo: &Repository, patch: &[u8], reverse: bool, check: bool) -> Re
         .map_err(|_| error("Git patch writer failed"))?;
     let output = result.map_err(|e| error(&format!("Could not wait for git apply: {e}")))?;
     crate::trace::append(&output.stderr);
-    if !output.status.success() {
+    // Git reports a stale executable mode as a warning with exit status 0.
+    // Refuse preflight diagnostics instead of silently accepting that mismatch.
+    if !output.status.success() || (check && !output.stderr.is_empty()) {
         return Err(error(&format!(
             "git apply {}: {}",
             output.status,
@@ -942,6 +979,68 @@ mod tests {
                 assert!(patch.select(0, 0, Some(1), reverse).is_err());
                 assert!(patch.select_part(0, 0, 1, reverse).is_err());
             }
+        }
+        assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), before);
+    }
+    #[cfg(unix)]
+    #[test]
+    fn mode_only_selection_and_stale_index_are_checked() {
+        use std::os::unix::fs::PermissionsExt;
+        let f = Fixture::new();
+        let path = f.root.join("space name");
+        let original = f.index();
+        f.repo.command(["config", "core.filemode", "true"]).unwrap();
+        for (old, new) in [(0o644, 0o755), (0o755, 0o644)] {
+            fs::set_permissions(&path, fs::Permissions::from_mode(old)).unwrap();
+            f.repo.command(["add", "--", "space name"]).unwrap();
+            fs::set_permissions(&path, fs::Permissions::from_mode(new)).unwrap();
+            let raw = f.diff(false);
+            let patch = Patch::parse(&raw).unwrap();
+            assert_eq!(patch.locate(2).unwrap(), (0, 0, None));
+            assert!(patch.select(0, 0, Some(0), false).is_err());
+            assert!(patch.select_part(0, 0, 0, false).is_err());
+            assert!(patch.split_hunk(0, 0).is_err());
+            let selected = patch.select(0, 0, None, false).unwrap();
+            apply_cached(&f.repo, &selected, false).unwrap();
+            assert!(f
+                .repo
+                .command(["ls-files", "--stage"])
+                .unwrap()
+                .starts_with(format!("100{new:o} ").as_bytes()));
+            let before = fs::read(f.root.join(".git/index")).unwrap();
+            assert!(apply_cached(&f.repo, &selected, false).is_err());
+            assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), before);
+            apply_cached(&f.repo, &selected, true).unwrap();
+            assert!(f
+                .repo
+                .command(["ls-files", "--stage"])
+                .unwrap()
+                .starts_with(format!("100{old:o} ").as_bytes()));
+            assert_eq!(f.index(), original);
+            assert_eq!(fs::read(&path).unwrap(), original);
+            assert_eq!(
+                fs::metadata(&path).unwrap().permissions().mode() & 0o777,
+                new
+            );
+        }
+        let before = fs::read(f.root.join(".git/index")).unwrap();
+        for paths in [
+            "a/space name b/other name",
+            "a/../x b/../x",
+            "space name space name",
+            "a/x b/y",
+            "a/x b/x\nrename from x",
+        ] {
+            let raw = format!("diff --git {paths}\nold mode 100644\nnew mode 100755\n");
+            assert!(apply_cached(&f.repo, raw.as_bytes(), false).is_err());
+        }
+        for (old, new) in [
+            ("100644", "120000"),
+            ("160000", "100755"),
+            ("100644", "100644"),
+        ] {
+            let raw = format!("diff --git a/x b/x\nold mode {old}\nnew mode {new}\n");
+            assert!(Patch::parse(raw.as_bytes()).is_err());
         }
         assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), before);
     }

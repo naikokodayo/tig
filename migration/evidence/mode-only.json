@@ -1,0 +1,68 @@
+{
+  "scope": "Mode-only regular executable-bit status-update in stage view; full migration parity remains open",
+  "tested_source_commit": "85888edbd9fc4217201b2e480915104699966c0a",
+  "base_commit": "97a8630cffd100ad0a64e2b738b6914dd571583a",
+  "source_content_sha256": "377f3e098892a1b6f043a65b0d2c39a5074f9402f41f7a28bde66dece29fc2d6",
+  "source_hash_method": "SHA256 sorted git ls-files -z rust src include compat Cargo.toml Cargo.lock Makefile tigrc; each path bytes + NUL + file bytes + NUL",
+  "source_and_test_sha256": {
+    "rust/patch.rs": "669eba16ae59edf797035ef0e5ff27a38c70cc35a544d54fcd5ddfb971eb7929",
+    "rust/main.rs": "395ee3e6a5bf7a006a6841de1356759f2c38b50628ea93d24738643466559c95",
+    "rust/git.rs": "34cb7ad944dec1e42a2e6b54d9bc7b574685a0fd214ca842ebf0f7bf71863e20",
+    "src/stage.c": "f5aebfe09715f0cae621e8647efe5d7c9b29d60e7b965da3bc7e67a5f07be5bf",
+    "rust/tests/mode-only.py": "13e6a6d5da8e64ea2b387bb6fe0c32f56d4d7d127f275b53de49f4de03c8a490",
+    "src/status.c": "783fe47be3ad6710cca5584ac8f66fb273813668f8803206ff0a14a8f2c7579a",
+    "rust/tests/patch-mode.py": "f24f15a138d1bba46dd9675baf65b503a4bf66a97f6d37ab44a80ad30aed464b",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/stage/default-test": "d58bba43a0248c8c2bea7551e41f8c8dec4dfd993dd8dbb156f8325d895d7493",
+    "test/stage/split-chunk-test": "0aa8614f911de18145b25164645805cc89b7eba159349bdb8181a7284c8c6969",
+    "test/stage/update-part-test": "57949ae5596c712dcfeedf32d7535b805177823814b0a648e9ecf72354723bbb"
+  },
+  "binaries": {
+    "c": {"tig": {"path": "src/tig", "sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c"}, "test-graph": {"path": "test/tools/test-graph", "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"}},
+    "rust": {"tig": {"path": "target/release/tig", "sha256": "66cafbb6fddf0b0d548af5db860adbaec21231c6a4c926b0bffb7004fe82671c"}, "test-graph": {"path": "target/release/test-graph", "sha256": "5c329397600718547209d88224b9ad143cb55da4182656383615acd1f414a6d8"}}
+  },
+  "baseline_rust_binary_sha256": "ae67473c94f45fd002e142aeb4d0c66ee3aa086040b4d5064a8245714e8890eb",
+  "commands": [
+    "cargo fmt --check",
+    "cargo test --all-targets",
+    "cargo clippy --all-targets -- -D warnings",
+    "python3 rust/tests/upstream-suite.py --output <receipt> test/stage/default-test test/stage/update-part-test test/stage/split-chunk-test",
+    "python3 rust/tests/mode-only.py --output <receipt>",
+    "python3 rust/tests/patch-mode.py --output <receipt>"
+  ],
+  "rust_checks": {"fmt_exit": 0, "test_exit": 0, "library_tests": 71, "application_tests": 26, "clippy_exit": 0, "unsafe": "forbid"},
+  "baseline_public": {"c_parity_pass": 4, "rust_parity_pass": 0, "rust_parity_refused": 4, "rust_stale_probes_not_reached": 4, "raw_rust_error": "tig: Patch has no text hunks\r\n", "source_note": "Baseline release binary retained from prior patch-mode receipt; runtime sources match base 97a8630c. Intermediate source-at-run hashes are not baseline build hashes."},
+  "final_public_counts": {"c_parity_pass": 4, "rust_parity_pass": 4, "rust_stale_mode_refusals_pass": 4, "prior_mode_text_pass": 12, "failures": 0, "skips": 0},
+  "index_checks": [
+    {"binary": "c", "executable": false, "reverse": false, "stale": false, "exit_code": 0, "timed_out": false, "index_mode": "100755", "index_preserved_after_stale": true, "worktree_preserved": true, "passed": true},
+    {"binary": "c", "executable": false, "reverse": true, "stale": false, "exit_code": 0, "timed_out": false, "index_mode": "100644", "index_preserved_after_stale": true, "worktree_preserved": true, "passed": true},
+    {"binary": "c", "executable": true, "reverse": false, "stale": false, "exit_code": 0, "timed_out": false, "index_mode": "100644", "index_preserved_after_stale": true, "worktree_preserved": true, "passed": true},
+    {"binary": "c", "executable": true, "reverse": true, "stale": false, "exit_code": 0, "timed_out": false, "index_mode": "100755", "index_preserved_after_stale": true, "worktree_preserved": true, "passed": true},
+    {"binary": "rust", "executable": false, "reverse": false, "stale": false, "exit_code": 0, "timed_out": false, "index_mode": "100755", "index_preserved_after_stale": true, "worktree_preserved": true, "passed": true},
+    {"binary": "rust", "executable": false, "reverse": false, "stale": true, "exit_code": 1, "timed_out": false, "index_mode": "100755", "index_preserved_after_stale": true, "worktree_preserved": true, "passed": true},
+    {"binary": "rust", "executable": false, "reverse": true, "stale": false, "exit_code": 0, "timed_out": false, "index_mode": "100644", "index_preserved_after_stale": true, "worktree_preserved": true, "passed": true},
+    {"binary": "rust", "executable": false, "reverse": true, "stale": true, "exit_code": 1, "timed_out": false, "index_mode": "100644", "index_preserved_after_stale": true, "worktree_preserved": true, "passed": true},
+    {"binary": "rust", "executable": true, "reverse": false, "stale": false, "exit_code": 0, "timed_out": false, "index_mode": "100644", "index_preserved_after_stale": true, "worktree_preserved": true, "passed": true},
+    {"binary": "rust", "executable": true, "reverse": false, "stale": true, "exit_code": 1, "timed_out": false, "index_mode": "100644", "index_preserved_after_stale": true, "worktree_preserved": true, "passed": true},
+    {"binary": "rust", "executable": true, "reverse": true, "stale": false, "exit_code": 0, "timed_out": false, "index_mode": "100755", "index_preserved_after_stale": true, "worktree_preserved": true, "passed": true},
+    {"binary": "rust", "executable": true, "reverse": true, "stale": true, "exit_code": 1, "timed_out": false, "index_mode": "100755", "index_preserved_after_stale": true, "worktree_preserved": true, "passed": true}
+  ],
+  "expected_refusal_raw_errors": [
+    "tig: git apply exit status: 0: warning: space name has type 100644, expected 100755\r\n",
+    "tig: git apply exit status: 0: warning: space name has type 100755, expected 100644\r\n"
+  ],
+  "original_scripts": [
+    {"binary": "c", "scripts_pass": 3, "assertions_pass": 21, "failures": 0, "skips": 0, "not_reached": 0, "build_exit": 0, "binaries_unchanged": true},
+    {"binary": "rust", "scripts_pass": 3, "assertions_pass": 21, "failures": 0, "skips": 0, "not_reached": 0, "build_exit": 0, "binaries_unchanged": true}
+  ],
+  "remaining_boundaries": [
+    "No blob ID exists in mode-only diffs; changed index content is retained. Refusal is for stale modes, not all possible index changes.",
+    "Line/block/split requests still reject mode-only patches.",
+    "Binary, rename/copy, file-type-only and added/deleted-file line selections remain unsupported.",
+    "Git-escaped paths remain refused by the existing canonical path validator; ordinary spaces are covered."
+  ],
+  "reviews": {"independent_read_only": 2, "material_blockers": 0, "main_rs_changes": 0, "rebase_conflicts": 0},
+  "verdict": "PASS_SCOPED; full migration parity gate remains open"
+}
