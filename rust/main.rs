@@ -1213,34 +1213,24 @@ impl App {
         }
         self.refresh_views()
     }
-    fn poll_watch(&mut self) -> bool {
+    fn poll_watch(&mut self) -> Result<bool> {
         if self.config.value("refresh-mode") != Some("periodic") {
-            return false;
+            return Ok(false);
         }
-        let Some(repo) = &self.repo else { return false };
+        let Some(repo) = &self.repo else {
+            return Ok(false);
+        };
         let seconds = self
             .config
             .value("refresh-interval")
             .unwrap_or("10")
             .parse::<u64>()
             .unwrap_or(0);
-        match self.watch.poll(
+        Ok(self.watch.poll(
             repo,
             std::time::Duration::from_secs(seconds),
             std::time::Instant::now(),
-        ) {
-            Ok(false) => false,
-            Ok(true) => {
-                if let Err(error) = self.refresh_views() {
-                    self.message = error.to_string();
-                }
-                true
-            }
-            Err(error) => {
-                self.message = error.to_string();
-                true
-            }
-        }
+        )?)
     }
     fn reset_watch(&mut self) -> Result<()> {
         if self.config.value("refresh-mode") == Some("periodic") {
@@ -1273,6 +1263,32 @@ impl App {
             self.watch.retry();
         }
         result
+    }
+    fn start_history_refresh(&mut self) -> Result<tig_rs::git::HistoryRefresh> {
+        self.sync_context();
+        let (args, _, order) = self.main_options()?;
+        Ok(self.repo()?.start_history(
+            &args,
+            &order,
+            self.config.value("show-notes").unwrap_or("yes"),
+        )?)
+    }
+    fn refresh_periodic(&mut self) -> Result<Option<tig_rs::git::HistoryRefresh>> {
+        // Keep the synchronous multi-view refresh until all panes can reload
+        // without blocking (diff metadata itself may invoke git log).
+        if self.view.name != "main"
+            || self.view.from_stdin
+            || self.other.is_some()
+            || self
+                .previous
+                .last()
+                .is_some_and(|view| matches!(view.name.as_str(), "main" | "status"))
+        {
+            self.refresh_views()?;
+            return Ok(None);
+        }
+        self.reset_watch()?;
+        self.start_history_refresh().map(Some)
     }
     fn sync_context(&mut self) {
         self.args = self.view.args.clone();
@@ -4736,6 +4752,11 @@ fn key_name(code: KeyCode, modifiers: KeyModifiers) -> String {
         _ => String::new(),
     }
 }
+struct PendingHistoryRefresh {
+    refresh: tig_rs::git::HistoryRefresh,
+    periodic: bool,
+}
+
 fn run() -> Result<()> {
     let args: Vec<OsString> = env::args_os().skip(1).collect();
     let mut cli = Cli::parse(&args, !io::stdin().is_terminal())?;
@@ -4943,13 +4964,10 @@ fn run() -> Result<()> {
     app.center_selection();
     let mut terminal = Terminal::open(&app.config)?;
     let mut key_sequence = String::new();
-    let mut history_refresh: Option<tig_rs::git::HistoryRefresh> = None;
+    let mut history_refresh: Option<PendingHistoryRefresh> = None;
     loop {
         if app.finder.is_some() {
             terminal.find_file(&mut app)?;
-        }
-        if history_refresh.is_none() {
-            app.poll_watch();
         }
         terminal.draw(&mut app)?;
         let event = loop {
@@ -4958,11 +4976,11 @@ fn run() -> Result<()> {
             }
             let mut completed = false;
             if let Some(refresh) = &mut history_refresh {
-                let result = refresh.poll(app.repo()?);
+                let result = refresh.refresh.poll(app.repo()?);
                 match result {
                     Ok(None) => (),
                     result => {
-                        history_refresh = None;
+                        let pending = history_refresh.take().expect("completed history job");
                         completed = true;
                         let result = result
                             .map_err(|e| -> Box<dyn std::error::Error> { Box::new(e) })
@@ -4992,22 +5010,64 @@ fn run() -> Result<()> {
                                 app.view = view;
                                 app.message.clear();
                             }
-                            Err(error) => app.message = error.to_string(),
+                            Err(error) => {
+                                if pending.periodic {
+                                    app.watch.retry();
+                                }
+                                app.message = error.to_string();
+                            }
                         }
                     }
                 }
             }
-            if completed || (history_refresh.is_none() && app.poll_watch()) {
+            let mut watch_error = false;
+            let changed = if history_refresh.is_none() {
+                match app.poll_watch() {
+                    Ok(changed) => changed,
+                    Err(error) => {
+                        app.message = error.to_string();
+                        watch_error = true;
+                        false
+                    }
+                }
+            } else {
+                false
+            };
+            if changed {
+                match app.refresh_periodic() {
+                    Ok(Some(refresh)) => {
+                        history_refresh = Some(PendingHistoryRefresh {
+                            refresh,
+                            periodic: true,
+                        });
+                        app.message = "Loading history (z to stop)".into();
+                    }
+                    Ok(None) => (),
+                    Err(error) => {
+                        app.watch.retry();
+                        app.message = error.to_string();
+                    }
+                }
+            }
+            if completed || changed || watch_error {
                 terminal.draw(&mut app)?;
             }
         };
         let action = match event {
             Event::Resize(w, h) => {
-                history_refresh = None;
+                let interrupted = history_refresh
+                    .take()
+                    .is_some_and(|pending| pending.periodic);
+                if interrupted {
+                    app.watch.retry();
+                    app.message.clear();
+                }
                 app.width = w as usize;
                 app.height = h as usize;
-                if let Err(error) = app.refresh_after_command() {
-                    app.message = error.to_string();
+                if !interrupted {
+                    if let Err(error) = app.refresh_after_command() {
+                        app.message = error.to_string();
+                    }
                 }
                 continue;
             }
@@ -5065,7 +5125,13 @@ fn run() -> Result<()> {
                     | "parent"
                     | "back"
             );
-        let cancelled = !navigates && history_refresh.take().is_some();
+        let cancelled = !navigates
+            && history_refresh.take().is_some_and(|job| {
+                if job.periodic && action != "stop-loading" {
+                    app.watch.retry();
+                }
+                true
+            });
         app.message.clear();
         if action == "stop-loading" {
             if cancelled {
@@ -5076,17 +5142,12 @@ fn run() -> Result<()> {
         // ponytail: only the focused main view refresh is asynchronous;
         // initial loads and general streaming need a broader view lifecycle.
         if action == "refresh" && app.view.name == "main" && !app.view.from_stdin {
-            app.sync_context();
-            let result = app.main_options().and_then(|(args, _, order)| {
-                Ok(app.repo()?.start_history(
-                    &args,
-                    &order,
-                    app.config.value("show-notes").unwrap_or("yes"),
-                )?)
-            });
-            match result {
+            match app.start_history_refresh() {
                 Ok(refresh) => {
-                    history_refresh = Some(refresh);
+                    history_refresh = Some(PendingHistoryRefresh {
+                        refresh,
+                        periodic: false,
+                    });
                     app.message = "Loading history (z to stop)".into();
                 }
                 Err(error) => app.message = error.to_string(),
