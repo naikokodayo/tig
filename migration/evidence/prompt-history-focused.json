@@ -1,0 +1,288 @@
+{
+  "schema": 1,
+  "source_commit": "647ed220f4374ab7b50791b12d407738cb8defd4",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "rust_complete": false,
+  "parity_gate": "BLOCKED",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "        CC  src/tig.o\n        CC  src/types.o\n        CC  src/string.o\n        CC  src/util.o\n        CC  src/map.o\n        CC  src/argv.o\n        CC  src/io.o\n        CC  src/refdb.o\n       GEN  src/builtin-config.c\n        CC  src/builtin-config.o\n        CC  src/request.o\n        CC  src/line.o\n        CC  src/keys.o\n        CC  src/repo.o\n        CC  src/options.o\n        CC  src/draw.o\n        CC  src/prompt.o\n        CC  src/display.o\n        CC  src/view.o\n        CC  src/search.o\n        CC  src/parse.o\n        CC  src/watch.o\n        CC  src/pager.o\n        CC  src/log.o\n        CC  src/reflog.o\n        CC  src/diff.o\n        CC  src/help.o\n        CC  src/tree.o\n        CC  src/blob.o\n        CC  src/blame.o\n        CC  src/refs.o\n        CC  src/status.o\n        CC  src/stage.o\n        CC  src/main.o\n        CC  src/stash.o\n        CC  src/grep.o\n        CC  src/ui.o\n        CC  src/apps.o\n        CC  src/graph.o\n        CC  src/graph-v1.o\n        CC  src/graph-v2.o\n        CC  compat/hashtab.o\n        CC  compat/utf8proc.o\n      LINK  src/tig\n        CC  test/tools/test-graph.o\n      LINK  test/tools/test-graph\n",
+      "results": [
+        {
+          "script": "test/main/search-preload-test",
+          "script_sha256": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/search-preload-test/.test-result",
+          "receipt": "  [OK] main.screen assertion\n  [OK] stderr assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/search-test",
+          "script_sha256": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-search-author.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-empty.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-find-next.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title-no-match.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-time.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-smart-case.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/search-test/.test-result",
+          "receipt": "  [OK] main-search-author.screen assertion\n  [OK] main-search-author-empty.screen assertion\n  [OK] main-search-author-find-next.screen assertion\n  [OK] main-search-title.screen assertion\n  [OK] main-search-title-no-match.screen assertion\n  [OK] main-search-refs.screen assertion\n  [OK] main-search-time.screen assertion\n  [OK] main-search-smart-case.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/src/tig",
+          "sha256": "8673b0c2688da4e890598f5a69237175a9a13b0074353b9f3217583a039a7b7a"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 2
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.26s\n",
+      "results": [
+        {
+          "script": "test/main/search-preload-test",
+          "script_sha256": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "skip",
+          "reasons": [],
+          "checks": {},
+          "assertions": [],
+          "receipt_path": "test/tmp/main/search-preload-test/.test-result",
+          "receipt": "",
+          "skip": "The test requires a tig compiled with readline\n",
+          "skipped_cases": {},
+          "transcript": "[skipped] The test requires a tig compiled with readline\r\n"
+        },
+        {
+          "script": "test/main/search-test",
+          "script_sha256": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-search-author.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-empty.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-find-next.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title-no-match.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-time.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-smart-case.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/search-test/.test-result",
+          "receipt": "  [OK] main-search-author.screen assertion\n  [OK] main-search-author-empty.screen assertion\n  [OK] main-search-author-find-next.screen assertion\n  [OK] main-search-title.screen assertion\n  [OK] main-search-title-no-match.screen assertion\n  [OK] main-search-refs.screen assertion\n  [OK] main-search-time.screen assertion\n  [OK] main-search-smart-case.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target/release/tig",
+          "sha256": "3585cba2fb914f23bfce501a53bf76d323bfd1816c432892ce971f73c7bdaa22"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target/release/test-graph",
+          "sha256": "217d4237168d74c9b0656e7661258892d2c2fde4af055742b99a05bfe12aae99"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "skip": 1,
+        "pass": 1
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/main/search-preload-test",
+      "c_status": "pass",
+      "rust_status": "skip",
+      "assertions": [
+        {
+          "id": "main.screen#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        },
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "NOT_REACHED"
+        }
+      ]
+    },
+    {
+      "script": "test/main/search-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-search-author.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-author-empty.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-author-find-next.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-title.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-title-no-match.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-time.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-search-smart-case.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ],
+  "prompt_history_verification": {
+    "rust_source_sha256": "26971ec919fb3c21dab9cf51ec4ee4e736892adf0ae3eda31f9eaf370ce5a2a8",
+    "pty_test_sha256": "0a99a4dd3f9bb24626b6b2e14d4eed4c6064154afc0ed5e94eb18ae03ee61d3e",
+    "command": "python3 rust/tests/prompt-history-pty.py target/release/tig",
+    "result": "PASS: preloaded find-next and live Up history navigation on a controlling PTY",
+    "rust_version_readline_claim": false,
+    "remaining_gate": "Original test_require readline skips Rust; full readline capability is not claimed."
+  }
+}

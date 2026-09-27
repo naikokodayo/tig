@@ -3382,9 +3382,78 @@ struct Terminal {
     out: fs::File,
     stop: std::sync::Arc<std::sync::atomic::AtomicBool>,
     signals: Vec<signal_hook::SigId>,
+    history: PromptHistory,
+}
+struct PromptHistory {
+    path: Option<PathBuf>,
+    entries: Vec<String>,
+    limit: usize,
+}
+impl PromptHistory {
+    fn load(config: &Config) -> Self {
+        let limit = config.usize_value("history-size", 500);
+        if limit == 0 {
+            return Self {
+                path: None,
+                entries: Vec::new(),
+                limit,
+            };
+        }
+        let home = env::var_os("HOME").map(PathBuf::from);
+        let preferred = env::var_os("XDG_DATA_HOME")
+            .filter(|value| !value.is_empty())
+            .map(|value| PathBuf::from(value).join("tig/history"))
+            .or_else(|| {
+                home.as_ref()
+                    .map(|home| home.join(".local/share/tig/history"))
+            });
+        let path = preferred
+            .and_then(|path| {
+                if env::var_os("XDG_DATA_HOME").is_some_and(|value| !value.is_empty()) {
+                    if let Some(parent) = path.parent() {
+                        let _ = fs::create_dir_all(parent);
+                    }
+                }
+                fs::OpenOptions::new()
+                    .read(true)
+                    .append(true)
+                    .create(true)
+                    .open(&path)
+                    .map(|_| path)
+                    .ok()
+            })
+            .or_else(|| home.map(|home| home.join(".tig_history")));
+        let entries = path
+            .as_ref()
+            .and_then(|path| fs::read_to_string(path).ok())
+            .map(|text| text.lines().map(str::to_owned).collect::<Vec<_>>())
+            .unwrap_or_default()
+            .into_iter()
+            .rev()
+            .take(limit)
+            .collect::<Vec<_>>()
+            .into_iter()
+            .rev()
+            .collect();
+        Self {
+            path,
+            entries,
+            limit,
+        }
+    }
+    fn append(&self, value: &str) {
+        if let Some(path) = &self.path {
+            // ponytail: append keeps old entries on disk; compact atomically if file growth matters.
+            let _ = fs::OpenOptions::new()
+                .append(true)
+                .create(true)
+                .open(path)
+                .and_then(|mut file| writeln!(file, "{value}"));
+        }
+    }
 }
 impl Terminal {
-    fn open() -> Result<Self> {
+    fn open(config: &Config) -> Result<Self> {
         let out = fs::OpenOptions::new()
             .read(true)
             .write(true)
@@ -3399,7 +3468,12 @@ impl Terminal {
             signals.push(signal_hook::flag::register(signal, stop.clone())?);
         }
         terminal::enable_raw_mode()?;
-        let mut t = Self { out, stop, signals };
+        let mut t = Self {
+            out,
+            stop,
+            signals,
+            history: PromptHistory::load(config),
+        };
         execute!(
             t.out,
             terminal::EnterAlternateScreen,
@@ -3468,6 +3542,8 @@ impl Terminal {
     }
     fn prompt(&mut self, app: &mut App, prefix: &str) -> Result<Option<String>> {
         let mut value = String::new();
+        let mut position = self.history.entries.len();
+        let mut draft = String::new();
         loop {
             queue!(
                 self.out,
@@ -3482,8 +3558,36 @@ impl Terminal {
             self.out.flush()?;
             if let Event::Key(k) = self.read()? {
                 match k.code {
-                    KeyCode::Enter => return Ok(Some(value)),
+                    KeyCode::Enter => {
+                        if self.history.limit > 0
+                            && !value.is_empty()
+                            && self.history.entries.last() != Some(&value)
+                        {
+                            self.history.entries.push(value.clone());
+                            if self.history.entries.len() > self.history.limit {
+                                self.history.entries.remove(0);
+                            }
+                            self.history.append(&value);
+                        }
+                        return Ok(Some(value));
+                    }
                     KeyCode::Esc => return Ok(None),
+                    KeyCode::Up if position > 0 => {
+                        if position == self.history.entries.len() {
+                            draft = value.clone();
+                        }
+                        position -= 1;
+                        value.clone_from(&self.history.entries[position]);
+                    }
+                    KeyCode::Down if position < self.history.entries.len() => {
+                        position += 1;
+                        value = self
+                            .history
+                            .entries
+                            .get(position)
+                            .cloned()
+                            .unwrap_or_else(|| draft.clone());
+                    }
                     KeyCode::Backspace => {
                         value.pop();
                     }
@@ -3604,6 +3708,8 @@ fn run() -> Result<()> {
     let invocation = env::current_dir()?;
     let repo = Repository::discover(&invocation).ok();
     let (width, height) = terminal::size().unwrap_or((80, 24));
+    let history = PromptHistory::load(&config);
+    let search = history.entries.last().cloned().unwrap_or_default();
     let mut app = App {
         repo,
         config,
@@ -3620,7 +3726,7 @@ fn run() -> Result<()> {
         path: PathBuf::new(),
         args: cli.git_args.clone(),
         message: String::new(),
-        search: String::new(),
+        search,
         width: width as usize,
         height: height as usize,
     };
@@ -3769,7 +3875,7 @@ fn run() -> Result<()> {
         return app.script(&script);
     }
     app.center_selection();
-    let mut terminal = Terminal::open()?;
+    let mut terminal = Terminal::open(&app.config)?;
     let mut key_sequence = String::new();
     loop {
         terminal.draw(&mut app)?;
@@ -3898,7 +4004,7 @@ fn run() -> Result<()> {
                     tty.flush()?;
                     BufReader::new(tty).read_line(&mut String::new())?;
                 }
-                terminal = Terminal::open()?;
+                terminal = Terminal::open(&app.config)?;
                 result
             };
             match result {
