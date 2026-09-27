@@ -3561,9 +3561,20 @@ fn complete_prompt_action(value: &mut String, point: &mut usize) {
         .map(|action| (*action).to_string())
         .chain(tig_rs::request_info().into_iter().map(|(_, name, _)| name))
         .filter(|action| action.starts_with(&*value));
-    if let (Some(action), None) = (matches.next(), matches.next()) {
+    let Some(mut common) = matches.next() else {
+        return;
+    };
+    for action in matches {
+        let shared = common
+            .bytes()
+            .zip(action.bytes())
+            .take_while(|(a, b)| a == b)
+            .count();
+        common.truncate(shared);
+    }
+    if common.len() > value.len() {
         value.clear();
-        value.push_str(&action);
+        value.push_str(&common);
         *point = value.len();
     }
 }

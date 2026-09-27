@@ -131,6 +131,10 @@ def main():
         assert history.read_text().splitlines()[-1] == "refresh"
         run(binary, repo, home, keys=b":e\t\rQQQ")
         assert history.read_text().splitlines()[-1] == "e"
+        run(binary, repo, home, keys=b":view-cl\tX\rQQQ")
+        assert history.read_text().splitlines()[-1] == "view-closeX"
+        run(binary, repo, home, keys=b":view-close\tX\rQQQ")
+        assert history.read_text().splitlines()[-1] == "view-closeX"
 
 
 if __name__ == "__main__":

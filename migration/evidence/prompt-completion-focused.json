@@ -1,14 +1,14 @@
 {
-  "scope": "Unique first-word action completion in the Rust colon prompt",
+  "scope": "First-word action Tab completion in the Rust colon prompt (unique and common prefix)",
   "base_commit": "e8fc0a48dc66b795c37eaae09c6aa6ba4f8a8692",
   "sha256": {
     "src/prompt.c": "6f358c75f49a784403462b09f67a25112545bb92d455e7b77e71dd293d9df203",
-    "rust/main.rs": "c32e804128c99a1184bd18ee9b6445845ef734d2315c413ed6f63f7ddde639b9",
-    "rust/tests/prompt-history-pty.py": "d28963b952ccc6d22a79d6b8bc1f189a7d3b47b80abc3768e39b9da89b0f4886",
+    "rust/main.rs": "d60043f2a00913e249ab3a562e7769c8b1626b86d520353ea9780decd9a63a95",
+    "rust/tests/prompt-history-pty.py": "902b132906f5ea41975fb917a50070394ebd8570a80477ef13db1a5f27f97a12",
     "test/main/search-preload-test": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
     "test/main/search-test": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
     "src/tig": "8673b0c2688da4e890598f5a69237175a9a13b0074353b9f3217583a039a7b7a",
-    "target/release/tig": "edb2bfa05c4b958b11a758fa893dec5cb55900a6f8ead1cbd4ae571738781f58",
+    "target/release/tig": "85fdbcdfdedfde51f3a56d37a80867062383b50e48e357c9a2fcaaa54fe9aa50",
     "rust/lib.rs": "738efb934c1d412a9fa085c7dea1a1acfe7e78dd0b17ab3c6f151c74bfd5cf86",
     "rust/request.rs": "d86fb0b900878ea116c17bd6a431b450d34999fd113770b6f9e0cb39ff88deb8"
   },
@@ -33,6 +33,16 @@
       "keys": ":e, Tab, Enter",
       "C": "e",
       "Rust_after": "e"
+    },
+    {
+      "keys": ":view-cl, Tab, X, Enter",
+      "C": "view-closeX",
+      "Rust_after": "view-closeX"
+    },
+    {
+      "keys": ":view-close, Tab, X, Enter",
+      "C": "view-closeX",
+      "Rust_after": "view-closeX"
     }
   ],
   "checks": {
@@ -84,7 +94,7 @@
     {
       "area": "completion",
       "required": "action, set/toggle options, variables, filenames and ambiguous-match display",
-      "current": "partial; unique first-word C action names only; option/variable/file and ambiguous display missing"
+      "current": "partial; first-word C action names, unique and common prefixes; option/variable/file and match-list display missing"
     },
     {
       "area": "terminal and signals",
@@ -110,12 +120,13 @@
     "cargo clippy --locked --all-targets -- -D warnings",
     "cargo build --release --locked --quiet",
     "python3 rust/tests/prompt-history-pty.py target/release/tig",
-    "python3 rust/tests/upstream-suite.py test/main/search-preload-test test/main/search-test --output /Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/work/readline-completion-reviewed.json",
+    "python3 rust/tests/upstream-suite.py test/main/search-preload-test test/main/search-test --output /Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/work/readline-completion-lcp.json",
     "cargo check --manifest-path /Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/work/linefeed-msrv/Cargo.toml"
   ],
   "library_sources": {
     "linefeed": "https://docs.rs/linefeed/0.6.0/linefeed/",
     "reedline": "https://crates.io/api/v1/crates/reedline/0.51.0",
     "rustyline": "https://github.com/kkawakam/rustyline"
-  }
+  },
+  "strict_runner_head": "46130f060484145ad8f1b72fa3b20519c928729b"
 }
