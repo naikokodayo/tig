@@ -4,7 +4,7 @@
 
 ## 当前阶段门
 
-最新严格配对快照固定在已合并源码 `44b0bf42`：154 个未改动的原版脚本在 C 与 Rust 两侧均实际尝试，Rust 应用与图形辅助程序均由 Rust 构建。C 为 152 通过、0 失败、2 跳过；Rust 为 **147 通过、4 失败、3 跳过**，较[上一快照](https://github.com/naikokodayo/tig/blob/d59e2d52f719ef5b43ff501cadd8852119f2a61e/migration/evidence/upstream-rust-only-current.json)新增 6 个通过。Rust 真实断言为 564 通过、6 失败，另有 2 条相对 C 未执行。完整二进制哈希、原始输出和逐脚本映射见[当前严格配对证据](evidence/upstream-rust-only-current.json)。阶段门仍未通过，最终应用 benchmark 延后。
+最新严格配对快照固定在已合并源码 `fc2402ff`：154 个未改动的原版脚本在 C 与 Rust 两侧均实际尝试，Rust 应用与图形辅助程序均由 Rust 构建。C 为 152 通过、0 失败、2 跳过；Rust 为 **147 通过、4 失败、3 跳过**，较[上一份实际已提交、绑定 `d59e2d52` 的快照](https://github.com/naikokodayo/tig/blob/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence/upstream-rust-only-current.json)新增 6 个通过。Rust 真实断言为 564 通过、6 失败，另有 2 条相对 C 未执行。完整二进制哈希、原始输出和逐脚本映射见[当前严格配对证据](evidence/upstream-rust-only-current.json)。此前文档误将 147 通过标为 `44b0bf42` 的已提交结果，现按收据中的源码版本纠正。阶段门仍未通过，最终应用 benchmark 延后。
 
 ## 并行任务与合并顺序
 
@@ -12,7 +12,7 @@
 
 1. **已合并并通过全套**：标准输入、diff 统计、分支变量、Git alias、控制字符、blame 初始差异、布局、子模块 diff 选项、主视图选项及暂存分块显示。
 2. **提示历史已合并**：加载、上下导航、限额和去重有真实终端回归；原始 `main/search-preload` 仍因完整 readline 特性未实现而跳过，`--version` 不冒称支持。
-3. **剩余四个失败脚本**：`diff/diff-highlight` 缺失程序时 Rust 保留原 diff；`main/filter-args` 与 `status/file-filter` 尚有三条精确 Git 命令 trace 差异，屏幕断言均通过；`tree/file-name` 见下方安全差异。原始断言没有修改。
+3. **剩余四个失败脚本**：`diff/diff-highlight` 缺失程序时 Rust 保留原 diff 并报错；`main/filter-args` 与 `status/file-filter` 尚有三条内部 Git 命令逐字 trace 差异，屏幕断言均通过；`tree/file-name` 见下方安全差异。原始断言没有修改。为满足 trace 而增加无用 Git 调用不作为迁移目标。
 4. **结构剪枝已取得可验证结果**：运行时 C 头文件解析已由 Rust 目录替代；仅用 `Cargo.toml`、`Cargo.lock`、`rust/` 和 `tigrc` 的 C-free release 构建通过。C 源码和原版测试仍作为行为基准保留，等阶段门完成后再移除。
 
 `tree/file-name` 是单独的安全差异：C 的 `git ls-tree` 文本输出对非 ASCII 文件名加引号和转义，随后 `src/tree.c` 按原始目录名的字节长度从该文本剥离路径，导致测试所期待的截断/乱码行。Rust 使用 `-z` 保留真实路径字节并正确显示文件名；真实 Git 回归已核对名称、路径与历史元数据。复制 C 行为会破坏文件导航。保留原版失败断言与原始证据，不修改测试或降低路径安全要求；阶段门继续保持阻塞，待明确验收该例外。

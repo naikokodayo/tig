@@ -660,9 +660,9 @@ the executable hashes and individual transcripts. This is 17 more passing
 Rust scripts than the preceding `86ce7680` snapshot. The parity gate remains
 **OPEN**; completed follow-up slices must be retested against their merged source.
 
-### Current strict paired snapshot after layout, staging, prompt, and diff integration
+### Current strict paired snapshot after prompt editing and mode-only staging
 
-At merged source `44b0bf426de481d365451671c338cd7ffdd4161c`, the runner
+At merged source `fc2402ff0cd145d386f53a5a3e503090127cbb08`, the runner
 attempted all 154 unchanged scripts with separately hashed C and Rust-only
 application/graph binaries. C passed 152, failed none, and skipped two. Rust
 passed 147, failed four, and skipped three: 564 actual assertions passed, six
@@ -671,10 +671,13 @@ receipt](migration/evidence/upstream-rust-only-current.json) contains each
 script's original output, route and hashes. This is six more passing Rust
 scripts than the [preceding source-bound snapshot](https://github.com/naikokodayo/tig/blob/d59e2d52f719ef5b43ff501cadd8852119f2a61e/migration/evidence/upstream-rust-only-current.json).
 The four failing scripts are `diff/diff-highlight` (two assertions: a missing
-highlighter leaves the original diff visible in Rust), `main/filter-args`
-(two exact Git trace assertions), `status/file-filter` (one exact Git trace
-assertion), and `tree/file-name` (one assertion expecting C's truncated Unicode
-path). `main/search-preload` skips on Rust's honest missing-readline feature
+highlighter leaves the original diff visible and reports an error in Rust),
+`main/filter-args` (two exact internal Git trace assertions),
+`status/file-filter` (one exact internal Git trace assertion), and
+`tree/file-name` (one assertion expecting C's truncated Unicode path).
+The filter screens pass; matching C's internal Git command spelling would
+require replacing Rust's working argument classification, discovery and
+history parser, not a single display fix. `main/search-preload` skips on Rust's honest missing-readline feature
 gate, leaving two assertions not reached. Original assertions were not changed.
 `stage/split-chunk` now passes; its earlier failure was a display mismatch, not
 evidence of C index data loss in this script. A release build from only
@@ -686,6 +689,9 @@ Earlier mixed-route full-suite JSON and raw logs are archived at the fixed
 [`44b0bf42` source commit](https://github.com/naikokodayo/tig/tree/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence).
 The current tree keeps the latest strict paired receipt instead of duplicating
 those superseded runs.
+The prior copy of this section quoted the 147-pass result at `44b0bf42`, but
+that commit's checked-in receipt was still bound to `d59e2d52` (141 passes).
+This run is the first checked-in strict receipt bound to the later merged source.
 
 ### Non-local `%s` follow-up
 
