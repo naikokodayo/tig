@@ -1461,6 +1461,18 @@ mod tests {
         }
     }
     #[test]
+    fn history_keeps_control_subjects_and_multiline_option_values() {
+        let f = Fixture::new();
+        let repo = f.repo();
+        fs::write(f.0.join("file"), b"content").unwrap();
+        repo.command(["add", "file"]).unwrap();
+        repo.command(["commit", "-qm", "before\u{3}after"]).unwrap();
+        assert_eq!(repo.history(&[], 0).unwrap()[0].subject, "before\u{3}after");
+        assert!(repo
+            .history(&["--grep".into(), "before\nafter".into()], 0)
+            .is_ok());
+    }
+    #[test]
     fn filtered_status_preserves_paths_renames_and_conflicts() {
         let f = Fixture::new();
         let repo = f.repo();

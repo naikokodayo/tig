@@ -644,7 +644,14 @@ impl App {
         let repo = self.repo()?;
         match name {
             "main" => {
-                let options = tig_rs::git::HistoryOptions::parse(&self.args)?;
+                let mut args = self
+                    .config
+                    .settings
+                    .get("main-options")
+                    .cloned()
+                    .unwrap_or_default();
+                args.extend(self.args.iter().cloned());
+                let options = tig_rs::git::HistoryOptions::parse(&args)?;
                 let mut config = self.config.clone();
                 let configured_graph = tig_rs::render::main_graph_enabled(&config);
                 let graph = options.with_graph && configured_graph;
@@ -654,7 +661,7 @@ impl App {
                 } else {
                     order
                 };
-                let commits = repo.history_ordered(&self.args, 0, order)?;
+                let commits = repo.history_ordered(&args, 0, order)?;
                 if !graph || order == "reverse" {
                     config
                         .settings
