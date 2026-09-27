@@ -667,7 +667,7 @@ Rust scripts than the preceding `86ce7680` snapshot. The parity gate remains
 
 ### Current strict paired snapshot
 
-At merged source `7231e2ec7c1ae3d8af522590897a8ff5a6e830ed`, the runner
+At merged source `09e7153565f5418d965a7d4fa8dbd8bc6acf85f2`, the runner
 attempted all 154 unchanged scripts with separately hashed C and Rust-only
 application/graph binaries. C passed 152, failed none, and skipped two. Rust
 passed 148, failed four, and skipped two: 566 actual assertions passed and six
@@ -693,8 +693,9 @@ mergetool, Git-native stash patches, historical tree/blob editing, diff-origin
 editing, grep-to-blame line navigation, pager Enter behavior, the interactive
 options menu, file/stage/status blame navigation, cancellable standalone
 main-history refresh, mouse navigation, search match feedback, native blame
-filename arguments, page and half-page viewport scrolling, and blame context
-navigation. Their focused Git/PTY checks add coverage beyond the
+filename arguments, page and half-page viewport scrolling, blame context
+navigation, tree back/parent handling, and cancellable split/periodic main
+history refresh. Their focused Git/PTY checks add coverage beyond the
 unchanged original scripts. The strict runner now uses bounded parallel jobs;
 the C/Rust phases and original result mapping remain ordered.
 
