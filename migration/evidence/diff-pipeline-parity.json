@@ -1,11 +1,12 @@
 {
   "schema": 2,
   "scope": "focused C/Rust diff pipeline parity, not the full migration gate",
-  "tested_source_commit": "ee881c3b8101999043d4e43bc757c855d727d4d8",
+  "tested_source_commit": "4d09f47fbec45b4b62b23734e870e0000d9db6c1",
   "source_sha256": {
-    "rust/main.rs": "24636d184fc27c3c83399b51d6c6ecb8f6f053a9829c529c78d1b13b99a035e6",
+    "rust/config.rs": "adf1be06bea100489c8087d06da4ee6ffe6723ec1abedb03ceb47099cde24eab",
+    "rust/main.rs": "395ee3e6a5bf7a006a6841de1356759f2c38b50628ea93d24738643466559c95",
     "rust/git.rs": "34cb7ad944dec1e42a2e6b54d9bc7b574685a0fd214ca842ebf0f7bf71863e20",
-    "rust/tests/diff-pipeline.py": "d7f6ddd7df7d047b489961717c78684395632c010bb7ac06e09f77cee7dd2f55"
+    "rust/tests/diff-pipeline.py": "a41f9d885d13bce4cafca7ca384fc872162ecc0e0342cc8c7fd94f6cd699214b"
   },
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -14,10 +15,10 @@
   },
   "binary_sha256": {
     "c": "687fbb3569b2f629730ed57fa65a044b5ec8f806b485cd27844649f343ae43fd",
-    "rust": "31dccedf327eedbeb93ffebd155c0ce8de39ce09bd5351686cac7e18dcf1fabf"
+    "rust": "b34929eb09d6cd543dcc77d5e7421ba8875287babcb7b5e1747951604466d180"
   },
   "binary_routes_verified": true,
-  "original_script_command": "python3 rust/tests/upstream-suite.py --output /Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/work/diff-rebased-full.json test/diff/diff-highlight-test test/main/submodule-test",
+  "original_script_command": "python3 rust/tests/upstream-suite.py --output /Users/liuxu/Documents/Codex/2026-09-27/tig-rust-diff-pipeline/work/diff-final-full.json test/diff/diff-highlight-test test/main/submodule-test",
   "original_scripts": [
     {
       "script": "test/diff/diff-highlight-test",
@@ -72,9 +73,10 @@
     "cases": [
       "inferred-word",
       "forced-word",
-      "decorated-filter"
+      "decorated-filter",
+      "cli-word-override"
     ],
-    "result": "3 exact C/Rust screen comparisons passed"
+    "result": "4 exact C/Rust screen comparisons passed"
   },
   "rust_checks": {
     "fmt": "pass",
