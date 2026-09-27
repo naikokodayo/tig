@@ -1,0 +1,52 @@
+{
+  "scope": "Move existing prompt history, inputrc, action completion and prompt text helpers from main.rs into rust/prompt.rs without changing behavior",
+  "tested_base_commit": "72f107f2a22c129bf1688f9140d6fa6e308d8b6a",
+  "sha256": {
+    "rust/main.rs": "9491f7cddf4bfec1b2dd0fbbfa308bb09b7d0ebafe41bd7f8708c6f4d589a647",
+    "rust/prompt.rs": "a58a905ed95dd95a6df871964cd1ab520736f32462b4805fe0fcc8aa0d150082",
+    "rust/tests/prompt-history-pty.py": "902b132906f5ea41975fb917a50070394ebd8570a80477ef13db1a5f27f97a12",
+    "src/prompt.c": "6f358c75f49a784403462b09f67a25112545bb92d455e7b77e71dd293d9df203",
+    "test/main/search-preload-test": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
+    "test/main/search-test": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
+    "src/tig": "8673b0c2688da4e890598f5a69237175a9a13b0074353b9f3217583a039a7b7a",
+    "target/release/tig": "26bc4cc19796842f4b35bc34f0f2638624b6ac37b39f244564b94ad04aacdcde"
+  },
+  "lines": {
+    "main_before": 5430,
+    "main_after": 5189,
+    "main_removed": 241,
+    "prompt_module": 254,
+    "combined_net_added": 13
+  },
+  "checks": {
+    "cargo_fmt": "pass",
+    "cargo_test": "99 passed",
+    "cargo_clippy_all_targets_D_warnings": "pass",
+    "cargo_release_build": "pass",
+    "prompt_history_pty": "pass",
+    "original_scripts": {
+      "c": {
+        "test/main/search-preload-test": {
+          "status": "pass",
+          "assertions_passed": 2
+        },
+        "test/main/search-test": {
+          "status": "pass",
+          "assertions_passed": 8
+        }
+      },
+      "rust": {
+        "test/main/search-preload-test": {
+          "status": "skip",
+          "assertions_passed": 0,
+          "skip": "[skipped] The test requires a tig compiled with readline"
+        },
+        "test/main/search-test": {
+          "status": "pass",
+          "assertions_passed": 8
+        }
+      }
+    }
+  },
+  "verdict": "Behavior checks pass for the extracted prompt paths. Strict parity remains BLOCKED: Rust still skips the unchanged readline-gated search-preload-test with 0 assertions; Rust --version does not claim readline."
+}
