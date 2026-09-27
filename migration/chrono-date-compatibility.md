@@ -73,7 +73,7 @@ PR #4 合入后，blame 时间戳也复用相同 Chrono 转换，删除第二套
 
 ## PR #3 的历史 OPEN gate：非本地自定义 `%s`
 
-复查发现不能把非本地 `%s` 交给 `TZ=UTC date` 并声称等价：C 先取提交 wall time 的 `gmtime`（`tm_isdst=0`），libc `%s` 再按用户 TZ 调用 `mktime`。例如 `1719792000 +0000`、`TZ=America/New_York` 的 C 输出是 `1719810000`，此前 Rust 输出 `1719792000`。24 个修复前 C/Rust 本地与非本地 probe 及二进制摘要保存在 [`date-percent-s-before.json`](evidence/date-percent-s-before.json)。[Darwin strftime 实现](https://github.com/apple-oss-distributions/Libc/blob/main/stdtime/FreeBSD/strftime.c)
+复查发现不能把非本地 `%s` 交给 `TZ=UTC date` 并声称等价：C 先取提交 wall time 的 `gmtime`（`tm_isdst=0`），libc `%s` 再按用户 TZ 调用 `mktime`。例如 `1719792000 +0000`、`TZ=America/New_York` 的 C 输出是 `1719810000`，此前 Rust 输出 `1719792000`。24 个修复前 C/Rust 本地与非本地 probe 及二进制摘要保存在 [`date-percent-s-before.json`](https://github.com/naikokodayo/tig/blob/3d753aa9733eea5888a5428de26fbd6e37948704/migration/evidence/date-percent-s-before.json)。[Darwin strftime 实现](https://github.com/apple-oss-distributions/Libc/blob/main/stdtime/FreeBSD/strftime.c)
 
 PR #3 的边界改为明确拒绝非本地 `%s`，错误为 `Non-local %s date format is not supported; use date-local`。本地 `%s`、字面量 `%%s` 与零日期的空白显示保留。回归覆盖纽约冬季/夏季、提交偏移与 Kolkata；先在旧二进制复现错误成功返回，再验证新行为。`date-local` 会改变显示语义，是可选模式，不是精确兼容替代。
 
@@ -116,7 +116,7 @@ python3 rust/tests/terminal-smoke.py
 
 `date-percent-s.py` 复用已有控制 PTY 工具，对未修改 C Tig 与 Rust 二进制逐例比较行输出、退出码、超时状态，并记录两端摘要。矩阵覆盖纽约冬夏、提交正负偏移、Kolkata、Lord Howe 半小时 DST、Dublin 负 DST、Casablanca、Apia、显式 POSIX TZ、空/未设置 TZ、时区文件、纽约 gap/fold 的墙上时间边界、负时间、2038 边界、9999 年、重复 `%s`、`%%s`、`%%%s` 和 locale 混合格式。修复前 156 个场景中 87 个明确被旧拒绝逻辑挡住，69 个既有路径通过；这不是全仓迁移完成率。
 
-最终本机检查和跨平台 CI 收据见下方记录；旧 `date-percent-s-*.json` 保留历史含义。**此门只在列明的平台和运行依赖范围内关闭；完整迁移、其它平台、自包含实现和大历史性能门仍开放。**
+最终本机检查和跨平台 CI 收据见下方记录；旧 `date-percent-s-*.json` 的历史含义保留在 Git 历史中。**此门只在列明的平台和运行依赖范围内关闭；完整迁移、其它平台、自包含实现和大历史性能门仍开放。**
 
 
 本机主体实现源码 `cada44f7`（实现 `cb962b5b` + main `f294b279`）：Rust 1.81 fmt、69 个单元测试、Clippy `-D warnings`、release 均通过；36 个日期/错误路径检查、156/156 个 C/Rust 差分场景和 130 个控制 PTY 检查通过。收据：[`checks.json`](evidence/nonlocal-percent-s/checks.json)、[`environment.json`](evidence/nonlocal-percent-s/environment.json)、[`differential.json`](evidence/nonlocal-percent-s/differential.json)、[`pty.json`](evidence/nonlocal-percent-s/pty.json)。

@@ -519,7 +519,7 @@ This slice starts from fork main `2fb2a871` in an independent clone. No
 `AGENTS.md` is present in that checkout. The old after-date full-suite snapshot
 remains historical; a fresh strict paired run reproduces all ten requested
 scripts failing on Rust, while C passes all 23 assertions. See
-[`diff-render-before.json`](migration/evidence/diff-render-before.json).
+[`diff-render-before.json`](https://github.com/naikokodayo/tig/blob/3d753aa9733eea5888a5428de26fbd6e37948704/migration/evidence/diff-render-before.json).
 
 Three bounded mechanisms are corrected:
 
@@ -548,7 +548,7 @@ scripts, 152 OK / 8 FAIL assertion records and 1 additional runtime failure**.
 No scripts are skipped and the adapter reports no unmatched assertion IDs.
 The missing `view.data` output is counted as a failed assertion, not a pass.
 This is focused evidence, not a full-suite result or a completion percentage.
-See [`diff-render-after.json`](migration/evidence/diff-render-after.json) for
+See [`diff-render-after.json`](https://github.com/naikokodayo/tig/blob/3d753aa9733eea5888a5428de26fbd6e37948704/migration/evidence/diff-render-after.json) for
 source, executable routing/hashes, original script hashes and raw transcripts.
 
 Remaining requested failures:
@@ -600,7 +600,7 @@ and numeric commands with trailing annotations are honored.
 
 The initial receipt started at `2fb2a871` and synchronized `9a691ee1`; its tested
 code is `1ec4145de69084e099720a6c28dadf36392ad65b`. The
-[before receipt](migration/evidence/blame-navigation-before.json) records all six
+[before receipt](https://github.com/naikokodayo/tig/blob/3d753aa9733eea5888a5428de26fbd6e37948704/migration/evidence/blame-navigation-before.json) records all six
 requested scripts passing under C and failing under Rust (2 passing assertions,
 11 failing assertions and 5 additional runtime failure records). The
 [after receipt](migration/evidence/blame-navigation-after.json) records the exact
@@ -1025,12 +1025,12 @@ and the user explicitly chose to preserve it.
 [Review probes](migration/evidence/blame-review.json) cover ten paired C/Rust
 checks and two Rust quoted-tab regressions. All twelve pass. C stays in diff for
 quoted-tab filenames; those two Rust checks are not claimed as C parity.
-The [integrated check receipt](migration/evidence/blame-navigation-sync-checks.json)
+The [integrated check receipt](https://github.com/naikokodayo/tig/blob/3d753aa9733eea5888a5428de26fbd6e37948704/migration/evidence/blame-navigation-sync-checks.json)
 records formatting, **76 unit tests**, Clippy, both builds, **139 existing PTY
 checks**, six blame rename/boundary checks, six diff-input checks, and eight paired
 diff-navigation comparisons. Source, script and executable hashes are recorded.
 
-The [fresh original-script receipt](migration/evidence/blame-navigation-sync-after.json)
+The [fresh original-script receipt](https://github.com/naikokodayo/tig/blob/3d753aa9733eea5888a5428de26fbd6e37948704/migration/evidence/blame-navigation-sync-after.json)
 contains 17 scripts: **C 98/98, Rust 96/98 assertions**,
 with no runtime failures or timeouts. The six requested blame scripts remain
 **C 13/13, Rust 12/13**. The only failures remain the saved `x`/`│` separator in
