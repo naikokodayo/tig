@@ -24,3 +24,5 @@ pub mod refs_view;
 pub mod tree_view;
 
 pub mod grep;
+
+pub mod file_finder;

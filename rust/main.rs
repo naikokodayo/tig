@@ -21,6 +21,7 @@ use std::{
 };
 use tig_rs::{
     config::{Cli, Config},
+    file_finder::{FileFinder, Input as FinderInput},
     git::{validate_diff_options, Repository},
     grep::{safe_grep_path, GrepLine},
     help_view::HelpView,
@@ -354,6 +355,7 @@ struct App {
     view: View,
     help: Option<HelpView>,
     tree_initialized: bool,
+    finder: Option<FileFinder>,
     previous: Vec<View>,
     pending_command: Option<tig_rs::commands::PreparedCommand>,
     prompt_answers: Vec<String>,
@@ -825,7 +827,41 @@ impl App {
         }
         Ok(v)
     }
+    fn finder_key(&mut self, key: &str) -> Result<()> {
+        let Some(mut finder) = self.finder.take() else {
+            return Ok(());
+        };
+        match finder.input(key, &self.config) {
+            FinderInput::Continue => self.finder = Some(finder),
+            FinderInput::Cancel => (),
+            FinderInput::Accept => {
+                let entry = finder.selected().ok_or("No file selected")?;
+                let bytes = self.repo()?.blob(&entry.oid)?;
+                let mut next = View::text("blob", &String::from_utf8_lossy(&bytes));
+                next.path = entry.path.clone();
+                next.revision = finder.revision;
+                next.args = self.args.clone();
+                next.wrap_text(&self.config, self.width);
+                self.path = next.path.clone();
+                self.revision = next.revision.clone();
+                if self.view.name == "blob" || self.other.is_some() {
+                    self.view = next;
+                } else {
+                    self.previous.push(std::mem::replace(&mut self.view, next));
+                }
+            }
+        }
+        Ok(())
+    }
     fn open(&mut self, name: &str, width: usize) -> Result<()> {
+        if name == "blob"
+            && (self.path.as_os_str().is_empty()
+                || self.view.name == "blob"
+                || matches!(self.selected(), Item::Tree(ref entry) if entry.kind == "tree"))
+        {
+            self.finder = Some(FileFinder::load(self.repo()?, &self.revision)?);
+            return Ok(());
+        }
         if name == "help" {
             self.help = Some(HelpView::new(&self.config, &self.view.name));
         }
@@ -2248,6 +2284,22 @@ impl App {
             if line.is_empty() || line.starts_with('#') {
                 continue;
             }
+            if self.finder.is_some() {
+                let mut input = line;
+                while !input.is_empty() && self.finder.is_some() {
+                    let end = if input.starts_with('<') {
+                        input
+                            .find('>')
+                            .map(|i| i + 1)
+                            .ok_or("Unclosed finder key")?
+                    } else {
+                        input.chars().next().unwrap().len_utf8()
+                    };
+                    self.finder_key(&input[..end])?;
+                    input = &input[end..];
+                }
+                continue;
+            }
             if grep_prompt {
                 self.grep_query(line.strip_suffix("<Enter>").unwrap_or(line))?;
                 grep_prompt = false;
@@ -2314,6 +2366,9 @@ impl App {
                     self.refresh_after_command()?;
                 }
             }
+        }
+        if self.finder.is_some() {
+            return Err("Unfinished scripted file finder input".into());
         }
         Ok(())
     }
@@ -2590,6 +2645,7 @@ mod editor_tests {
             view,
             help: None,
             tree_initialized: false,
+            finder: None,
             previous: vec![],
             pending_command: None,
             prompt_answers: vec![],
@@ -2761,6 +2817,7 @@ mod editor_tests {
             view,
             help: None,
             tree_initialized: false,
+            finder: None,
             previous: vec![],
             pending_command: None,
             prompt_answers: vec![],
@@ -3249,6 +3306,70 @@ impl Terminal {
         self.out.flush()?;
         Ok(())
     }
+    fn find_file(&mut self, app: &mut App) -> Result<()> {
+        while let Some(finder) = &app.finder {
+            let visible = app.height.saturating_sub(2).max(1);
+            let top = finder.selected.saturating_sub(visible - 1);
+            queue!(self.out, cursor::MoveTo(0, 0), Clear(ClearType::All))?;
+            for (row, &index) in finder.visible.iter().skip(top).take(visible).enumerate() {
+                queue!(self.out, cursor::MoveTo(0, row as u16))?;
+                if top + row == finder.selected {
+                    queue!(self.out, SetAttribute(Attribute::Reverse))?;
+                }
+                write!(
+                    self.out,
+                    "{}",
+                    clip(&FileFinder::label(&finder.files[index]), 0, app.width)
+                )?;
+                queue!(self.out, SetAttribute(Attribute::Reset))?;
+            }
+            queue!(
+                self.out,
+                cursor::MoveTo(0, app.height.saturating_sub(2) as u16),
+                SetAttribute(Attribute::Reverse)
+            )?;
+            let title = format!(
+                "[finder] file {} of {}",
+                if finder.visible.is_empty() {
+                    0
+                } else {
+                    finder.selected + 1
+                },
+                finder.visible.len()
+            );
+            write!(self.out, "{}", clip(&title, 0, app.width))?;
+            queue!(
+                self.out,
+                SetAttribute(Attribute::Reset),
+                cursor::MoveTo(0, app.height.saturating_sub(1) as u16)
+            )?;
+            write!(
+                self.out,
+                "{}",
+                clip(&format!("Find file: {}", finder.query), 0, app.width)
+            )?;
+            self.out.flush()?;
+            match self.read()? {
+                Event::Resize(width, height) => {
+                    app.width = width as usize;
+                    app.height = height as usize;
+                    if let Err(error) = app.refresh_after_command() {
+                        app.message = error.to_string();
+                    }
+                }
+                Event::Key(key) => {
+                    if key.modifiers.contains(KeyModifiers::ALT) {
+                        continue;
+                    }
+                    if let Err(error) = app.finder_key(&key_name(key.code, key.modifiers)) {
+                        app.message = error.to_string();
+                    }
+                }
+                _ => (),
+            }
+        }
+        Ok(())
+    }
     fn prompt(&mut self, app: &mut App, prefix: &str) -> Result<Option<String>> {
         let mut value = String::new();
         let mut point = 0;
@@ -3441,6 +3562,7 @@ fn key_name(code: KeyCode, modifiers: KeyModifiers) -> String {
         KeyCode::PageUp => "<PgUp>".into(),
         KeyCode::PageDown => "<PgDown>".into(),
         KeyCode::Tab => "<Tab>".into(),
+        KeyCode::Backspace => "<Backspace>".into(),
         KeyCode::Esc => "<Esc>".into(),
         KeyCode::F(n) => format!("<F{n}>"),
         _ => String::new(),
@@ -3503,6 +3625,7 @@ fn run() -> Result<()> {
         view: View::new(&cli.view),
         help: None,
         tree_initialized: false,
+        finder: None,
         previous: vec![],
         pending_command: None,
         prompt_answers: vec![],
@@ -3667,6 +3790,9 @@ fn run() -> Result<()> {
     let mut terminal = Terminal::open(&app.config)?;
     let mut key_sequence = String::new();
     loop {
+        if app.finder.is_some() {
+            terminal.find_file(&mut app)?;
+        }
         terminal.draw(&mut app)?;
         let action = match terminal.read()? {
             Event::Resize(w, h) => {
@@ -3875,6 +4001,7 @@ mod tests {
             view: View::new("main"),
             help: None,
             tree_initialized: false,
+            finder: None,
             previous: vec![],
             pending_command: None,
             prompt_answers: vec![],
@@ -4123,6 +4250,7 @@ mod tests {
             view: View::new("main"),
             help: None,
             tree_initialized: false,
+            finder: None,
             previous: vec![],
             pending_command: None,
             prompt_answers: vec![],
@@ -4208,6 +4336,7 @@ mod tests {
             view: View::new("main"),
             help: None,
             tree_initialized: false,
+            finder: None,
             previous: vec![],
             pending_command: None,
             prompt_answers: vec![],
@@ -4251,6 +4380,7 @@ mod tests {
             view: View::new("grep"),
             help: None,
             tree_initialized: false,
+            finder: None,
             previous: vec![],
             pending_command: None,
             prompt_answers: vec![],
@@ -4327,6 +4457,7 @@ mod tests {
             view,
             help: None,
             tree_initialized: false,
+            finder: None,
             previous: vec![],
             pending_command: None,
             prompt_answers: vec![],
@@ -4379,6 +4510,7 @@ mod tests {
             view: View::new("main"),
             help: None,
             tree_initialized: false,
+            finder: None,
             previous: vec![],
             pending_command: None,
             prompt_answers: vec![],
@@ -4549,6 +4681,7 @@ mod tests {
             view: child,
             help: None,
             tree_initialized: false,
+            finder: None,
             previous: vec![],
             pending_command: None,
             prompt_answers: vec![],
@@ -4626,6 +4759,7 @@ mod tests {
             view: View::text("diff", "first\nsecond"),
             help: None,
             tree_initialized: false,
+            finder: None,
             previous: vec![],
             pending_command: None,
             prompt_answers: vec![],
