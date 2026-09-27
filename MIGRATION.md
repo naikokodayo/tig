@@ -36,8 +36,7 @@ License: GPL-2.0-or-later; original history, COPYING and copyright notices retai
 - `rust/refs_view.rs`, `rust/tree_view.rs`: reference and directory rows,
   metadata, columns, filters, sorting, annotated tags and recursive trees.
   Custom `TIG_LS_REMOTE` loading now feeds both refs rows and main decorations.
-  Exact reference sort ties and all mailmap/date configuration effects still
-  need compatibility work.
+  Reference mailmap/date sorting and tag metadata have focused C/Rust checks.
 - `rust/help_view.rs`: live help rows from active bindings and upstream request
   descriptions, including section collapse and help search.
 - `rust/main.rs`: initial terminal application using Crossterm, with owned view
@@ -54,8 +53,8 @@ License: GPL-2.0-or-later; original history, COPYING and copyright notices retai
   claim; syntax and which hidden fields are searchable still need comparison.
 - The grep view now parses NUL-delimited Git hits, groups results by file,
   supports configured widths, and opens worktree or revision-tree blobs at the
-  selected line. Ambiguous revision/path forms fail closed; context and other
-  output-changing Git grep options remain unsupported in this Rust view.
+  selected line. Pattern files, boolean expressions and context are supported;
+  output modes without file/line/text records still fail closed.
 
 First-party Rust uses `forbid(unsafe_code)` through the crate and Cargo lint.
 This does **not** mean dependencies, the OS or Git are unsafe-free. Crossterm,
@@ -660,9 +659,9 @@ the executable hashes and individual transcripts. This is 17 more passing
 Rust scripts than the preceding `86ce7680` snapshot. The parity gate remains
 **OPEN**; completed follow-up slices must be retested against their merged source.
 
-### Current strict paired snapshot after prompt and staging integration
+### Current strict paired snapshot
 
-At merged source `72f107f2a22c129bf1688f9140d6fa6e308d8b6a`, the runner
+At merged source `62d518c7be3d561eed6eef69bd08e2684a41ef52`, the runner
 attempted all 154 unchanged scripts with separately hashed C and Rust-only
 application/graph binaries. C passed 152, failed none, and skipped two. Rust
 passed 147, failed four, and skipped three: 564 actual assertions passed, six
@@ -684,6 +683,9 @@ evidence of C index data loss in this script. A release build from only
 `Cargo.toml`, `Cargo.lock`, `rust/`, and `tigrc` succeeded without the C source
 tree; original tests and C remain the parity reference. The gate remains **BLOCKED**;
 the end-to-end C/Rust benchmark has not begun.
+This source also includes main-view notes, blame options, confirmed status
+mergetool, and Git-native stash patches. Their focused Git/PTY checks add
+coverage beyond the unchanged original scripts.
 
 Earlier mixed-route full-suite JSON and raw logs are archived at the fixed
 [`44b0bf42` source commit](https://github.com/naikokodayo/tig/tree/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence).
