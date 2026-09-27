@@ -1571,6 +1571,29 @@ impl App {
         }
         self.message = format!("No match found for '{}'", self.search);
     }
+    fn move_merge(&mut self, backwards: bool) {
+        let count = self.view.items.len();
+        let wrap = self.config.bool_value("wrap-search", true);
+        for offset in 1..count {
+            let index = if backwards {
+                (self.view.selected + count - offset) % count
+            } else {
+                (self.view.selected + offset) % count
+            };
+            if !wrap
+                && ((backwards && index >= self.view.selected)
+                    || (!backwards && index <= self.view.selected))
+            {
+                break;
+            }
+            if matches!(self.view.items.get(index), Some(Item::Commit(c)) if c.parents.len() > 1) {
+                self.view.selected = index;
+                self.center_selection();
+                return;
+            }
+        }
+        self.message = "No merge commit found".into();
+    }
     fn goto_commit(&mut self, target: &str) -> Result<()> {
         let target = self.repo()?.revision(target)?;
         let index = self
@@ -2224,6 +2247,8 @@ impl App {
             "move-half-page-up" => self.view.move_by(-page / 2),
             "move-first-line" => self.view.selected = 0,
             "move-last-line" => self.view.selected = self.view.rows.len().saturating_sub(1),
+            "move-next-merge" if self.view.name == "main" => self.move_merge(false),
+            "move-prev-merge" if self.view.name == "main" => self.move_merge(true),
             "scroll-left" | "scroll-right" | "scroll-first-col" => {
                 let width = if self.split && self.other.is_some() {
                     let (vertical, parent, child) = self.pane_sizes();
@@ -4471,6 +4496,30 @@ mod tests {
         app.args.clear();
         assert!(app.load("main").unwrap().rows[5].starts_with("●"));
         app.view = app.load("main").unwrap();
+        let merges: Vec<_> = app
+            .view
+            .items
+            .iter()
+            .enumerate()
+            .filter_map(|(index, item)| {
+                matches!(item, Item::Commit(c) if c.parents.len() > 1).then_some(index)
+            })
+            .collect();
+        assert!(!merges.is_empty());
+        app.view.selected = 0;
+        app.action("move-next-merge").unwrap();
+        assert_eq!(
+            app.view.selected,
+            *merges.iter().find(|index| **index > 0).unwrap()
+        );
+        app.view.selected = 0;
+        app.action("move-prev-merge").unwrap();
+        assert_eq!(app.view.selected, *merges.last().unwrap());
+        app.config.parse("set wrap-search = no");
+        app.view.selected = app.view.items.len() - 1;
+        app.action("move-next-merge").unwrap();
+        assert_eq!(app.view.selected, app.view.items.len() - 1);
+        assert_eq!(app.message, "No merge commit found");
         app.height = 5;
         app.action("goto 6").unwrap();
         app.action("scroll-right").unwrap();
