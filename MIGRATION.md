@@ -697,6 +697,14 @@ regular files, text renames, inputrc cursor bindings and action-name Tab
 completion. These additions do not change the inherited script count; their
 scoped receipts are separate from the 154-script gate.
 
+At merged source `db43517c386ab2fd9d32eaceb851677c928e7444`, the same strict
+154-script run covered the merged grep, refs, interactive file finder and
+confirmed status revert slices. C again passed 152 and skipped two. Rust again
+passed 147, failed four and skipped three, with 564 passing and six failing
+assertions. No new original-script regressions appeared; the scoped terminal
+and Git tests cover behavior absent from those scripts. The full parity gate
+remains **BLOCKED**, and the final application benchmark remains deferred.
+
 ### Non-local `%s` follow-up
 
 The PR #3 blanket refusal is replaced by a host POSIX bridge on 64-bit macOS
