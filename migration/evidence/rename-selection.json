@@ -1,0 +1,67 @@
+{
+  "scope": "Unchanged-mode regular-file text rename selection through aggregate stage view; copy remains refused",
+  "tested_source_commit": "77a718c94815479d61787b977f8a87d3e5cb0bae",
+  "base_commit": "e8fc0a48dc66b795c37eaae09c6aa6ba4f8a8692",
+  "source_content_sha256": "5ac887af19782072889c5f21c93423c63cc9f9bcf599b6dc001acc54e95ebef8",
+  "source_hash_method": "SHA256 sorted git ls-files -z rust src include compat Cargo.toml Cargo.lock Makefile tigrc; each path bytes + NUL + file bytes + NUL",
+  "source_and_test_sha256": {
+    "rust/patch.rs": "481834376bfa687202f05d562f48e6958f6e7887a5203c0dde76d9febd07561a",
+    "rust/main.rs": "94570a2a62c018e7c78845120501e75830f9ee1936f5a6f45938d26f92a6404d",
+    "rust/git.rs": "34cb7ad944dec1e42a2e6b54d9bc7b574685a0fd214ca842ebf0f7bf71863e20",
+    "src/stage.c": "f5aebfe09715f0cae621e8647efe5d7c9b29d60e7b965da3bc7e67a5f07be5bf",
+    "rust/tests/rename-selection.py": "3226ef2f0051fb8fa4202150980101cbd6b015a02445fc1dee181a98ab75f052",
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "rust/tests/mode-only.py": "13e6a6d5da8e64ea2b387bb6fe0c32f56d4d7d127f275b53de49f4de03c8a490",
+    "test/stage/default-test": "d58bba43a0248c8c2bea7551e41f8c8dec4dfd993dd8dbb156f8325d895d7493",
+    "test/stage/update-part-test": "57949ae5596c712dcfeedf32d7535b805177823814b0a648e9ecf72354723bbb"
+  },
+  "binary_sha256": {
+    "before": {"c": {"tig": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c", "test-graph": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"}, "rust": {"tig": "06f583c1eec3ee81d6e31376d986dce10f68b726352c4e6b8b944939dedb34ce", "test-graph": "c690ad7e85ddc6fc5733cbdf67cab9e29d9c3686c5bbc5e46fd644ef04a09257"}},
+    "after": {"c": {"tig": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c", "test-graph": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"}, "rust": {"tig": "50d49f5dc16b7edd8e9d6862d7c0a72bf25e6ec46b49228652a3556b316c0eb8", "test-graph": "c690ad7e85ddc6fc5733cbdf67cab9e29d9c3686c5bbc5e46fd644ef04a09257"}}
+  },
+  "binary_routes": {"c": "src/tig; test/tools/test-graph", "rust": "target/release/tig; target/release/test-graph"},
+  "commands": [
+    "cargo fmt --check",
+    "cargo test --all-targets",
+    "cargo clippy --all-targets -- -D warnings",
+    "python3 rust/tests/upstream-suite.py --output <receipt> test/stage/default-test test/stage/update-part-test",
+    "python3 rust/tests/rename-selection.py --output <receipt>",
+    "python3 rust/tests/mode-only.py --output <receipt>"
+  ],
+  "rust_checks": {"fmt_exit": 0, "library_tests": 73, "application_tests": 26, "test_exit": 0, "clippy_exit": 0, "unsafe": "forbid"},
+  "baseline_public": {"c_pass": 4, "rust_refused": 4, "fixture": "Isolated added selection before strengthening the final fixture with adjacent added rows", "test_sha256": "c04e9be58da07f5a33b8503ff92d9cbda822123fe6becc531137c83df562a370", "raw_error": "tig: Partial rename and copy changes are unsupported; stage the whole file\r\n"},
+  "final_public_counts": {"c_pass": 4, "rust_pass": 4, "failures": 0, "skips": 0, "fixture": "Adjacent selected/pair rows; line keeps pair, block removes both; separate remaining change retained at old path"},
+  "index_checks": [
+    {"binary": "c", "mode": 420, "action": "stage-update-line", "exit_code": 0, "timed_out": false, "old_path_content": "first\npair\n1\n2\n3\n4\n5\n6\n7\n8\nremaining\nlast\n", "worktree_preserved": true, "passed": true, "sole_index_path": "old name"},
+    {"binary": "c", "mode": 420, "action": "stage-update-part", "exit_code": 0, "timed_out": false, "old_path_content": "first\n1\n2\n3\n4\n5\n6\n7\n8\nremaining\nlast\n", "worktree_preserved": true, "passed": true, "sole_index_path": "old name"},
+    {"binary": "c", "mode": 493, "action": "stage-update-line", "exit_code": 0, "timed_out": false, "old_path_content": "first\npair\n1\n2\n3\n4\n5\n6\n7\n8\nremaining\nlast\n", "worktree_preserved": true, "passed": true, "sole_index_path": "old name"},
+    {"binary": "c", "mode": 493, "action": "stage-update-part", "exit_code": 0, "timed_out": false, "old_path_content": "first\n1\n2\n3\n4\n5\n6\n7\n8\nremaining\nlast\n", "worktree_preserved": true, "passed": true, "sole_index_path": "old name"},
+    {"binary": "rust", "mode": 420, "action": "stage-update-line", "exit_code": 0, "timed_out": false, "old_path_content": "first\npair\n1\n2\n3\n4\n5\n6\n7\n8\nremaining\nlast\n", "worktree_preserved": true, "passed": true, "sole_index_path": "old name"},
+    {"binary": "rust", "mode": 420, "action": "stage-update-part", "exit_code": 0, "timed_out": false, "old_path_content": "first\n1\n2\n3\n4\n5\n6\n7\n8\nremaining\nlast\n", "worktree_preserved": true, "passed": true, "sole_index_path": "old name"},
+    {"binary": "rust", "mode": 493, "action": "stage-update-line", "exit_code": 0, "timed_out": false, "old_path_content": "first\npair\n1\n2\n3\n4\n5\n6\n7\n8\nremaining\nlast\n", "worktree_preserved": true, "passed": true, "sole_index_path": "old name"},
+    {"binary": "rust", "mode": 493, "action": "stage-update-part", "exit_code": 0, "timed_out": false, "old_path_content": "first\n1\n2\n3\n4\n5\n6\n7\n8\nremaining\nlast\n", "worktree_preserved": true, "passed": true, "sole_index_path": "old name"}
+  ],
+  "shared_path_regression": {"script": "rust/tests/mode-only.py", "parity_checks_pass": 8, "rust_stale_mode_refusals_pass": 4, "failures": 0, "skips": 0},
+  "expected_mode_refusal_raw_errors": [
+    "tig: git apply exit status: 0: warning: space name has type 100644, expected 100755\r\n",
+    "tig: git apply exit status: 0: warning: space name has type 100755, expected 100644\r\n"
+  ],
+  "original_scripts": [
+    {"phase": "before", "binary": "c", "scripts_pass": 2, "assertions_pass": 19, "failures": 0, "skips": 0, "not_reached": 0, "build_exit": 0, "binaries_unchanged": true},
+    {"phase": "before", "binary": "rust", "scripts_pass": 2, "assertions_pass": 19, "failures": 0, "skips": 0, "not_reached": 0, "build_exit": 0, "binaries_unchanged": true},
+    {"phase": "after", "binary": "c", "scripts_pass": 2, "assertions_pass": 19, "failures": 0, "skips": 0, "not_reached": 0, "build_exit": 0, "binaries_unchanged": true},
+    {"phase": "after", "binary": "rust", "scripts_pass": 2, "assertions_pass": 19, "failures": 0, "skips": 0, "not_reached": 0, "build_exit": 0, "binaries_unchanged": true}
+  ],
+  "copy_investigation": {"source": "e8fc0a48dc66b795c37eaae09c6aa6ba4f8a8692", "fixture": "Modified source plus copied destination with two separated insertions; diff.renames=copies; aggregate staged line/block request", "raw_diff_sha256": "fa01aef60af6383c113242d7f7a7877b90531355842a11c342f9382b73990626", "c": "Both requests exited 0 but left both index paths/content unchanged; not counted as operation passes", "rust": "Both explicitly refused; index unchanged", "raw_rust_error": "tig: Partial rename and copy changes are unsupported; stage the whole file\r\n"},
+  "safety_regression": "text_rename_selection_validates_both_paths_and_preserves_index_on_failure: forward roundtrip; repeat apply; existing destination; mismatched/traversing/duplicate metadata; false diff path; nonregular/mode-changing rename; copy header rejection",
+  "remaining_gaps": [
+    "Pure rename without text hunks remains refused.",
+    "Mode-changing or nonregular renames, copies, binary partials, and Git-escaped paths remain refused.",
+    "Single-path stage view can present a rename as an added destination; aggregate staged view is the supported public path.",
+    "Unselected text moves to the old index path on partial unstage, matching C; worktree is unchanged."
+  ],
+  "reviews": {"independent_read_only": 2, "material_blockers": 0, "block_fixture_finding": "Resolved with adjacent added rows; re-reviewed", "main_rs_changes": 0, "rebase_conflicts": 0},
+  "verdict": "PASS_SCOPED; full migration parity remains open"
+}
