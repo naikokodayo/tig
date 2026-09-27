@@ -1,288 +1,56 @@
 {
-  "schema": 1,
-  "source_commit": "e4deecbb33686e36ab26d614a38980582dcb7e23",
-  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
-  "harness_sha256": {
-    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
-    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
-    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  "scope": "Focused original C/Rust search scripts plus controlling-PTY Rust regression; full parity remains blocked",
+  "tested_source_commit": "e4deecbb33686e36ab26d614a38980582dcb7e23",
+  "sha256": {
+    "rust/main.rs": "a14c4b704929cade7f5f2e1e6e23aaaea18a443feaa2413b282b4401d3b3a258",
+    "rust/tests/prompt-history-pty.py": "0a99a4dd3f9bb24626b6b2e14d4eed4c6064154afc0ed5e94eb18ae03ee61d3e",
+    "test/main/search-preload-test": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
+    "test/main/search-test": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "C tig binary": "8673b0c2688da4e890598f5a69237175a9a13b0074353b9f3217583a039a7b7a",
+    "Rust tig binary": "fa81f3211e24aee898839844f86013061c0ae80d2bbd74f8e30655a5db444203"
   },
-  "rust_complete": false,
-  "parity_gate": "BLOCKED",
-  "script_timeout_seconds": 120,
-  "environment": {
-    "platform": "Darwin arm64",
-    "git": "git version 2.50.1 (Apple Git-155)",
-    "init.defaultBranch": "master",
-    "TEST_OPTS": "",
-    "pty_rows": 30,
-    "pty_columns": 80
-  },
-  "runs": {
-    "c": {
-      "build_command": [
-        "make",
-        "src/tig",
-        "test/tools/test-graph"
-      ],
-      "build_exit_code": 0,
-      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
-      "results": [
-        {
-          "script": "test/main/search-preload-test",
-          "script_sha256": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
-          "exit_code": 0,
-          "timed_out": false,
-          "status": "pass",
-          "reasons": [],
-          "checks": {
-            "OK": 2
-          },
-          "assertions": [
-            {
-              "id": "main.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "stderr#1",
-              "status": "OK"
-            }
-          ],
-          "receipt_path": "test/tmp/main/search-preload-test/.test-result",
-          "receipt": "  [OK] main.screen assertion\n  [OK] stderr assertion\n",
-          "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
-        },
-        {
-          "script": "test/main/search-test",
-          "script_sha256": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
-          "exit_code": 0,
-          "timed_out": false,
-          "status": "pass",
-          "reasons": [],
-          "checks": {
-            "OK": 8
-          },
-          "assertions": [
-            {
-              "id": "main-search-author.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "main-search-author-empty.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "main-search-author-find-next.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "main-search-title.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "main-search-title-no-match.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "main-search-refs.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "main-search-time.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "main-search-smart-case.screen#1",
-              "status": "OK"
-            }
-          ],
-          "receipt_path": "test/tmp/main/search-test/.test-result",
-          "receipt": "  [OK] main-search-author.screen assertion\n  [OK] main-search-author-empty.screen assertion\n  [OK] main-search-author-find-next.screen assertion\n  [OK] main-search-title.screen assertion\n  [OK] main-search-title-no-match.screen assertion\n  [OK] main-search-refs.screen assertion\n  [OK] main-search-time.screen assertion\n  [OK] main-search-smart-case.screen assertion\n",
-          "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
-        }
-      ],
-      "binaries": {
-        "tig": {
-          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/src/tig",
-          "sha256": "8673b0c2688da4e890598f5a69237175a9a13b0074353b9f3217583a039a7b7a"
-        },
-        "test-graph": {
-          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/test/tools/test-graph",
-          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
-        }
-      },
-      "binaries_unchanged": true,
-      "summary": {
-        "pass": 2
-      }
-    },
-    "rust": {
-      "build_command": [
-        "make",
-        "rust-test-binaries"
-      ],
-      "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.02s\n",
-      "results": [
-        {
-          "script": "test/main/search-preload-test",
-          "script_sha256": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
-          "exit_code": 0,
-          "timed_out": false,
-          "status": "skip",
-          "reasons": [],
-          "checks": {},
-          "assertions": [],
-          "receipt_path": "test/tmp/main/search-preload-test/.test-result",
-          "receipt": "",
-          "skip": "The test requires a tig compiled with readline\n",
-          "skipped_cases": {},
-          "transcript": "[skipped] The test requires a tig compiled with readline\r\n"
-        },
-        {
-          "script": "test/main/search-test",
-          "script_sha256": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
-          "exit_code": 0,
-          "timed_out": false,
-          "status": "pass",
-          "reasons": [],
-          "checks": {
-            "OK": 8
-          },
-          "assertions": [
-            {
-              "id": "main-search-author.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "main-search-author-empty.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "main-search-author-find-next.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "main-search-title.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "main-search-title-no-match.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "main-search-refs.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "main-search-time.screen#1",
-              "status": "OK"
-            },
-            {
-              "id": "main-search-smart-case.screen#1",
-              "status": "OK"
-            }
-          ],
-          "receipt_path": "test/tmp/main/search-test/.test-result",
-          "receipt": "  [OK] main-search-author.screen assertion\n  [OK] main-search-author-empty.screen assertion\n  [OK] main-search-author-find-next.screen assertion\n  [OK] main-search-title.screen assertion\n  [OK] main-search-title-no-match.screen assertion\n  [OK] main-search-refs.screen assertion\n  [OK] main-search-time.screen assertion\n  [OK] main-search-smart-case.screen assertion\n",
-          "skip": "",
-          "skipped_cases": {},
-          "transcript": ""
-        }
-      ],
-      "binaries": {
-        "tig": {
-          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target/release/tig",
-          "sha256": "fa81f3211e24aee898839844f86013061c0ae80d2bbd74f8e30655a5db444203"
-        },
-        "test-graph": {
-          "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target/release/test-graph",
-          "sha256": "217d4237168d74c9b0656e7661258892d2c2fde4af055742b99a05bfe12aae99"
-        }
-      },
-      "binaries_unchanged": true,
-      "summary": {
-        "skip": 1,
-        "pass": 1
-      }
-    }
-  },
-  "mapping": [
-    {
-      "script": "test/main/search-preload-test",
-      "c_status": "pass",
-      "rust_status": "skip",
-      "assertions": [
-        {
-          "id": "main.screen#1",
-          "c": "OK",
-          "rust": "NOT_REACHED"
-        },
-        {
-          "id": "stderr#1",
-          "c": "OK",
-          "rust": "NOT_REACHED"
-        }
-      ]
-    },
-    {
-      "script": "test/main/search-test",
-      "c_status": "pass",
-      "rust_status": "pass",
-      "assertions": [
-        {
-          "id": "main-search-author.screen#1",
-          "c": "OK",
-          "rust": "OK"
-        },
-        {
-          "id": "main-search-author-empty.screen#1",
-          "c": "OK",
-          "rust": "OK"
-        },
-        {
-          "id": "main-search-author-find-next.screen#1",
-          "c": "OK",
-          "rust": "OK"
-        },
-        {
-          "id": "main-search-title.screen#1",
-          "c": "OK",
-          "rust": "OK"
-        },
-        {
-          "id": "main-search-title-no-match.screen#1",
-          "c": "OK",
-          "rust": "OK"
-        },
-        {
-          "id": "main-search-refs.screen#1",
-          "c": "OK",
-          "rust": "OK"
-        },
-        {
-          "id": "main-search-time.screen#1",
-          "c": "OK",
-          "rust": "OK"
-        },
-        {
-          "id": "main-search-smart-case.screen#1",
-          "c": "OK",
-          "rust": "OK"
-        }
-      ]
-    }
+  "commands": [
+    "cargo fmt --check",
+    "cargo test -q",
+    "cargo clippy --all-targets -- -D warnings",
+    "cargo build --release -q",
+    "python3 rust/tests/prompt-history-pty.py target/release/tig",
+    "python3 rust/tests/upstream-suite.py test/main/search-preload-test test/main/search-test --output migration/evidence/prompt-history-focused.json"
   ],
-  "prompt_history_verification": {
-    "rust_source_sha256": "a14c4b704929cade7f5f2e1e6e23aaaea18a443feaa2413b282b4401d3b3a258",
-    "pty_test_sha256": "0a99a4dd3f9bb24626b6b2e14d4eed4c6064154afc0ed5e94eb18ae03ee61d3e",
-    "command": "python3 rust/tests/prompt-history-pty.py target/release/tig",
-    "result": "PASS: preloaded find-next and live Up history navigation on a controlling PTY",
+  "results": {
+    "rust_unit_tests": "94 passed; 0 failed",
+    "format_clippy_release": "pass",
+    "pty": {
+      "platform": "Darwin arm64; controlling 80x30 PTY",
+      "preload": "PASS: preexisting .tig_history entry drives :find-next to commit 2 of 3 before a prompt opens",
+      "navigation": "PASS: live Up recalls needle, editing and Enter append needlex",
+      "preservation": "PASS: original needle entry remains unchanged before appended needlex"
+    },
+    "original_scripts": {
+      "C": {
+        "main/search-preload-test": {
+          "status": "pass",
+          "passed_assertions": 2
+        },
+        "main/search-test": {
+          "status": "pass",
+          "passed_assertions": 8
+        }
+      },
+      "Rust": {
+        "main/search-preload-test": {
+          "status": "skip",
+          "passed_assertions": 0
+        },
+        "main/search-test": {
+          "status": "pass",
+          "passed_assertions": 8
+        }
+      }
+    },
+    "rust_preload_raw_skip": "[skipped] The test requires a tig compiled with readline",
     "rust_version_readline_claim": false,
-    "remaining_gate": "Original test_require readline skips Rust; full readline capability is not claimed."
+    "parity_gate": "BLOCKED: original readline-gated script is unverified on Rust"
   }
 }
