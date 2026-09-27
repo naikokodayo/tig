@@ -2519,10 +2519,21 @@ impl App {
                     self.view.left.saturating_add(step)
                 };
             }
-            "scroll-line-down" | "scroll-line-up" | "scroll-wheel-down" | "scroll-wheel-up" => {
+            "scroll-line-down"
+            | "scroll-line-up"
+            | "scroll-wheel-down"
+            | "scroll-wheel-up"
+            | "scroll-page-down"
+            | "scroll-page-up"
+            | "scroll-half-page-down"
+            | "scroll-half-page-up" => {
                 let down = action.ends_with("down");
                 let steps = if action.starts_with("scroll-wheel") {
                     self.config.usize_value("mouse-scroll", 3)
+                } else if action.starts_with("scroll-page") {
+                    page as usize
+                } else if action.starts_with("scroll-half-page") {
+                    page as usize / 2
                 } else {
                     1
                 };
