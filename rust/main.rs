@@ -2597,6 +2597,21 @@ impl App {
             "parent" if self.view.name == "tree" => self.tree_parent()?,
             "parent" if self.view.name == "blame" => self.blame_forward(true)?,
             "view-blame" if self.view.name == "blame" => self.blame_forward(false)?,
+            "view-blame" if self.view.name == "grep" => {
+                if let Item::Grep(hit) = self.selected() {
+                    self.select_context();
+                    // An unqualified grep searches the worktree, not HEAD.
+                    if hit.revision.is_none() {
+                        self.revision.clear();
+                    }
+                    self.open("blame", self.width)?;
+                    self.view.selected = hit
+                        .line
+                        .saturating_sub(1)
+                        .min(self.view.rows.len().saturating_sub(1));
+                    self.center_selection();
+                }
+            }
             "view-blame" | "view-blob"
                 if self.view.name == "diff"
                     || (action == "view-blame"
