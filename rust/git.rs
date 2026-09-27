@@ -374,8 +374,21 @@ impl Repository {
             );
         }
         let mut hits = crate::grep::grep_rows(&output.stdout, &revisions)?;
+        let mut pinned: std::collections::HashMap<(Option<String>, PathBuf), String> =
+            std::collections::HashMap::new();
         for hit in &mut hits {
             hit.cached = options.cached;
+            if hit.cached || hit.revision.is_some() {
+                let key = (hit.revision.clone(), hit.path.clone());
+                let oid = if let Some(oid) = pinned.get(&key) {
+                    oid.clone()
+                } else {
+                    let oid = self.grep_blob_oid(hit)?;
+                    pinned.insert(key, oid.clone());
+                    oid
+                };
+                hit.source_oid = Some(oid);
+            }
         }
         if options.before == 0 && options.after == 0 {
             return Ok(hits.into_iter().map(Some).collect());
@@ -412,6 +425,9 @@ impl Repository {
         if !crate::grep::safe_grep_path(&hit.path) {
             return Err("Invalid grep result path".into());
         }
+        if let Some(oid) = &hit.source_oid {
+            return Ok(self.blob(oid)?);
+        }
         let prefix = if let Some(revision) = &hit.revision {
             format!("{}:", self.grep_tree_oid(revision)?)
         } else if hit.cached {
@@ -422,6 +438,28 @@ impl Repository {
         let mut spec = OsString::from(prefix);
         spec.push(hit.path.as_os_str());
         Ok(self.command([OsString::from("cat-file"), OsString::from("blob"), spec])?)
+    }
+
+    fn grep_blob_oid(&self, hit: &crate::grep::GrepLine) -> Result<String> {
+        if !crate::grep::safe_grep_path(&hit.path) {
+            return Err(GitError("Invalid grep result path".into()));
+        }
+        let mut spec = OsString::from(if let Some(revision) = &hit.revision {
+            format!("{}:", self.grep_tree_oid(revision)?)
+        } else {
+            ":".into()
+        });
+        spec.push(hit.path.as_os_str());
+        let oid = text(trim_lf(&self.command([
+            OsString::from("rev-parse"),
+            OsString::from("--verify"),
+            OsString::from("--end-of-options"),
+            spec,
+        ])?));
+        if !matches!(oid.len(), 40 | 64) || !oid.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+            return Err(GitError("Expected a full grep blob object ID".into()));
+        }
+        Ok(oid)
     }
 
     fn grep_tree_oid(&self, revision: &str) -> Result<String> {
@@ -1610,6 +1648,34 @@ mod tests {
         fn drop(&mut self) {
             let _ = fs::remove_dir_all(&self.0);
         }
+    }
+    #[test]
+    fn grep_hits_keep_their_original_blob_after_head_or_index_moves() {
+        let fixture = Fixture::new();
+        let repo = fixture.repo();
+        fs::write(fixture.0.join("file"), b"needle old\n").unwrap();
+        repo.command(["add", "file"]).unwrap();
+        repo.command(["commit", "-qm", "old"]).unwrap();
+        let from_head = repo
+            .grep(&["needle".into(), "HEAD".into()])
+            .unwrap()
+            .into_iter()
+            .flatten()
+            .next()
+            .unwrap();
+        let from_index = repo
+            .grep(&["--cached".into(), "needle".into()])
+            .unwrap()
+            .into_iter()
+            .flatten()
+            .next()
+            .unwrap();
+        assert!(from_head.source_oid.is_some() && from_index.source_oid.is_some());
+        fs::write(fixture.0.join("file"), b"new version\n").unwrap();
+        repo.command(["add", "file"]).unwrap();
+        repo.command(["commit", "-qam", "new"]).unwrap();
+        assert_eq!(repo.grep_blob(&from_head).unwrap(), b"needle old\n");
+        assert_eq!(repo.grep_blob(&from_index).unwrap(), b"needle old\n");
     }
     #[test]
     fn history_keeps_control_subjects_and_multiline_option_values() {
