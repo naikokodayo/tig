@@ -182,6 +182,28 @@ pub(crate) fn option_type(name: &str) -> Option<&'static str> {
         .map(|(_, kind)| *kind)
 }
 
+pub fn completion_names() -> (Vec<String>, Vec<String>) {
+    let options = OPTIONS
+        .iter()
+        .map(|(name, _)| (*name).to_string())
+        .collect();
+    let mut toggles = OPTIONS
+        .iter()
+        .map(|(name, _)| (*name).to_string())
+        .collect::<Vec<_>>();
+    toggles.extend(
+        COLUMNS
+            .iter()
+            .filter(|(name, _)| *name != "section")
+            .flat_map(|(column, fields)| {
+                fields
+                    .iter()
+                    .map(move |(name, _)| format!("{column}-{name}"))
+            }),
+    );
+    (options, toggles)
+}
+
 pub(crate) fn column_names() -> impl Iterator<Item = &'static str> {
     COLUMNS.iter().map(|(name, _)| *name)
 }
