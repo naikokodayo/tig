@@ -1122,7 +1122,8 @@ use crate::line::builtin_line_type;
 pub fn diff_view_data(
     rows: &[String],
     selected: usize,
-    wrapping: Option<(&[String], &[(usize, bool)])>,
+    display_rows: &[String],
+    source_indices: &[(usize, bool)],
 ) -> Result<String, &'static str> {
     let mut output = String::new();
     let mut displayed = 0;
@@ -1184,7 +1185,7 @@ pub fn diff_view_data(
             };
             vec![text]
         });
-        if let Some((display_rows, source_indices)) = wrapping {
+        if !source_indices.is_empty() {
             let start = displayed;
             while source_indices
                 .get(displayed)
@@ -1219,7 +1220,7 @@ pub fn diff_view_data(
             crate::view_export::line(&mut output, index, kind, index == selected, Some(&cells));
         }
     }
-    if wrapping.is_some_and(|(_, indices)| displayed != indices.len()) {
+    if displayed != source_indices.len() {
         return Err("save-view has invalid wrapped diff rows");
     }
     Ok(output)
@@ -1272,7 +1273,7 @@ fn diff_stat_cells_preserve_paths_and_binary_boundaries() {
         " context | 0",
         "---deleted",
     ];
-    let data = diff_view_data(&rows.map(str::to_owned), 4, None).unwrap();
+    let data = diff_view_data(&rows.map(str::to_owned), 4, &[], &[]).unwrap();
     assert!(data.contains("line[  2] type=default"));
     assert!(data.contains("line[  4] type=diff-stat selected=1"));
     assert!(data.contains("line[  7] cells=2 text=[@@ -1 +1 @@][]"));
@@ -1290,7 +1291,7 @@ fn diff_export_drops_only_file_header_tab_delimiters() {
         "+++ new\t",
     ]
     .map(str::to_owned);
-    let data = diff_view_data(&rows, 0, None).unwrap();
+    let data = diff_view_data(&rows, 0, &[], &[]).unwrap();
     assert!(data.contains("text=[--- a/space name]\n"));
     assert!(data.contains("text=[+++ b/space name]\n"));
     assert!(data.contains("text=[--- old\t]\n"));

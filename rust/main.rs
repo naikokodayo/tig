@@ -2272,13 +2272,13 @@ impl App {
             match self.view.name.as_str() {
                 "diff" | "pager" | "stage" if !self.view.untracked => {
                     let wrapped = (self.view.name == "diff")
-                        .then(|| self.view.wrapping.as_ref())
-                        .flatten()
-                        .map(|wrap| (self.view.rows.as_slice(), wrap.lines.as_slice()));
+                        .then_some(self.view.wrapping.as_ref())
+                        .flatten();
                     data.push_str(&tig_rs::render::diff_view_data(
                         self.view.source_rows(),
                         self.view.selected,
-                        wrapped,
+                        &self.view.rows,
+                        wrapped.map_or(&[][..], |wrap| wrap.lines.as_slice()),
                     )?);
                 }
                 "log" => data.push_str(&tig_rs::view_export::log_data(
