@@ -27,6 +27,37 @@ use tig_rs::{
 use unicode_width::UnicodeWidthChar;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+fn highlight_diff(config: &Config, input: &[u8]) -> String {
+    let program = match config.value("diff-highlight") {
+        Some("yes" | "true" | "1") => "diff-highlight",
+        Some("no" | "false" | "0" | "") | None => return String::from_utf8_lossy(input).into(),
+        Some(program) => program,
+    };
+    if config.bool_value("word-diff", false) {
+        return String::from_utf8_lossy(input).into();
+    }
+    let result = Command::new(program)
+        .env("GIT_CONFIG", "/dev/null")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .and_then(|mut child| {
+            let mut stdin = child.stdin.take().expect("piped highlight stdin");
+            let (output, written) = std::thread::scope(|scope| {
+                let writer = scope.spawn(move || stdin.write_all(input));
+                (child.wait_with_output(), writer.join())
+            });
+            written.map_err(|_| io::Error::other("highlight writer panicked"))??;
+            output
+        });
+    match result {
+        Ok(output) if output.status.success() => String::from_utf8_lossy(&output.stdout).into(),
+        _ => {
+            eprintln!("tig warning: Failed to run the diff-highlight program: {program}");
+            String::from_utf8_lossy(input).into()
+        }
+    }
+}
 const HELP: &str = "Tig Rust migration (compatibility work in progress)\n\nUsage: tig [-C path] [log|show|reflog|blame|grep|refs|stash|status] [arguments]\n       git show | tig\n\nKeys: j/k move, Enter open, q back/quit, Q quit, / search, n next match\n      m history, d diff, s status, t tree, r refs, b blame, h help, R refresh\n      u stage/unstage selected file in status; horizontal arrows scroll\n\nThis version is not yet a drop-in replacement for upstream Tig. See MIGRATION.md.";
 
 #[derive(Clone)]
@@ -784,40 +815,55 @@ impl App {
                     None
                 };
                 if let Some(base) = &diff_base {
-                    let text = repo.command([
+                    let context = format!("-U{}", self.config.usize_value("diff-context", 3));
+                    let mut args = vec![
                         "diff",
                         "--no-ext-diff",
                         "--no-textconv",
                         "--stat",
                         "--patch",
-                        &format!("-U{}", self.config.usize_value("diff-context", 3)),
+                        &context,
                         if self.config.bool_value("word-diff", false) {
                             "--word-diff=plain"
                         } else {
                             "--word-diff=none"
                         },
-                        base,
-                        &oid,
-                        "--",
-                    ])?;
-                    let mut view = View::text(name, &String::from_utf8_lossy(&text));
+                    ];
+                    args.extend(
+                        self.config
+                            .settings
+                            .get("diff-options")
+                            .into_iter()
+                            .flatten()
+                            .map(String::as_str),
+                    );
+                    args.extend([base.as_str(), oid.as_str(), "--"]);
+                    let text = repo.command(args)?;
+                    let mut view = View::text(name, &highlight_diff(&self.config, &text));
                     view.revision = oid;
                     view.diff_base = diff_base;
                     return Ok(view);
                 }
-                let mut view = View::text(
-                    name,
-                    &repo.show(
-                        &oid,
-                        self.config.usize_value("diff-context", 3),
-                        self.config.bool_value("word-diff", false),
-                        (self.config.bool_value("file-filter", true)
-                            && !self.path.as_os_str().is_empty())
-                        .then_some(self.path.as_path()),
-                        width,
-                    )?,
-                );
-                view.revision = oid.clone();
+                let text = repo.show(
+                    &oid,
+                    self.config.usize_value("diff-context", 3),
+                    self.config.bool_value("word-diff", false),
+                    self.config
+                        .settings
+                        .get("diff-options")
+                        .map_or(&[], Vec::as_slice),
+                    (self.config.bool_value("file-filter", true)
+                        && !self.path.as_os_str().is_empty())
+                    .then_some(self.path.as_path()),
+                    width,
+                )?;
+                let shown = highlight_diff(&self.config, text.as_bytes());
+                let mut view = View::text(name, &shown);
+                view.revision = if shown.starts_with("commit ") {
+                    oid.clone()
+                } else {
+                    "HEAD".into()
+                };
                 if let Some(commit) = repo.history(&[oid, "--".into()], 1)?.first() {
                     let mut refs = tig_rs::render::refs(&self.config, &commit.decorations, ", ");
                     // C creates an empty Refs line only when annotated tags exist.
@@ -4089,6 +4135,13 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn failed_highlighter_keeps_the_original_diff() {
+        let mut config = Config::defaults();
+        config.parse("set diff-highlight = program-that-does-not-exist");
+        assert_eq!(highlight_diff(&config, b"diff content\n"), "diff content\n");
+    }
 
     #[test]
     fn grep_nul_fields_preserve_colons_newlines_and_revision_paths() {

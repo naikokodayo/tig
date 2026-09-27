@@ -558,6 +558,7 @@ impl Repository {
         revision: &str,
         context: usize,
         word_diff: bool,
+        diff_options: &[String],
         file: Option<&Path>,
         width: usize,
     ) -> Result<String> {
@@ -582,6 +583,10 @@ impl Repository {
         .into_iter()
         .map(OsString::from)
         .collect();
+        args.splice(
+            args.len() - 2..args.len() - 2,
+            diff_options.iter().map(OsString::from),
+        );
         if let Some(file) = file {
             valid_path(file)?;
             args.push(file.into());
@@ -1740,7 +1745,7 @@ mod tests {
         repo.command(["commit", "-qam", "change"]).unwrap();
         for context in [0, 3, 4, 5, 8] {
             for word in [false, true] {
-                let show = repo.show("HEAD", context, word, None, 80).unwrap();
+                let show = repo.show("HEAD", context, word, &[], None, 80).unwrap();
                 let span = if context == 0 {
                     "10".into()
                 } else {
@@ -1815,7 +1820,7 @@ mod tests {
         assert_eq!(blame.len(), 2);
         assert_eq!(blame[1].line, 2);
         assert!(repo
-            .show("HEAD", 3, false, None, 80)
+            .show("HEAD", 3, false, &[], None, 80)
             .unwrap()
             .contains("initial"));
         fs::rename(f.0.join(":(glob)*"), f.0.join("renamed")).unwrap();
@@ -1839,7 +1844,7 @@ mod tests {
                 original_path: None
             })
             .is_err());
-        assert!(repo.show("--output=oops", 3, false, None, 80).is_err());
+        assert!(repo.show("--output=oops", 3, false, &[], None, 80).is_err());
         assert!(repo.history(&["--format=oops".into()], 1).is_err());
     }
 }
