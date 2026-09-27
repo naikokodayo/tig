@@ -3443,6 +3443,7 @@ impl PromptHistory {
                         }
                     }
                 }
+                Err(error) if error.kind() == io::ErrorKind::NotFound => (),
                 Err(_) => path = None,
             }
         }
@@ -3456,6 +3457,20 @@ impl PromptHistory {
         let Some(path) = &self.path else {
             return Ok(());
         };
+        match fs::symlink_metadata(path) {
+            Ok(metadata) if metadata.file_type().is_symlink() => {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidInput,
+                    "history path is a symlink",
+                ));
+            }
+            Ok(_) => {
+                // Check the file itself before replacing it; a writable parent is not enough.
+                fs::OpenOptions::new().write(true).open(path)?;
+            }
+            Err(error) if error.kind() == io::ErrorKind::NotFound => (),
+            Err(error) => return Err(error),
+        }
         let temporary = path.with_extension(format!("tig-rs-{}.tmp", std::process::id()));
         let mut file = fs::OpenOptions::new()
             .write(true)

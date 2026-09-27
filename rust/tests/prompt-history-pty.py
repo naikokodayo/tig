@@ -79,6 +79,20 @@ def main():
         history.write_bytes(damaged)
         run(binary, repo, home, keys=b"Q")
         assert history.read_bytes() == damaged
+        protected = b"a\nb\n"
+        history.write_bytes(protected)
+        history.chmod(0o400)
+        run(binary, repo, home, keys=b"Q")
+        assert history.read_bytes() == protected and history.stat().st_mode & 0o777 == 0o400
+        history.unlink()
+        target = root / "symlink-target"
+        target.write_bytes(protected)
+        history.symlink_to(target)
+        run(binary, repo, home, keys=b"Q")
+        assert history.is_symlink() and target.read_bytes() == protected
+        history.unlink()
+        run(binary, repo, home, keys=b"/needle\rQ")
+        assert history.read_text() == "needle\n"
 
 
 if __name__ == "__main__":
