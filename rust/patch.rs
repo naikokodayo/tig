@@ -429,18 +429,24 @@ impl Patch {
             .get(hunk)
             .ok_or_else(|| error("Hunk index out of range"))?;
         if file.headers.iter().any(|l| {
-            [
-                b"rename ".as_slice(),
-                b"copy ",
-                b"old mode ",
-                b"new mode ",
-                b"similarity index ",
-            ]
-            .iter()
-            .any(|p| l.starts_with(p))
+            [b"rename ".as_slice(), b"copy ", b"similarity index "]
+                .iter()
+                .any(|p| l.starts_with(p))
         }) {
             return Err(error(
-                "Partial rename, copy and mode changes are unsupported; stage the whole file",
+                "Partial rename and copy changes are unsupported; stage the whole file",
+            ));
+        }
+        // C carries executable-bit changes with the selected text. Keep Git's
+        // checked, atomic index apply, but do not partially change file types.
+        if file.headers.iter().any(|header| {
+            header
+                .strip_prefix(b"old mode ")
+                .or_else(|| header.strip_prefix(b"new mode "))
+                .is_some_and(|mode| mode != b"100644" && mode != b"100755")
+        }) {
+            return Err(error(
+                "Partial file type changes are unsupported; stage the whole file",
             ));
         }
         let mut selected = source.clone();
@@ -910,6 +916,34 @@ mod tests {
         }
         assert_eq!(f.index(), working);
         assert_eq!(fs::read(f.root.join("space name")).unwrap(), working);
+    }
+    #[test]
+    fn executable_mode_selection_keeps_checked_index_updates() {
+        let f = Fixture::new();
+        let raw = b"diff --git a/space name b/space name\nold mode 100644\nnew mode 100755\n--- a/space name\n+++ b/space name\n@@ -1,3 +1,4 @@\n alpha\n+selected\n beta\n gamma\n";
+        let patch = Patch::parse(raw).unwrap();
+        let selected = patch.select(0, 0, Some(1), false).unwrap();
+        let working = fs::read(f.root.join("space name")).unwrap();
+        apply_cached(&f.repo, &selected, false).unwrap();
+        assert!(f
+            .repo
+            .command(["ls-files", "--stage"])
+            .unwrap()
+            .starts_with(b"100755 "));
+        let before = fs::read(f.root.join(".git/index")).unwrap();
+        assert!(apply_cached(&f.repo, &selected, false).is_err());
+        assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), before);
+        assert_eq!(fs::read(f.root.join("space name")).unwrap(), working);
+        for mode in ["120000", "160000", "100600"] {
+            let raw = String::from_utf8_lossy(raw).replace("100755", mode);
+            let patch = Patch::parse(raw.as_bytes()).unwrap();
+            for reverse in [false, true] {
+                assert!(patch.select(0, 0, None, reverse).is_err());
+                assert!(patch.select(0, 0, Some(1), reverse).is_err());
+                assert!(patch.select_part(0, 0, 1, reverse).is_err());
+            }
+        }
+        assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), before);
     }
     #[test]
     fn malformed_and_unsupported_patches_fail() {
