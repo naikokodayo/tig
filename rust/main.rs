@@ -3487,6 +3487,56 @@ struct Terminal {
     stop: std::sync::Arc<std::sync::atomic::AtomicBool>,
     signals: Vec<signal_hook::SigId>,
     history: PromptHistory,
+    inputrc_motion: std::collections::HashMap<char, bool>,
+}
+fn inputrc_motion() -> std::collections::HashMap<char, bool> {
+    let path = env::var_os("INPUTRC")
+        .filter(|value| !value.is_empty())
+        .map(PathBuf::from)
+        .or_else(|| env::var_os("HOME").map(|home| PathBuf::from(home).join(".inputrc")));
+    let Some(contents) = path.and_then(|path| fs::read_to_string(path).ok()) else {
+        return Default::default();
+    };
+    let mut motions = std::collections::HashMap::new();
+    let mut conditions = Vec::new();
+    let mut active = true;
+    for line in contents.lines().map(str::trim) {
+        if let Some(name) = line.strip_prefix("$if ") {
+            // Unknown condition types stay inactive in both branches.
+            let matched = (!name.contains('=')).then(|| name.trim() == "tig");
+            conditions.push((active, matched));
+            active &= matched == Some(true);
+        } else if line == "$else" {
+            if let Some((parent, matched)) = conditions.last() {
+                active = *parent && *matched == Some(false);
+            }
+        } else if line == "$endif" {
+            if let Some((parent, _)) = conditions.pop() {
+                active = parent;
+            }
+        } else if active {
+            let Some((key, action)) = line.split_once(':') else {
+                continue;
+            };
+            let Some(key) = key
+                .trim()
+                .strip_prefix("\"\\C-")
+                .and_then(|s| s.strip_suffix('"'))
+            else {
+                continue;
+            };
+            let Some(key) = key.chars().next().filter(|_| key.len() == 1) else {
+                continue;
+            };
+            let end = match action.trim() {
+                "beginning-of-line" => false,
+                "end-of-line" => true,
+                _ => continue,
+            };
+            motions.insert(key.to_ascii_lowercase(), end);
+        }
+    }
+    motions
 }
 struct PromptHistory {
     path: Option<PathBuf>,
@@ -3626,6 +3676,7 @@ impl Terminal {
             stop,
             signals,
             history: PromptHistory::load(config),
+            inputrc_motion: inputrc_motion(),
         };
         execute!(
             t.out,
@@ -3726,7 +3777,18 @@ impl Terminal {
                 cursor::Show
             )?;
             self.out.flush()?;
-            match self.read()? {
+            let event = self.read()?;
+            if let Event::Key(k) = &event {
+                if let KeyCode::Char(key) = k.code {
+                    if key != 'c' && k.modifiers.contains(KeyModifiers::CONTROL) {
+                        if let Some(&end) = self.inputrc_motion.get(&key) {
+                            point = if end { value.len() } else { 0 };
+                            continue;
+                        }
+                    }
+                }
+            }
+            match event {
                 Event::Resize(w, h) => {
                     app.width = w as usize;
                     app.height = h as usize;

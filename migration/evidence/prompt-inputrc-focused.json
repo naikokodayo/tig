@@ -1,0 +1,65 @@
+{
+  "scope": "Narrow GNU Readline inputrc cursor-motion compatibility in the Rust prompt",
+  "base_commit": "3d98923716e92d944c2319a702e8eeabfc287baa",
+  "sha256": {
+    "src/prompt.c": "6f358c75f49a784403462b09f67a25112545bb92d455e7b77e71dd293d9df203",
+    "rust/main.rs": "94570a2a62c018e7c78845120501e75830f9ee1936f5a6f45938d26f92a6404d",
+    "rust/tests/prompt-history-pty.py": "f3e73fb59567e8bdaf48f20820f636e6b6358bbf6cc184056dca45fc0238dbef",
+    "test/main/search-preload-test": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
+    "test/main/search-test": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
+    "src/tig": "8673b0c2688da4e890598f5a69237175a9a13b0074353b9f3217583a039a7b7a",
+    "target/release/tig": "06f583c1eec3ee81d6e31376d986dce10f68b726352c4e6b8b944939dedb34ce"
+  },
+  "behavior": [
+    {
+      "inputrc": "$if tig; \"\\C-a\": end-of-line",
+      "keys": "/ab, Ctrl-A, X, Enter",
+      "C": "abX",
+      "Rust_before": "Xab",
+      "Rust_after": "abX"
+    },
+    {
+      "inputrc": "$if tig; \"\\C-e\": beginning-of-line",
+      "keys": "/ab, Ctrl-E, X, Enter",
+      "C": "Xab",
+      "Rust_after": "Xab"
+    },
+    {
+      "inputrc": "$if tig; \"\\C-c\": end-of-line",
+      "keys": "/ab, Ctrl-C, X, Enter",
+      "C": "prompt canceled; history unchanged",
+      "Rust_after": "prompt canceled; history unchanged"
+    }
+  ],
+  "checks": {
+    "cargo_fmt": "pass",
+    "cargo_test": "98 passed",
+    "cargo_clippy_all_targets_D_warnings": "pass",
+    "cargo_release_build": "pass",
+    "prompt_history_pty": "pass",
+    "original_scripts": {
+      "c": {
+        "test/main/search-preload-test": {
+          "status": "pass",
+          "assertions_passed": 2
+        },
+        "test/main/search-test": {
+          "status": "pass",
+          "assertions_passed": 8
+        }
+      },
+      "rust": {
+        "test/main/search-preload-test": {
+          "status": "skip",
+          "assertions_passed": 0,
+          "skip": "The test requires a tig compiled with readline"
+        },
+        "test/main/search-test": {
+          "status": "pass",
+          "assertions_passed": 8
+        }
+      }
+    }
+  },
+  "boundary": "Only quoted Ctrl-key bindings to beginning-of-line/end-of-line, in unconditional lines or $if tig application sections, are applied; Ctrl-C retains prompt cancellation even when bound in inputrc. Other Readline editing, completion, keymaps and condition types remain unsupported; Rust --version does not claim readline. The unchanged search-preload-test remains skipped on Rust, so its original assertions are unverified there and the parity gate is BLOCKED."
+}

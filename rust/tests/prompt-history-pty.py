@@ -110,6 +110,19 @@ def main():
                      keys="/123456e\u0301\x7f\rQQQ".encode(), columns=8).decode(errors="replace")
         assert "\x1b[2K123456e\u0301\x1b[30;8H" in screen
         assert history.read_text().splitlines()[-1] == "123456"
+        (home / ".inputrc").write_text(
+            '$if other\n"\\C-a": beginning-of-line\n$endif\n'
+            '$if tig\n"\\C-a": end-of-line\n$endif\n'
+        )
+        run(binary, repo, home, keys=b"/ab\x01X\rQQQ")
+        assert history.read_text().splitlines()[-1] == "abX"
+        (home / ".inputrc").write_text('$if tig\n"\\C-e": beginning-of-line\n$endif\n')
+        run(binary, repo, home, keys=b"/ab\x05X\rQQQ")
+        assert history.read_text().splitlines()[-1] == "Xab"
+        saved_history = history.read_bytes()
+        (home / ".inputrc").write_text('$if tig\n"\\C-c": end-of-line\n$endif\n')
+        run(binary, repo, home, keys=b"/ab\x03X\rQQQQQ")
+        assert history.read_bytes() == saved_history
 
 
 if __name__ == "__main__":
