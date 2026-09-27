@@ -660,20 +660,26 @@ the executable hashes and individual transcripts. This is 17 more passing
 Rust scripts than the preceding `86ce7680` snapshot. The parity gate remains
 **OPEN**; completed follow-up slices must be retested against their merged source.
 
-### Current strict paired snapshot after diff, stdin, Git alias, and blame integration
+### Current strict paired snapshot after layout, staging, prompt, and diff integration
 
-At merged source `d59e2d52f719ef5b43ff501cadd8852119f2a61e`, the runner
+At merged source `44b0bf426de481d365451671c338cd7ffdd4161c`, the runner
 attempted all 154 unchanged scripts with separately hashed C and Rust-only
 application/graph binaries. C passed 152, failed none, and skipped two. Rust
-passed 141, failed 10, and skipped three: 554 actual assertions passed, 16
+passed 147, failed four, and skipped three: 564 actual assertions passed, six
 failed, and two C assertions were not reached. The [current paired
 receipt](migration/evidence/upstream-rust-only-current.json) contains each
-script's original output, route and hashes. This is seven more passing Rust
+script's original output, route and hashes. This is six more passing Rust
 scripts than the [preceding source-bound snapshot](https://github.com/naikokodayo/tig/blob/d59e2d52f719ef5b43ff501cadd8852119f2a61e/migration/evidence/upstream-rust-only-current.json).
-`tree/file-name` exposes C's quoted-text directory stripping bug; the Rust
-path remains byte-preserving and its original assertion is still recorded as
-failed. `stage/split-chunk` is a display mismatch, not evidence of C index
-data loss in this script. The parity gate remains **BLOCKED**;
+The four failing scripts are `diff/diff-highlight` (two assertions: a missing
+highlighter leaves the original diff visible in Rust), `main/filter-args`
+(two exact Git trace assertions), `status/file-filter` (one exact Git trace
+assertion), and `tree/file-name` (one assertion expecting C's truncated Unicode
+path). `main/search-preload` skips on Rust's honest missing-readline feature
+gate, leaving two assertions not reached. Original assertions were not changed.
+`stage/split-chunk` now passes; its earlier failure was a display mismatch, not
+evidence of C index data loss in this script. A release build from only
+`Cargo.toml`, `Cargo.lock`, `rust/`, and `tigrc` succeeded without the C source
+tree; original tests and C remain the parity reference. The gate remains **BLOCKED**;
 the end-to-end C/Rust benchmark has not begun.
 
 ### Non-local `%s` follow-up

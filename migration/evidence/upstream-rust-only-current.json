@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "d59e2d52f719ef5b43ff501cadd8852119f2a61e",
+  "source_commit": "44b0bf426de481d365451671c338cd7ffdd4161c",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -5105,7 +5105,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 41.00s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.07s\n",
       "results": [
         {
           "script": "test/blame/blob-blame-test",
@@ -5416,13 +5416,13 @@
             "failed_checks"
           ],
           "checks": {
-            "FAIL": 3,
-            "OK": 3
+            "OK": 4,
+            "FAIL": 2
           },
           "assertions": [
             {
               "id": "diff-highlight-true.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "diff-highlight-true.stderr#1",
@@ -5430,7 +5430,7 @@
             },
             {
               "id": "diff-highlight-custom.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "diff-highlight-custom.stderr#1",
@@ -5442,14 +5442,14 @@
             },
             {
               "id": "diff-highlight-misconfigured.stderr#1",
-              "status": "OK"
+              "status": "FAIL"
             }
           ],
           "receipt_path": "test/tmp/diff/diff-highlight-test/.test-result",
-          "receipt": "[FAIL] diff-highlight-true.screen != expected/diff-highlight-true.screen\n\u001b[1mdiff --git a/expected/diff-highlight-true.screen b/diff-highlight-true.screen\u001b[m\n\u001b[1mindex 6e31703..f89c059 100644\u001b[m\n\u001b[1m--- a/expected/diff-highlight-true.screen\u001b[m\n\u001b[1m+++ b/diff-highlight-true.screen\u001b[m\n\u001b[36m@@ -4,7 +4,7 @@\u001b[m \u001b[mAuthorDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\n Commit:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\n CommitDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\n \u001b[m\n\u001b[31m-    Changed by diff-highlight\u001b[m\n\u001b[32m+\u001b[m\u001b[32m    Add type parameter for js.Dynamic\u001b[m\n ---\u001b[m\n  common/src/main/scala/org/scalajs/benchmark/Benchmark.scala | 2 +-\u001b[m\n  1 file changed, 1 insertion(+), 1 deletion(-)\u001b[m\n  [OK] diff-highlight-true.stderr assertion\n[FAIL] diff-highlight-custom.screen != expected/diff-highlight-custom.screen\n\u001b[1mdiff --git a/expected/diff-highlight-custom.screen b/diff-highlight-custom.screen\u001b[m\n\u001b[1mindex b943e90..f89c059 100644\u001b[m\n\u001b[1m--- a/expected/diff-highlight-custom.screen\u001b[m\n\u001b[1m+++ b/diff-highlight-custom.screen\u001b[m\n\u001b[36m@@ -1,29 +1,29 @@\u001b[m\n\u001b[31m-24      85    1067\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthor:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthorDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommit:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommitDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\n \u001b[m\n\u001b[32m+\u001b[m\u001b[32m    Add type parameter for js.Dynamic\u001b[m\n\u001b[32m+\u001b[m\u001b[32m---\u001b[m\n\u001b[32m+\u001b[m\u001b[32m common/src/main/scala/org/scalajs/benchmark/Benchmark.scala | 2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[m\n \u001b[m\n\u001b[32m+\u001b[m\u001b[32mdiff --git a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala b/commo\u001b[m\n\u001b[32m+\u001b[m\u001b[32mindex 65f914a..3aa4320 100644\u001b[m\n\u001b[32m+\u001b[m\u001b[32m--- a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+++ b/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -15,7 +15,7 @@ object Benchmark {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   val benchmarks = js.Array[Benchmark]()\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   val benchmarkApps = js.Array[BenchmarkApp]()\u001b[m\n  \u001b[m\n\u001b[32m+\u001b[m\u001b[32m-  val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+  val global = js.Dynamic.global.asInstanceOf[js.Dictionary[js.Any]]\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   global(\"runScalaJSBenchmarks\") = runBenchmarks _\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   global(\"initScalaJSBenchmarkApps\") = initBenchmarkApps _\u001b[m\n  \u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-[diff] HEAD - line 1 of 1                                                   100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[diff] a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff - line 1 of 24              100%\u001b[m\n  [OK] diff-highlight-custom.stderr assertion\n[FAIL] diff-highlight-misconfigured.screen != expected/diff-highlight-misconfigured.screen\n\u001b[1mdiff --git a/expected/diff-highlight-misconfigured.screen b/diff-highlight-misconfigured.screen\u001b[m\n\u001b[1mindex e314d0b..f89c059 100644\u001b[m\n\u001b[1m--- a/expected/diff-highlight-misconfigured.screen\u001b[m\n\u001b[1m+++ b/diff-highlight-misconfigured.screen\u001b[m\n\u001b[36m@@ -1,29 +1,29 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthor:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthorDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommit:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommitDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\n \u001b[m\n\u001b[32m+\u001b[m\u001b[32m    Add type parameter for js.Dynamic\u001b[m\n\u001b[32m+\u001b[m\u001b[32m---\u001b[m\n\u001b[32m+\u001b[m\u001b[32m common/src/main/scala/org/scalajs/benchmark/Benchmark.scala | 2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[m\n \u001b[m\n\u001b[32m+\u001b[m\u001b[32mdiff --git a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala b/commo\u001b[m\n\u001b[32m+\u001b[m\u001b[32mindex 65f914a..3aa4320 100644\u001b[m\n\u001b[32m+\u001b[m\u001b[32m--- a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+++ b/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -15,7 +15,7 @@ object Benchmark {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   val benchmarks = js.Array[Benchmark]()\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   val benchmarkApps = js.Array[BenchmarkApp]()\u001b[m\n  \u001b[m\n\u001b[32m+\u001b[m\u001b[32m-  val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+  val global = js.Dynamic.global.asInstanceOf[js.Dictionary[js.Any]]\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   global(\"runScalaJSBenchmarks\") = runBenchmarks _\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   global(\"initScalaJSBenchmarkApps\") = initBenchmarkApps _\u001b[m\n  \u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-[diff]                                                                        0%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[diff] a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff - line 1 of 24              100%\u001b[m\n  [OK] diff-highlight-misconfigured.stderr assertion\n",
+          "receipt": "  [OK] diff-highlight-true.screen assertion\n  [OK] diff-highlight-true.stderr assertion\n  [OK] diff-highlight-custom.screen assertion\n  [OK] diff-highlight-custom.stderr assertion\n[FAIL] diff-highlight-misconfigured.screen != expected/diff-highlight-misconfigured.screen\n\u001b[1mdiff --git a/expected/diff-highlight-misconfigured.screen b/diff-highlight-misconfigured.screen\u001b[m\n\u001b[1mindex e314d0b..77927d3 100644\u001b[m\n\u001b[1m--- a/expected/diff-highlight-misconfigured.screen\u001b[m\n\u001b[1m+++ b/diff-highlight-misconfigured.screen\u001b[m\n\u001b[36m@@ -1,29 +1,29 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthor:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthorDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommit:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommitDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\n  \u001b[m\n\u001b[32m+\u001b[m\u001b[32m    Add type parameter for js.Dynamic\u001b[m\n\u001b[32m+\u001b[m\u001b[32m---\u001b[m\n\u001b[32m+\u001b[m\u001b[32m common/src/main/scala/org/scalajs/benchmark/Benchmark.scala | 2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[m\n  \u001b[m\n\u001b[32m+\u001b[m\u001b[32mdiff --git a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala b/commo\u001b[m\n\u001b[32m+\u001b[m\u001b[32mindex 65f914a..3aa4320 100644\u001b[m\n\u001b[32m+\u001b[m\u001b[32m--- a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+++ b/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -15,7 +15,7 @@ object Benchmark {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   val benchmarks = js.Array[Benchmark]()\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   val benchmarkApps = js.Array[BenchmarkApp]()\u001b[m\n  \u001b[m\n\u001b[32m+\u001b[m\u001b[32m-  val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+  val global = js.Dynamic.global.asInstanceOf[js.Dictionary[js.Any]]\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   global(\"runScalaJSBenchmarks\") = runBenchmarks _\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   global(\"initScalaJSBenchmarkApps\") = initBenchmarkApps _\u001b[m\n  \u001b[m\n  \u001b[m\n  \u001b[m\n  \u001b[m\n  \u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-[diff]                                                                        0%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[diff] a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff - line 1 of 24              100%\u001b[m\n[FAIL] diff-highlight-misconfigured.stderr != expected/diff-highlight-misconfigured.stderr\n\u001b[1mdiff --git a/expected/diff-highlight-misconfigured.stderr b/diff-highlight-misconfigured.stderr\u001b[m\n\u001b[1mindex e69de29..f69c014 100644\u001b[m\n\u001b[1m--- a/expected/diff-highlight-misconfigured.stderr\u001b[m\n\u001b[1m+++ b/diff-highlight-misconfigured.stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig warning: Failed to run the diff-highlight program: program-that-does-not-exist\u001b[m\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 3 out of 6 test(s)\r\n| [FAIL] diff-highlight-true.screen != expected/diff-highlight-true.screen\r\n| \u001b[1mdiff --git a/expected/diff-highlight-true.screen b/diff-highlight-true.screen\u001b[m\r\n| \u001b[1mindex 6e31703..f89c059 100644\u001b[m\r\n| \u001b[1m--- a/expected/diff-highlight-true.screen\u001b[m\r\n| \u001b[1m+++ b/diff-highlight-true.screen\u001b[m\r\n| \u001b[36m@@ -4,7 +4,7 @@\u001b[m \u001b[mAuthorDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\r\n|  Commit:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\r\n|  CommitDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-    Changed by diff-highlight\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    Add type parameter for js.Dynamic\u001b[m\r\n|  ---\u001b[m\r\n|   common/src/main/scala/org/scalajs/benchmark/Benchmark.scala | 2 +-\u001b[m\r\n|   1 file changed, 1 insertion(+), 1 deletion(-)\u001b[m\r\n|   [OK] diff-highlight-true.stderr assertion\r\n| [FAIL] diff-highlight-custom.screen != expected/diff-highlight-custom.screen\r\n| \u001b[1mdiff --git a/expected/diff-highlight-custom.screen b/diff-highlight-custom.screen\u001b[m\r\n| \u001b[1mindex b943e90..f89c059 100644\u001b[m\r\n| \u001b[1m--- a/expected/diff-highlight-custom.screen\u001b[m\r\n| \u001b[1m+++ b/diff-highlight-custom.screen\u001b[m\r\n| \u001b[36m@@ -1,29 +1,29 @@\u001b[m\r\n| \u001b[31m-24      85    1067\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mAuthor:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mAuthorDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mCommit:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mCommitDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\r\n|  \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    Add type parameter for js.Dynamic\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m---\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m common/src/main/scala/org/scalajs/benchmark/Benchmark.scala | 2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[m\r\n|  \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdiff --git a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala b/commo\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mindex 65f914a..3aa4320 100644\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m--- a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+++ b/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m@@ -15,7 +15,7 @@ object Benchmark {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   val benchmarks = js.Array[Benchmark]()\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   val benchmarkApps = js.Array[BenchmarkApp]()\u001b[m\r\n|   \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-  val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+  val global = js.Dynamic.global.asInstanceOf[js.Dictionary[js.Any]]\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   global(\"runScalaJSBenchmarks\") = runBenchmarks _\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   global(\"initScalaJSBenchmarkApps\") = initBenchmarkApps _\u001b[m\r\n|   \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-[diff] HEAD - line 1 of 1                                                   100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[diff] a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff - line 1 of 24              100%\u001b[m\r\n|   [OK] diff-highlight-custom.stderr assertion\r\n| [FAIL] diff-highlight-misconfigured.screen != expected/diff-highlight-misconfigured.screen\r\n| \u001b[1mdiff --git a/expected/diff-highlight-misconfigured.screen b/diff-highlight-misconfigured.screen\u001b[m\r\n| \u001b[1mindex e314d0b..f89c059 100644\u001b[m\r\n| \u001b[1m--- a/expected/diff-highlight-misconfigured.screen\u001b[m\r\n| \u001b[1m+++ b/diff-highlight-misconfigured.screen\u001b[m\r\n| \u001b[36m@@ -1,29 +1,29 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mAuthor:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mAuthorDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mCommit:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mCommitDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\r\n|  \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    Add type parameter for js.Dynamic\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m---\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m common/src/main/scala/org/scalajs/benchmark/Benchmark.scala | 2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[m\r\n|  \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdiff --git a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala b/commo\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mindex 65f914a..3aa4320 100644\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m--- a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+++ b/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m@@ -15,7 +15,7 @@ object Benchmark {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   val benchmarks = js.Array[Benchmark]()\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   val benchmarkApps = js.Array[BenchmarkApp]()\u001b[m\r\n|   \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-  val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+  val global = js.Dynamic.global.asInstanceOf[js.Dictionary[js.Any]]\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   global(\"runScalaJSBenchmarks\") = runBenchmarks _\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   global(\"initScalaJSBenchmarkApps\") = initBenchmarkApps _\u001b[m\r\n|   \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-[diff]                                                                        0%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[diff] a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff - line 1 of 24              100%\u001b[m\r\n|   [OK] diff-highlight-misconfigured.stderr assertion\r\n"
+          "transcript": "| Failed 2 out of 6 test(s)\r\n| [stderr] [diff-highlight-misconfigured] tig warning: Failed to run the diff-highlight program: program-that-does-not-exist\r\n|   [OK] diff-highlight-true.screen assertion\r\n|   [OK] diff-highlight-true.stderr assertion\r\n|   [OK] diff-highlight-custom.screen assertion\r\n|   [OK] diff-highlight-custom.stderr assertion\r\n| [FAIL] diff-highlight-misconfigured.screen != expected/diff-highlight-misconfigured.screen\r\n| \u001b[1mdiff --git a/expected/diff-highlight-misconfigured.screen b/diff-highlight-misconfigured.screen\u001b[m\r\n| \u001b[1mindex e314d0b..77927d3 100644\u001b[m\r\n| \u001b[1m--- a/expected/diff-highlight-misconfigured.screen\u001b[m\r\n| \u001b[1m+++ b/diff-highlight-misconfigured.screen\u001b[m\r\n| \u001b[36m@@ -1,29 +1,29 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mAuthor:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mAuthorDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mCommit:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mCommitDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\r\n|   \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    Add type parameter for js.Dynamic\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m---\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m common/src/main/scala/org/scalajs/benchmark/Benchmark.scala | 2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[m\r\n|   \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdiff --git a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala b/commo\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mindex 65f914a..3aa4320 100644\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m--- a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+++ b/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m@@ -15,7 +15,7 @@ object Benchmark {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   val benchmarks = js.Array[Benchmark]()\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   val benchmarkApps = js.Array[BenchmarkApp]()\u001b[m\r\n|   \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-  val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+  val global = js.Dynamic.global.asInstanceOf[js.Dictionary[js.Any]]\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   global(\"runScalaJSBenchmarks\") = runBenchmarks _\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   global(\"initScalaJSBenchmarkApps\") = initBenchmarkApps _\u001b[m\r\n|   \u001b[m\r\n|   \u001b[m\r\n|   \u001b[m\r\n|   \u001b[m\r\n|   \u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-[diff]                                                                        0%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[diff] a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff - line 1 of 24              100%\u001b[m\r\n| [FAIL] diff-highlight-misconfigured.stderr != expected/diff-highlight-misconfigured.stderr\r\n| \u001b[1mdiff --git a/expected/diff-highlight-misconfigured.stderr b/diff-highlight-misconfigured.stderr\u001b[m\r\n| \u001b[1mindex e69de29..f69c014 100644\u001b[m\r\n| \u001b[1m--- a/expected/diff-highlight-misconfigured.stderr\u001b[m\r\n| \u001b[1m+++ b/diff-highlight-misconfigured.stderr\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig warning: Failed to run the diff-highlight program: program-that-does-not-exist\u001b[m\r\n"
         },
         {
           "script": "test/diff/diff-stat-split-test",
@@ -7378,24 +7378,22 @@
           "script_sha256": "dddb92e5a6a90488359c6a2f47eb84415b22308e52940f206bca268593db4fe0",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 1
+            "OK": 1
           },
           "assertions": [
             {
               "id": "with-10-lines.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/main/main-options-test/.test-result",
-          "receipt": "[FAIL] with-10-lines.screen != expected/with-10-lines.screen\n\u001b[1mdiff --git a/expected/with-10-lines.screen b/with-10-lines.screen\u001b[m\n\u001b[1mindex 6e5eb3f..6df9f1d 100644\u001b[m\n\u001b[1m--- a/expected/with-10-lines.screen\u001b[m\n\u001b[1m+++ b/with-10-lines.screen\u001b[m\n\u001b[36m@@ -8,8 +8,8 @@\u001b[m\n 2010-02-06 15:02 +0000 作者                  o Commit 9 C\u001b[m\n 2010-01-29 02:40 +0000 René Lévesque         o Commit 9 B\u001b[m\n 2010-01-20 14:18 +0000 A. U. Thor            o Commit 9 A\u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m-[main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 10            100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-12 01:56 +0000 Max Power             o Commit 8 E\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-03 13:33 +0000 Jørgen Thygesen Brahe o Commit 8 D\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-26 01:11 +0000 作者                  o Commit 8 C\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-17 12:49 +0000 René Lévesque         o <v1.0> Commit 8 B\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 50             28%\u001b[m\n",
+          "receipt": "  [OK] with-10-lines.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 1 test(s)\r\n| [FAIL] with-10-lines.screen != expected/with-10-lines.screen\r\n| \u001b[1mdiff --git a/expected/with-10-lines.screen b/with-10-lines.screen\u001b[m\r\n| \u001b[1mindex 6e5eb3f..6df9f1d 100644\u001b[m\r\n| \u001b[1m--- a/expected/with-10-lines.screen\u001b[m\r\n| \u001b[1m+++ b/with-10-lines.screen\u001b[m\r\n| \u001b[36m@@ -8,8 +8,8 @@\u001b[m\r\n|  2010-02-06 15:02 +0000 作者                  o Commit 9 C\u001b[m\r\n|  2010-01-29 02:40 +0000 René Lévesque         o Commit 9 B\u001b[m\r\n|  2010-01-20 14:18 +0000 A. U. Thor            o Commit 9 A\u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m-[main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 10            100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-12 01:56 +0000 Max Power             o Commit 8 E\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-03 13:33 +0000 Jørgen Thygesen Brahe o Commit 8 D\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-26 01:11 +0000 作者                  o Commit 8 C\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-17 12:49 +0000 René Lévesque         o <v1.0> Commit 8 B\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[main] 5cb3412a5e06e506840495b91acc885037a48b72 - commit 1 of 50             28%\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/main/merge-test",
@@ -7767,13 +7765,10 @@
           "script_sha256": "ae7a945fee6bf5676a0435fb3335e92ca8c2f61f823e9a188ed06f36f91c340b",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "OK": 1,
-            "FAIL": 1
+            "OK": 2
           },
           "assertions": [
             {
@@ -7782,14 +7777,14 @@
             },
             {
               "id": "main-submodule-diff.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/main/submodule-test/.test-result",
-          "receipt": "  [OK] main-submodule.screen assertion\n[FAIL] main-submodule-diff.screen != expected/main-submodule-diff.screen\n\u001b[1mdiff --git a/expected/main-submodule-diff.screen b/main-submodule-diff.screen\u001b[m\n\u001b[1mindex e50b0ed..dbd6a95 100644\u001b[m\n\u001b[1m--- a/expected/main-submodule-diff.screen\u001b[m\n\u001b[1m+++ b/main-submodule-diff.screen\u001b[m\n\u001b[36m@@ -21,26 +21,26 @@\u001b[m \u001b[mCommitDate: Sun Sep 6 08:23:30 2009 +0000\u001b[m\n  repo-two-c | 2 +-\u001b[m\n  3 files changed, 3 insertions(+), 3 deletions(-)\u001b[m\n \u001b[m\n\u001b[31m-Submodule repo-two-a a1d2fa2..598d4e4:\u001b[m\n\u001b[31m-  > [repo-two-a] Commit 5\u001b[m\n\u001b[31m-Submodule repo-two-b f3866fb..8ab92f1:\u001b[m\n\u001b[31m-  > [repo-two-b] Commit 5\u001b[m\n\u001b[31m-Submodule repo-two-c cd41885..e4b7821:\u001b[m\n\u001b[31m-  > [repo-two-c] Commit 5\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-[diff] feeb2dfd5e09e887e4b6c901e7d91a4c85a7831d - line 1 of 20              100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdiff --git a/repo-two-a b/repo-two-a\u001b[m\n\u001b[32m+\u001b[m\u001b[32mindex a1d2fa2..598d4e4 160000\u001b[m\n\u001b[32m+\u001b[m\u001b[32m--- a/repo-two-a\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+++ b/repo-two-a\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -1 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-Subproject commit a1d2fa223a5f983adaad9a22df5c518aefba1d07\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+Subproject commit 598d4e4d8b652f28e7b78fd4f95124fadb10efcf\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdiff --git a/repo-two-b b/repo-two-b\u001b[m\n\u001b[32m+\u001b[m\u001b[32mindex f3866fb..8ab92f1 160000\u001b[m\n\u001b[32m+\u001b[m\u001b[32m--- a/repo-two-b\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+++ b/repo-two-b\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -1 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-Subproject commit f3866fb983d82c8fc2b01423dde37084f59385d5\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+Subproject commit 8ab92f1f22470039668eb12d405e4356dcae8305\u001b[m\n\u001b[32m+\u001b[m\u001b[32mdiff --git a/repo-two-c b/repo-two-c\u001b[m\n\u001b[32m+\u001b[m\u001b[32mindex cd41885..e4b7821 160000\u001b[m\n\u001b[32m+\u001b[m\u001b[32m--- a/repo-two-c\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+++ b/repo-two-c\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -1 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-Subproject commit cd41885fa2b86fa6aae5308bba55c76a97498dcc\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+Subproject commit e4b78219ea174bc0c7f97024cf18fc1e6c08013a\u001b[m\n\u001b[32m+\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[diff] feeb2dfd5e09e887e4b6c901e7d91a4c85a7831d - line 1 of 35              100%\u001b[m\n",
+          "receipt": "  [OK] main-submodule.screen assertion\n  [OK] main-submodule-diff.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 2 test(s)\r\n|   [OK] main-submodule.screen assertion\r\n| [FAIL] main-submodule-diff.screen != expected/main-submodule-diff.screen\r\n| \u001b[1mdiff --git a/expected/main-submodule-diff.screen b/main-submodule-diff.screen\u001b[m\r\n| \u001b[1mindex e50b0ed..dbd6a95 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-submodule-diff.screen\u001b[m\r\n| \u001b[1m+++ b/main-submodule-diff.screen\u001b[m\r\n| \u001b[36m@@ -21,26 +21,26 @@\u001b[m \u001b[mCommitDate: Sun Sep 6 08:23:30 2009 +0000\u001b[m\r\n|   repo-two-c | 2 +-\u001b[m\r\n|   3 files changed, 3 insertions(+), 3 deletions(-)\u001b[m\r\n|  \u001b[m\r\n| \u001b[31m-Submodule repo-two-a a1d2fa2..598d4e4:\u001b[m\r\n| \u001b[31m-  > [repo-two-a] Commit 5\u001b[m\r\n| \u001b[31m-Submodule repo-two-b f3866fb..8ab92f1:\u001b[m\r\n| \u001b[31m-  > [repo-two-b] Commit 5\u001b[m\r\n| \u001b[31m-Submodule repo-two-c cd41885..e4b7821:\u001b[m\r\n| \u001b[31m-  > [repo-two-c] Commit 5\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-[diff] feeb2dfd5e09e887e4b6c901e7d91a4c85a7831d - line 1 of 20              100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdiff --git a/repo-two-a b/repo-two-a\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mindex a1d2fa2..598d4e4 160000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m--- a/repo-two-a\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+++ b/repo-two-a\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m@@ -1 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-Subproject commit a1d2fa223a5f983adaad9a22df5c518aefba1d07\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+Subproject commit 598d4e4d8b652f28e7b78fd4f95124fadb10efcf\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdiff --git a/repo-two-b b/repo-two-b\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mindex f3866fb..8ab92f1 160000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m--- a/repo-two-b\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+++ b/repo-two-b\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m@@ -1 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-Subproject commit f3866fb983d82c8fc2b01423dde37084f59385d5\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+Subproject commit 8ab92f1f22470039668eb12d405e4356dcae8305\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdiff --git a/repo-two-c b/repo-two-c\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mindex cd41885..e4b7821 160000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m--- a/repo-two-c\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+++ b/repo-two-c\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m@@ -1 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-Subproject commit cd41885fa2b86fa6aae5308bba55c76a97498dcc\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+Subproject commit e4b78219ea174bc0c7f97024cf18fc1e6c08013a\u001b[m\r\n| \u001b[32m+\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[diff] feeb2dfd5e09e887e4b6c901e7d91a4c85a7831d - line 1 of 35              100%\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/main/unbind-default-quit-key-test",
@@ -7878,45 +7873,40 @@
           "script_sha256": "70db7c2628291db5ea02a0a15759bcf547790067ea981b15e068c6ea738fd5fc",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 3
+            "OK": 3
           },
           "assertions": [
             {
               "id": "main-verticals-ascii.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "main-verticals-default.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "main-verticals-utf8.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/main/vertical-lines-test/.test-result",
-          "receipt": "[FAIL] main-verticals-ascii.screen != expected/main-verticals-ascii.screen\n\u001b[1mdiff --git a/expected/main-verticals-ascii.screen b/main-verticals-ascii.screen\u001b[m\n\u001b[1mindex 3a9d90d..bcdfd4d 100644\u001b[m\n\u001b[1m--- a/expected/main-verticals-ascii.screen\u001b[m\n\u001b[1m+++ b/main-verticals-ascii.screen\u001b[m\n\u001b[36m@@ -1,17 +1,17 @@\u001b[m\n\u001b[31m-  1| 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac\u001b[m\n\u001b[31m-   | 2010-03-29 17:15 +0000 Jørgen Thy~ |   | Refs: [master], {origin/master}, {\u001b[m\n\u001b[31m-   | 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex\u001b[m\n\u001b[31m-   | 2010-03-12 16:31 +0000 René Léves~ |   | AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[31m-  5| 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@\u001b[m\n\u001b[31m-   | 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[31m-   | 2010-02-15 03:24 +0000 Jørgen Thy~ |   |\u001b[m\n\u001b[31m-   | 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E\u001b[m\n\u001b[31m-   | 2010-01-29 02:40 +0000 René Léves~ |\u001b[m\n\u001b[31m- 10| 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\n\u001b[31m-   | 2010-01-12 01:56 +0000 Max Power   |\u001b[m\n\u001b[31m-   | 2010-01-03 13:33 +0000 Jørgen Thy~ |\u001b[m\n\u001b[31m-   | 2009-12-26 01:11 +0000 作者        |\u001b[m\n\u001b[31m-   | 2009-12-17 12:49 +0000 René Léves~ |\u001b[m\n\u001b[31m- 15| 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\n\u001b[31m-   | 2009-11-30 12:05 +0000 Max Power   |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m  1│ 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   | Refs: [master], {origin/master}, {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-12 16:31 +0000 René Lévesqu|   | AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[32m+\u001b[m\u001b[32m  5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   |\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-29 02:40 +0000 René Lévesqu|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 10│ 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-12 01:56 +0000 Max Power   |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-03 13:33 +0000 Jørgen Thyge|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2009-12-26 01:11 +0000 作者        |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2009-12-17 12:49 +0000 René Lévesqu|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 15│ 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2009-11-30 12:05 +0000 Max Power   |\u001b[m\n [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%\u001b[m\n[FAIL] main-verticals-default.screen != expected/main-verticals-default.screen\n\u001b[1mdiff --git a/expected/main-verticals-default.screen b/main-verticals-default.screen\u001b[m\n\u001b[1mindex 8a13299..bcdfd4d 100644\u001b[m\n\u001b[1m--- a/expected/main-verticals-default.screen\u001b[m\n\u001b[1m+++ b/main-verticals-default.screen\u001b[m\n\u001b[36m@@ -1,17 +1,17 @@\u001b[m\n\u001b[31m-  1x 2010-04-07 05:37 +0000 Max Power   |  1x commit 5cb3412a5e06e506840495b91ac\u001b[m\n\u001b[31m-   x 2010-03-29 17:15 +0000 Jørgen Thy~ |   x Refs: [master], {origin/master}, {\u001b[m\n\u001b[31m-   x 2010-03-21 04:53 +0000 作者        |   x Author:     Max Power <power123@ex\u001b[m\n\u001b[31m-   x 2010-03-12 16:31 +0000 René Léves~ |   x AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[31m-  5x 2010-03-04 04:09 +0000 A. U. Thor  |  5x Commit:     Committer <c.ommitter@\u001b[m\n\u001b[31m-   x 2010-02-23 15:46 +0000 Max Power   |   x CommitDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[31m-   x 2010-02-15 03:24 +0000 Jørgen Thy~ |   x\u001b[m\n\u001b[31m-   x 2010-02-06 15:02 +0000 作者        |   x     Commit 10 E\u001b[m\n\u001b[31m-   x 2010-01-29 02:40 +0000 René Léves~ |\u001b[m\n\u001b[31m- 10x 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\n\u001b[31m-   x 2010-01-12 01:56 +0000 Max Power   |\u001b[m\n\u001b[31m-   x 2010-01-03 13:33 +0000 Jørgen Thy~ |\u001b[m\n\u001b[31m-   x 2009-12-26 01:11 +0000 作者        |\u001b[m\n\u001b[31m-   x 2009-12-17 12:49 +0000 René Léves~ |\u001b[m\n\u001b[31m- 15x 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\n\u001b[31m-   x 2009-11-30 12:05 +0000 Max Power   |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m  1│ 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   | Refs: [master], {origin/master}, {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-12 16:31 +0000 René Lévesqu|   | AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[32m+\u001b[m\u001b[32m  5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   |\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-29 02:40 +0000 René Lévesqu|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 10│ 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-12 01:56 +0000 Max Power   |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-03 13:33 +0000 Jørgen Thyge|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2009-12-26 01:11 +0000 作者        |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2009-12-17 12:49 +0000 René Lévesqu|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 15│ 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2009-11-30 12:05 +0000 Max Power   |\u001b[m\n [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%\u001b[m\n[FAIL] main-verticals-utf8.screen != expected/main-verticals-utf8.screen\n\u001b[1mdiff --git a/expected/main-verticals-utf8.screen b/main-verticals-utf8.screen\u001b[m\n\u001b[1mindex 6a3007c..3ae17ee 100644\u001b[m\n\u001b[1m--- a/expected/main-verticals-utf8.screen\u001b[m\n\u001b[1m+++ b/main-verticals-utf8.screen\u001b[m\n\u001b[36m@@ -1,17 +1,17 @@\u001b[m\n   1│ 2010-04-07 05:37 +0000 Max Power   |  1│ commit 5cb3412a5e06e506840495b91ac\u001b[m\n\u001b[31m-   │ 2010-03-29 17:15 +0000 Jørgen Thy~ |   │ Refs: [master], {origin/master}, {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   │ Refs: [master], {origin/master}, {\u001b[m\n    │ 2010-03-21 04:53 +0000 作者        |   │ Author:     Max Power <power123@ex\u001b[m\n\u001b[31m-   │ 2010-03-12 16:31 +0000 René Léves~ |   │ AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-03-12 16:31 +0000 René Lévesqu|   │ AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\n   5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5│ Commit:     Committer <c.ommitter@\u001b[m\n    │ 2010-02-23 15:46 +0000 Max Power   |   │ CommitDate: Wed Apr 7 05:37:40 201\u001b[m\n\u001b[31m-   │ 2010-02-15 03:24 +0000 Jørgen Thy~ |   │\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   │\u001b[m\u001b[41m \u001b[m\n    │ 2010-02-06 15:02 +0000 作者        |   │     Commit 10 E\u001b[m\n\u001b[31m-   │ 2010-01-29 02:40 +0000 René Léves~ |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-29 02:40 +0000 René Lévesqu|\u001b[m\n  10│ 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\n    │ 2010-01-12 01:56 +0000 Max Power   |\u001b[m\n\u001b[31m-   │ 2010-01-03 13:33 +0000 Jørgen Thy~ |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2010-01-03 13:33 +0000 Jørgen Thyge|\u001b[m\n    │ 2009-12-26 01:11 +0000 作者        |\u001b[m\n\u001b[31m-   │ 2009-12-17 12:49 +0000 René Léves~ |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   │ 2009-12-17 12:49 +0000 René Lévesqu|\u001b[m\n  15│ 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\n    │ 2009-11-30 12:05 +0000 Max Power   |\u001b[m\n [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%\u001b[m\n",
+          "receipt": "  [OK] main-verticals-ascii.screen assertion\n  [OK] main-verticals-default.screen assertion\n  [OK] main-verticals-utf8.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 3 out of 3 test(s)\r\n| [FAIL] main-verticals-ascii.screen != expected/main-verticals-ascii.screen\r\n| \u001b[1mdiff --git a/expected/main-verticals-ascii.screen b/main-verticals-ascii.screen\u001b[m\r\n| \u001b[1mindex 3a9d90d..bcdfd4d 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-verticals-ascii.screen\u001b[m\r\n| \u001b[1m+++ b/main-verticals-ascii.screen\u001b[m\r\n| \u001b[36m@@ -1,17 +1,17 @@\u001b[m\r\n| \u001b[31m-  1| 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac\u001b[m\r\n| \u001b[31m-   | 2010-03-29 17:15 +0000 Jørgen Thy~ |   | Refs: [master], {origin/master}, {\u001b[m\r\n| \u001b[31m-   | 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex\u001b[m\r\n| \u001b[31m-   | 2010-03-12 16:31 +0000 René Léves~ |   | AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[31m-  5| 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@\u001b[m\r\n| \u001b[31m-   | 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[31m-   | 2010-02-15 03:24 +0000 Jørgen Thy~ |   |\u001b[m\r\n| \u001b[31m-   | 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E\u001b[m\r\n| \u001b[31m-   | 2010-01-29 02:40 +0000 René Léves~ |\u001b[m\r\n| \u001b[31m- 10| 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[31m-   | 2010-01-12 01:56 +0000 Max Power   |\u001b[m\r\n| \u001b[31m-   | 2010-01-03 13:33 +0000 Jørgen Thy~ |\u001b[m\r\n| \u001b[31m-   | 2009-12-26 01:11 +0000 作者        |\u001b[m\r\n| \u001b[31m-   | 2009-12-17 12:49 +0000 René Léves~ |\u001b[m\r\n| \u001b[31m- 15| 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[31m-   | 2009-11-30 12:05 +0000 Max Power   |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m  1│ 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   | Refs: [master], {origin/master}, {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-12 16:31 +0000 René Lévesqu|   | AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m  5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   |\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-29 02:40 +0000 René Lévesqu|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 10│ 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-12 01:56 +0000 Max Power   |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-03 13:33 +0000 Jørgen Thyge|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2009-12-26 01:11 +0000 作者        |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2009-12-17 12:49 +0000 René Lévesqu|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 15│ 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2009-11-30 12:05 +0000 Max Power   |\u001b[m\r\n|  [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%\u001b[m\r\n| [FAIL] main-verticals-default.screen != expected/main-verticals-default.screen\r\n| \u001b[1mdiff --git a/expected/main-verticals-default.screen b/main-verticals-default.screen\u001b[m\r\n| \u001b[1mindex 8a13299..bcdfd4d 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-verticals-default.screen\u001b[m\r\n| \u001b[1m+++ b/main-verticals-default.screen\u001b[m\r\n| \u001b[36m@@ -1,17 +1,17 @@\u001b[m\r\n| \u001b[31m-  1x 2010-04-07 05:37 +0000 Max Power   |  1x commit 5cb3412a5e06e506840495b91ac\u001b[m\r\n| \u001b[31m-   x 2010-03-29 17:15 +0000 Jørgen Thy~ |   x Refs: [master], {origin/master}, {\u001b[m\r\n| \u001b[31m-   x 2010-03-21 04:53 +0000 作者        |   x Author:     Max Power <power123@ex\u001b[m\r\n| \u001b[31m-   x 2010-03-12 16:31 +0000 René Léves~ |   x AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[31m-  5x 2010-03-04 04:09 +0000 A. U. Thor  |  5x Commit:     Committer <c.ommitter@\u001b[m\r\n| \u001b[31m-   x 2010-02-23 15:46 +0000 Max Power   |   x CommitDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[31m-   x 2010-02-15 03:24 +0000 Jørgen Thy~ |   x\u001b[m\r\n| \u001b[31m-   x 2010-02-06 15:02 +0000 作者        |   x     Commit 10 E\u001b[m\r\n| \u001b[31m-   x 2010-01-29 02:40 +0000 René Léves~ |\u001b[m\r\n| \u001b[31m- 10x 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[31m-   x 2010-01-12 01:56 +0000 Max Power   |\u001b[m\r\n| \u001b[31m-   x 2010-01-03 13:33 +0000 Jørgen Thy~ |\u001b[m\r\n| \u001b[31m-   x 2009-12-26 01:11 +0000 作者        |\u001b[m\r\n| \u001b[31m-   x 2009-12-17 12:49 +0000 René Léves~ |\u001b[m\r\n| \u001b[31m- 15x 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[31m-   x 2009-11-30 12:05 +0000 Max Power   |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m  1│ 2010-04-07 05:37 +0000 Max Power   |  1| commit 5cb3412a5e06e506840495b91ac\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   | Refs: [master], {origin/master}, {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-21 04:53 +0000 作者        |   | Author:     Max Power <power123@ex\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-12 16:31 +0000 René Lévesqu|   | AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m  5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5| Commit:     Committer <c.ommitter@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-02-23 15:46 +0000 Max Power   |   | CommitDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   |\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-02-06 15:02 +0000 作者        |   |     Commit 10 E\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-29 02:40 +0000 René Lévesqu|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 10│ 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-12 01:56 +0000 Max Power   |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-03 13:33 +0000 Jørgen Thyge|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2009-12-26 01:11 +0000 作者        |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2009-12-17 12:49 +0000 René Lévesqu|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 15│ 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2009-11-30 12:05 +0000 Max Power   |\u001b[m\r\n|  [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%\u001b[m\r\n| [FAIL] main-verticals-utf8.screen != expected/main-verticals-utf8.screen\r\n| \u001b[1mdiff --git a/expected/main-verticals-utf8.screen b/main-verticals-utf8.screen\u001b[m\r\n| \u001b[1mindex 6a3007c..3ae17ee 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-verticals-utf8.screen\u001b[m\r\n| \u001b[1m+++ b/main-verticals-utf8.screen\u001b[m\r\n| \u001b[36m@@ -1,17 +1,17 @@\u001b[m\r\n|    1│ 2010-04-07 05:37 +0000 Max Power   |  1│ commit 5cb3412a5e06e506840495b91ac\u001b[m\r\n| \u001b[31m-   │ 2010-03-29 17:15 +0000 Jørgen Thy~ |   │ Refs: [master], {origin/master}, {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   │ Refs: [master], {origin/master}, {\u001b[m\r\n|     │ 2010-03-21 04:53 +0000 作者        |   │ Author:     Max Power <power123@ex\u001b[m\r\n| \u001b[31m-   │ 2010-03-12 16:31 +0000 René Léves~ |   │ AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-03-12 16:31 +0000 René Lévesqu|   │ AuthorDate: Wed Apr 7 05:37:40 201\u001b[m\r\n|    5│ 2010-03-04 04:09 +0000 A. U. Thor  |  5│ Commit:     Committer <c.ommitter@\u001b[m\r\n|     │ 2010-02-23 15:46 +0000 Max Power   |   │ CommitDate: Wed Apr 7 05:37:40 201\u001b[m\r\n| \u001b[31m-   │ 2010-02-15 03:24 +0000 Jørgen Thy~ |   │\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-02-15 03:24 +0000 Jørgen Thyge|   │\u001b[m\u001b[41m \u001b[m\r\n|     │ 2010-02-06 15:02 +0000 作者        |   │     Commit 10 E\u001b[m\r\n| \u001b[31m-   │ 2010-01-29 02:40 +0000 René Léves~ |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-29 02:40 +0000 René Lévesqu|\u001b[m\r\n|   10│ 2010-01-20 14:18 +0000 A. U. Thor  |\u001b[m\r\n|     │ 2010-01-12 01:56 +0000 Max Power   |\u001b[m\r\n| \u001b[31m-   │ 2010-01-03 13:33 +0000 Jørgen Thy~ |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2010-01-03 13:33 +0000 Jørgen Thyge|\u001b[m\r\n|     │ 2009-12-26 01:11 +0000 作者        |\u001b[m\r\n| \u001b[31m-   │ 2009-12-17 12:49 +0000 René Léves~ |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   │ 2009-12-17 12:49 +0000 René Lévesqu|\u001b[m\r\n|   15│ 2009-12-09 00:27 +0000 A. U. Thor  |\u001b[m\r\n|     │ 2009-11-30 12:05 +0000 Max Power   |\u001b[m\r\n|  [main] 5cb3412a5e06e506840495b91acc8 32%|[diff] 5cb3412a5e06e506840495b91ac 100%\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/main/view-split-test",
           "script_sha256": "1893d1cec14ce3191fe06aca35c9f3e71891bb61f40b8cedb645bc52b82a16f4",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "OK": 3,
-            "FAIL": 1
+            "OK": 4
           },
           "assertions": [
             {
@@ -7925,7 +7915,7 @@
             },
             {
               "id": "main-vsplit-25-75.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "main-hsplit-default.screen#1",
@@ -7937,10 +7927,10 @@
             }
           ],
           "receipt_path": "test/tmp/main/view-split-test/.test-result",
-          "receipt": "  [OK] main-vsplit-default.screen assertion\n[FAIL] main-vsplit-25-75.screen != expected/main-vsplit-25-75.screen\n\u001b[1mdiff --git a/expected/main-vsplit-25-75.screen b/main-vsplit-25-75.screen\u001b[m\n\u001b[1mindex 6a136ae..dfbbf9d 100644\u001b[m\n\u001b[1m--- a/expected/main-vsplit-25-75.screen\u001b[m\n\u001b[1m+++ b/main-vsplit-25-75.screen\u001b[m\n\u001b[36m@@ -1,17 +1,17 @@\u001b[m\n\u001b[31m-2010-04-07 05:37 +0 |commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\n\u001b[31m-2010-03-29 17:15 +0 |Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5c\u001b[m\n\u001b[31m-2010-03-21 04:53 +0 |Author:     Max Power <power123@example.org>\u001b[m\n\u001b[31m-2010-03-12 16:31 +0 |AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n\u001b[31m-2010-03-04 04:09 +0 |Commit:     Committer <c.ommitter@example.net>\u001b[m\n\u001b[31m-2010-02-23 15:46 +0 |CommitDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n\u001b[31m-2010-02-15 03:24 +0 |\u001b[m\n\u001b[31m-2010-02-06 15:02 +0 |    Commit 10 E\u001b[m\n\u001b[31m-2010-01-29 02:40 +0 |\u001b[m\n\u001b[31m-2010-01-20 14:18 +0 |\u001b[m\n\u001b[31m-2010-01-12 01:56 +0 |\u001b[m\n\u001b[31m-2010-01-03 13:33 +0 |\u001b[m\n\u001b[31m-2009-12-26 01:11 +0 |\u001b[m\n\u001b[31m-2009-12-17 12:49 +0 |\u001b[m\n\u001b[31m-2009-12-09 00:27 +0 |\u001b[m\n\u001b[31m-2009-11-30 12:05 +0 |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-04-07 05:37 +00|commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-29 17:15 +00|Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5c\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-21 04:53 +00|Author:     Max Power <power123@example.org>\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-12 16:31 +00|AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-04 04:09 +00|Commit:     Committer <c.ommitter@example.net>\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-02-23 15:46 +00|CommitDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-02-15 03:24 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-02-06 15:02 +00|    Commit 10 E\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-29 02:40 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-20 14:18 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-12 01:56 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-01-03 13:33 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-26 01:11 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-17 12:49 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-12-09 00:27 +00|\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2009-11-30 12:05 +00|\u001b[m\n [main] 5cb3412a5 32%|[diff] 5cb3412a5e06e506840495b91acc885037a48b72 - line 100%\u001b[m\n  [OK] main-hsplit-default.screen assertion\n  [OK] main-hsplit-50-50.screen assertion\n",
+          "receipt": "  [OK] main-vsplit-default.screen assertion\n  [OK] main-vsplit-25-75.screen assertion\n  [OK] main-hsplit-default.screen assertion\n  [OK] main-hsplit-50-50.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 4 test(s)\r\n|   [OK] main-vsplit-default.screen assertion\r\n| [FAIL] main-vsplit-25-75.screen != expected/main-vsplit-25-75.screen\r\n| \u001b[1mdiff --git a/expected/main-vsplit-25-75.screen b/main-vsplit-25-75.screen\u001b[m\r\n| \u001b[1mindex 6a136ae..dfbbf9d 100644\u001b[m\r\n| \u001b[1m--- a/expected/main-vsplit-25-75.screen\u001b[m\r\n| \u001b[1m+++ b/main-vsplit-25-75.screen\u001b[m\r\n| \u001b[36m@@ -1,17 +1,17 @@\u001b[m\r\n| \u001b[31m-2010-04-07 05:37 +0 |commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\r\n| \u001b[31m-2010-03-29 17:15 +0 |Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5c\u001b[m\r\n| \u001b[31m-2010-03-21 04:53 +0 |Author:     Max Power <power123@example.org>\u001b[m\r\n| \u001b[31m-2010-03-12 16:31 +0 |AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n| \u001b[31m-2010-03-04 04:09 +0 |Commit:     Committer <c.ommitter@example.net>\u001b[m\r\n| \u001b[31m-2010-02-23 15:46 +0 |CommitDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n| \u001b[31m-2010-02-15 03:24 +0 |\u001b[m\r\n| \u001b[31m-2010-02-06 15:02 +0 |    Commit 10 E\u001b[m\r\n| \u001b[31m-2010-01-29 02:40 +0 |\u001b[m\r\n| \u001b[31m-2010-01-20 14:18 +0 |\u001b[m\r\n| \u001b[31m-2010-01-12 01:56 +0 |\u001b[m\r\n| \u001b[31m-2010-01-03 13:33 +0 |\u001b[m\r\n| \u001b[31m-2009-12-26 01:11 +0 |\u001b[m\r\n| \u001b[31m-2009-12-17 12:49 +0 |\u001b[m\r\n| \u001b[31m-2009-12-09 00:27 +0 |\u001b[m\r\n| \u001b[31m-2009-11-30 12:05 +0 |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-04-07 05:37 +00|commit 5cb3412a5e06e506840495b91acc885037a48b72\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-29 17:15 +00|Refs: [master], {origin/master}, {origin/HEAD}, v1.0-13-g5c\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-21 04:53 +00|Author:     Max Power <power123@example.org>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-12 16:31 +00|AuthorDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-04 04:09 +00|Commit:     Committer <c.ommitter@example.net>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-02-23 15:46 +00|CommitDate: Wed Apr 7 05:37:40 2010 +0000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-02-15 03:24 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-02-06 15:02 +00|    Commit 10 E\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-29 02:40 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-20 14:18 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-12 01:56 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-01-03 13:33 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-26 01:11 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-17 12:49 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-12-09 00:27 +00|\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2009-11-30 12:05 +00|\u001b[m\r\n|  [main] 5cb3412a5 32%|[diff] 5cb3412a5e06e506840495b91acc885037a48b72 - line 100%\u001b[m\r\n|   [OK] main-hsplit-default.screen assertion\r\n|   [OK] main-hsplit-50-50.screen assertion\r\n"
+          "transcript": ""
         },
         {
           "script": "test/prompt/exec-test",
@@ -8351,13 +8341,10 @@
           "script_sha256": "15e743199c03998a888fa22334e5c0c7789ed2fb9de611923f2c0e9d62bbf55a",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "OK": 1,
-            "FAIL": 2
+            "OK": 3
           },
           "assertions": [
             {
@@ -8366,18 +8353,18 @@
             },
             {
               "id": "hsplit.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "vsplit.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/regressions/github-434-test/.test-result",
-          "receipt": "  [OK] vsplit-auto.screen assertion\n[FAIL] hsplit.screen != expected/hsplit.screen\n\u001b[1mdiff --git a/expected/hsplit.screen b/hsplit.screen\u001b[m\n\u001b[1mindex 3c341c0..2130986 100644\u001b[m\n\u001b[1m--- a/expected/hsplit.screen\u001b[m\n\u001b[1m+++ b/hsplit.screen\u001b[m\n\u001b[36m@@ -9,6 +9,7 @@\u001b[m\n 2010-01-29 02:40 +0000 René Lévesque         o Commit 9 B\u001b[m\n [main] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - commit 2 of 50                                                                                             18%\u001b[m\n commit 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4\u001b[m\n\u001b[32m+\u001b[m\u001b[32mRefs: v1.0-12-g2843bfd\u001b[m\n Author:     Jørgen Thygesen Brahe <brache@example.dk>\u001b[m\n AuthorDate: Mon Mar 29 17:15:30 2010 +0000\u001b[m\n Commit:     Committer <c.ommitter@example.net>\u001b[m\n\u001b[36m@@ -25,5 +26,4 @@\u001b[m \u001b[mCommitDate: Mon Mar 29 17:15:30 2010 +0000\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n\u001b[31m- \u001b[m\n\u001b[31m-[diff] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - line 1 of 7                                                                                               100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[diff] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - line 1 of 8                                                                                               100%\u001b[m\n[FAIL] vsplit.screen != expected/vsplit.screen\n\u001b[1mdiff --git a/expected/vsplit.screen b/vsplit.screen\u001b[m\n\u001b[1mindex b21646e..575ce8f 100644\u001b[m\n\u001b[1m--- a/expected/vsplit.screen\u001b[m\n\u001b[1m+++ b/vsplit.screen\u001b[m\n\u001b[36m@@ -1,11 +1,11 @@\u001b[m\n 2010-04-07 05:37 +0000 Max Power             o [master] {origin/master} {origin/|commit 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4\u001b[m\n\u001b[31m-2010-03-29 17:15 +0000 Jørgen Thygesen Brahe o Commit 10 D                      |Author:     Jørgen Thygesen Brahe <brache@example.dk>\u001b[m\n\u001b[31m-2010-03-21 04:53 +0000 作者                  o Commit 10 C                      |AuthorDate: Mon Mar 29 17:15:30 2010 +0000\u001b[m\n\u001b[31m-2010-03-12 16:31 +0000 René Lévesque         o Commit 10 B                      |Commit:     Committer <c.ommitter@example.net>\u001b[m\n\u001b[31m-2010-03-04 04:09 +0000 A. U. Thor            o Commit 10 A                      |CommitDate: Mon Mar 29 17:15:30 2010 +0000\u001b[m\n\u001b[31m-2010-02-23 15:46 +0000 Max Power             o Commit 9 E                       |\u001b[m\n\u001b[31m-2010-02-15 03:24 +0000 Jørgen Thygesen Brahe o Commit 9 D                       |    Commit 10 D\u001b[m\n\u001b[31m-2010-02-06 15:02 +0000 作者                  o Commit 9 C                       |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-29 17:15 +0000 Jørgen Thygesen Brahe o Commit 10 D                      |Refs: v1.0-12-g2843bfd\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-21 04:53 +0000 作者                  o Commit 10 C                      |Author:     Jørgen Thygesen Brahe <brache@example.dk>\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-12 16:31 +0000 René Lévesque         o Commit 10 B                      |AuthorDate: Mon Mar 29 17:15:30 2010 +0000\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-03-04 04:09 +0000 A. U. Thor            o Commit 10 A                      |Commit:     Committer <c.ommitter@example.net>\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-02-23 15:46 +0000 Max Power             o Commit 9 E                       |CommitDate: Mon Mar 29 17:15:30 2010 +0000\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-02-15 03:24 +0000 Jørgen Thygesen Brahe o Commit 9 D                       |\u001b[m\n\u001b[32m+\u001b[m\u001b[32m2010-02-06 15:02 +0000 作者                  o Commit 9 C                       |    Commit 10 D\u001b[m\n 2010-01-29 02:40 +0000 René Lévesque         o Commit 9 B                       |\u001b[m\n 2010-01-20 14:18 +0000 A. U. Thor            o Commit 9 A                       |\u001b[m\n 2010-01-12 01:56 +0000 Max Power             o Commit 8 E                       |\u001b[m\n\u001b[36m@@ -26,4 +26,4 @@\u001b[m\n 2009-09-06 08:23 +0000 Max Power             o Commit 5 E                       |\u001b[m\n 2009-08-28 20:01 +0000 Jørgen Thygesen Brahe o Commit 5 D                       |\u001b[m\n 2009-08-20 07:39 +0000 作者                  o Commit 5 C                       |\u001b[m\n\u001b[31m-[main] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - commit 2 of 50             56%|[diff] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - line 1 of 7              100%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[main] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - commit 2 of 50             56%|[diff] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - line 1 of 8              100%\u001b[m\n",
+          "receipt": "  [OK] vsplit-auto.screen assertion\n  [OK] hsplit.screen assertion\n  [OK] vsplit.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 2 out of 3 test(s)\r\n|   [OK] vsplit-auto.screen assertion\r\n| [FAIL] hsplit.screen != expected/hsplit.screen\r\n| \u001b[1mdiff --git a/expected/hsplit.screen b/hsplit.screen\u001b[m\r\n| \u001b[1mindex 3c341c0..2130986 100644\u001b[m\r\n| \u001b[1m--- a/expected/hsplit.screen\u001b[m\r\n| \u001b[1m+++ b/hsplit.screen\u001b[m\r\n| \u001b[36m@@ -9,6 +9,7 @@\u001b[m\r\n|  2010-01-29 02:40 +0000 René Lévesque         o Commit 9 B\u001b[m\r\n|  [main] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - commit 2 of 50                                                                                             18%\u001b[m\r\n|  commit 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mRefs: v1.0-12-g2843bfd\u001b[m\r\n|  Author:     Jørgen Thygesen Brahe <brache@example.dk>\u001b[m\r\n|  AuthorDate: Mon Mar 29 17:15:30 2010 +0000\u001b[m\r\n|  Commit:     Committer <c.ommitter@example.net>\u001b[m\r\n| \u001b[36m@@ -25,5 +26,4 @@\u001b[m \u001b[mCommitDate: Mon Mar 29 17:15:30 2010 +0000\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n| \u001b[31m- \u001b[m\r\n| \u001b[31m-[diff] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - line 1 of 7                                                                                               100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[diff] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - line 1 of 8                                                                                               100%\u001b[m\r\n| [FAIL] vsplit.screen != expected/vsplit.screen\r\n| \u001b[1mdiff --git a/expected/vsplit.screen b/vsplit.screen\u001b[m\r\n| \u001b[1mindex b21646e..575ce8f 100644\u001b[m\r\n| \u001b[1m--- a/expected/vsplit.screen\u001b[m\r\n| \u001b[1m+++ b/vsplit.screen\u001b[m\r\n| \u001b[36m@@ -1,11 +1,11 @@\u001b[m\r\n|  2010-04-07 05:37 +0000 Max Power             o [master] {origin/master} {origin/|commit 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4\u001b[m\r\n| \u001b[31m-2010-03-29 17:15 +0000 Jørgen Thygesen Brahe o Commit 10 D                      |Author:     Jørgen Thygesen Brahe <brache@example.dk>\u001b[m\r\n| \u001b[31m-2010-03-21 04:53 +0000 作者                  o Commit 10 C                      |AuthorDate: Mon Mar 29 17:15:30 2010 +0000\u001b[m\r\n| \u001b[31m-2010-03-12 16:31 +0000 René Lévesque         o Commit 10 B                      |Commit:     Committer <c.ommitter@example.net>\u001b[m\r\n| \u001b[31m-2010-03-04 04:09 +0000 A. U. Thor            o Commit 10 A                      |CommitDate: Mon Mar 29 17:15:30 2010 +0000\u001b[m\r\n| \u001b[31m-2010-02-23 15:46 +0000 Max Power             o Commit 9 E                       |\u001b[m\r\n| \u001b[31m-2010-02-15 03:24 +0000 Jørgen Thygesen Brahe o Commit 9 D                       |    Commit 10 D\u001b[m\r\n| \u001b[31m-2010-02-06 15:02 +0000 作者                  o Commit 9 C                       |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-29 17:15 +0000 Jørgen Thygesen Brahe o Commit 10 D                      |Refs: v1.0-12-g2843bfd\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-21 04:53 +0000 作者                  o Commit 10 C                      |Author:     Jørgen Thygesen Brahe <brache@example.dk>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-12 16:31 +0000 René Lévesque         o Commit 10 B                      |AuthorDate: Mon Mar 29 17:15:30 2010 +0000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-03-04 04:09 +0000 A. U. Thor            o Commit 10 A                      |Commit:     Committer <c.ommitter@example.net>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-02-23 15:46 +0000 Max Power             o Commit 9 E                       |CommitDate: Mon Mar 29 17:15:30 2010 +0000\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-02-15 03:24 +0000 Jørgen Thygesen Brahe o Commit 9 D                       |\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m2010-02-06 15:02 +0000 作者                  o Commit 9 C                       |    Commit 10 D\u001b[m\r\n|  2010-01-29 02:40 +0000 René Lévesque         o Commit 9 B                       |\u001b[m\r\n|  2010-01-20 14:18 +0000 A. U. Thor            o Commit 9 A                       |\u001b[m\r\n|  2010-01-12 01:56 +0000 Max Power             o Commit 8 E                       |\u001b[m\r\n| \u001b[36m@@ -26,4 +26,4 @@\u001b[m\r\n|  2009-09-06 08:23 +0000 Max Power             o Commit 5 E                       |\u001b[m\r\n|  2009-08-28 20:01 +0000 Jørgen Thygesen Brahe o Commit 5 D                       |\u001b[m\r\n|  2009-08-20 07:39 +0000 作者                  o Commit 5 C                       |\u001b[m\r\n| \u001b[31m-[main] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - commit 2 of 50             56%|[diff] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - line 1 of 7              100%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[main] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - commit 2 of 50             56%|[diff] 2843bfd58b98c7e23ab91e51ffa4db4f8e27c9a4 - line 1 of 8              100%\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/script/comment-test",
@@ -8574,13 +8561,10 @@
           "script_sha256": "0aa8614f911de18145b25164645805cc89b7eba159349bdb8181a7284c8c6969",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "OK": 1,
-            "FAIL": 1
+            "OK": 2
           },
           "assertions": [
             {
@@ -8589,14 +8573,14 @@
             },
             {
               "id": "split-diff.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/stage/split-chunk-test/.test-result",
-          "receipt": "  [OK] default-diff.screen assertion\n[FAIL] split-diff.screen != expected/split-diff.screen\n\u001b[1mdiff --git a/expected/split-diff.screen b/split-diff.screen\u001b[m\n\u001b[1mindex 775edde..7736b0f 100644\u001b[m\n\u001b[1m--- a/expected/split-diff.screen\u001b[m\n\u001b[1m+++ b/split-diff.screen\u001b[m\n\u001b[36m@@ -23,7 +23,7 @@\u001b[m \u001b[mindex 12d1d9e..931fee6 100644\u001b[m\n -6\u001b[m\n +edited-too\u001b[m\n  7\u001b[m\n\u001b[31m-@@ -8,4 +8,1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -8,4 +8,2 @@\u001b[m\n  7\u001b[m\n -8\u001b[m\n -9\u001b[m\n",
+          "receipt": "  [OK] default-diff.screen assertion\n  [OK] split-diff.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 2 test(s)\r\n|   [OK] default-diff.screen assertion\r\n| [FAIL] split-diff.screen != expected/split-diff.screen\r\n| \u001b[1mdiff --git a/expected/split-diff.screen b/split-diff.screen\u001b[m\r\n| \u001b[1mindex 775edde..7736b0f 100644\u001b[m\r\n| \u001b[1m--- a/expected/split-diff.screen\u001b[m\r\n| \u001b[1m+++ b/split-diff.screen\u001b[m\r\n| \u001b[36m@@ -23,7 +23,7 @@\u001b[m \u001b[mindex 12d1d9e..931fee6 100644\u001b[m\r\n|  -6\u001b[m\r\n|  +edited-too\u001b[m\r\n|   7\u001b[m\r\n| \u001b[31m-@@ -8,4 +8,1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m@@ -8,4 +8,2 @@\u001b[m\r\n|   7\u001b[m\r\n|  -8\u001b[m\r\n|  -9\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/stage/update-part-test",
@@ -10067,10 +10051,10 @@
             }
           ],
           "receipt_path": "test/tmp/tree/file-name-test/.test-result",
-          "receipt": "  [OK] root-dir.screen assertion\n[FAIL] first-child-dir.screen != expected/first-child-dir.screen\n\u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\n\u001b[1mindex 0a482af..53d6b42 100644\u001b[m\n\u001b[1m--- a/expected/first-child-dir.screen\u001b[m\n\u001b[1m+++ b/first-child-dir.screen\u001b[m\n\u001b[36m@@ -1,7 +1,7 @@\u001b[m\n Directory path /-- foo bar/\u001b[m\n drwxr-xr-x                                    ..\u001b[m\n -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\n\u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\n \u001b[m\n \u001b[m\n \u001b[m\n  [OK] second-child-dir.screen assertion\n  [OK] second-child-dir-first-file.screen assertion\n",
+          "receipt": "  [OK] root-dir.screen assertion\n[FAIL] first-child-dir.screen != expected/first-child-dir.screen\n\u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\n\u001b[1mindex 0a482af..edac9b5 100644\u001b[m\n\u001b[1m--- a/expected/first-child-dir.screen\u001b[m\n\u001b[1m+++ b/first-child-dir.screen\u001b[m\n\u001b[36m@@ -1,7 +1,7 @@\u001b[m\n Directory path /-- foo bar/\u001b[m\n drwxr-xr-x                                    ..\u001b[m\n -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\n\u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\n  \u001b[m\n  \u001b[m\n  \u001b[m\n  [OK] second-child-dir.screen assertion\n  [OK] second-child-dir-first-file.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 4 test(s)\r\n|   [OK] root-dir.screen assertion\r\n| [FAIL] first-child-dir.screen != expected/first-child-dir.screen\r\n| \u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\r\n| \u001b[1mindex 0a482af..53d6b42 100644\u001b[m\r\n| \u001b[1m--- a/expected/first-child-dir.screen\u001b[m\r\n| \u001b[1m+++ b/first-child-dir.screen\u001b[m\r\n| \u001b[36m@@ -1,7 +1,7 @@\u001b[m\r\n|  Directory path /-- foo bar/\u001b[m\r\n|  drwxr-xr-x                                    ..\u001b[m\r\n|  -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\r\n| \u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|  \u001b[m\r\n|   [OK] second-child-dir.screen assertion\r\n|   [OK] second-child-dir-first-file.screen assertion\r\n"
+          "transcript": "| Failed 1 out of 4 test(s)\r\n|   [OK] root-dir.screen assertion\r\n| [FAIL] first-child-dir.screen != expected/first-child-dir.screen\r\n| \u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\r\n| \u001b[1mindex 0a482af..edac9b5 100644\u001b[m\r\n| \u001b[1m--- a/expected/first-child-dir.screen\u001b[m\r\n| \u001b[1m+++ b/first-child-dir.screen\u001b[m\r\n| \u001b[36m@@ -1,7 +1,7 @@\u001b[m\r\n|  Directory path /-- foo bar/\u001b[m\r\n|  drwxr-xr-x                                    ..\u001b[m\r\n|  -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\r\n| \u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\r\n|   \u001b[m\r\n|   \u001b[m\r\n|   \u001b[m\r\n|   [OK] second-child-dir.screen assertion\r\n|   [OK] second-child-dir-first-file.screen assertion\r\n"
         },
         {
           "script": "test/tree/recurse-test",
@@ -10182,18 +10166,18 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig",
-          "sha256": "966929474b11c4425a389132962ac30d3b88eb46af7338a347df2abad4c42449"
+          "sha256": "b34929eb09d6cd543dcc77d5e7421ba8875287babcb7b5e1747951604466d180"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph",
-          "sha256": "cef42b529157a36aeaa22dfa939b47b5f10cf800da2ff5155f386f01d718ec79"
+          "sha256": "5c329397600718547209d88224b9ad143cb55da4182656383615acd1f414a6d8"
         }
       },
       "binaries_unchanged": true,
       "summary": {
-        "pass": 141,
+        "pass": 147,
         "skip": 3,
-        "fail": 10
+        "fail": 4
       }
     }
   },
@@ -10412,7 +10396,7 @@
         {
           "id": "diff-highlight-true.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "diff-highlight-true.stderr#1",
@@ -10422,7 +10406,7 @@
         {
           "id": "diff-highlight-custom.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "diff-highlight-custom.stderr#1",
@@ -10437,7 +10421,7 @@
         {
           "id": "diff-highlight-misconfigured.stderr#1",
           "c": "OK",
-          "rust": "OK"
+          "rust": "FAIL"
         }
       ]
     },
@@ -11838,12 +11822,12 @@
     {
       "script": "test/main/main-options-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "with-10-lines.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -12134,7 +12118,7 @@
     {
       "script": "test/main/submodule-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "main-submodule.screen#1",
@@ -12144,7 +12128,7 @@
         {
           "id": "main-submodule-diff.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -12207,29 +12191,29 @@
     {
       "script": "test/main/vertical-lines-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "main-verticals-ascii.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "main-verticals-default.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "main-verticals-utf8.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
     {
       "script": "test/main/view-split-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "main-vsplit-default.screen#1",
@@ -12239,7 +12223,7 @@
         {
           "id": "main-vsplit-25-75.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "main-hsplit-default.screen#1",
@@ -12544,7 +12528,7 @@
     {
       "script": "test/regressions/github-434-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "vsplit-auto.screen#1",
@@ -12554,12 +12538,12 @@
         {
           "id": "hsplit.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "vsplit.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -12726,7 +12710,7 @@
     {
       "script": "test/stage/split-chunk-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "default-diff.screen#1",
@@ -12736,7 +12720,7 @@
         {
           "id": "split-diff.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
