@@ -350,6 +350,7 @@ impl View {
     }
 }
 struct App {
+    watch: tig_rs::watch::Watch,
     repo: Option<Repository>,
     config: Config,
     view: View,
@@ -983,17 +984,71 @@ impl App {
         Ok(())
     }
     fn refresh_after_command(&mut self) -> Result<()> {
-        if self.other.is_none() {
-            self.refresh_parent()?;
+        if self.config.value("refresh-mode") == Some("manual") {
+            return Ok(());
         }
-        self.action("refresh")?;
-        if self.other.is_some() {
+        self.refresh_views()
+    }
+    fn poll_watch(&mut self) -> bool {
+        if self.config.value("refresh-mode") != Some("periodic") {
+            return false;
+        }
+        let Some(repo) = &self.repo else { return false };
+        let seconds = self
+            .config
+            .value("refresh-interval")
+            .unwrap_or("10")
+            .parse::<u64>()
+            .unwrap_or(0);
+        match self.watch.poll(
+            repo,
+            std::time::Duration::from_secs(seconds),
+            std::time::Instant::now(),
+        ) {
+            Ok(false) => false,
+            Ok(true) => {
+                if let Err(error) = self.refresh_views() {
+                    self.message = error.to_string();
+                }
+                true
+            }
+            Err(error) => {
+                self.message = error.to_string();
+                true
+            }
+        }
+    }
+    fn reset_watch(&mut self) -> Result<()> {
+        if self.config.value("refresh-mode") == Some("periodic") {
+            if let Some(repo) = &self.repo {
+                self.watch.reset(repo, std::time::Instant::now())?;
+            }
+        }
+        Ok(())
+    }
+    fn refresh_views(&mut self) -> Result<()> {
+        // Record before loading, so a concurrent change after a view's Git read
+        // remains visible to the next poll. A failed pane keeps retrying.
+        let baseline = self.reset_watch();
+        let parent = if self.other.is_none() {
+            self.refresh_parent()
+        } else {
+            Ok(())
+        };
+        let current = self.action("refresh");
+        let other = if self.other.is_some() {
             self.swap_panes();
             let result = self.action("refresh");
             self.swap_panes();
-            result?;
+            result.map(|_| ())
+        } else {
+            Ok(())
+        };
+        let result = baseline.and(parent).and(current.map(|_| ())).and(other);
+        if result.is_err() {
+            self.watch.retry();
         }
-        Ok(())
+        result
     }
     fn sync_context(&mut self) {
         self.args = self.view.args.clone();
@@ -1884,6 +1939,9 @@ impl App {
                     }
                     self.message = "Can't close last remaining view".into();
                 }
+                if self.config.value("refresh-mode") == Some("periodic") {
+                    self.action("refresh")?;
+                }
             }
             "enter" => self.enter(true)?,
             "view-next" => {
@@ -2693,6 +2751,7 @@ mod editor_tests {
         view.path = "new/file".into();
         view.push("content".into(), Item::Blame(line.clone()));
         let mut app = App {
+            watch: tig_rs::watch::Watch::default(),
             repo: None,
             config: Config::defaults(),
             view,
@@ -2866,6 +2925,7 @@ mod editor_tests {
         }
         view.selected = 1;
         let mut app = App {
+            watch: tig_rs::watch::Watch::default(),
             repo: None,
             config: Config::default(),
             view,
@@ -3305,15 +3365,19 @@ impl Terminal {
     }
     fn read(&self) -> Result<Event> {
         loop {
-            if self.stop.load(std::sync::atomic::Ordering::Relaxed) {
-                return Err(
-                    io::Error::new(io::ErrorKind::Interrupted, "Terminal interrupted").into(),
-                );
-            }
-            if event::poll(std::time::Duration::from_millis(100))? {
-                return Ok(event::read()?);
+            if let Some(event) = self.read_tick()? {
+                return Ok(event);
             }
         }
+    }
+    fn read_tick(&self) -> Result<Option<Event>> {
+        if self.stop.load(std::sync::atomic::Ordering::Relaxed) {
+            return Err(io::Error::new(io::ErrorKind::Interrupted, "Terminal interrupted").into());
+        }
+        if event::poll(std::time::Duration::from_millis(100))? {
+            return Ok(Some(event::read()?));
+        }
+        Ok(None)
     }
     fn draw(&mut self, app: &mut App) -> Result<()> {
         let lines = app.screen(false);
@@ -3675,6 +3739,7 @@ fn run() -> Result<()> {
     let history = PromptHistory::load(&config);
     let search = history.entries.last().cloned().unwrap_or_default();
     let mut app = App {
+        watch: tig_rs::watch::Watch::default(),
         repo,
         config,
         view: View::new(&cli.view),
@@ -3696,6 +3761,9 @@ fn run() -> Result<()> {
         width: width as usize,
         height: height as usize,
     };
+    if let Err(error) = app.reset_watch() {
+        app.message = error.to_string();
+    }
     if let (Some(repo), Some(separator)) = (&app.repo, app.args.iter().position(|arg| arg == "--"))
     {
         if cli.view != "blame" {
@@ -3849,8 +3917,17 @@ fn run() -> Result<()> {
         if app.finder.is_some() {
             terminal.find_file(&mut app)?;
         }
+        app.poll_watch();
         terminal.draw(&mut app)?;
-        let action = match terminal.read()? {
+        let event = loop {
+            if let Some(event) = terminal.read_tick()? {
+                break event;
+            }
+            if app.poll_watch() {
+                terminal.draw(&mut app)?;
+            }
+        };
+        let action = match event {
             Event::Resize(w, h) => {
                 app.width = w as usize;
                 app.height = h as usize;
@@ -4002,7 +4079,10 @@ fn run() -> Result<()> {
                             .to_owned();
                     }
                 }
-                Err(error) => app.message = error.to_string(),
+                Err(error) => {
+                    let _ = app.refresh_after_command();
+                    app.message = error.to_string();
+                }
             }
         }
     }
@@ -4061,6 +4141,7 @@ mod tests {
         let mut config = Config::defaults();
         config.parse("set line-graphics = utf-8\nset show-changes = no\nset main-view = commit-title:yes,graph,refs=no");
         let mut app = App {
+            watch: tig_rs::watch::Watch::default(),
             repo: Some(repo),
             config,
             view: View::new("main"),
@@ -4311,6 +4392,7 @@ mod tests {
             .unwrap();
         let repo = Repository::discover(root.join("common/src")).unwrap();
         let mut app = App {
+            watch: tig_rs::watch::Watch::default(),
             repo: Some(repo),
             config: Config::defaults(),
             view: View::new("main"),
@@ -4398,6 +4480,7 @@ mod tests {
     #[test]
     fn unclosed_binding_argument_cannot_become_a_valid_toggle() {
         let mut app = App {
+            watch: tig_rs::watch::Watch::default(),
             repo: None,
             config: Config::defaults(),
             view: View::new("main"),
@@ -4443,6 +4526,7 @@ mod tests {
     #[test]
     fn failed_grep_query_keeps_previous_arguments() {
         let mut app = App {
+            watch: tig_rs::watch::Watch::default(),
             repo: None,
             config: Config::defaults(),
             view: View::new("grep"),
@@ -4521,6 +4605,7 @@ mod tests {
             }),
         );
         let mut app = App {
+            watch: tig_rs::watch::Watch::default(),
             repo: None,
             config: Config::defaults(),
             view,
@@ -4575,6 +4660,7 @@ mod tests {
         repo.command(["commit", "-qm", "base"]).unwrap();
         fs::write(root.join("new"), "new\n").unwrap();
         let mut app = App {
+            watch: tig_rs::watch::Watch::default(),
             repo: Some(repo),
             config: Config::defaults(),
             view: View::new("main"),
@@ -4747,6 +4833,7 @@ mod tests {
         child.path = "child.txt".into();
         child.left = 1;
         let mut app = App {
+            watch: tig_rs::watch::Watch::default(),
             repo: None,
             config: Config::default(),
             view: child,
@@ -4826,6 +4913,7 @@ mod tests {
     #[test]
     fn explicit_diff_detaches_parent_and_vertical_split_reserves_separator() {
         let mut app = App {
+            watch: tig_rs::watch::Watch::default(),
             repo: None,
             config: Config::defaults(),
             view: View::text("diff", "first\nsecond"),
