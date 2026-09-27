@@ -1,0 +1,875 @@
+{
+  "scope": "Diff/stage historical blob slice only; not the full 154-script parity gate",
+  "source_commit": "5890e6a5ebe55b8668810fac5c3430b9a8c22c0b",
+  "base_commit": "dc16e3cc88811ffe03ae9cbbeab77d704f76ac95",
+  "source_manifest_sha256": "d2e9e9c7926489d8c1af13cb423b905c67ce07baa007faafcbdab5729c7cbdb7",
+  "source_sha256": {
+    "Cargo.lock": "7f9d3e6d2f4d911c6d664fc0262cb8372c15107aef416a069d26b6c6f4a527ab",
+    "Cargo.toml": "2a4246632b36ca9defc3fb89312e983b474db8bf2775bf7699232041046a0a0a",
+    "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
+    "rust/blame_options.rs": "3428dde1443dae5234bf6f2b5786568858d304af86e265a2e58e323f2b462ae0",
+    "rust/blob_editor.rs": "70f69440bb6e9e1d537b3ee4b2f4868786a7e09f627737779e6fb79ae7b9b499",
+    "rust/commands.rs": "4ccff24976180c3cab67a33b5834911360b7fc60b4ed8d8ed34ebb04b5d45ed2",
+    "rust/config.rs": "adf1be06bea100489c8087d06da4ee6ffe6723ec1abedb03ceb47099cde24eab",
+    "rust/date.rs": "51d16041689246691bcfacc8a2f2654e39ae2a123c5aec770c449bfc6ced24f4",
+    "rust/file_finder.rs": "982467deb7b9369b1d2c8f2dd981fb27a384dfa252c8ac8cf9b778be99d89a78",
+    "rust/git.rs": "e6adf8e3f0a9e9accc811046a4e56b57933c167bda006b43e95fdc813263e5a8",
+    "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
+    "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+    "rust/grep.rs": "cc2f8c908ce709f823d8ce2863ecf1315c5bd17b4feaa468a872d875b1e896f6",
+    "rust/help_view.rs": "4e493d2f6073c2b379361f1a9564b71bdd1d20fdc1e788c628d2a0ecf6dc60ec",
+    "rust/lib.rs": "4a12641eb6ee98eec473f7808d497f85d65ccfabc417efab26385be5ddcc2557",
+    "rust/line.rs": "db277d47a595ce2642455b09bd074bdfaad3204c26c7d52565692a7642726e69",
+    "rust/main.rs": "4e93ea80d0c39d550634518175584536b6264a6cc601bf2cddad9e758bb90c5a",
+    "rust/model.rs": "d00793ef4520c705b5e6b51c5820285c4f593bb29885e09705deac4609f88b0f",
+    "rust/options_catalog.rs": "8f070a0695a25a17329c29b002ff820c79eda73c6eab57ade9547ae623d86f5f",
+    "rust/patch.rs": "255874e94a4ffa35c71c2233083ae0d3018e675687a0a948dcebcbd550f86e46",
+    "rust/prompt.rs": "aa9878efbdb6135469e3e5593d028d55ad5ed66ce0c8baa269c282e076595bc5",
+    "rust/refs_view.rs": "88d0406fe0d2ca05587ce6327b2f99a5f52d60704ae31d014e9e93655d181414",
+    "rust/render.rs": "fceae91968717a44ef2cff44bc3702a0c145ff48abff9b6e83e7cec7820aab9c",
+    "rust/request.rs": "d86fb0b900878ea116c17bd6a431b450d34999fd113770b6f9e0cb39ff88deb8",
+    "rust/status_ops.rs": "5e5f34a7a66387ec44cf14775e7f141262f01ab58fd5388dacbf303a3be4ef7b",
+    "rust/stdin_show.rs": "4930776c25c247e073c886749a787ae53c64f9c4faef626a006803f3d8825dd3",
+    "rust/trace.rs": "4fb87248de03495a20b7d4f3863c971c30000a07c1f688d55b2625b22bcf8c23",
+    "rust/tree_view.rs": "cbc6ce461b63617cfc8e0d9af890aaa15fea14c382f930cb99a55ffbdafddb51",
+    "rust/view_export.rs": "92b2fd6fe61198b2d832305b4dbec2899ee646fa446bdf6178d89092c3b97117",
+    "rust/watch.rs": "851c479af44000c515ee5949416cb3f114f62b1b98c610d967d4e8fab296c81c"
+  },
+  "binary_sha256": {
+    "src/tig": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+    "target/release/tig": "1c377cecefad00520762b68a3608737af1595118e6b9d7e8612b3ab9d02552cf"
+  },
+  "checks": {
+    "cargo fmt --check": "PASS",
+    "rustup run 1.81.0 cargo build --release --bin tig": "PASS",
+    "rustup run 1.81.0 cargo test --bin tig --quiet": "25 PASS",
+    "rustup run 1.81.0 cargo clippy --bin tig -- -D warnings": "PASS",
+    "git diff --check": "PASS"
+  },
+  "review": "Three independent fresh-context read-only Reviewers; final source and regression reviewed, no material findings.",
+  "original_command": "python3 rust/tests/upstream-suite.py --output /tmp/diff-origin-original-final.json test/blame/initial-diff-test test/blame/blob-blame-test test/diff/wrap-lines-test test/stage/default-test",
+  "original": {
+    "schema": 1,
+    "source_commit": "dc16e3cc88811ffe03ae9cbbeab77d704f76ac95",
+    "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+    "harness_sha256": {
+      "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+      "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+      "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+    },
+    "rust_complete": false,
+    "parity_gate": "PASS_SELECTED_SCRIPTS",
+    "script_timeout_seconds": 120,
+    "environment": {
+      "platform": "Darwin arm64",
+      "git": "git version 2.50.1 (Apple Git-155)",
+      "init.defaultBranch": "master",
+      "TEST_OPTS": "",
+      "pty_rows": 30,
+      "pty_columns": 80
+    },
+    "runs": {
+      "c": {
+        "build_command": [
+          "make",
+          "src/tig",
+          "test/tools/test-graph"
+        ],
+        "build_exit_code": 0,
+        "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+        "results": [
+          {
+            "script": "test/blame/blob-blame-test",
+            "script_sha256": "a932f97f6963a0962c69b2064371d897bba836ce4a3a93a454b7d994b62b55e6",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 1
+            },
+            "assertions": [
+              {
+                "id": "recursive-blame.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/blame/blob-blame-test/.test-result",
+            "receipt": "  [OK] recursive-blame.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/blame/initial-diff-test",
+            "script_sha256": "13f0d337f1954eb9f30b30d9009862fb24f69753cf4cc6a62f4ab998b5cbd193",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 2
+            },
+            "assertions": [
+              {
+                "id": "initial-diff.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "blame-deleted-line.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/blame/initial-diff-test/.test-result",
+            "receipt": "  [OK] initial-diff.screen assertion\n  [OK] blame-deleted-line.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/diff/wrap-lines-test",
+            "script_sha256": "4a68cfaf5c4231853b50799b217f130d445b4b873fdec577f60290e8d5237072",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 1
+            },
+            "assertions": [
+              {
+                "id": "wrapped.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/diff/wrap-lines-test/.test-result",
+            "receipt": "  [OK] wrapped.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/stage/default-test",
+            "script_sha256": "d58bba43a0248c8c2bea7551e41f8c8dec4dfd993dd8dbb156f8325d895d7493",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 14
+            },
+            "assertions": [
+              {
+                "id": "status.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#2",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#2",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes-for-a-shortcut.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#3",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes-for-a.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#3",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-default-title.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-line.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-chunk.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-last-chunk.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-all.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/stage/default-test/.test-result",
+            "receipt": "  [OK] status.screen assertion\n  [OK] staged-changes.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] staged-changes.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] staged-changes-for-a-shortcut.screen assertion\n  [OK] staged-changes.screen assertion\n  [OK] staged-changes-for-a.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] unstaged-changes-default-title.screen assertion\n  [OK] unstaged-changes-staged-bc-line.screen assertion\n  [OK] unstaged-changes-staged-bc-chunk.screen assertion\n  [OK] unstaged-changes-staged-bc-last-chunk.screen assertion\n  [OK] unstaged-changes-staged-all.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          }
+        ],
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-diff-origin/work/tig/src/tig",
+            "sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-diff-origin/work/tig/test/tools/test-graph",
+            "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+          }
+        },
+        "binaries_unchanged": true,
+        "summary": {
+          "pass": 4
+        }
+      },
+      "rust": {
+        "build_command": [
+          "make",
+          "rust-test-binaries"
+        ],
+        "build_exit_code": 0,
+        "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-diff-origin/work/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-diff-origin/work/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-diff-origin/work/tig/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.43s\n",
+        "results": [
+          {
+            "script": "test/blame/blob-blame-test",
+            "script_sha256": "a932f97f6963a0962c69b2064371d897bba836ce4a3a93a454b7d994b62b55e6",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 1
+            },
+            "assertions": [
+              {
+                "id": "recursive-blame.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/blame/blob-blame-test/.test-result",
+            "receipt": "  [OK] recursive-blame.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/blame/initial-diff-test",
+            "script_sha256": "13f0d337f1954eb9f30b30d9009862fb24f69753cf4cc6a62f4ab998b5cbd193",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 2
+            },
+            "assertions": [
+              {
+                "id": "initial-diff.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "blame-deleted-line.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/blame/initial-diff-test/.test-result",
+            "receipt": "  [OK] initial-diff.screen assertion\n  [OK] blame-deleted-line.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/diff/wrap-lines-test",
+            "script_sha256": "4a68cfaf5c4231853b50799b217f130d445b4b873fdec577f60290e8d5237072",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 1
+            },
+            "assertions": [
+              {
+                "id": "wrapped.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/diff/wrap-lines-test/.test-result",
+            "receipt": "  [OK] wrapped.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/stage/default-test",
+            "script_sha256": "d58bba43a0248c8c2bea7551e41f8c8dec4dfd993dd8dbb156f8325d895d7493",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 14
+            },
+            "assertions": [
+              {
+                "id": "status.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#2",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#2",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes-for-a-shortcut.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#3",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes-for-a.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#3",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-default-title.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-line.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-chunk.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-last-chunk.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-all.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/stage/default-test/.test-result",
+            "receipt": "  [OK] status.screen assertion\n  [OK] staged-changes.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] staged-changes.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] staged-changes-for-a-shortcut.screen assertion\n  [OK] staged-changes.screen assertion\n  [OK] staged-changes-for-a.screen assertion\n  [OK] unstaged-changes.screen assertion\n  [OK] unstaged-changes-default-title.screen assertion\n  [OK] unstaged-changes-staged-bc-line.screen assertion\n  [OK] unstaged-changes-staged-bc-chunk.screen assertion\n  [OK] unstaged-changes-staged-bc-last-chunk.screen assertion\n  [OK] unstaged-changes-staged-all.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          }
+        ],
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-diff-origin/work/tig/target/release/tig",
+            "sha256": "1c377cecefad00520762b68a3608737af1595118e6b9d7e8612b3ab9d02552cf"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-diff-origin/work/tig/target/release/test-graph",
+            "sha256": "b0cc67bae1c9e1a2024f41369063ff91ab1384a55c461323fc2d5e82f65470c5"
+          }
+        },
+        "binaries_unchanged": true,
+        "summary": {
+          "pass": 4
+        }
+      }
+    },
+    "mapping": [
+      {
+        "script": "test/blame/blob-blame-test",
+        "c_status": "pass",
+        "rust_status": "pass",
+        "assertions": [
+          {
+            "id": "recursive-blame.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      },
+      {
+        "script": "test/blame/initial-diff-test",
+        "c_status": "pass",
+        "rust_status": "pass",
+        "assertions": [
+          {
+            "id": "initial-diff.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "blame-deleted-line.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      },
+      {
+        "script": "test/diff/wrap-lines-test",
+        "c_status": "pass",
+        "rust_status": "pass",
+        "assertions": [
+          {
+            "id": "wrapped.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      },
+      {
+        "script": "test/stage/default-test",
+        "c_status": "pass",
+        "rust_status": "pass",
+        "assertions": [
+          {
+            "id": "status.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "staged-changes.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "unstaged-changes.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "staged-changes.screen#2",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "unstaged-changes.screen#2",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "staged-changes-for-a-shortcut.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "staged-changes.screen#3",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "staged-changes-for-a.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "unstaged-changes.screen#3",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "unstaged-changes-default-title.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "unstaged-changes-staged-bc-line.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "unstaged-changes-staged-bc-chunk.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "unstaged-changes-staged-bc-last-chunk.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "unstaged-changes-staged-all.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      }
+    ]
+  },
+  "pty_command": "python3 rust/tests/diff-origin-blob.py --output /tmp/diff-origin-pty.json",
+  "pty_before": {
+    "source_sha256": {
+      "rust/main.rs": "397177dd69d00410964927de86162f32b6776fb5613c550f514355a5852df23e",
+      "rust/git.rs": "e6adf8e3f0a9e9accc811046a4e56b57933c167bda006b43e95fdc813263e5a8",
+      "src/diff.c": "af27dc07c813c77c1901b2f7dd91588497c7c173a58640c9f1c188387737c9e3",
+      "src/stage.c": "f5aebfe09715f0cae621e8647efe5d7c9b29d60e7b965da3bc7e67a5f07be5bf",
+      "rust/tests/diff-origin-blob.py": "6cb818a04e439e7c9be1343027f86ec30cad7d711f45062365b8800332919b28"
+    },
+    "checks": [
+      {
+        "name": "deleted origin",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nold marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] old name - line 2 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "added origin",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 2 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "context historical rename",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nold marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] old name - line 3 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "stat current blob",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 1 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "root added line",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nold marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] old name - line 2 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "staged deletion",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 2 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "staged EOF addition",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 5 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "staged addition",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 3 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "deleted origin",
+        "binary": "target/release/tig",
+        "binary_sha256": "f61b6098b0b3768f539d535ed04dd81d629c271a37899262f0dc0eaa324dc452",
+        "passed": false,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": ""
+      },
+      {
+        "name": "added origin",
+        "binary": "target/release/tig",
+        "binary_sha256": "f61b6098b0b3768f539d535ed04dd81d629c271a37899262f0dc0eaa324dc452",
+        "passed": false,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": ""
+      },
+      {
+        "name": "context historical rename",
+        "binary": "target/release/tig",
+        "binary_sha256": "f61b6098b0b3768f539d535ed04dd81d629c271a37899262f0dc0eaa324dc452",
+        "passed": false,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": ""
+      },
+      {
+        "name": "stat current blob",
+        "binary": "target/release/tig",
+        "binary_sha256": "f61b6098b0b3768f539d535ed04dd81d629c271a37899262f0dc0eaa324dc452",
+        "passed": false,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": ""
+      },
+      {
+        "name": "root added line",
+        "binary": "target/release/tig",
+        "binary_sha256": "f61b6098b0b3768f539d535ed04dd81d629c271a37899262f0dc0eaa324dc452",
+        "passed": false,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": ""
+      },
+      {
+        "name": "staged deletion",
+        "binary": "target/release/tig",
+        "binary_sha256": "f61b6098b0b3768f539d535ed04dd81d629c271a37899262f0dc0eaa324dc452",
+        "passed": false,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 1 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "staged EOF addition",
+        "binary": "target/release/tig",
+        "binary_sha256": "f61b6098b0b3768f539d535ed04dd81d629c271a37899262f0dc0eaa324dc452",
+        "passed": false,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 1 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "staged addition",
+        "binary": "target/release/tig",
+        "binary_sha256": "f61b6098b0b3768f539d535ed04dd81d629c271a37899262f0dc0eaa324dc452",
+        "passed": false,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 1 of 5                                                                                                                               100%\n"
+      }
+    ]
+  },
+  "pty_after": {
+    "source_sha256": {
+      "rust/main.rs": "4e93ea80d0c39d550634518175584536b6264a6cc601bf2cddad9e758bb90c5a",
+      "rust/git.rs": "e6adf8e3f0a9e9accc811046a4e56b57933c167bda006b43e95fdc813263e5a8",
+      "src/diff.c": "af27dc07c813c77c1901b2f7dd91588497c7c173a58640c9f1c188387737c9e3",
+      "src/stage.c": "f5aebfe09715f0cae621e8647efe5d7c9b29d60e7b965da3bc7e67a5f07be5bf",
+      "rust/tests/diff-origin-blob.py": "6cb818a04e439e7c9be1343027f86ec30cad7d711f45062365b8800332919b28"
+    },
+    "checks": [
+      {
+        "name": "deleted origin",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nold marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] old name - line 2 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "added origin",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 2 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "context historical rename",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nold marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] old name - line 3 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "stat current blob",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 1 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "root added line",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nold marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] old name - line 2 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "staged deletion",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 2 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "staged EOF addition",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 5 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "staged addition",
+        "binary": "src/tig",
+        "binary_sha256": "6cbf9ce5c234eeed120b086c5fb128769c790e45d05be55499ed6fa5728e70c7",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 3 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "deleted origin",
+        "binary": "target/release/tig",
+        "binary_sha256": "1c377cecefad00520762b68a3608737af1595118e6b9d7e8612b3ab9d02552cf",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nold marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] old name - line 2 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "added origin",
+        "binary": "target/release/tig",
+        "binary_sha256": "1c377cecefad00520762b68a3608737af1595118e6b9d7e8612b3ab9d02552cf",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 2 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "context historical rename",
+        "binary": "target/release/tig",
+        "binary_sha256": "1c377cecefad00520762b68a3608737af1595118e6b9d7e8612b3ab9d02552cf",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nold marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] old name - line 3 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "stat current blob",
+        "binary": "target/release/tig",
+        "binary_sha256": "1c377cecefad00520762b68a3608737af1595118e6b9d7e8612b3ab9d02552cf",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 1 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "root added line",
+        "binary": "target/release/tig",
+        "binary_sha256": "1c377cecefad00520762b68a3608737af1595118e6b9d7e8612b3ab9d02552cf",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nold marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] old name - line 2 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "staged deletion",
+        "binary": "target/release/tig",
+        "binary_sha256": "1c377cecefad00520762b68a3608737af1595118e6b9d7e8612b3ab9d02552cf",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 2 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "staged EOF addition",
+        "binary": "target/release/tig",
+        "binary_sha256": "1c377cecefad00520762b68a3608737af1595118e6b9d7e8612b3ab9d02552cf",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 5 of 5                                                                                                                               100%\n"
+      },
+      {
+        "name": "staged addition",
+        "binary": "target/release/tig",
+        "binary_sha256": "1c377cecefad00520762b68a3608737af1595118e6b9d7e8612b3ab9d02552cf",
+        "passed": true,
+        "exit_code": 0,
+        "timeout": false,
+        "unchanged": true,
+        "screen": "first\nnew marker\nthird\nfourth\nfifth\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n[blob] new name - line 3 of 5                                                                                                                               100%\n"
+      }
+    ]
+  },
+  "verdict": "PASS_SELECTED_SLICE"
+}
