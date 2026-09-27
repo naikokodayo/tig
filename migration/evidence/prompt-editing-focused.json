@@ -1,22 +1,24 @@
 {
   "scope": "Rust prompt cursor editing; original search scripts run unchanged through C/Rust strict adapter",
-  "tested_source_commit": "43baf57be6316eb8c64cb069e8818fc07b9c00c8",
+  "tested_source_commit": "6de420f213b8f5d543aa363642df541ed8cec93e",
   "sha256": {
     "src/prompt.c": "6f358c75f49a784403462b09f67a25112545bb92d455e7b77e71dd293d9df203",
-    "rust/main.rs": "7f7aee826bc33a45ce341a5ac1288c825b62af9eafa035a0ecbc141d20520baa",
-    "rust/tests/prompt-history-pty.py": "c7a264bb375202aef59788f1e7400d9a3a7cffe801fc8591e97254d487382b49",
+    "rust/main.rs": "1205552b29c9bac3d5b47f8f1b754d45be7e5749dad0240f12553606398c8a5e",
+    "rust/tests/prompt-history-pty.py": "2b8fd4295fe9ea594725c481bba7836e6d396a4ccf4ade7a74aca1ab6cf035e7",
     "test/main/search-preload-test": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
     "test/main/search-test": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
     "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
     "C tig binary": "8673b0c2688da4e890598f5a69237175a9a13b0074353b9f3217583a039a7b7a",
-    "Rust tig binary": "072a735367b0d868008919bdf9265bbfa44e456472df921e4e5038a93d25bbd1"
+    "Rust tig binary": "c75cf2553ddec4beb0e0dee9271f345c406f7da19a7d73531700601b16f5a5e8",
+    "Cargo.toml": "2a4246632b36ca9defc3fb89312e983b474db8bf2775bf7699232041046a0a0a",
+    "Cargo.lock": "7f9d3e6d2f4d911c6d664fc0262cb8372c15107aef416a069d26b6c6f4a527ab"
   },
   "checks": {
     "cargo fmt --check": "pass",
-    "cargo test -q": "95 passed; 0 failed",
+    "cargo test -q": "96 passed; 0 failed",
     "cargo clippy --all-targets -- -D warnings": "pass",
     "cargo build --release -q": "pass",
-    "python3 rust/tests/prompt-history-pty.py": "pass: live middle insertion, Unicode backspace, Ctrl-A/E, Right/Delete; existing preload/history safety cases",
+    "python3 rust/tests/prompt-history-pty.py": "pass: 8-column caret/clip for 👩‍🔬, 👋🏽 and decomposed é; whole-grapheme Backspace/Delete; prior prompt/history cases",
     "original_scripts": {
       "c": {
         "main/search-preload-test": {
@@ -39,11 +41,12 @@
         }
       }
     },
-    "rust_preload_raw_skip": "[skipped] The test requires a tig compiled with readline"
+    "rust_preload_raw_skip": "[skipped] The test requires a tig compiled with readline",
+    "unicode-segmentation =1.12.0": "builds with rustc 1.81.0; dual MIT/Apache-2.0 (MIT option)"
   },
   "readline_gap": {
     "C_source": "src/prompt.c: readline_init/read_prompt provide inputrc keymaps, terminal mode and SIGINT integration, action/option/variable/filename completion, redisplay, and history",
-    "Rust_milestone": "cursor-aware editing in the existing crossterm prompt; persistent history already present",
+    "Rust_milestone": "grapheme-aware cursor editing and narrow-terminal display in existing crossterm prompt; persistent history already present",
     "remaining": "GNU Readline-compatible completion, inputrc/keymaps, kill/yank and other editing commands, and terminal/signal behavior require further parity work",
     "version_claim_readline": false,
     "parity_gate": "BLOCKED: original test_require readline remains skipped on Rust"
