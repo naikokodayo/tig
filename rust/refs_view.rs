@@ -2,7 +2,7 @@
 //! Refs view preparation. The synthetic first row selects all history.
 use crate::{
     config::Config,
-    git::{GitError, Repository, Result},
+    git::{parse_history, GitError, Repository, Result},
     model::{Commit, Reference},
     render,
 };
@@ -86,38 +86,6 @@ pub(crate) fn numeric(a: &str, b: &str) -> Ordering {
             }
         })
 }
-fn timestamp(iso: &str) -> i64 {
-    let number = |a, b| {
-        iso.get(a..b)
-            .and_then(|s| s.parse::<i64>().ok())
-            .unwrap_or(0)
-    };
-    let y = number(0, 4);
-    let m = number(5, 7);
-    let leap = |year: i64| year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
-    let mut days = 365 * (y - 1) + (y - 1) / 4 - (y - 1) / 100 + (y - 1) / 400;
-    for month in 1..m {
-        days += match month {
-            2 => {
-                if leap(y) {
-                    29
-                } else {
-                    28
-                }
-            }
-            4 | 6 | 9 | 11 => 30,
-            _ => 31,
-        };
-    }
-    days += number(8, 10);
-    let offset = (number(20, 22) * 60 + number(23, 25)) * 60;
-    days * 86400 + number(11, 13) * 3600 + number(14, 16) * 60 + number(17, 19)
-        - if iso.as_bytes().get(19) == Some(&b'-') {
-            -offset
-        } else {
-            offset
-        }
-}
 fn empty_commit() -> Commit {
     Commit {
         oid: String::new(),
@@ -163,7 +131,23 @@ pub fn load(
         .ok()
         .map(|b| String::from_utf8_lossy(&b).trim().to_owned())
         .unwrap_or_default();
-    let history = repo.history(&["--all".into(), "--simplify-by-decoration".into()], 0)?;
+    // Reuse the history record parser, but refs metadata has its own mailmap
+    // setting and does not need main-view decorations or revision filtering.
+    let format = if config.bool_value("mailmap", true) {
+        "--format=%H%x00%P%x00%aN%x00%aI%x00%s%x00%x00%aE%x00%cN%x00%cE%x00%cI"
+    } else {
+        "--format=%H%x00%P%x00%an%x00%aI%x00%s%x00%x00%ae%x00%cn%x00%ce%x00%cI"
+    };
+    let history = parse_history(&repo.command([
+        "log",
+        "--no-show-signature",
+        "--no-color",
+        "--all",
+        "--decorate-refs=",
+        "--simplify-by-decoration",
+        format,
+        "-z",
+    ])?)?;
     let commits: HashMap<_, _> = history.into_iter().map(|c| (c.oid.clone(), c)).collect();
     let mut entries = Vec::new();
     let references = repo.refs()?;
@@ -242,47 +226,57 @@ pub fn load(
             "Unsupported refs sort field: {sort_field}"
         )));
     }
-    let use_author = config
-        .value("refs-view-date-use-author")
-        .map(|v| matches!(v, "yes" | "true" | "1"))
-        .unwrap_or_else(|| {
-            config.settings.get("refs-view").is_some_and(|cols| {
-                cols.iter().any(|c| {
-                    c.starts_with("date:")
-                        && c.split(',').any(|o| {
-                            matches!(
-                                o,
-                                "use-author"
-                                    | "use-author=yes"
-                                    | "use-author=true"
-                                    | "use-author=1"
-                            )
-                        })
-                })
-            })
-        });
+    let date_spec = config.settings.get("refs-view").and_then(|specs| {
+        specs
+            .iter()
+            .find(|spec| spec.split(':').next() == Some("date"))
+    });
+    let use_author = if let Some(spec) = date_spec {
+        let mut column = render::Column::parse(spec).map_err(GitError)?;
+        if let Some(value) = config.value("refs-view-date-use-author") {
+            column.options.insert("use-author", value);
+        }
+        column.flag("use-author", false).map_err(GitError)?
+    } else {
+        false
+    };
+    // Validate once before sorting; never substitute a fabricated timestamp.
+    let dates: HashMap<_, _> = entries
+        .iter()
+        .map(|entry| {
+            let iso = if use_author {
+                &entry.3.date
+            } else {
+                &entry.3.committer_date
+            };
+            chrono::DateTime::parse_from_rfc3339(iso)
+                .map(|date| (entry.0.oid.clone(), date.timestamp()))
+                .map_err(|error| GitError(format!("Invalid refs date {iso:?}: {error}")))
+        })
+        .collect::<Result<_>>()?;
     entries.sort_by(|a, b| {
         let order = match sort_field {
-            "date" => timestamp(if use_author {
-                &b.3.date
-            } else {
-                &b.3.committer_date
-            })
-            .cmp(&timestamp(if use_author {
-                &a.3.date
-            } else {
-                &a.3.committer_date
-            })),
-            "author" => a.3.author.to_lowercase().cmp(&b.3.author.to_lowercase()),
+            "date" => dates[&a.0.oid].cmp(&dates[&b.0.oid]),
+            "author" => {
+                a.3.oid
+                    .is_empty()
+                    .cmp(&b.3.oid.is_empty())
+                    .then_with(|| a.3.author.cmp(&b.3.author))
+            }
             "committer" => {
-                a.3.committer
-                    .to_lowercase()
-                    .cmp(&b.3.committer.to_lowercase())
+                a.3.oid
+                    .is_empty()
+                    .cmp(&b.3.oid.is_empty())
+                    .then_with(|| a.3.committer.cmp(&b.3.committer))
             }
             "id" => a.0.oid.cmp(&b.0.oid),
             "commit-title" => a.3.subject.cmp(&b.3.subject),
             _ => a.2.cmp(&b.2).then_with(|| numeric(&a.1, &b.1)),
         }
+        .then_with(|| dates[&a.0.oid].cmp(&dates[&b.0.oid]))
+        .then_with(|| a.3.author.cmp(&b.3.author))
+        .then_with(|| a.3.committer.cmp(&b.3.committer))
+        .then_with(|| a.3.subject.cmp(&b.3.subject))
         .then_with(|| a.2.cmp(&b.2))
         .then_with(|| numeric(&a.1, &b.1));
         if reverse {
@@ -472,9 +466,5 @@ mod tests {
             ["master", "r1.1.2", "r1.1.x", "v2.0", "v1.10", "v1.2", "v1.1"]
         );
         assert_eq!(numeric("作者", "作品"), "作者".cmp("作品"));
-        assert_eq!(
-            timestamp("2020-01-01T01:00:00+01:00"),
-            timestamp("2020-01-01T00:00:00+00:00")
-        );
     }
 }
