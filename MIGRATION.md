@@ -667,14 +667,13 @@ Rust scripts than the preceding `86ce7680` snapshot. The parity gate remains
 
 ### Current strict paired snapshot
 
-At merged source `62d518c7be3d561eed6eef69bd08e2684a41ef52`, the runner
+At merged source `9b7fbe073f8d8769a04c0f656eb28e4d498566e0`, the runner
 attempted all 154 unchanged scripts with separately hashed C and Rust-only
 application/graph binaries. C passed 152, failed none, and skipped two. Rust
-passed 147, failed four, and skipped three: 564 actual assertions passed, six
-failed, and two C assertions were not reached. The [current paired
+passed 148, failed four, and skipped two: 566 actual assertions passed and six
+failed. The [current paired
 receipt](migration/evidence/upstream-rust-only-current.json) contains each
-script's original output, route and hashes. This is six more passing Rust
-scripts than the [preceding source-bound snapshot](https://github.com/naikokodayo/tig/blob/d59e2d52f719ef5b43ff501cadd8852119f2a61e/migration/evidence/upstream-rust-only-current.json).
+script's original output, route and hashes.
 The four failing scripts are `diff/diff-highlight` (two assertions: a missing
 highlighter leaves the original diff visible and reports an error in Rust),
 `main/filter-args` (two exact internal Git trace assertions),
@@ -682,16 +681,17 @@ highlighter leaves the original diff visible and reports an error in Rust),
 `tree/file-name` (one assertion expecting C's truncated Unicode path).
 The filter screens pass; matching C's internal Git command spelling would
 require replacing Rust's working argument classification, discovery and
-history parser, not a single display fix. `main/search-preload` skips on Rust's honest missing-readline feature
-gate, leaving two assertions not reached. Original assertions were not changed.
+history parser, not a single display fix. `main/search-preload` now passes.
+Original assertions were not changed.
 `stage/split-chunk` now passes; its earlier failure was a display mismatch, not
 evidence of C index data loss in this script. A release build from only
 `Cargo.toml`, `Cargo.lock`, `rust/`, and `tigrc` succeeded without the C source
 tree; original tests and C remain the parity reference. The gate remains **BLOCKED**;
 the end-to-end C/Rust benchmark has not begun.
 This source also includes main-view notes, blame options, confirmed status
-mergetool, and Git-native stash patches. Their focused Git/PTY checks add
-coverage beyond the unchanged original scripts.
+mergetool, Git-native stash patches, historical tree/blob editing, diff-origin
+editing, grep-to-blame line navigation and pager Enter behavior. Their focused
+Git/PTY checks add coverage beyond the unchanged original scripts.
 
 Earlier mixed-route full-suite JSON and raw logs are archived at the fixed
 [`44b0bf42` source commit](https://github.com/naikokodayo/tig/tree/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence).
