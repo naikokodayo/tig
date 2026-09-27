@@ -1,0 +1,16 @@
+{
+  "scope": "Confirmed whole-file status revert and explicit conflict-side checkout; full migration parity remains open",
+  "tested_source_commit": "43f51bded00a13492a56b0196447168573d64712",
+  "base_commit": "71b38feab4fdc211d98d2efb36997611449fe80e",
+  "source_content_sha256": "721f48fb6f0704b335fcd771105a17caa3dcc01e11cccdf4fc468ca2bc2da716",
+  "source_hash_method": "SHA256 sorted git ls-files -z rust src include compat Cargo.toml Cargo.lock Makefile tigrc; path + NUL + content + NUL",
+  "binaries": {"rust": "da04df91afa50d52402a22c38c85253cbe6a1db2c5c1c4be1c32fe38c50053b6", "c": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c"},
+  "checks": {"cargo_fmt": 0, "cargo_test": 0, "library_tests": 84, "application_tests": 23, "clippy_all_targets_deny_warnings": 0, "backend_real_git_tests": 5, "rust_pty_pass": 8, "c_pty_pass": 2, "independent_read_only_reviews": 2, "review_blockers": 0},
+  "terminal_command": "python3 rust/tests/status-revert.py target/release/tig; python3 rust/tests/status-revert.py src/tig --c",
+  "terminal_cases": ["no/default/Escape cancel without writes", "confirmed ordinary revert keeps recovery and index", "script y cannot supply consent", "ours/theirs/deleted-side preserve conflict index until explicit u"],
+  "original_scripts": [{"script": "test/status/file-name-test", "sha256": "2f1f9fea59a3a08f7bdf5d2fa6b767c72c94e922bc51167ab73bc84e28ee70c1"}, {"script": "test/status/refresh-test", "sha256": "8da82f46fb86373992e5546fadbff84a17eaef025b7d0f39966dd005025dd6a5"}, {"script": "test/status/worktree-test", "sha256": "f80c49d8bf02d02b5b75438bb5551592949214f0fb09444c68e3db031a1c9f19"}],
+  "original_results": {"c": {"pass": 3, "assertions": 17, "fail": 0, "skip": 0, "not_reached": 0}, "rust": {"pass": 3, "assertions": 17, "fail": 0, "skip": 0, "not_reached": 0}},
+  "behavior_change": "Previously status-revert had no Rust dispatch; now status view uses explicit confirmation and preserves recovery. C ordinary yes/no behavior matched. Conflict index remains unmerged until user stages, intentionally avoiding C automatic index writes.",
+  "boundaries": ["Whole-file regular paths only; staged/untracked/symlink/submodule/chunk revert refused", "Scripted revert always cancels", "No atomic containment against concurrent parent-directory replacement or concurrent index writer; backups preserve moved bytes", "Recovery directories retained for manual inspection/removal"],
+  "verdict": "PASS_SCOPED"
+}
