@@ -102,7 +102,7 @@ pub(crate) fn known_request(name: &str) -> bool {
             .any(|(_, requests)| requests.iter().any(|(request, _)| *request == name))
 }
 
-pub(crate) fn request_info() -> Vec<(String, String, String)> {
+pub fn request_info() -> Vec<(String, String, String)> {
     VIEWS
         .iter()
         .map(|view| {

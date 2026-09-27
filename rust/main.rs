@@ -3538,6 +3538,46 @@ fn inputrc_motion() -> std::collections::HashMap<char, bool> {
     }
     motions
 }
+fn complete_prompt_action(value: &mut String, point: &mut usize) {
+    const ACTIONS: &[&str] = &[
+        "!",
+        "source",
+        "color",
+        "bind",
+        "set",
+        "toggle",
+        "goto",
+        "save-display",
+        "save-options",
+        "exec",
+        "echo",
+        "none",
+    ];
+    if value.is_empty() || value.chars().any(char::is_whitespace) {
+        return;
+    }
+    let mut matches = ACTIONS
+        .iter()
+        .map(|action| (*action).to_string())
+        .chain(tig_rs::request_info().into_iter().map(|(_, name, _)| name))
+        .filter(|action| action.starts_with(&*value));
+    let Some(mut common) = matches.next() else {
+        return;
+    };
+    for action in matches {
+        let shared = common
+            .bytes()
+            .zip(action.bytes())
+            .take_while(|(a, b)| a == b)
+            .count();
+        common.truncate(shared);
+    }
+    if common.len() > value.len() {
+        value.clear();
+        value.push_str(&common);
+        *point = value.len();
+    }
+}
 struct PromptHistory {
     path: Option<PathBuf>,
     entries: Vec<String>,
@@ -3810,6 +3850,9 @@ impl Terminal {
                     KeyCode::Esc => {
                         queue!(self.out, cursor::Hide)?;
                         return Ok(None);
+                    }
+                    KeyCode::Tab if prefix == ":" && point == value.len() => {
+                        complete_prompt_action(&mut value, &mut point);
                     }
                     KeyCode::Up if position > 0 => {
                         if position == self.history.entries.len() {
