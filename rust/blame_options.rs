@@ -73,7 +73,7 @@ pub fn arguments(repo: &Repository, options: &[String]) -> Result<Vec<OsString>>
 }
 
 impl Invocation {
-    pub fn parse(repo: &Repository, args: &[String], config: &Config) -> Result<Self> {
+    pub fn parse(repo: &Repository, args: &[OsString], config: &Config) -> Result<Self> {
         let (before, files) = match args.iter().position(|arg| arg == "--") {
             Some(split) => (&args[..split], &args[split + 1..]),
             None if !args.is_empty() => (&args[..args.len() - 1], &args[args.len() - 1..]),
@@ -93,20 +93,25 @@ impl Invocation {
         let mut order = config.value("commit-order").unwrap_or("auto");
         let mut input = before.iter();
         while let Some(arg) = input.next() {
-            match arg.as_str() {
+            let arg = arg.to_str().ok_or_else(|| {
+                GitError("Non-UTF-8 blame options/revisions are not supported".into())
+            })?;
+            match arg {
                 "--reverse" => order = "reverse",
                 "--topo-order" | "--date-order" | "--author-date-order" => order = "default",
                 "-L" | "--ignore-rev" => {
-                    options.push(arg.clone());
+                    options.push(arg.to_owned());
                     options.push(
                         input
                             .next()
                             .ok_or_else(|| GitError(format!("{arg} requires a value")))?
-                            .clone(),
+                            .to_str()
+                            .ok_or_else(|| GitError("Non-UTF-8 blame option value".into()))?
+                            .to_owned(),
                     );
                 }
-                _ if revision_option(arg) => bounds.push(arg.clone()),
-                _ if arg.starts_with('-') => options.push(arg.clone()),
+                _ if revision_option(arg) => bounds.push(arg.to_owned()),
+                _ if arg.starts_with('-') => options.push(arg.to_owned()),
                 _ => {
                     // Git expands ranges, ^ exclusions, and shorthand expressions.
                     // --end-of-options keeps even malicious revision names inert.
