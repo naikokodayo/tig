@@ -1,0 +1,1243 @@
+{
+  "scope": "Executable mode plus selected text only; full migration parity remains open",
+  "tested_source_commit": "e7fa4ed68ff5f627f4175a0a027ed8b8038c3a7b",
+  "source_content_sha256": "979df1a95f6bfa377ab2defade79b2b4a12aa1e00f6aa99966499ce86166270d",
+  "source_hash_method": "SHA256 sorted git ls-files -z rust src include compat Cargo.toml Cargo.lock Makefile tigrc; each path bytes + NUL + file bytes + NUL",
+  "commands": [
+    "cargo fmt --check",
+    "cargo test --all-targets",
+    "cargo clippy --all-targets -- -D warnings",
+    "python3 rust/tests/upstream-suite.py --output <receipt> test/stage/default-test test/stage/update-part-test test/stage/split-chunk-test",
+    "python3 rust/tests/patch-mode.py --output <receipt>"
+  ],
+  "rust_checks": {
+    "fmt_exit": 0,
+    "test_exit": 0,
+    "library_tests": 70,
+    "application_tests": 26,
+    "clippy_exit": 0,
+    "first_party_unsafe": "forbid; no unsafe introduced"
+  },
+  "baseline_public": {
+    "checks": [
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+        "binary_sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c",
+        "reverse": false,
+        "action": "stage-update-line",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\nselected\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+        "mode": "100755",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+        "binary_sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c",
+        "reverse": false,
+        "action": "stage-update-part",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\nselected\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+        "mode": "100755",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+        "binary_sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c",
+        "reverse": false,
+        "action": "status-update",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\nselected\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+        "mode": "100755",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+        "binary_sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c",
+        "reverse": true,
+        "action": "stage-update-line",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\n1\n2\n3\n4\n5\n6\n7\n8\nother\n9\n",
+        "mode": "100644",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+        "binary_sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c",
+        "reverse": true,
+        "action": "stage-update-part",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\n1\n2\n3\n4\n5\n6\n7\n8\nother\n9\n",
+        "mode": "100644",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+        "binary_sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c",
+        "reverse": true,
+        "action": "status-update",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\n1\n2\n3\n4\n5\n6\n7\n8\nother\n9\n",
+        "mode": "100644",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+        "binary_sha256": "b34929eb09d6cd543dcc77d5e7421ba8875287babcb7b5e1747951604466d180",
+        "reverse": false,
+        "action": "stage-update-line",
+        "exit_code": 1,
+        "timed_out": false,
+        "index": "a\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+        "mode": "100644",
+        "worktree_preserved": true,
+        "passed": false,
+        "screen": "",
+        "transcript": "tig: Partial rename, copy and mode changes are unsupported; stage the whole file\r\n"
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+        "binary_sha256": "b34929eb09d6cd543dcc77d5e7421ba8875287babcb7b5e1747951604466d180",
+        "reverse": false,
+        "action": "stage-update-part",
+        "exit_code": 1,
+        "timed_out": false,
+        "index": "a\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+        "mode": "100644",
+        "worktree_preserved": true,
+        "passed": false,
+        "screen": "",
+        "transcript": "tig: Partial rename, copy and mode changes are unsupported; stage the whole file\r\n"
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+        "binary_sha256": "b34929eb09d6cd543dcc77d5e7421ba8875287babcb7b5e1747951604466d180",
+        "reverse": false,
+        "action": "status-update",
+        "exit_code": 1,
+        "timed_out": false,
+        "index": "a\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+        "mode": "100644",
+        "worktree_preserved": true,
+        "passed": false,
+        "screen": "",
+        "transcript": "tig: Partial rename, copy and mode changes are unsupported; stage the whole file\r\n"
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+        "binary_sha256": "b34929eb09d6cd543dcc77d5e7421ba8875287babcb7b5e1747951604466d180",
+        "reverse": true,
+        "action": "stage-update-line",
+        "exit_code": 1,
+        "timed_out": false,
+        "index": "a\nselected\n1\n2\n3\n4\n5\n6\n7\n8\nother\n9\n",
+        "mode": "100755",
+        "worktree_preserved": true,
+        "passed": false,
+        "screen": "",
+        "transcript": "tig: Partial rename, copy and mode changes are unsupported; stage the whole file\r\n"
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+        "binary_sha256": "b34929eb09d6cd543dcc77d5e7421ba8875287babcb7b5e1747951604466d180",
+        "reverse": true,
+        "action": "stage-update-part",
+        "exit_code": 1,
+        "timed_out": false,
+        "index": "a\nselected\n1\n2\n3\n4\n5\n6\n7\n8\nother\n9\n",
+        "mode": "100755",
+        "worktree_preserved": true,
+        "passed": false,
+        "screen": "",
+        "transcript": "tig: Partial rename, copy and mode changes are unsupported; stage the whole file\r\n"
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+        "binary_sha256": "b34929eb09d6cd543dcc77d5e7421ba8875287babcb7b5e1747951604466d180",
+        "reverse": true,
+        "action": "status-update",
+        "exit_code": 1,
+        "timed_out": false,
+        "index": "a\nselected\n1\n2\n3\n4\n5\n6\n7\n8\nother\n9\n",
+        "mode": "100755",
+        "worktree_preserved": true,
+        "passed": false,
+        "screen": "",
+        "transcript": "tig: Partial rename, copy and mode changes are unsupported; stage the whole file\r\n"
+      }
+    ],
+    "source_sha256": {
+      "rust/patch.rs": "b3ab20038fded35277cb5f8055d17b116bf17677078bb33cd56ddfa32cbd320e",
+      "rust/main.rs": "395ee3e6a5bf7a006a6841de1356759f2c38b50628ea93d24738643466559c95",
+      "rust/git.rs": "34cb7ad944dec1e42a2e6b54d9bc7b574685a0fd214ca842ebf0f7bf71863e20",
+      "src/stage.c": "f5aebfe09715f0cae621e8647efe5d7c9b29d60e7b965da3bc7e67a5f07be5bf",
+      "rust/tests/patch-mode.py": "f24f15a138d1bba46dd9675baf65b503a4bf66a97f6d37ab44a80ad30aed464b"
+    }
+  },
+  "final_public": {
+    "checks": [
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+        "binary_sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c",
+        "reverse": false,
+        "action": "stage-update-line",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\nselected\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+        "mode": "100755",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+        "binary_sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c",
+        "reverse": false,
+        "action": "stage-update-part",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\nselected\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+        "mode": "100755",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+        "binary_sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c",
+        "reverse": false,
+        "action": "status-update",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\nselected\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+        "mode": "100755",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+        "binary_sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c",
+        "reverse": true,
+        "action": "stage-update-line",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\n1\n2\n3\n4\n5\n6\n7\n8\nother\n9\n",
+        "mode": "100644",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+        "binary_sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c",
+        "reverse": true,
+        "action": "stage-update-part",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\n1\n2\n3\n4\n5\n6\n7\n8\nother\n9\n",
+        "mode": "100644",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+        "binary_sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c",
+        "reverse": true,
+        "action": "status-update",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\n1\n2\n3\n4\n5\n6\n7\n8\nother\n9\n",
+        "mode": "100644",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+        "binary_sha256": "ae67473c94f45fd002e142aeb4d0c66ee3aa086040b4d5064a8245714e8890eb",
+        "reverse": false,
+        "action": "stage-update-line",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\nselected\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+        "mode": "100755",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+        "binary_sha256": "ae67473c94f45fd002e142aeb4d0c66ee3aa086040b4d5064a8245714e8890eb",
+        "reverse": false,
+        "action": "stage-update-part",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\nselected\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+        "mode": "100755",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+        "binary_sha256": "ae67473c94f45fd002e142aeb4d0c66ee3aa086040b4d5064a8245714e8890eb",
+        "reverse": false,
+        "action": "status-update",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\nselected\n1\n2\n3\n4\n5\n6\n7\n8\n9\n",
+        "mode": "100755",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+        "binary_sha256": "ae67473c94f45fd002e142aeb4d0c66ee3aa086040b4d5064a8245714e8890eb",
+        "reverse": true,
+        "action": "stage-update-line",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\n1\n2\n3\n4\n5\n6\n7\n8\nother\n9\n",
+        "mode": "100644",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+        "binary_sha256": "ae67473c94f45fd002e142aeb4d0c66ee3aa086040b4d5064a8245714e8890eb",
+        "reverse": true,
+        "action": "stage-update-part",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\n1\n2\n3\n4\n5\n6\n7\n8\nother\n9\n",
+        "mode": "100644",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      },
+      {
+        "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+        "binary_sha256": "ae67473c94f45fd002e142aeb4d0c66ee3aa086040b4d5064a8245714e8890eb",
+        "reverse": true,
+        "action": "status-update",
+        "exit_code": 0,
+        "timed_out": false,
+        "index": "a\n1\n2\n3\n4\n5\n6\n7\n8\nother\n9\n",
+        "mode": "100644",
+        "worktree_preserved": true,
+        "passed": true,
+        "screen": "",
+        "transcript": ""
+      }
+    ],
+    "source_sha256": {
+      "rust/patch.rs": "8783893426afea8c2e69f4c5a16e6ae547236bd1d853d732fd0bd018a52214e9",
+      "rust/main.rs": "395ee3e6a5bf7a006a6841de1356759f2c38b50628ea93d24738643466559c95",
+      "rust/git.rs": "34cb7ad944dec1e42a2e6b54d9bc7b574685a0fd214ca842ebf0f7bf71863e20",
+      "src/stage.c": "f5aebfe09715f0cae621e8647efe5d7c9b29d60e7b965da3bc7e67a5f07be5bf",
+      "rust/tests/patch-mode.py": "f24f15a138d1bba46dd9675baf65b503a4bf66a97f6d37ab44a80ad30aed464b"
+    }
+  },
+  "original_scripts_before": {
+    "source_commit_at_run": "a62eaa5ba0529dba98eff8258ed74aad884adf3c",
+    "harness_sha256": {
+      "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+      "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+      "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+    },
+    "runs": {
+      "c": {
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+            "sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/test/tools/test-graph",
+            "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+          }
+        },
+        "binaries_unchanged": true,
+        "build_exit_code": 0,
+        "summary": {
+          "pass": 3
+        },
+        "results": [
+          {
+            "script": "test/stage/default-test",
+            "script_sha256": "d58bba43a0248c8c2bea7551e41f8c8dec4dfd993dd8dbb156f8325d895d7493",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "checks": {
+              "OK": 14
+            },
+            "assertions": [
+              {
+                "id": "status.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#2",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#2",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes-for-a-shortcut.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#3",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes-for-a.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#3",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-default-title.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-line.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-chunk.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-last-chunk.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-all.screen#1",
+                "status": "OK"
+              }
+            ],
+            "skip": "",
+            "skipped_cases": {}
+          },
+          {
+            "script": "test/stage/split-chunk-test",
+            "script_sha256": "0aa8614f911de18145b25164645805cc89b7eba159349bdb8181a7284c8c6969",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "checks": {
+              "OK": 2
+            },
+            "assertions": [
+              {
+                "id": "default-diff.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "split-diff.screen#1",
+                "status": "OK"
+              }
+            ],
+            "skip": "",
+            "skipped_cases": {}
+          },
+          {
+            "script": "test/stage/update-part-test",
+            "script_sha256": "57949ae5596c712dcfeedf32d7535b805177823814b0a648e9ecf72354723bbb",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "checks": {
+              "OK": 5
+            },
+            "assertions": [
+              {
+                "id": "default-diff.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-any.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-first.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-last.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-single.screen#1",
+                "status": "OK"
+              }
+            ],
+            "skip": "",
+            "skipped_cases": {}
+          }
+        ]
+      },
+      "rust": {
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+            "sha256": "b34929eb09d6cd543dcc77d5e7421ba8875287babcb7b5e1747951604466d180"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/test-graph",
+            "sha256": "5c329397600718547209d88224b9ad143cb55da4182656383615acd1f414a6d8"
+          }
+        },
+        "binaries_unchanged": true,
+        "build_exit_code": 0,
+        "summary": {
+          "pass": 3
+        },
+        "results": [
+          {
+            "script": "test/stage/default-test",
+            "script_sha256": "d58bba43a0248c8c2bea7551e41f8c8dec4dfd993dd8dbb156f8325d895d7493",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "checks": {
+              "OK": 14
+            },
+            "assertions": [
+              {
+                "id": "status.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#2",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#2",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes-for-a-shortcut.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#3",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes-for-a.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#3",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-default-title.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-line.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-chunk.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-last-chunk.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-all.screen#1",
+                "status": "OK"
+              }
+            ],
+            "skip": "",
+            "skipped_cases": {}
+          },
+          {
+            "script": "test/stage/split-chunk-test",
+            "script_sha256": "0aa8614f911de18145b25164645805cc89b7eba159349bdb8181a7284c8c6969",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "checks": {
+              "OK": 2
+            },
+            "assertions": [
+              {
+                "id": "default-diff.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "split-diff.screen#1",
+                "status": "OK"
+              }
+            ],
+            "skip": "",
+            "skipped_cases": {}
+          },
+          {
+            "script": "test/stage/update-part-test",
+            "script_sha256": "57949ae5596c712dcfeedf32d7535b805177823814b0a648e9ecf72354723bbb",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "checks": {
+              "OK": 5
+            },
+            "assertions": [
+              {
+                "id": "default-diff.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-any.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-first.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-last.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-single.screen#1",
+                "status": "OK"
+              }
+            ],
+            "skip": "",
+            "skipped_cases": {}
+          }
+        ]
+      }
+    }
+  },
+  "original_scripts_after": {
+    "source_commit_at_run": "5fb471492ecce79bc831442efde983ed75132cea",
+    "harness_sha256": {
+      "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+      "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+      "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+    },
+    "runs": {
+      "c": {
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+            "sha256": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/test/tools/test-graph",
+            "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+          }
+        },
+        "binaries_unchanged": true,
+        "build_exit_code": 0,
+        "summary": {
+          "pass": 3
+        },
+        "results": [
+          {
+            "script": "test/stage/default-test",
+            "script_sha256": "d58bba43a0248c8c2bea7551e41f8c8dec4dfd993dd8dbb156f8325d895d7493",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "checks": {
+              "OK": 14
+            },
+            "assertions": [
+              {
+                "id": "status.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#2",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#2",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes-for-a-shortcut.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#3",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes-for-a.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#3",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-default-title.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-line.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-chunk.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-last-chunk.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-all.screen#1",
+                "status": "OK"
+              }
+            ],
+            "skip": "",
+            "skipped_cases": {}
+          },
+          {
+            "script": "test/stage/split-chunk-test",
+            "script_sha256": "0aa8614f911de18145b25164645805cc89b7eba159349bdb8181a7284c8c6969",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "checks": {
+              "OK": 2
+            },
+            "assertions": [
+              {
+                "id": "default-diff.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "split-diff.screen#1",
+                "status": "OK"
+              }
+            ],
+            "skip": "",
+            "skipped_cases": {}
+          },
+          {
+            "script": "test/stage/update-part-test",
+            "script_sha256": "57949ae5596c712dcfeedf32d7535b805177823814b0a648e9ecf72354723bbb",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "checks": {
+              "OK": 5
+            },
+            "assertions": [
+              {
+                "id": "default-diff.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-any.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-first.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-last.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-single.screen#1",
+                "status": "OK"
+              }
+            ],
+            "skip": "",
+            "skipped_cases": {}
+          }
+        ]
+      },
+      "rust": {
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+            "sha256": "ae67473c94f45fd002e142aeb4d0c66ee3aa086040b4d5064a8245714e8890eb"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/test-graph",
+            "sha256": "5c329397600718547209d88224b9ad143cb55da4182656383615acd1f414a6d8"
+          }
+        },
+        "binaries_unchanged": true,
+        "build_exit_code": 0,
+        "summary": {
+          "pass": 3
+        },
+        "results": [
+          {
+            "script": "test/stage/default-test",
+            "script_sha256": "d58bba43a0248c8c2bea7551e41f8c8dec4dfd993dd8dbb156f8325d895d7493",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "checks": {
+              "OK": 14
+            },
+            "assertions": [
+              {
+                "id": "status.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#2",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#2",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes-for-a-shortcut.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes.screen#3",
+                "status": "OK"
+              },
+              {
+                "id": "staged-changes-for-a.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes.screen#3",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-default-title.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-line.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-chunk.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-bc-last-chunk.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "unstaged-changes-staged-all.screen#1",
+                "status": "OK"
+              }
+            ],
+            "skip": "",
+            "skipped_cases": {}
+          },
+          {
+            "script": "test/stage/split-chunk-test",
+            "script_sha256": "0aa8614f911de18145b25164645805cc89b7eba159349bdb8181a7284c8c6969",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "checks": {
+              "OK": 2
+            },
+            "assertions": [
+              {
+                "id": "default-diff.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "split-diff.screen#1",
+                "status": "OK"
+              }
+            ],
+            "skip": "",
+            "skipped_cases": {}
+          },
+          {
+            "script": "test/stage/update-part-test",
+            "script_sha256": "57949ae5596c712dcfeedf32d7535b805177823814b0a648e9ecf72354723bbb",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "checks": {
+              "OK": 5
+            },
+            "assertions": [
+              {
+                "id": "default-diff.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-any.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-first.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-last.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "update-part-single.screen#1",
+                "status": "OK"
+              }
+            ],
+            "skip": "",
+            "skipped_cases": {}
+          }
+        ]
+      }
+    }
+  },
+  "form_observations": [
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+      "form": "added",
+      "reverse": false,
+      "code": 0,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100644 b5660615986901aceae1450e10650892e191f8dc 0\ta\n100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0\tnew\n",
+      "blobs": {
+        "a": "one\ntwo\nthree\nfour\nfive\nsix\n",
+        "new": ""
+      },
+      "worktree_preserved": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+      "form": "added",
+      "reverse": true,
+      "code": 0,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100644 b5660615986901aceae1450e10650892e191f8dc 0\ta\n100644 b5660615986901aceae1450e10650892e191f8dc 0\tnew\n",
+      "blobs": {
+        "a": "one\ntwo\nthree\nfour\nfive\nsix\n",
+        "new": "one\ntwo\nthree\nfour\nfive\nsix\n"
+      },
+      "worktree_preserved": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+      "form": "deleted",
+      "reverse": false,
+      "code": 0,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100644 b5660615986901aceae1450e10650892e191f8dc 0\ta\n",
+      "blobs": {
+        "a": "one\ntwo\nthree\nfour\nfive\nsix\n"
+      },
+      "worktree_preserved": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+      "form": "deleted",
+      "reverse": true,
+      "code": 0,
+      "timeout": false,
+      "index_changed": true,
+      "index": "100644 5626abf0f72e58d7a153368ba57db4c673c0e171 0\ta\n",
+      "blobs": {
+        "a": "one\n"
+      },
+      "worktree_preserved": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+      "form": "rename",
+      "reverse": true,
+      "code": 0,
+      "timeout": false,
+      "index_changed": true,
+      "index": "100644 b5660615986901aceae1450e10650892e191f8dc 0\ta\n",
+      "blobs": {
+        "a": "one\ntwo\nthree\nfour\nfive\nsix\n"
+      },
+      "worktree_preserved": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+      "form": "binary",
+      "reverse": false,
+      "code": 0,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100644 b5660615986901aceae1450e10650892e191f8dc 0\ta\n",
+      "blobs": {
+        "a": "one\ntwo\nthree\nfour\nfive\nsix\n"
+      },
+      "worktree_preserved": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+      "form": "binary",
+      "reverse": true,
+      "code": 0,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100644 b835d73543244b6694f36a8c5dfdffb71b153db7 0\ta\n",
+      "blobs": {
+        "a": "\u0000binary\n"
+      },
+      "worktree_preserved": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+      "form": "mode-only",
+      "reverse": false,
+      "code": 0,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100644 b5660615986901aceae1450e10650892e191f8dc 0\ta\n",
+      "blobs": {
+        "a": "one\ntwo\nthree\nfour\nfive\nsix\n"
+      },
+      "worktree_preserved": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/src/tig",
+      "form": "mode-only",
+      "reverse": true,
+      "code": 0,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100755 b5660615986901aceae1450e10650892e191f8dc 0\ta\n",
+      "blobs": {
+        "a": "one\ntwo\nthree\nfour\nfive\nsix\n"
+      },
+      "worktree_preserved": true,
+      "transcript": ""
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+      "form": "added",
+      "reverse": false,
+      "code": 1,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100644 b5660615986901aceae1450e10650892e191f8dc 0\ta\n100644 e69de29bb2d1d6434b8b29ae775ad8c2e48c5391 0\tnew\n",
+      "blobs": {
+        "a": "one\ntwo\nthree\nfour\nfive\nsix\n",
+        "new": ""
+      },
+      "worktree_preserved": true,
+      "transcript": "tig: Line selection for added/deleted files is unsupported; select the hunk\r\n"
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+      "form": "added",
+      "reverse": true,
+      "code": 1,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100644 b5660615986901aceae1450e10650892e191f8dc 0\ta\n100644 b5660615986901aceae1450e10650892e191f8dc 0\tnew\n",
+      "blobs": {
+        "a": "one\ntwo\nthree\nfour\nfive\nsix\n",
+        "new": "one\ntwo\nthree\nfour\nfive\nsix\n"
+      },
+      "worktree_preserved": true,
+      "transcript": "tig: Line selection for added/deleted files is unsupported; select the hunk\r\n"
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+      "form": "deleted",
+      "reverse": false,
+      "code": 1,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100644 b5660615986901aceae1450e10650892e191f8dc 0\ta\n",
+      "blobs": {
+        "a": "one\ntwo\nthree\nfour\nfive\nsix\n"
+      },
+      "worktree_preserved": true,
+      "transcript": "tig: Line selection for added/deleted files is unsupported; select the hunk\r\n"
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+      "form": "deleted",
+      "reverse": true,
+      "code": 1,
+      "timeout": false,
+      "index_changed": false,
+      "index": "",
+      "blobs": {},
+      "worktree_preserved": true,
+      "transcript": "tig: Line selection for added/deleted files is unsupported; select the hunk\r\n"
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+      "form": "rename",
+      "reverse": true,
+      "code": 1,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100644 b68b305e0239db3df71c53785eee126a9fbac00f 0\tnew\n",
+      "blobs": {
+        "new": "one\ntwo\nthree\nfour\nfive\nsix\nadded\n"
+      },
+      "worktree_preserved": true,
+      "transcript": "tig: Line selection for added/deleted files is unsupported; select the hunk\r\n"
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+      "form": "binary",
+      "reverse": false,
+      "code": 1,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100644 b5660615986901aceae1450e10650892e191f8dc 0\ta\n",
+      "blobs": {
+        "a": "one\ntwo\nthree\nfour\nfive\nsix\n"
+      },
+      "worktree_preserved": true,
+      "transcript": "tig: Binary patches are unsupported\r\n"
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+      "form": "binary",
+      "reverse": true,
+      "code": 1,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100644 b835d73543244b6694f36a8c5dfdffb71b153db7 0\ta\n",
+      "blobs": {
+        "a": "\u0000binary\n"
+      },
+      "worktree_preserved": true,
+      "transcript": "tig: Binary patches are unsupported\r\n"
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+      "form": "mode-only",
+      "reverse": false,
+      "code": 1,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100644 b5660615986901aceae1450e10650892e191f8dc 0\ta\n",
+      "blobs": {
+        "a": "one\ntwo\nthree\nfour\nfive\nsix\n"
+      },
+      "worktree_preserved": true,
+      "transcript": "tig: Patch has no text hunks\r\n"
+    },
+    {
+      "binary": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-patch-forms/work/tig/target/release/tig",
+      "form": "mode-only",
+      "reverse": true,
+      "code": 1,
+      "timeout": false,
+      "index_changed": false,
+      "index": "100755 b5660615986901aceae1450e10650892e191f8dc 0\ta\n",
+      "blobs": {
+        "a": "one\ntwo\nthree\nfour\nfive\nsix\n"
+      },
+      "worktree_preserved": true,
+      "transcript": "tig: Patch has no text hunks\r\n"
+    }
+  ],
+  "form_probe_sha256": "0943fc3cdd84fde029f70a2f3cc83863b4d87a12172c475fd0a3f0d9bcdeaa54",
+  "form_probe_note": "One-off mapping, not asserted parity. Mode-only status-update reviewer observations in PATCH-FORMS.md. Rename probes are staged reverse only. All observed worktrees preserved.",
+  "review": {
+    "independent_read_only": 2,
+    "new_blockers": 0,
+    "preexisting_gap": "mode-only status-update from stage view is refused by Rust; C updates mode"
+  },
+  "verdict": "PASS_SCOPED; 12/12 public cases and 3/3 original scripts (21/21 assertions per binary); unsupported forms remain gaps"
+}
