@@ -667,7 +667,7 @@ Rust scripts than the preceding `86ce7680` snapshot. The parity gate remains
 
 ### Current strict paired snapshot
 
-At merged source `9b7fbe073f8d8769a04c0f656eb28e4d498566e0`, the runner
+At merged source `228cf56199e3002b48e69cb3fd0b780a80cfcd2d`, the runner
 attempted all 154 unchanged scripts with separately hashed C and Rust-only
 application/graph binaries. C passed 152, failed none, and skipped two. Rust
 passed 148, failed four, and skipped two: 566 actual assertions passed and six
@@ -690,8 +690,11 @@ tree; original tests and C remain the parity reference. The gate remains **BLOCK
 the end-to-end C/Rust benchmark has not begun.
 This source also includes main-view notes, blame options, confirmed status
 mergetool, Git-native stash patches, historical tree/blob editing, diff-origin
-editing, grep-to-blame line navigation and pager Enter behavior. Their focused
-Git/PTY checks add coverage beyond the unchanged original scripts.
+editing, grep-to-blame line navigation, pager Enter behavior, the interactive
+options menu, file/stage/status blame navigation and cancellable standalone
+main-history refresh. Their focused Git/PTY checks add coverage beyond the
+unchanged original scripts. The strict runner now uses bounded parallel jobs;
+the C/Rust phases and original result mapping remain ordered.
 
 Earlier mixed-route full-suite JSON and raw logs are archived at the fixed
 [`44b0bf42` source commit](https://github.com/naikokodayo/tig/tree/44b0bf426de481d365451671c338cd7ffdd4161c/migration/evidence).

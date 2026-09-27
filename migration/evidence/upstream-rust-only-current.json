@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "source_commit": "9b7fbe073f8d8769a04c0f656eb28e4d498566e0",
+  "source_commit": "228cf56199e3002b48e69cb3fd0b780a80cfcd2d",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
     "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
-    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+    "rust/tests/upstream-suite.py": "40f68213956d46c2611e10ac1ebe48c72d1bb6a24443705a2db452d92d1a7663"
   },
   "rust_complete": false,
   "parity_gate": "BLOCKED",
@@ -5105,7 +5105,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 12.65s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 22.95s\n",
       "results": [
         {
           "script": "test/blame/blob-blame-test",
@@ -10177,11 +10177,11 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig",
-          "sha256": "b7a0724d7ffb26c83b68bc9a68c9f57d4325d882a064cb05ad86a30a42962974"
+          "sha256": "6ea896a5135c6c89b0ad9a3d7e260d2536540ceb7dd9999035fc6cb548095ab8"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph",
-          "sha256": "b0cc67bae1c9e1a2024f41369063ff91ab1384a55c461323fc2d5e82f65470c5"
+          "sha256": "0b7d905e6bdbbf63a7df3ce6d713c6c1f1c1f5c9feb3b59201e88a5d6a69e127"
         }
       },
       "binaries_unchanged": true,
