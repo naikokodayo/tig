@@ -1240,26 +1240,61 @@ impl Repository {
         }
         Ok(paths)
     }
+    fn entry_pathspecs(entries: &[StatusEntry]) -> Result<Vec<u8>> {
+        if entries.is_empty() {
+            return Err(GitError("No status entries to update".into()));
+        }
+        let mut input = Vec::new();
+        for entry in entries {
+            for path in Self::entry_paths(entry)? {
+                input.extend_from_slice(path.as_encoded_bytes());
+                input.push(0);
+            }
+        }
+        Ok(input)
+    }
     pub fn stage(&self, entry: &StatusEntry) -> Result<()> {
-        let mut args: Vec<OsString> = vec!["add".into(), "--all".into(), "--".into()];
-        args.extend(Self::entry_paths(entry)?);
-        self.command(args).map(|_| ())
+        self.stage_many(std::slice::from_ref(entry))
+    }
+    pub fn stage_many(&self, entries: &[StatusEntry]) -> Result<()> {
+        let input = Self::entry_pathspecs(entries)?;
+        run_with_input(
+            &self.root,
+            [
+                "add",
+                "--all",
+                "--pathspec-from-file=-",
+                "--pathspec-file-nul",
+            ],
+            Some(&input),
+        )
+        .map(|_| ())
     }
     pub fn unstage(&self, entry: &StatusEntry) -> Result<()> {
+        self.unstage_many(std::slice::from_ref(entry))
+    }
+    pub fn unstage_many(&self, entries: &[StatusEntry]) -> Result<()> {
+        let input = Self::entry_pathspecs(entries)?;
         // An unborn branch has no HEAD. rm --cached only updates its index.
         let has_head = !self.is_unborn()?;
-        let mut args: Vec<OsString> = if has_head {
-            vec!["reset".into(), "--quiet".into(), "HEAD".into(), "--".into()]
+        let args: Vec<&str> = if has_head {
+            vec![
+                "reset",
+                "--quiet",
+                "HEAD",
+                "--pathspec-from-file=-",
+                "--pathspec-file-nul",
+            ]
         } else {
             vec![
-                "rm".into(),
-                "--cached".into(),
-                "--ignore-unmatch".into(),
-                "--".into(),
+                "rm",
+                "--cached",
+                "--ignore-unmatch",
+                "--pathspec-from-file=-",
+                "--pathspec-file-nul",
             ]
         };
-        args.extend(Self::entry_paths(entry)?);
-        self.command(args).map(|_| ())
+        run_with_input(&self.root, args, Some(&input)).map(|_| ())
     }
 }
 
