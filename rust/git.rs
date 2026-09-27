@@ -68,7 +68,7 @@ where
 {
     run_with_input(cwd, args, None)
 }
-pub(crate) fn run_with_input<I, S>(cwd: &Path, args: I, input: Option<&[u8]>) -> Result<Vec<u8>>
+fn git_command<I, S>(cwd: &Path, args: I) -> Result<Command>
 where
     I: IntoIterator<Item = S>,
     S: AsRef<OsStr>,
@@ -97,6 +97,16 @@ where
         .env("GIT_TERMINAL_PROMPT", "0")
         .env("LC_ALL", "C")
         .stdin(Stdio::null());
+    Ok(command)
+}
+pub(crate) fn run_with_input<I, S>(cwd: &Path, args: I, input: Option<&[u8]>) -> Result<Vec<u8>>
+where
+    I: IntoIterator<Item = S>,
+    S: AsRef<OsStr>,
+{
+    run_command_with_input(git_command(cwd, args)?, input)
+}
+fn run_command_with_input(mut command: Command, input: Option<&[u8]>) -> Result<Vec<u8>> {
     let output = if let Some(input) = input {
         use std::io::Write;
         command
@@ -131,6 +141,62 @@ where
         )));
     }
     Ok(output.stdout)
+}
+// Only the UI owns/waits for the child; readers prevent either pipe filling.
+pub struct HistoryRefresh {
+    child: std::process::Child,
+    stdout: Option<std::thread::JoinHandle<std::io::Result<Vec<u8>>>>,
+    stderr: Option<std::thread::JoinHandle<std::io::Result<Vec<u8>>>>,
+    unborn: bool,
+    first_parent: bool,
+}
+fn drain(
+    mut pipe: impl std::io::Read + Send + 'static,
+) -> std::thread::JoinHandle<std::io::Result<Vec<u8>>> {
+    std::thread::spawn(move || {
+        let mut bytes = Vec::new();
+        pipe.read_to_end(&mut bytes)?;
+        Ok(bytes)
+    })
+}
+impl HistoryRefresh {
+    pub fn poll(&mut self, repo: &Repository) -> Result<Option<Vec<Commit>>> {
+        let Some(status) = self.child.try_wait().map_err(|e| GitError(e.to_string()))? else {
+            return Ok(None);
+        };
+        // A descendant may still hold a pipe: never join a running reader on the UI.
+        if !self.stdout.as_ref().is_some_and(|h| h.is_finished())
+            || !self.stderr.as_ref().is_some_and(|h| h.is_finished())
+        {
+            return Ok(None);
+        }
+        let read = |handle: &mut Option<std::thread::JoinHandle<std::io::Result<Vec<u8>>>>| {
+            handle
+                .take()
+                .expect("completed reader")
+                .join()
+                .map_err(|_| GitError("Git reader panicked".into()))?
+                .map_err(|e| GitError(e.to_string()))
+        };
+        let stdout = read(&mut self.stdout)?;
+        let stderr = read(&mut self.stderr)?;
+        crate::trace::append(&stderr);
+        if !status.success() {
+            return Err(GitError(format!(
+                "git exited with {status}: {}",
+                text(&stderr).trim()
+            )));
+        }
+        repo.finish_history(&stdout, self.unborn, self.first_parent)
+            .map(Some)
+    }
+}
+impl Drop for HistoryRefresh {
+    fn drop(&mut self) {
+        let _ = self.child.kill();
+        let _ = self.child.wait();
+        // Readers own their pipes and exit at EOF, including on cancellation.
+    }
 }
 // Both history decorations and the refs view use the same filtered ref records.
 fn parse_remote_refs(bytes: &[u8], head: &str) -> Result<Vec<Reference>> {
@@ -547,6 +613,21 @@ impl Repository {
         input: Option<&[u8]>,
         notes: &str,
     ) -> Result<Vec<Commit>> {
+        let (command, unborn, first_parent) =
+            self.history_command(revisions, limit, order, notes)?;
+        self.finish_history(
+            &run_command_with_input(command, input)?,
+            unborn,
+            first_parent,
+        )
+    }
+    fn history_command(
+        &self,
+        revisions: &[String],
+        limit: usize,
+        order: &str,
+        notes: &str,
+    ) -> Result<(Command, bool, bool)> {
         let options = HistoryOptions::parse(revisions)?;
         let order_arg = match order {
             "auto" | "topo" => Some("--topo-order"),
@@ -594,14 +675,43 @@ impl Repository {
         } else {
             &self.invocation
         };
-        let mut result = parse_history(&run_with_input(directory, args, input)?)?;
+        Ok((git_command(directory, args)?, unborn, options.first_parent))
+    }
+    pub fn start_history(
+        &self,
+        revisions: &[String],
+        order: &str,
+        notes: &str,
+    ) -> Result<HistoryRefresh> {
+        let (mut command, unborn, first_parent) =
+            self.history_command(revisions, 0, order, notes)?;
+        command.stdout(Stdio::piped()).stderr(Stdio::piped());
+        crate::trace::command(&command);
+        let mut child = command.spawn().map_err(|e| GitError(e.to_string()))?;
+        let stdout = drain(child.stdout.take().expect("piped stdout"));
+        let stderr = drain(child.stderr.take().expect("piped stderr"));
+        Ok(HistoryRefresh {
+            child,
+            stdout: Some(stdout),
+            stderr: Some(stderr),
+            unborn,
+            first_parent,
+        })
+    }
+    fn finish_history(
+        &self,
+        bytes: &[u8],
+        unborn: bool,
+        first_parent: bool,
+    ) -> Result<Vec<Commit>> {
+        let mut result = parse_history(bytes)?;
         let references = self.refs()?;
         let upstream = self
             .command(["rev-parse", "--symbolic-full-name", "@{upstream}"])
             .map(|b| text(trim_lf(&b)))
             .unwrap_or_default();
         decorate_history(&mut result, &references, &upstream);
-        if options.first_parent {
+        if first_parent {
             for commit in &mut result {
                 commit.parents.truncate(1);
             }

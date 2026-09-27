@@ -592,6 +592,92 @@ impl App {
         view.forwarded_stdin = Some(args.to_vec());
         Ok(view)
     }
+    fn main_options(&self) -> Result<(Vec<String>, Config, String)> {
+        let mut args = self
+            .config
+            .settings
+            .get("main-options")
+            .cloned()
+            .unwrap_or_default();
+        args.extend(self.args.iter().cloned());
+        let options = tig_rs::git::HistoryOptions::parse(&args)?;
+        let mut config = self.config.clone();
+        let configured_graph = tig_rs::render::main_graph_enabled(&config);
+        let graph = options.with_graph && configured_graph;
+        let order = self.config.value("commit-order").unwrap_or("auto");
+        let order = if order == "auto" && !configured_graph {
+            "default"
+        } else {
+            order
+        };
+        if !graph || order == "reverse" {
+            config
+                .settings
+                .insert("main-view-commit-title-graph".into(), vec!["no".into()]);
+        }
+        Ok((args, config, order.to_owned()))
+    }
+    fn main_content(&self, commits: Vec<Commit>, width: usize) -> Result<View> {
+        let repo = self.repo()?;
+        let (_, config, _) = self.main_options()?;
+        let mut v = View::new("main");
+        let head = if self.config.bool_value("show-changes", true) && !repo.bare {
+            repo.revision("HEAD").ok()
+        } else {
+            None
+        };
+        let kinds = if head
+            .as_ref()
+            .is_some_and(|id| commits.iter().any(|c| c.oid == *id))
+        {
+            changes(
+                &repo.status()?,
+                self.config.bool_value("show-untracked", true),
+            )
+        } else {
+            Vec::new()
+        };
+        let date = if kinds.is_empty() {
+            String::new()
+        } else {
+            changes_date()?
+        };
+        let null_id = head
+            .as_ref()
+            .map(|id| "0".repeat(id.len()))
+            .unwrap_or_default();
+        let mut display = Vec::with_capacity(commits.len() + kinds.len());
+        let mut items = Vec::with_capacity(commits.len() + kinds.len());
+        for commit in commits {
+            if head.as_ref().is_some_and(|id| commit.oid == *id) {
+                for (index, kind) in kinds.iter().copied().enumerate() {
+                    let parent = if index + 1 < kinds.len() {
+                        null_id.clone()
+                    } else {
+                        commit.oid.clone()
+                    };
+                    display.push(changes_commit(kind, parent, &date, &null_id));
+                    items.push(Item::Changes(kind));
+                }
+            }
+            items.push(Item::Commit(commit.clone()));
+            display.push(commit);
+        }
+        let (rows, fields) = tig_rs::render::render_commit_fields(&config, &display, width)?;
+        v.commit_fields = fields;
+        v.commit_row_widths = vec![width; rows.len()];
+        for (row, item) in rows.into_iter().zip(items) {
+            let kind = match &item {
+                Item::Changes(ChangeKind::Untracked) => "stat-untracked",
+                Item::Changes(ChangeKind::Unstaged) => "stat-unstaged",
+                Item::Changes(ChangeKind::Staged) => "stat-staged",
+                Item::Commit(commit) if commit.annotated => "main-annotated",
+                _ => "main-commit",
+            };
+            v.push_typed(row, item, kind);
+        }
+        Ok(v)
+    }
     fn load_content(&self, name: &str, width: usize) -> Result<View> {
         let mut v = View::new(name);
         if name == "help" {
@@ -619,90 +705,14 @@ impl App {
         let repo = self.repo()?;
         match name {
             "main" => {
-                let mut args = self
-                    .config
-                    .settings
-                    .get("main-options")
-                    .cloned()
-                    .unwrap_or_default();
-                args.extend(self.args.iter().cloned());
-                let options = tig_rs::git::HistoryOptions::parse(&args)?;
-                let mut config = self.config.clone();
-                let configured_graph = tig_rs::render::main_graph_enabled(&config);
-                let graph = options.with_graph && configured_graph;
-                let order = self.config.value("commit-order").unwrap_or("auto");
-                let order = if order == "auto" && !configured_graph {
-                    "default"
-                } else {
-                    order
-                };
+                let (args, _, order) = self.main_options()?;
                 let commits = repo.history_ordered(
                     &args,
                     0,
-                    order,
+                    &order,
                     self.config.value("show-notes").unwrap_or("yes"),
                 )?;
-                if !graph || order == "reverse" {
-                    config
-                        .settings
-                        .insert("main-view-commit-title-graph".into(), vec!["no".into()]);
-                }
-                let head = if self.config.bool_value("show-changes", true) && !repo.bare {
-                    repo.revision("HEAD").ok()
-                } else {
-                    None
-                };
-                let kinds = if head
-                    .as_ref()
-                    .is_some_and(|id| commits.iter().any(|c| c.oid == *id))
-                {
-                    changes(
-                        &repo.status()?,
-                        self.config.bool_value("show-untracked", true),
-                    )
-                } else {
-                    Vec::new()
-                };
-                let date = if kinds.is_empty() {
-                    String::new()
-                } else {
-                    changes_date()?
-                };
-                let null_id = head
-                    .as_ref()
-                    .map(|id| "0".repeat(id.len()))
-                    .unwrap_or_default();
-                let mut display = Vec::with_capacity(commits.len() + kinds.len());
-                let mut items = Vec::with_capacity(commits.len() + kinds.len());
-                for commit in commits {
-                    if head.as_ref().is_some_and(|id| commit.oid == *id) {
-                        for (index, kind) in kinds.iter().copied().enumerate() {
-                            let parent = if index + 1 < kinds.len() {
-                                null_id.clone()
-                            } else {
-                                commit.oid.clone()
-                            };
-                            display.push(changes_commit(kind, parent, &date, &null_id));
-                            items.push(Item::Changes(kind));
-                        }
-                    }
-                    items.push(Item::Commit(commit.clone()));
-                    display.push(commit);
-                }
-                let (rows, fields) =
-                    tig_rs::render::render_commit_fields(&config, &display, width)?;
-                v.commit_fields = fields;
-                v.commit_row_widths = vec![width; rows.len()];
-                for (row, item) in rows.into_iter().zip(items) {
-                    let kind = match &item {
-                        Item::Changes(ChangeKind::Untracked) => "stat-untracked",
-                        Item::Changes(ChangeKind::Unstaged) => "stat-unstaged",
-                        Item::Changes(ChangeKind::Staged) => "stat-staged",
-                        Item::Commit(commit) if commit.annotated => "main-annotated",
-                        _ => "main-commit",
-                    };
-                    v.push_typed(row, item, kind);
-                }
+                return self.main_content(commits, width);
             }
             "status" => return self.status_view(self.view.name == "status" && self.view.untracked),
 
@@ -4585,22 +4595,57 @@ fn run() -> Result<()> {
     app.center_selection();
     let mut terminal = Terminal::open(&app.config)?;
     let mut key_sequence = String::new();
+    let mut history_refresh: Option<tig_rs::git::HistoryRefresh> = None;
     loop {
         if app.finder.is_some() {
             terminal.find_file(&mut app)?;
         }
-        app.poll_watch();
+        if history_refresh.is_none() {
+            app.poll_watch();
+        }
         terminal.draw(&mut app)?;
         let event = loop {
             if let Some(event) = terminal.read_tick()? {
                 break event;
             }
-            if app.poll_watch() {
+            let mut completed = false;
+            if let Some(refresh) = &mut history_refresh {
+                let result = refresh.poll(app.repo()?);
+                match result {
+                    Ok(None) => (),
+                    result => {
+                        history_refresh = None;
+                        completed = true;
+                        let result = result
+                            .map_err(|e| -> Box<dyn std::error::Error> { Box::new(e) })
+                            .and_then(|commits| {
+                                app.main_content(commits.expect("completed history"), app.width)
+                            });
+                        match result {
+                            Ok(mut view) => {
+                                view.args = app.view.args.clone();
+                                view.revision = app.view.revision.clone();
+                                view.path = app.view.path.clone();
+                                view.selected =
+                                    app.view.selected.min(view.rows.len().saturating_sub(1));
+                                view.top = app.view.top;
+                                view.left = app.view.left;
+                                view.history = app.view.history.clone();
+                                app.view = view;
+                                app.message.clear();
+                            }
+                            Err(error) => app.message = error.to_string(),
+                        }
+                    }
+                }
+            }
+            if completed || (history_refresh.is_none() && app.poll_watch()) {
                 terminal.draw(&mut app)?;
             }
         };
         let action = match event {
             Event::Resize(w, h) => {
+                history_refresh = None;
                 app.width = w as usize;
                 app.height = h as usize;
                 if let Err(error) = app.refresh_after_command() {
@@ -4640,7 +4685,54 @@ fn run() -> Result<()> {
             app.message = "Unknown key, press h for help".into();
             continue;
         };
+        // Navigation can use the retained rows while the replacement is loading.
+        // Other actions may change the view/context, so discard their stale job.
+        let navigates = action.starts_with("move-")
+            || action.starts_with("scroll-")
+            || action.starts_with(":goto ")
+            || matches!(
+                action.as_str(),
+                "next"
+                    | "previous"
+                    | "find-next"
+                    | "find-prev"
+                    | "search"
+                    | "search-back"
+                    | "parent"
+                    | "back"
+            );
+        let cancelled = !navigates && history_refresh.take().is_some();
         app.message.clear();
+        if action == "stop-loading" {
+            if cancelled {
+                app.message = "Loading stopped".into();
+            }
+            continue;
+        }
+        // ponytail: only explicit, single-pane main refresh is asynchronous;
+        // initial loads and general streaming need a broader view lifecycle.
+        if action == "refresh"
+            && app.view.name == "main"
+            && !app.view.from_stdin
+            && app.other.is_none()
+        {
+            app.sync_context();
+            let result = app.main_options().and_then(|(args, _, order)| {
+                Ok(app.repo()?.start_history(
+                    &args,
+                    &order,
+                    app.config.value("show-notes").unwrap_or("yes"),
+                )?)
+            });
+            match result {
+                Ok(refresh) => {
+                    history_refresh = Some(refresh);
+                    app.message = "Loading history (z to stop)".into();
+                }
+                Err(error) => app.message = error.to_string(),
+            }
+            continue;
+        }
         if action == "search" || action == "search-back" {
             if let Some(s) =
                 terminal.prompt(&mut app, if action == "search" { "/" } else { "?" })?
