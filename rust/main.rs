@@ -4961,7 +4961,17 @@ fn run() -> Result<()> {
                         let result = result
                             .map_err(|e| -> Box<dyn std::error::Error> { Box::new(e) })
                             .and_then(|commits| {
-                                app.main_content(commits.expect("completed history"), app.width)
+                                let (vertical, parent, child) = app.pane_sizes();
+                                let width = if app.split && app.other.is_some() && vertical {
+                                    if app.parent_focused {
+                                        parent
+                                    } else {
+                                        child
+                                    }
+                                } else {
+                                    app.width
+                                };
+                                app.main_content(commits.expect("completed history"), width)
                             });
                         match result {
                             Ok(mut view) => {
@@ -5057,13 +5067,9 @@ fn run() -> Result<()> {
             }
             continue;
         }
-        // ponytail: only explicit, single-pane main refresh is asynchronous;
+        // ponytail: only the focused main view refresh is asynchronous;
         // initial loads and general streaming need a broader view lifecycle.
-        if action == "refresh"
-            && app.view.name == "main"
-            && !app.view.from_stdin
-            && app.other.is_none()
-        {
+        if action == "refresh" && app.view.name == "main" && !app.view.from_stdin {
             app.sync_context();
             let result = app.main_options().and_then(|(args, _, order)| {
                 Ok(app.repo()?.start_history(
