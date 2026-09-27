@@ -25,7 +25,8 @@ successful index operation; index snapshots decide the observation.
   single-line probes. Rust explicitly refuses added-file line/block selection.
 - Deleted file: C made no index change when staging one deletion; unstaging
   one deletion restored only that line into the index. Rust explicitly refuses
-  both line directions. Full text-hunk selection is already available.
+  both line directions at that checkpoint; reverse regular-file selection is
+  added below. Full text-hunk selection is already available.
 - Staged rename plus appended text: C unstaged the rename and selected text
   together. Rust's selected-path diff presented the destination as an added
   file and refused line selection. A raw rename/copy patch is also explicitly
@@ -85,3 +86,29 @@ non-regular modes, and line/block/split requests without hunks. Formatting,
 97 Rust tests, Clippy, the 12 preceding mode-plus-text cases, and the same
 three unchanged original staging scripts (21 assertions per binary) pass.
 The compact source/binary-bound receipt is `migration/evidence/mode-only.json`.
+
+## Deleted-file partial unstage (base `fc2402ff`)
+
+Real-index C/Rust probes of added files (intent-to-add or staged) and deleted
+files found a usable C line-selection path only when unstaging a deletion.
+The other three directions made no C index change in the selected-line probe.
+Rust now permits line/block selection only in reverse for deleted regular
+files (`100644`/`100755`), through the existing checked cached apply path.
+Added-file selections, forward deletion, and nonregular deletion remain
+explicitly refused. No application dispatch or index writer is added.
+
+The unchanged C implementation loses the selected line's newline when the
+original deleted file has no final newline and the first/middle line is
+restored. Rust's existing marker handling correctly preserves those bytes;
+this is an intentional safety difference, not full C parity. Restoring the
+last line without its final newline and restoring the complete block match C.
+
+`rust/tests/deleted-line.py` checks first/middle/last lines and a complete block
+across two executable modes and both EOF states: Rust passes all 16 exact
+content checks; C matches 12 and retains 4 recorded newline-loss differences.
+All cases preserve worktree deletion and the restored index mode. The unit
+regression checks stale-apply index preservation and unsupported directions.
+Formatting, 98 Rust tests, Clippy, and two unchanged original scripts
+(`stage/default-test`, `stage/update-part-test`; 19 assertions per binary)
+pass. The compact source/binary-bound receipt is
+`migration/evidence/deleted-line.json`. The full migration parity gate stays open.
