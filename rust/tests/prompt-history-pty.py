@@ -13,9 +13,9 @@ import termios
 import time
 
 
-def run(binary, repo, home, script=None, keys=b""):
+def run(binary, repo, home, script=None, keys=b"", columns=80):
     master, slave = pty.openpty()
-    fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 30, 80, 0, 0))
+    fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 30, columns, 0, 0))
 
     def setup():
         os.setsid()
@@ -47,6 +47,7 @@ def run(binary, repo, home, script=None, keys=b""):
             process.kill()
             process.wait()
         os.close(master)
+    return bytes(output)
 
 
 def main():
@@ -93,6 +94,22 @@ def main():
         history.unlink()
         run(binary, repo, home, keys=b"/needle\rQ")
         assert history.read_text() == "needle\n"
+        run(binary, repo, home, keys="/ab\x1b[D\u00e9\x01Z\x05Y\x1b[D\x1b[D\x7f\rQ".encode())
+        assert history.read_text().splitlines()[-1] == "ZabY"
+        run(binary, repo, home, keys=b"/abc\x01\x1b[C\x1b[3~\rQ")
+        assert history.read_text().splitlines()[-1] == "ac"
+        for grapheme in ("👩‍🔬", "👋🏽"):
+            screen = run(binary, repo, home,
+                         keys=f"/12345{grapheme}\rQQQ".encode(), columns=8).decode(errors="replace")
+            assert f"\x1b[2K12345{grapheme}\x1b[30;8H" in screen
+        run(binary, repo, home, keys="/A👩‍🔬B\x1b[D\x7f\rQQQ".encode())
+        assert history.read_text().splitlines()[-1] == "AB"
+        run(binary, repo, home, keys="/A👋🏽B\x01\x1b[C\x1b[3~\rQQQ".encode())
+        assert history.read_text().splitlines()[-1] == "AB"
+        screen = run(binary, repo, home,
+                     keys="/123456e\u0301\x7f\rQQQ".encode(), columns=8).decode(errors="replace")
+        assert "\x1b[2K123456e\u0301\x1b[30;8H" in screen
+        assert history.read_text().splitlines()[-1] == "123456"
 
 
 if __name__ == "__main__":

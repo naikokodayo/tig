@@ -24,7 +24,8 @@ use tig_rs::{
     help_view::HelpView,
     model::{BlameLine, Commit, StatusEntry, TreeEntry},
 };
-use unicode_width::UnicodeWidthChar;
+use unicode_segmentation::UnicodeSegmentation;
+use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 fn diff_options(config: &Config) -> Result<&[String]> {
@@ -3445,6 +3446,42 @@ fn clip(text: &str, skip: usize, width: usize) -> String {
     }
     out
 }
+fn clip_prompt(text: &str, skip: usize, width: usize) -> String {
+    let mut out = String::new();
+    let mut column = 0;
+    for grapheme in text.graphemes(true) {
+        let cells = UnicodeWidthStr::width(grapheme);
+        if column >= skip && column.saturating_add(cells) <= skip.saturating_add(width) {
+            out.push_str(grapheme);
+        }
+        column += cells;
+        if column >= skip.saturating_add(width) {
+            break;
+        }
+    }
+    out
+}
+fn prompt_text(text: &str) -> String {
+    let mut out = String::new();
+    let mut column = 0;
+    for grapheme in text.graphemes(true) {
+        if grapheme == "\t" {
+            let spaces = 8 - column % 8;
+            out.push_str(&" ".repeat(spaces));
+            column += spaces;
+        } else if grapheme.chars().any(char::is_control) {
+            for c in grapheme.chars() {
+                let escaped = format!("\\x{:02x}", c as u32);
+                column += escaped.len();
+                out.push_str(&escaped);
+            }
+        } else {
+            out.push_str(grapheme);
+            column += UnicodeWidthStr::width(grapheme);
+        }
+    }
+    out
+}
 struct Terminal {
     out: fs::File,
     stop: std::sync::Arc<std::sync::atomic::AtomicBool>,
@@ -3658,22 +3695,43 @@ impl Terminal {
     }
     fn prompt(&mut self, app: &mut App, prefix: &str) -> Result<Option<String>> {
         let mut value = String::new();
+        let mut point = 0;
         let mut position = self.history.entries.len();
         let mut draft = String::new();
         loop {
+            let line = prompt_text(&format!("{prefix}{value}"));
+            let caret = UnicodeWidthStr::width(
+                prompt_text(&format!("{prefix}{}", &value[..point])).as_str(),
+            );
+            let wanted = caret.saturating_sub(app.width.saturating_sub(1));
+            let mut skip = 0;
+            for grapheme in line.graphemes(true) {
+                if skip >= wanted {
+                    break;
+                }
+                skip += UnicodeWidthStr::width(grapheme);
+            }
             queue!(
                 self.out,
                 cursor::MoveTo(0, app.height.saturating_sub(1) as u16),
                 Clear(ClearType::CurrentLine)
             )?;
-            write!(
+            write!(self.out, "{}", clip_prompt(&line, skip, app.width))?;
+            queue!(
                 self.out,
-                "{}",
-                clip(&format!("{prefix}{value}"), 0, app.width)
+                cursor::MoveTo(
+                    caret.saturating_sub(skip) as u16,
+                    app.height.saturating_sub(1) as u16
+                ),
+                cursor::Show
             )?;
             self.out.flush()?;
-            if let Event::Key(k) = self.read()? {
-                match k.code {
+            match self.read()? {
+                Event::Resize(w, h) => {
+                    app.width = w as usize;
+                    app.height = h as usize;
+                }
+                Event::Key(k) => match k.code {
                     KeyCode::Enter => {
                         if self.history.limit > 0
                             && !value.is_empty()
@@ -3684,15 +3742,20 @@ impl Terminal {
                                 self.history.entries.remove(0);
                             }
                         }
+                        queue!(self.out, cursor::Hide)?;
                         return Ok(Some(value));
                     }
-                    KeyCode::Esc => return Ok(None),
+                    KeyCode::Esc => {
+                        queue!(self.out, cursor::Hide)?;
+                        return Ok(None);
+                    }
                     KeyCode::Up if position > 0 => {
                         if position == self.history.entries.len() {
                             draft = value.clone();
                         }
                         position -= 1;
                         value.clone_from(&self.history.entries[position]);
+                        point = value.len();
                     }
                     KeyCode::Down if position < self.history.entries.len() => {
                         position += 1;
@@ -3702,16 +3765,54 @@ impl Terminal {
                             .get(position)
                             .cloned()
                             .unwrap_or_else(|| draft.clone());
+                        point = value.len();
                     }
                     KeyCode::Backspace => {
-                        value.pop();
+                        if let Some((previous, _)) = value[..point].grapheme_indices(true).last() {
+                            value.replace_range(previous..point, "");
+                            point = previous;
+                        }
                     }
                     KeyCode::Char('c') if k.modifiers.contains(KeyModifiers::CONTROL) => {
-                        return Ok(None)
+                        queue!(self.out, cursor::Hide)?;
+                        return Ok(None);
                     }
-                    KeyCode::Char(c) => value.push(c),
+                    KeyCode::Left => {
+                        point = value[..point]
+                            .grapheme_indices(true)
+                            .last()
+                            .map_or(0, |(i, _)| i)
+                    }
+                    KeyCode::Right if point < value.len() => {
+                        point += value[point..].graphemes(true).next().unwrap().len()
+                    }
+                    KeyCode::Home => point = 0,
+                    KeyCode::End => point = value.len(),
+                    KeyCode::Char('a') if k.modifiers.contains(KeyModifiers::CONTROL) => point = 0,
+                    KeyCode::Char('e') if k.modifiers.contains(KeyModifiers::CONTROL) => {
+                        point = value.len()
+                    }
+                    KeyCode::Delete if point < value.len() => {
+                        let end = point + value[point..].graphemes(true).next().unwrap().len();
+                        value.replace_range(point..end, "");
+                    }
+                    KeyCode::Char(c)
+                        if !k
+                            .modifiers
+                            .intersects(KeyModifiers::CONTROL | KeyModifiers::ALT)
+                            && !c.is_control() =>
+                    {
+                        value.insert(point, c);
+                        point += c.len_utf8();
+                        point = value
+                            .grapheme_indices(true)
+                            .map(|(start, grapheme)| start + grapheme.len())
+                            .find(|&end| end >= point)
+                            .unwrap_or(value.len());
+                    }
                     _ => (),
-                }
+                },
+                _ => (),
             }
         }
     }
