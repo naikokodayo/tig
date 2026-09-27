@@ -30,3 +30,5 @@ pub mod file_finder;
 pub mod status_ops;
 
 pub mod watch;
+
+pub mod view_export;

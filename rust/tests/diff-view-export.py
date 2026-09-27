@@ -47,7 +47,8 @@ with tempfile.TemporaryDirectory(prefix='tig-view-export-') as temporary:
         for mode, binary in [('c', ROOT / 'src/tig'), ('rust', args.rust_binary.resolve())]:
             output = directory / f'{mode}-{case}.data'
             # Refusing wrapped export must not truncate an existing destination.
-            output.write_text('untouched\n')
+            if wrapped or case in ('custom', 'collision', 'runtime-color'):
+                output.write_text('untouched\n')
             steps.write_text((':enter\n' if case == 'split' else ':color "diff-stat" red default\n' if case == 'runtime-color' else '') + f':save-view {output}\n:quit\n')
             command = [str(binary), '-C', str(repo), *(['log'] if case == 'split' else ['show', 'HEAD'])]
             if case in ('metadata', 'custom', 'collision', 'runtime-color'):
