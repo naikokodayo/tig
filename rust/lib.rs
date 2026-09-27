@@ -34,3 +34,5 @@ pub mod watch;
 pub mod view_export;
 
 pub mod blame_options;
+
+pub mod stdin_show;

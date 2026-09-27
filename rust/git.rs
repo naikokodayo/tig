@@ -68,7 +68,7 @@ where
 {
     run_with_input(cwd, args, None)
 }
-fn run_with_input<I, S>(cwd: &Path, args: I, input: Option<&[u8]>) -> Result<Vec<u8>>
+pub(crate) fn run_with_input<I, S>(cwd: &Path, args: I, input: Option<&[u8]>) -> Result<Vec<u8>>
 where
     I: IntoIterator<Item = S>,
     S: AsRef<OsStr>,

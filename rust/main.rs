@@ -31,6 +31,11 @@ use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+fn diff_commit_id(line: &str) -> Option<&str> {
+    line.strip_prefix("commit ")
+        .and_then(|header| header.split_whitespace().next())
+        .filter(|oid| matches!(oid.len(), 40 | 64) && oid.bytes().all(|c| c.is_ascii_hexdigit()))
+}
 fn diff_options(config: &Config) -> Result<&[String]> {
     let options = config
         .settings
@@ -191,6 +196,7 @@ struct View {
     untracked: bool,
     raw_patch: Vec<u8>,
     from_stdin: bool,
+    forwarded_stdin: Option<Vec<String>>,
     sort_field: Option<String>,
     sort_reverse: bool,
     args: Vec<String>,
@@ -221,6 +227,7 @@ impl View {
             untracked: false,
             raw_patch: Vec::new(),
             from_stdin: false,
+            forwarded_stdin: None,
             sort_field: None,
             sort_reverse: false,
             args: Vec::new(),
@@ -477,6 +484,99 @@ impl App {
         }
         Ok(v)
     }
+    fn add_diff_refs(&self, view: &mut View) -> Result<()> {
+        let repo = self.repo()?;
+        let headers: Vec<_> = view
+            .rows
+            .iter()
+            .enumerate()
+            .filter_map(|(index, line)| diff_commit_id(line).map(|oid| (index, oid.to_owned())))
+            .collect();
+        let first_commit = headers.first().map(|(index, _)| *index);
+        let annotated_tags = repo.refs().is_ok_and(|refs| {
+            refs.iter().any(|reference| {
+                reference.name.starts_with("refs/tags/") && !reference.target.is_empty()
+            })
+        });
+        let ids: Vec<_> = headers.iter().map(|(_, oid)| oid.clone()).collect();
+        let commits: std::collections::HashMap<_, _> = tig_rs::stdin_show::commits(repo, &ids)?
+            .into_iter()
+            .map(|commit| (commit.oid.clone(), commit))
+            .collect();
+        for (index, oid) in headers.into_iter().rev() {
+            if let Some(commit) = commits.get(&oid) {
+                let mut refs = tig_rs::render::refs(&self.config, &commit.decorations, ", ");
+                // C adds an empty refs row for undecorated commits when tags exist.
+                let show_refs =
+                    !refs.is_empty() || (commit.decorations.is_empty() && annotated_tags);
+                if show_refs
+                    && Some(index) == first_commit
+                    && !commit
+                        .decorations
+                        .split(", ")
+                        .any(|r| r.starts_with("tag: "))
+                {
+                    if let Ok(description) = repo.command(["describe", "--tags", &commit.oid]) {
+                        let description = String::from_utf8_lossy(&description);
+                        if !description.trim().is_empty() {
+                            if !refs.is_empty() {
+                                refs.push_str(", ");
+                            }
+                            refs.push_str(description.trim());
+                        }
+                    }
+                }
+                if show_refs {
+                    view.rows.insert(index + 1, format!("Refs: {refs}"));
+                    view.items.insert(index + 1, Item::Text);
+                    view.row_types.insert(index + 1, "pp-refs");
+                }
+            }
+        }
+        view.line_numbers = (1..=view.rows.len()).collect();
+        Ok(())
+    }
+    fn forwarded_diff(&self, args: &[String], input: &[u8], width: usize) -> Result<View> {
+        let mut options = diff_options(&self.config)?.to_vec();
+        options.push(format!("-U{}", self.config.usize_value("diff-context", 3)));
+        options.push(
+            if word_diff_enabled(&self.config) {
+                "--word-diff=plain"
+            } else {
+                "--word-diff=none"
+            }
+            .into(),
+        );
+        options.push(
+            if self.config.bool_value("mailmap", false) {
+                "--use-mailmap"
+            } else {
+                "--no-use-mailmap"
+            }
+            .into(),
+        );
+        match self.config.value("ignore-space").unwrap_or("no") {
+            "all" => options.push("--ignore-all-space".into()),
+            "some" => options.push("--ignore-space-change".into()),
+            "at-eol" => options.push("--ignore-space-at-eol".into()),
+            _ => (),
+        }
+        options.push(match self.config.value("show-notes").unwrap_or("no") {
+            "no" | "false" | "0" => "--no-notes".into(),
+            "yes" | "true" | "1" | "" => "--show-notes".into(),
+            reference => format!("--show-notes={reference}"),
+        });
+        let output = tig_rs::stdin_show::show(self.repo()?, args, input, &options, width)?;
+        let shown = highlight_diff(&self.config, &output);
+        let mut view = View::text("diff", &shown);
+        if let Some(oid) = shown.lines().find_map(diff_commit_id) {
+            view.revision = oid.into();
+        }
+        self.add_diff_refs(&mut view)?;
+        view.from_stdin = true;
+        view.forwarded_stdin = Some(args.to_vec());
+        Ok(view)
+    }
     fn load_content(&self, name: &str, width: usize) -> Result<View> {
         let mut v = View::new(name);
         if name == "help" {
@@ -490,6 +590,10 @@ impl App {
             return Ok(v);
         }
         if name == "diff" && self.view.name == "diff" && self.view.from_stdin {
+            if let Some(args) = &self.view.forwarded_stdin {
+                // As in C, a refresh reruns show after the input pipe was consumed.
+                return self.forwarded_diff(args, &[], width);
+            }
             return Ok(self.view.clone());
         }
         if name == "main" && self.view.name == "main" && self.view.from_stdin {
@@ -745,45 +849,7 @@ impl App {
                 } else {
                     "HEAD".into()
                 };
-                if shown.starts_with("commit ") {
-                    if let Some(commit) = repo.history(&[oid, "--".into()], 1)?.first() {
-                        let mut refs =
-                            tig_rs::render::refs(&self.config, &commit.decorations, ", ");
-                        // C creates an empty Refs line only when annotated tags exist.
-                        let describe = !refs.is_empty()
-                            || (commit.decorations.is_empty()
-                                && repo.refs().is_ok_and(|refs| {
-                                    refs.iter().any(|reference| {
-                                        reference.name.starts_with("refs/tags/")
-                                            && !reference.target.is_empty()
-                                    })
-                                }));
-                        if describe
-                            && !commit
-                                .decorations
-                                .split(", ")
-                                .any(|r| r.starts_with("tag: "))
-                        {
-                            if let Ok(description) =
-                                repo.command(["describe", "--tags", &commit.oid])
-                            {
-                                let description = String::from_utf8_lossy(&description);
-                                if !description.trim().is_empty() {
-                                    if !refs.is_empty() {
-                                        refs.push_str(", ");
-                                    }
-                                    refs.push_str(description.trim());
-                                }
-                            }
-                        }
-                        if !refs.is_empty() && !view.rows.is_empty() {
-                            view.rows.insert(1, format!("Refs: {refs}"));
-                            view.items.insert(1, Item::Text);
-                            view.row_types.insert(1, "pp-refs");
-                            view.line_numbers = (1..=view.rows.len()).collect();
-                        }
-                    }
-                }
+                self.add_diff_refs(&mut view)?;
                 return Ok(view);
             }
             "stage" => {
@@ -1164,6 +1230,17 @@ impl App {
                     PathBuf::new()
                 };
                 self.revision = hit.revision.unwrap_or_else(|| "HEAD".into());
+            }
+            Item::Text if self.view.name == "diff" => {
+                let selected = self.view.source_index(self.view.selected);
+                if let Some(oid) = self
+                    .view
+                    .source_rows()
+                    .get(..=selected)
+                    .and_then(|rows| rows.iter().rev().find_map(|row| diff_commit_id(row)))
+                {
+                    self.revision = oid.into();
+                }
             }
             Item::Text => (),
         }
@@ -2674,7 +2751,12 @@ fn stat_header_after(rows: &[String], selected: usize, start: usize) -> Option<u
             || line.starts_with("diff --cc ")
             || line.starts_with("diff --combined ")
     };
-    let first_patch = rows.iter().position(|row| is_header(row))?;
+    let first_patch = rows
+        .iter()
+        .enumerate()
+        .skip(start)
+        .take_while(|(_, row)| !row.starts_with("commit "))
+        .find_map(|(index, row)| is_header(row).then_some(index))?;
     if selected < start || selected >= first_patch || !rows.get(selected)?.contains(" | ") {
         return None;
     }
@@ -2686,6 +2768,7 @@ fn stat_header_after(rows: &[String], selected: usize, start: usize) -> Option<u
     rows.iter()
         .enumerate()
         .skip(first_patch)
+        .take_while(|(_, row)| !row.starts_with("commit "))
         .filter(|(_, row)| is_header(row))
         .nth(stat_index)
         .map(|(index, _)| index)
@@ -3964,21 +4047,15 @@ fn run() -> Result<()> {
         };
         if cli.view == "diff" {
             if forward_stdin {
-                return Err(
-                    "Forwarding revision input to git show --stdin is not supported yet".into(),
-                );
-            }
-            app.view = View::text("diff", text);
-            app.view.from_stdin = true;
-            if let Some(oid) = text.lines().find_map(|line| {
-                line.strip_prefix("commit ")
-                    .and_then(|header| header.split_whitespace().next())
-                    .filter(|oid| {
-                        matches!(oid.len(), 40 | 64) && oid.bytes().all(|c| c.is_ascii_hexdigit())
-                    })
-            }) {
-                app.view.revision = oid.into();
-                app.revision = oid.into();
+                app.view = app.forwarded_diff(&cli.git_args, &input, app.width)?;
+                app.revision = app.view.revision.clone();
+            } else {
+                app.view = View::text("diff", text);
+                app.view.from_stdin = true;
+                if let Some(oid) = text.lines().find_map(diff_commit_id) {
+                    app.view.revision = oid.into();
+                    app.revision = oid.into();
+                }
             }
         } else if forward_stdin
             || cli
@@ -5196,6 +5273,20 @@ mod tests {
         assert_eq!(diff_stat_header(&rows, 1), None);
         assert_eq!(diff_stat_header(&rows, 3), Some(5));
         assert_eq!(diff_stat_header(&rows, 4), Some(6));
+        let mut multiple = rows.clone();
+        multiple.extend(rows.iter().cloned());
+        assert_eq!(diff_stat_header(&multiple, 10), Some(12));
+        assert_eq!(diff_stat_header(&multiple, 11), Some(13));
+        // A malformed/missing file header cannot jump into the next commit.
+        let missing = [
+            "commit one",
+            "---",
+            " file | 1 +",
+            "commit two",
+            "diff --git a/file b/file",
+        ]
+        .map(str::to_owned);
+        assert_eq!(diff_stat_header(&missing, 2), None);
     }
     #[test]
     fn wrapped_pager_rows_preserve_source_and_navigation() {
