@@ -251,7 +251,19 @@ impl View {
     fn text(name: &str, text: &str) -> Self {
         let mut v = Self::new(name);
         for line in text.lines() {
-            v.push(line.into(), Item::Text);
+            let item = if name == "pager" {
+                line.strip_prefix("commit ")
+                    .and_then(|header| header.split_whitespace().next())
+                    .filter(|oid| {
+                        (4..=64).contains(&oid.len())
+                            && oid.bytes().all(|byte| byte.is_ascii_hexdigit())
+                    })
+                    .map(|oid| Item::Ref(oid.into(), None))
+                    .unwrap_or(Item::Text)
+            } else {
+                Item::Text
+            };
+            v.push(line.into(), item);
         }
         v
     }
@@ -1406,6 +1418,10 @@ impl App {
             }
             return Ok(());
         }
+        if self.view.name == "pager" && !matches!(self.selected(), Item::Ref(..)) {
+            self.action("scroll-line-down")?;
+            return Ok(());
+        }
         if self.view.name == "diff" || (self.view.name == "stage" && !self.view.untracked) {
             let header = if self.view.name == "diff" {
                 diff_stat_header(
@@ -1543,6 +1559,12 @@ impl App {
             self.parent_focused = false;
             if from_grep || self.other.as_ref().is_some_and(|view| view.name == "blame") {
                 self.center_selection();
+            }
+            if self.other.as_ref().is_some_and(|view| view.name == "pager")
+                && !self.config.bool_value("focus-child", true)
+            {
+                self.swap_panes();
+                self.action("scroll-line-down")?;
             }
         }
         Ok(())
@@ -4898,6 +4920,16 @@ mod tests {
             .unwrap()
             .history(&["Build.scala".into()], 0)
             .is_err());
+        let oid = app.repo().unwrap().revision("HEAD").unwrap();
+        app.args.clear();
+        app.config.parse("set focus-child = no");
+        app.view = View::text("pager", &format!("commit {oid}\n{}", "body\n".repeat(20)));
+        app.view.selected = 0;
+        app.height = 8;
+        app.enter(true).unwrap();
+        assert_eq!(app.view.name, "pager");
+        assert_eq!(app.view.top, 1);
+        assert_eq!(app.other.as_ref().unwrap().name, "diff");
         fs::remove_dir_all(root).unwrap();
     }
 
@@ -5455,6 +5487,20 @@ mod tests {
         app.parent_focused = true;
         assert!(app.action("back").unwrap());
         assert_eq!(app.view.rows, vec!["older"]);
+        app.other = None;
+        app.split = false;
+        app.height = 8;
+        app.view = View::text("pager", &"line\n".repeat(20));
+        app.enter(true).unwrap();
+        assert_eq!(app.view.top, 1);
+        assert!(app.other.is_none());
+        let pager = View::text("pager", &format!("commit {}\nbody", "a".repeat(40)));
+        assert!(matches!(pager.items[0], Item::Ref(..)));
+        assert!(matches!(pager.items[1], Item::Text));
+        assert!(matches!(
+            View::text("pager", "commit abcdef12").items[0],
+            Item::Ref(..)
+        ));
     }
     #[test]
     fn explicit_diff_detaches_parent_and_vertical_split_reserves_separator() {
