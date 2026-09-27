@@ -1,0 +1,172 @@
+{
+  "schema": 1,
+  "slice": "grep common options, sources, context, and module extraction",
+  "source_commit": "209d094db511b4051546c8bd403f1018e228f20a",
+  "base_commit": "72af6d1d54e84df52794eed79a1bc1c93c065983",
+  "source_sha256": "d4c2f520b71eb852107b063c6ae7da27ffe69b6af9bd15e5a591043387f6221c",
+  "source_hash_algorithm": "SHA-256 of sorted nonempty git ls-files -z -- Cargo.toml Cargo.lock Makefile tigrc rust src include compat test entries: path bytes + NUL + file bytes + NUL",
+  "binaries_sha256": {
+    "src/tig": "f77d958929042d92aa5407d9988dbc923bb11057370dc0902bb32f9269d430c7",
+    "target/release/tig": "ebe669775c3fe29feb29022ca97a63e25f17c0ebfa1e0b4f1bc0923f506eabfd",
+    "target/release/test-graph": "0d977c88662c32a53e452fa33593983f6d520be15df25c43b9973cabaad86549"
+  },
+  "toolchain": "Rust 1.81.0; macOS arm64",
+  "main_rs_net_removed": 398,
+  "checks": [
+    {
+      "command": "rustup run 1.81.0 cargo fmt --all -- --check",
+      "exit": 0
+    },
+    {
+      "command": "rustup run 1.81.0 cargo test --locked --all-targets",
+      "exit": 0,
+      "passed": 100,
+      "failed": 0
+    },
+    {
+      "command": "rustup run 1.81.0 cargo clippy --locked --all-targets -- -D warnings",
+      "exit": 0
+    },
+    {
+      "command": "rustup run 1.81.0 cargo build --locked --release",
+      "exit": 0
+    },
+    {
+      "command": "python3 rust/tests/grep-revisions.py",
+      "exit": 0,
+      "passed": 24,
+      "paired_c_rust": 13,
+      "rust_safety_or_extension_oracles": 11,
+      "scope": "Optioned refs, multiple refs, implicit paths, pattern files/aliases/boolean expressions, decimal context, index vs HEAD/worktree, untracked, colon/newline/separator-like paths; all 24 Rust blob refreshes retain their source"
+    },
+    {
+      "command": "rustup run 1.81.0 python3 rust/tests/upstream-suite.py test/grep/default-test test/grep/editor-test test/grep/refspec-test test/grep/start-on-line-test --output ../grep-upstream-final.json",
+      "exit": 0,
+      "route": "real PTY, original scripts and assertions; C binary then Rust binary; no skips or changed assertions",
+      "runs": {
+        "c": {
+          "scripts": 4,
+          "passed_assertions": 14,
+          "failed_assertions": 0,
+          "skips": 0,
+          "missing": 0,
+          "results": [
+            {
+              "script": "test/grep/default-test",
+              "script_sha256": "b1851b78638060c7bf6456d1e135346155e3b1b8ccc6061870de1d95b09a3acc",
+              "status": "pass",
+              "checks": {
+                "OK": 9
+              }
+            },
+            {
+              "script": "test/grep/editor-test",
+              "script_sha256": "56a4d55eca2219a12c2ef14ca62585f34f0ff4d96fcbe8cea887cb176991089a",
+              "status": "pass",
+              "checks": {
+                "OK": 2
+              }
+            },
+            {
+              "script": "test/grep/refspec-test",
+              "script_sha256": "b6157d8b16a2f3b3b45d89a5b148b28d28518ece49d640f1692e67253623b455",
+              "status": "pass",
+              "checks": {
+                "OK": 2
+              }
+            },
+            {
+              "script": "test/grep/start-on-line-test",
+              "script_sha256": "7562768e9629a5e7b7ec142e57a01a6d2afcb7d6a7cf1a6f89d6374ae9fce5a6",
+              "status": "pass",
+              "checks": {
+                "OK": 1
+              }
+            }
+          ]
+        },
+        "rust": {
+          "scripts": 4,
+          "passed_assertions": 14,
+          "failed_assertions": 0,
+          "skips": 0,
+          "missing": 0,
+          "results": [
+            {
+              "script": "test/grep/default-test",
+              "script_sha256": "b1851b78638060c7bf6456d1e135346155e3b1b8ccc6061870de1d95b09a3acc",
+              "status": "pass",
+              "checks": {
+                "OK": 9
+              }
+            },
+            {
+              "script": "test/grep/editor-test",
+              "script_sha256": "56a4d55eca2219a12c2ef14ca62585f34f0ff4d96fcbe8cea887cb176991089a",
+              "status": "pass",
+              "checks": {
+                "OK": 2
+              }
+            },
+            {
+              "script": "test/grep/refspec-test",
+              "script_sha256": "b6157d8b16a2f3b3b45d89a5b148b28d28518ece49d640f1692e67253623b455",
+              "status": "pass",
+              "checks": {
+                "OK": 2
+              }
+            },
+            {
+              "script": "test/grep/start-on-line-test",
+              "script_sha256": "7562768e9629a5e7b7ec142e57a01a6d2afcb7d6a7cf1a6f89d6374ae9fce5a6",
+              "status": "pass",
+              "checks": {
+                "OK": 1
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "before": {
+    "source_commit": "3b721e71",
+    "binary_sha256": "26bc4cc19796842f4b35bc34f0f2638624b6ac37b39f244564b94ad04aacdcde",
+    "command": "python3 rust/tests/grep-revisions.py (initial optioned-revision case)",
+    "status": "failed as expected before implementation",
+    "raw_diagnostic": "tig: Grep revision paths with options are not supported in the Rust view\r\n",
+    "argv": [
+      "grep",
+      "-i",
+      "needle",
+      "HEAD",
+      "--",
+      "file.txt"
+    ]
+  },
+  "reviews": [
+    {
+      "reviewer": "grep_safety_review",
+      "context": "fresh, independent, read-only",
+      "result": "no material findings"
+    },
+    {
+      "reviewer": "grep_behavior_review",
+      "context": "fresh, independent, read-only",
+      "result": "max-depth=-1 fixed; non-decimal/negative context counts remain explicitly unsupported, documented below"
+    },
+    {
+      "reviewer": "grep_final_review",
+      "context": "fresh, read-only final diff review",
+      "result": "no material findings; verified delegated numeric options and distinct staged/HEAD/worktree regression"
+    }
+  ],
+  "remaining_boundaries": [
+    "Context counts are nonnegative decimal usize values; Git negative/suffixed forms remain rejected. Context plus only-matching is rejected.",
+    "Output-changing list/count/quiet/heading/column/break modes, function context, combined short-option clusters, submodule recursion, external textconv and no-index remain unsupported.",
+    "Leading -- before a positional pattern remains rejected; use -e for a leading-dash pattern. Pathspecs remain literal.",
+    "Only tree/commit revision sources are supported. Overlapping revision labels are rejected. Nested-tree worktree edit/command context stays disabled.",
+    "Git loading remains synchronous and buffered; context reads one source file at a time. No full-suite, performance or complete C parity claim."
+  ],
+  "verdict": "PASS_SCOPED_FUNCTIONAL_SLICE; full migration parity remains open"
+}

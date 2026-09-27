@@ -320,6 +320,122 @@ impl HistoryOptions {
 }
 
 impl Repository {
+    /// Load the NUL-delimited grep protocol without guessing revisions from labels.
+    pub fn grep(
+        &self,
+        args: &[String],
+    ) -> std::result::Result<Vec<Option<crate::grep::GrepLine>>, Box<dyn std::error::Error>> {
+        let options = crate::grep::GrepOptions::parse(args)?;
+        let mut command = Command::new("git");
+        command
+            .current_dir(&self.root)
+            .args(["--no-pager", "--literal-pathspecs", "-c", "color.ui=false"])
+            .args(["grep", "--no-color", "-n", "-z", "--full-name", "-I"])
+            .args(&options.args)
+            .env("GIT_TERMINAL_PROMPT", "0")
+            .env("LC_ALL", "C")
+            .stdin(Stdio::null());
+        let output = crate::trace::output(&mut command)?;
+        if !output.status.success() && output.status.code() != Some(1) {
+            return Err(format!(
+                "git grep exited with {}: {}",
+                output.status,
+                String::from_utf8_lossy(&output.stderr).trim()
+            )
+            .into());
+        }
+        let mut revisions = Vec::new();
+        for operand in options.operands {
+            // Git treats the first unresolved operand and everything after it as paths.
+            // Resolve separately: a filename such as HEAD:literal is not proof of a revision.
+            if self
+                .command([
+                    "rev-parse",
+                    "--verify",
+                    "--quiet",
+                    "--end-of-options",
+                    &operand,
+                ])
+                .is_err()
+            {
+                break;
+            }
+            self.grep_tree_oid(&operand)?;
+            revisions.push(operand);
+        }
+        if revisions.iter().any(|a| {
+            revisions
+                .iter()
+                .any(|b| a != b && b.starts_with(&format!("{a}:")))
+        }) {
+            return Err(
+                "Overlapping Git grep revision labels are ambiguous; search each tree separately"
+                    .into(),
+            );
+        }
+        let mut hits = crate::grep::grep_rows(&output.stdout, &revisions)?;
+        for hit in &mut hits {
+            hit.cached = options.cached;
+        }
+        if options.before == 0 && options.after == 0 {
+            return Ok(hits.into_iter().map(Some).collect());
+        }
+        let mut rows = Vec::new();
+        let mut start = 0;
+        while start < hits.len() {
+            let end = start
+                + hits[start..]
+                    .iter()
+                    .take_while(|hit| {
+                        hit.path == hits[start].path && hit.revision == hits[start].revision
+                    })
+                    .count();
+            let content = self.grep_blob(&hits[start])?;
+            if !rows.is_empty() {
+                rows.push(None);
+            }
+            rows.extend(crate::grep::context_rows(
+                &hits[start..end],
+                &content,
+                options.before,
+                options.after,
+            )?);
+            start = end;
+        }
+        Ok(rows)
+    }
+
+    pub fn grep_blob(
+        &self,
+        hit: &crate::grep::GrepLine,
+    ) -> std::result::Result<Vec<u8>, Box<dyn std::error::Error>> {
+        if !crate::grep::safe_grep_path(&hit.path) {
+            return Err("Invalid grep result path".into());
+        }
+        let prefix = if let Some(revision) = &hit.revision {
+            format!("{}:", self.grep_tree_oid(revision)?)
+        } else if hit.cached {
+            ":".into()
+        } else {
+            return Ok(std::fs::read(self.root.join(&hit.path))?);
+        };
+        let mut spec = OsString::from(prefix);
+        spec.push(hit.path.as_os_str());
+        Ok(self.command([OsString::from("cat-file"), OsString::from("blob"), spec])?)
+    }
+
+    fn grep_tree_oid(&self, revision: &str) -> Result<String> {
+        let object = self.command(["rev-parse", "--verify", "--end-of-options", revision])?;
+        let object = text(&object);
+        let tree = self.command([
+            "rev-parse",
+            "--verify",
+            "--end-of-options",
+            &format!("{}^{{tree}}", object.trim()),
+        ])?;
+        Ok(text(&tree).trim().to_owned())
+    }
+
     pub fn discover(start: impl AsRef<Path>) -> Result<Self> {
         let start = start.as_ref();
         let git_dir = path(trim_lf(&run(start, ["rev-parse", "--absolute-git-dir"])?))?;

@@ -22,3 +22,5 @@ pub mod render;
 pub mod refs_view;
 
 pub mod tree_view;
+
+pub mod grep;
