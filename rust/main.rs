@@ -3995,6 +3995,91 @@ impl Terminal {
         }
         Ok(())
     }
+    fn action(&mut self, app: &mut App, action: &str) -> Result<bool> {
+        if action.strip_prefix(':').unwrap_or(action) != "options" {
+            return app.action(action);
+        }
+        // Keep the order, labels and hotkeys of src/tig.c TOGGLE_MENU_INFO.
+        const ITEMS: &[(char, &str, &str)] = &[
+            ('.', "line numbers", "line-number"),
+            ('D', "dates", "date"),
+            ('A', "author", "author"),
+            ('T', "committer", "committer"),
+            ('~', "graphics", "line-graphics"),
+            ('g', "revision graph", "commit-title-graph"),
+            ('#', "file names", "file-name"),
+            ('*', "file sizes", "file-size"),
+            ('W', "space changes", "ignore-space"),
+            ('l', "commit order", "commit-order"),
+            ('F', "reference display", "commit-title-refs"),
+            ('C', "local change display", "show-changes"),
+            ('X', "commit ID display", "id"),
+            ('%', "file filtering", "file-filter"),
+            ('^', "revision filtering", "rev-filter"),
+            (
+                '$',
+                "commit title overflow display",
+                "commit-title-overflow",
+            ),
+            (
+                'd',
+                "untracked directory info",
+                "status-show-untracked-dirs",
+            ),
+            ('|', "view split", "vertical-split"),
+        ];
+        let mut selected = 0;
+        let choice = loop {
+            let (hotkey, label, _) = ITEMS[selected];
+            app.message = format!("Toggle option {label} [{hotkey}]");
+            let context = format!("({} of {})", selected + 1, ITEMS.len());
+            let remaining = app.width.saturating_sub(app.message.len());
+            if context.len() < remaining {
+                app.message.push_str(&" ".repeat(remaining - context.len()));
+                app.message.push_str(&context);
+            }
+            self.draw(app)?;
+            execute!(
+                self.out,
+                cursor::MoveTo(
+                    app.width.saturating_sub(1) as u16,
+                    app.height.saturating_sub(1) as u16
+                ),
+                cursor::Show
+            )?;
+            match self.read()? {
+                Event::Resize(width, height) => {
+                    app.width = width as usize;
+                    app.height = height as usize;
+                }
+                Event::Key(key) => match key_name(key.code, key.modifiers).as_str() {
+                    "<Enter>" => break Some(selected),
+                    "<Esc>" | "<C-C>" => break None,
+                    "<Left>" | "<Up>" => selected = (selected + ITEMS.len() - 1) % ITEMS.len(),
+                    "<Right>" | "<Down>" => selected = (selected + 1) % ITEMS.len(),
+                    _ => {
+                        if !key
+                            .modifiers
+                            .intersects(KeyModifiers::CONTROL | KeyModifiers::ALT)
+                        {
+                            if let KeyCode::Char(c) = key.code {
+                                if let Some(index) = ITEMS.iter().position(|item| item.0 == c) {
+                                    break Some(index);
+                                }
+                            }
+                        }
+                    }
+                },
+                _ => (),
+            }
+        };
+        execute!(self.out, cursor::Hide)?;
+        app.message.clear();
+        if let Some(index) = choice {
+            app.action(&format!("toggle {}", ITEMS[index].2))?;
+        }
+        Ok(true)
+    }
     fn prompt(&mut self, app: &mut App, prefix: &str) -> Result<Option<String>> {
         let mut value = String::new();
         let mut point = 0;
@@ -4506,7 +4591,7 @@ fn run() -> Result<()> {
                     if !read_command_prompts(&mut terminal, &mut app, &s)? {
                         continue;
                     }
-                    app.action(&format!(":{s}"))
+                    terminal.action(&mut app, &format!(":{s}"))
                 };
                 match result {
                     Ok(false) => break,
@@ -4518,7 +4603,7 @@ fn run() -> Result<()> {
             if !read_command_prompts(&mut terminal, &mut app, &action)? {
                 continue;
             }
-            match app.action(&action) {
+            match terminal.action(&mut app, &action) {
                 Ok(false) => break,
                 Ok(true) => (),
                 Err(e) => app.message = e.to_string(),
