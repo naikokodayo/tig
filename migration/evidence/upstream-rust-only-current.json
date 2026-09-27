@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "db43517c386ab2fd9d32eaceb851677c928e7444",
+  "source_commit": "4dca878dc9feb3fa6497c7d7e928c7ee1ce93094",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -5105,7 +5105,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 23.18s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 19.43s\n",
       "results": [
         {
           "script": "test/blame/blob-blame-test",
@@ -10166,11 +10166,11 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig",
-          "sha256": "da04df91afa50d52402a22c38c85253cbe6a1db2c5c1c4be1c32fe38c50053b6"
+          "sha256": "92366eb52337b2f0266ae1953091b17f77017f7c215d280defdbd9c1b41e5a1d"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph",
-          "sha256": "14f25fdffe57523049c9a20a9a940c9b3b75caea227f0acc723851aa4478bda0"
+          "sha256": "6ec9eedc7e6260d2c5e06d891dbffc76849bf9e3bc38c51a5552c59ba8a0b88e"
         }
       },
       "binaries_unchanged": true,

@@ -705,6 +705,13 @@ assertions. No new original-script regressions appeared; the scoped terminal
 and Git tests cover behavior absent from those scripts. The full parity gate
 remains **BLOCKED**, and the final application benchmark remains deferred.
 
+At merged source `4dca878dc9feb3fa6497c7d7e928c7ee1ce93094`, another strict
+run also covered automatic refresh, combined grep options and general
+`save-view`. Counts and the four failing scripts remained unchanged from
+`db43517c`; no new original-script regressions appeared. Their scoped real
+terminal and safety checks provide additional coverage. Full parity remains
+**BLOCKED**.
+
 ### Non-local `%s` follow-up
 
 The PR #3 blanket refusal is replaced by a host POSIX bridge on 64-bit macOS
