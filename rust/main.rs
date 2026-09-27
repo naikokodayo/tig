@@ -20,20 +20,37 @@ use std::{
 };
 use tig_rs::{
     config::{Cli, Config},
-    git::Repository,
+    git::{validate_diff_options, Repository},
     help_view::HelpView,
     model::{BlameLine, Commit, StatusEntry, TreeEntry},
 };
 use unicode_width::UnicodeWidthChar;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+fn diff_options(config: &Config) -> Result<&[String]> {
+    let options = config
+        .settings
+        .get("diff-options")
+        .map_or(&[][..], Vec::as_slice);
+    validate_diff_options(options)?;
+    Ok(options)
+}
+fn word_diff_enabled(config: &Config) -> bool {
+    config.bool_value("word-diff", false)
+        || config.settings.get("diff-options").is_some_and(|options| {
+            options.iter().any(|option| {
+                matches!(option.as_str(), "--word-diff" | "--word-diff=plain")
+                    || option.starts_with("--word-diff-regex=")
+            })
+        })
+}
 fn highlight_diff(config: &Config, input: &[u8]) -> String {
     let program = match config.value("diff-highlight") {
         Some("yes" | "true" | "1") => "diff-highlight",
         Some("no" | "false" | "0" | "") | None => return String::from_utf8_lossy(input).into(),
         Some(program) => program,
     };
-    if config.bool_value("word-diff", false) {
+    if word_diff_enabled(config) {
         return String::from_utf8_lossy(input).into();
     }
     let result = Command::new(program)
@@ -806,6 +823,7 @@ impl App {
                 }
             }
             "diff" => {
+                let diff_options = diff_options(&self.config)?;
                 let oid = repo.revision(&self.revision)?;
                 let diff_base = if self.view.name == "stash" {
                     Some(repo.revision(&format!("{oid}^"))?)
@@ -818,26 +836,23 @@ impl App {
                     let context = format!("-U{}", self.config.usize_value("diff-context", 3));
                     let mut args = vec![
                         "diff",
-                        "--no-ext-diff",
-                        "--no-textconv",
                         "--stat",
                         "--patch",
                         &context,
-                        if self.config.bool_value("word-diff", false) {
+                        if word_diff_enabled(&self.config) {
                             "--word-diff=plain"
                         } else {
                             "--word-diff=none"
                         },
                     ];
-                    args.extend(
-                        self.config
-                            .settings
-                            .get("diff-options")
-                            .into_iter()
-                            .flatten()
-                            .map(String::as_str),
-                    );
-                    args.extend([base.as_str(), oid.as_str(), "--"]);
+                    args.extend(diff_options.iter().map(String::as_str));
+                    args.extend([
+                        "--no-ext-diff",
+                        "--no-textconv",
+                        base.as_str(),
+                        oid.as_str(),
+                        "--",
+                    ]);
                     let text = repo.command(args)?;
                     let mut view = View::text(name, &highlight_diff(&self.config, &text));
                     view.revision = oid;
@@ -847,11 +862,8 @@ impl App {
                 let text = repo.show(
                     &oid,
                     self.config.usize_value("diff-context", 3),
-                    self.config.bool_value("word-diff", false),
-                    self.config
-                        .settings
-                        .get("diff-options")
-                        .map_or(&[], Vec::as_slice),
+                    word_diff_enabled(&self.config),
+                    diff_options,
                     (self.config.bool_value("file-filter", true)
                         && !self.path.as_os_str().is_empty())
                     .then_some(self.path.as_path()),
@@ -4141,6 +4153,14 @@ mod tests {
         let mut config = Config::defaults();
         config.parse("set diff-highlight = program-that-does-not-exist");
         assert_eq!(highlight_diff(&config, b"diff content\n"), "diff content\n");
+        config.parse("set diff-highlight = wc\nset diff-options = --word-diff=plain");
+        assert_eq!(highlight_diff(&config, b"diff content\n"), "diff content\n");
+        for option in ["--", "--output=overwritten", "-ooverwritten"] {
+            config
+                .settings
+                .insert("diff-options".into(), vec![option.into()]);
+            assert!(diff_options(&config).is_err(), "{option}");
+        }
     }
 
     #[test]

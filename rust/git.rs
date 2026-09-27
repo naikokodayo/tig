@@ -16,6 +16,18 @@ impl fmt::Display for GitError {
 }
 impl std::error::Error for GitError {}
 pub type Result<T> = std::result::Result<T, GitError>;
+pub fn validate_diff_options(options: &[String]) -> Result<()> {
+    if let Some(option) = options.iter().find(|option| {
+        matches!(
+            option.as_str(),
+            "--" | "--end-of-options" | "--output" | "-o"
+        ) || option.starts_with("--output=")
+            || (option.starts_with("-o") && !option.starts_with("--"))
+    }) {
+        return Err(GitError(format!("Unsupported diff option: {option}")));
+    }
+    Ok(())
+}
 
 #[derive(Clone, Debug)]
 pub struct Repository {
@@ -562,11 +574,10 @@ impl Repository {
         file: Option<&Path>,
         width: usize,
     ) -> Result<String> {
+        validate_diff_options(diff_options)?;
         let oid = self.revision(revision)?;
         let mut args: Vec<OsString> = [
             "show",
-            "--no-ext-diff",
-            "--no-textconv",
             "--no-show-signature",
             "--format=fuller",
             &format!("--stat={width}"),
@@ -585,7 +596,10 @@ impl Repository {
         .collect();
         args.splice(
             args.len() - 2..args.len() - 2,
-            diff_options.iter().map(OsString::from),
+            diff_options.iter().map(OsString::from).chain([
+                OsString::from("--no-ext-diff"),
+                OsString::from("--no-textconv"),
+            ]),
         );
         if let Some(file) = file {
             valid_path(file)?;
@@ -1759,6 +1773,11 @@ mod tests {
                 }));
             }
         }
+        repo.command(["config", "diff.external", "false"]).unwrap();
+        assert!(repo
+            .show("HEAD", 3, false, &["--ext-diff".into()], None, 80)
+            .unwrap()
+            .contains("-line 10\n+changed 10"));
         assert_eq!(repo.history(&[], 0).unwrap().len(), 2);
     }
 
