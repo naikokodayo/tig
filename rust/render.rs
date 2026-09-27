@@ -439,12 +439,73 @@ fn main_columns(config: &Config) -> Result<Vec<Column<'_>>, String> {
     Ok(columns.into_iter().filter(Column::enabled).collect())
 }
 
-pub fn main_refs_searchable(config: &Config) -> bool {
-    main_columns(config).is_ok_and(|columns| {
-        columns
-            .iter()
-            .any(|column| column.name == "commit-title" && column.flag("refs", false) == Ok(true))
-    })
+// Search source column values, not generated line numbers, graph cells or padding.
+// Keep formatting shared with display so author/date modes retain their semantics.
+pub fn main_search_fields(config: &Config, commits: &[Commit]) -> Result<Vec<Vec<String>>, String> {
+    let columns = main_columns(config)?;
+    commits
+        .iter()
+        .map(|commit| {
+            let mut fields = Vec::new();
+            for col in &columns {
+                if col.name == "line-number" {
+                    continue;
+                }
+                fields.push(commit_column_text(commit, col)?);
+                if col.name == "commit-title" && col.flag("refs", false)? {
+                    // ponytail: decorations lack repository-wide branch/tag collisions;
+                    // use typed C-compatible ref names when that parity slice lands.
+                    fields.extend(commit.decorations.split(", ").map(|name| {
+                        let name = name
+                            .strip_prefix("HEAD -> ")
+                            .unwrap_or(name)
+                            .trim_start_matches("tag: ")
+                            .trim_start_matches("replace: ");
+                        let name = if name == "refs/stash"
+                            || name.starts_with("refs/notes/")
+                            || name.starts_with("refs/prefetch/")
+                        {
+                            name.strip_prefix("refs/").unwrap_or(name)
+                        } else {
+                            name.trim_start_matches("refs/heads/")
+                                .trim_start_matches("refs/tags/")
+                                .trim_start_matches("refs/remotes/")
+                        };
+                        name.to_owned()
+                    }));
+                }
+            }
+            Ok(fields)
+        })
+        .collect()
+}
+
+fn commit_column_text(c: &Commit, col: &Column<'_>) -> Result<String, String> {
+    match col.name {
+        "id" => Ok(sanitize(&c.oid)),
+        "date" => date(
+            if col.flag("use-author", false)? {
+                &c.date
+            } else {
+                &c.committer_date
+            },
+            col,
+        ),
+        "author" => author(
+            &c.author,
+            &c.author_email,
+            col.display,
+            col.number("width")?,
+        ),
+        "committer" => author(
+            &c.committer,
+            &c.committer_email,
+            col.display,
+            col.number("width")?,
+        ),
+        "commit-title" => Ok(sanitize(&c.subject)),
+        _ => unreachable!(),
+    }
 }
 
 pub fn main_graph_enabled(config: &Config) -> bool {
@@ -577,15 +638,7 @@ pub fn render_commit_fields(
             .iter()
             .enumerate()
             .map(|(i, c)| match col.name {
-                "id" => Ok(sanitize(&c.oid)),
-                "date" => date(
-                    if col.flag("use-author", false)? {
-                        &c.date
-                    } else {
-                        &c.committer_date
-                    },
-                    col,
-                ),
+                "id" | "date" => commit_column_text(c, col),
                 "author" => author(&c.author, &c.author_email, col.display, fixed.max(max)),
                 "committer" => author(
                     &c.committer,
@@ -993,16 +1046,34 @@ mod tests {
     fn reference_formats_and_graph_switches() {
         let mut config = Config::defaults();
         config.parse("set line-graphics = ascii\nset main-view = commit-title:yes,graph,refs\nset reference-format = (branch) [tag] hide:remote");
-        assert!(main_refs_searchable(&config));
         let mut c = commit();
         c.decorations =
             "HEAD -> refs/heads/master, tag: refs/tags/v1.0, refs/remotes/origin/master".into();
         assert_eq!(
+            main_search_fields(&config, &[c.clone()]).unwrap()[0],
+            ["WIP: Upgrade", "master", "v1.0", "origin/master"]
+        );
+        assert_eq!(
             render_commits(&config, &[c.clone()], 100).unwrap()[0],
             "* (master) [v1.0] WIP: Upgrade"
         );
+        c.decorations =
+            "refs/notes/review, refs/stash, refs/prefetch/topic, replace: replaced".into();
+        assert_eq!(
+            main_search_fields(&config, &[c.clone()]).unwrap()[0],
+            [
+                "WIP: Upgrade",
+                "notes/review",
+                "stash",
+                "prefetch/topic",
+                "replaced"
+            ]
+        );
         config.parse("set main-view = commit-title:yes,graph=no,refs=no");
-        assert!(!main_refs_searchable(&config));
+        assert_eq!(
+            main_search_fields(&config, &[c.clone()]).unwrap()[0],
+            ["WIP: Upgrade"]
+        );
         assert_eq!(
             render_commits(&config, &[c], 100).unwrap()[0],
             "WIP: Upgrade"
