@@ -2812,26 +2812,58 @@ impl App {
                 return Ok(true);
             }
             "status-update" if self.view.name == "status" => {
-                if let Item::Status(e, staged) = self.selected() {
-                    if staged {
-                        self.repo()?.unstage(&e)?;
-                    } else {
-                        self.repo()?.stage(&e)?;
+                let (entries, staged) = match self.selected() {
+                    Item::Status(entry, staged) => (vec![entry], staged),
+                    Item::Text => {
+                        let kind = self.view.row_types.get(self.view.selected).copied();
+                        let staged = kind == Some("stat-staged");
+                        let entries = if matches!(
+                            kind,
+                            Some("stat-staged" | "stat-unstaged" | "stat-untracked")
+                        ) {
+                            self.view
+                                .items
+                                .iter()
+                                .enumerate()
+                                .skip(self.view.selected + 1)
+                                .take_while(|(index, item)| {
+                                    self.view.row_types.get(*index).copied() == kind
+                                        && matches!(item, Item::Status(..))
+                                })
+                                .filter_map(|(_, item)| match item {
+                                    Item::Status(entry, _) => Some(entry.clone()),
+                                    _ => None,
+                                })
+                                .collect()
+                        } else {
+                            Vec::new()
+                        };
+                        (entries, staged)
                     }
-                    self.refresh_parent()?;
-                    self.action("refresh")?;
-                    if self.view.untracked
-                        && self.other.is_some()
-                        && !self
-                            .view
-                            .items
-                            .iter()
-                            .any(|item| matches!(item, Item::Status(..)))
-                    {
-                        self.action("view-close")?;
-                    }
+                    _ => (Vec::new(), false),
+                };
+                if entries.is_empty() {
+                    self.message = "Nothing to update".into();
                     return Ok(true);
                 }
+                if staged {
+                    self.repo()?.unstage_many(&entries)?;
+                } else {
+                    self.repo()?.stage_many(&entries)?;
+                }
+                self.refresh_parent()?;
+                self.action("refresh")?;
+                if self.view.untracked
+                    && self.other.is_some()
+                    && !self
+                        .view
+                        .items
+                        .iter()
+                        .any(|item| matches!(item, Item::Status(..)))
+                {
+                    self.action("view-close")?;
+                }
+                return Ok(true);
             }
             "show-version" => self.message = format!("tig-rs {}", env!("CARGO_PKG_VERSION")),
             "parent" if self.view.name == "blame" => self.blame_forward(true)?,
