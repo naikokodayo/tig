@@ -20,8 +20,10 @@ pub fn validate_diff_options(options: &[String]) -> Result<()> {
     if let Some(option) = options.iter().find(|option| {
         matches!(
             option.as_str(),
-            "--" | "--end-of-options" | "--output" | "-o"
+            "--" | "--end-of-options" | "--output" | "-o" | "--ext-diff" | "--textconv"
         ) || option.starts_with("--output=")
+            || option.starts_with("--ext-diff=")
+            || option.starts_with("--textconv=")
             || (option.starts_with("-o") && !option.starts_with("--"))
     }) {
         return Err(GitError(format!("Unsupported diff option: {option}")));
@@ -578,6 +580,8 @@ impl Repository {
         let oid = self.revision(revision)?;
         let mut args: Vec<OsString> = [
             "show",
+            "--no-ext-diff",
+            "--no-textconv",
             "--no-show-signature",
             "--format=fuller",
             &format!("--stat={width}"),
@@ -1775,9 +1779,12 @@ mod tests {
         }
         repo.command(["config", "diff.external", "false"]).unwrap();
         assert!(repo
-            .show("HEAD", 3, false, &["--ext-diff".into()], None, 80)
+            .show("HEAD", 3, false, &["--src-prefix".into()], None, 80)
             .unwrap()
             .contains("-line 10\n+changed 10"));
+        assert!(repo
+            .show("HEAD", 3, false, &["--ext-diff".into()], None, 80)
+            .is_err());
         assert_eq!(repo.history(&[], 0).unwrap().len(), 2);
     }
 

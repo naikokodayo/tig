@@ -836,6 +836,8 @@ impl App {
                     let context = format!("-U{}", self.config.usize_value("diff-context", 3));
                     let mut args = vec![
                         "diff",
+                        "--no-ext-diff",
+                        "--no-textconv",
                         "--stat",
                         "--patch",
                         &context,
@@ -4155,7 +4157,13 @@ mod tests {
         assert_eq!(highlight_diff(&config, b"diff content\n"), "diff content\n");
         config.parse("set diff-highlight = wc\nset diff-options = --word-diff=plain");
         assert_eq!(highlight_diff(&config, b"diff content\n"), "diff content\n");
-        for option in ["--", "--output=overwritten", "-ooverwritten"] {
+        for option in [
+            "--",
+            "--output=overwritten",
+            "-ooverwritten",
+            "--ext-diff",
+            "--textconv",
+        ] {
             config
                 .settings
                 .insert("diff-options".into(), vec![option.into()]);
