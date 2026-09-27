@@ -4,7 +4,7 @@
 mod prompt;
 use crossterm::{
     cursor,
-    event::{self, Event, KeyCode, KeyModifiers, MouseEventKind},
+    event::{self, Event, KeyCode, KeyModifiers, MouseButton, MouseEvent, MouseEventKind},
     execute, queue,
     style::{Attribute, SetAttribute},
     terminal::{self, Clear, ClearType},
@@ -2426,6 +2426,31 @@ impl App {
             }
             "move-down" | "next" => self.view.move_by(1),
             "move-up" | "previous" => self.view.move_by(-1),
+            "move-wheel-down" | "move-wheel-up" => {
+                let down = action == "move-wheel-down";
+                let old = self.view.selected;
+                let steps = self
+                    .config
+                    .usize_value("mouse-scroll", 3)
+                    .min(isize::MAX as usize) as isize;
+                self.view.move_by(if down { steps } else { -steps });
+                if self.view.selected == old && (old == 0 || old + 1 >= self.view.rows.len()) {
+                    self.message = format!(
+                        "Cannot move beyond the {} line",
+                        if old == 0 { "first" } else { "last" }
+                    );
+                } else if self.view.selected < self.view.top
+                    || self.view.selected >= self.view.top.saturating_add(page as usize)
+                {
+                    self.view.top = if down && self.view.selected + 1 == self.view.rows.len() {
+                        self.view.rows.len().saturating_sub(page as usize)
+                    } else {
+                        self.view
+                            .top
+                            .saturating_add_signed(self.view.selected as isize - old as isize)
+                    };
+                }
+            }
             "move-page-down" => self.view.move_by(page),
             "move-page-up" => self.view.move_by(-page),
             "move-half-page-down" => self.view.move_by(page / 2),
@@ -2471,27 +2496,33 @@ impl App {
                     self.view.left.saturating_add(step)
                 };
             }
-            "scroll-line-down" | "scroll-line-up" => {
-                let max_top = self.view.rows.len().saturating_sub(page as usize);
-                let next = if action == "scroll-line-down" {
-                    self.view.top.saturating_add(1).min(max_top)
+            "scroll-line-down" | "scroll-line-up" | "scroll-wheel-down" | "scroll-wheel-up" => {
+                let down = action.ends_with("down");
+                let steps = if action.starts_with("scroll-wheel") {
+                    self.config.usize_value("mouse-scroll", 3)
                 } else {
-                    self.view.top.saturating_sub(1)
+                    1
+                };
+                let max_top = self.view.rows.len().saturating_sub(page as usize);
+                let next = if down {
+                    self.view
+                        .top
+                        .saturating_add(steps)
+                        .min(max_top)
+                        .max(self.view.top)
+                } else {
+                    self.view.top.saturating_sub(steps)
                 };
                 if next == self.view.top {
                     self.message = format!(
                         "Cannot scroll beyond the {} line",
-                        if action == "scroll-line-down" {
-                            "last"
-                        } else {
-                            "first"
-                        }
+                        if down { "last" } else { "first" }
                     );
                 } else {
                     self.view.selected = self
                         .view
                         .selected
-                        .saturating_add_signed(if action == "scroll-line-down" { 1 } else { -1 })
+                        .saturating_add_signed(next as isize - self.view.top as isize)
                         .min(self.view.rows.len().saturating_sub(1));
                     self.view.top = next;
                 }
@@ -2820,6 +2851,81 @@ impl App {
             total - child,
             child.saturating_sub(usize::from(vertical)),
         )
+    }
+    fn pane_rect(&self, parent_focused: bool) -> (usize, usize, usize, usize) {
+        if self.split && self.other.is_some() {
+            let (vertical, parent, child) = self.pane_sizes();
+            if vertical {
+                (
+                    if parent_focused { 0 } else { parent + 1 },
+                    0,
+                    if parent_focused { parent } else { child },
+                    self.height.saturating_sub(2),
+                )
+            } else {
+                (
+                    0,
+                    if parent_focused { 0 } else { parent },
+                    self.width,
+                    (if parent_focused { parent } else { child }).saturating_sub(1),
+                )
+            }
+        } else {
+            (0, 0, self.width, self.height.saturating_sub(2))
+        }
+    }
+    fn mouse_action(&mut self, event: MouseEvent) -> Option<&'static str> {
+        if !self.config.bool_value("mouse", false) {
+            return None;
+        }
+        let column = usize::from(event.column);
+        let row = usize::from(event.row);
+        let contains = |(x, y, width, height)| {
+            column >= x && column < x + width && row >= y && row < y + height
+        };
+        let rect = self.pane_rect(self.parent_focused);
+        if !contains(rect) {
+            return (self.split
+                && self.other.is_some()
+                && contains(self.pane_rect(!self.parent_focused)))
+            .then_some("view-next");
+        }
+        match event.kind {
+            MouseEventKind::ScrollDown | MouseEventKind::Down(MouseButton::Middle) => {
+                Some(if self.config.bool_value("mouse-wheel-cursor", false) {
+                    "move-wheel-down"
+                } else {
+                    "scroll-wheel-down"
+                })
+            }
+            MouseEventKind::ScrollUp => {
+                Some(if self.config.bool_value("mouse-wheel-cursor", false) {
+                    "move-wheel-up"
+                } else {
+                    "scroll-wheel-up"
+                })
+            }
+            MouseEventKind::Down(MouseButton::Left) => {
+                let selected =
+                    (self.view.top + row - rect.1).min(self.view.rows.len().saturating_sub(1));
+                if self.view.top + row - rect.1 == self.view.selected {
+                    let stat = if self.view.name == "stage" {
+                        stage_stat_header(&self.view.rows, selected).is_some()
+                    } else {
+                        diff_stat_header(self.view.source_rows(), self.view.source_index(selected))
+                            .is_some()
+                    };
+                    if !matches!(self.view.name.as_str(), "diff" | "stage") || stat {
+                        return Some("enter");
+                    }
+                } else {
+                    self.view.selected = selected;
+                    self.message.clear();
+                }
+                None
+            }
+            _ => None,
+        }
     }
     fn screen(&mut self, saved: bool) -> Vec<String> {
         let mut lines = if self.split && self.other.is_some() {
@@ -3923,6 +4029,7 @@ struct Terminal {
     signals: Vec<signal_hook::SigId>,
     history: PromptHistory,
     inputrc_motion: std::collections::HashMap<char, bool>,
+    mouse: bool,
 }
 impl Terminal {
     fn open(config: &Config) -> Result<Self> {
@@ -3946,14 +4053,25 @@ impl Terminal {
             signals,
             history: PromptHistory::load(config),
             inputrc_motion: inputrc_motion(),
+            mouse: false,
         };
-        execute!(
-            t.out,
-            terminal::EnterAlternateScreen,
-            cursor::Hide,
-            event::EnableMouseCapture
-        )?;
+        execute!(t.out, terminal::EnterAlternateScreen, cursor::Hide)?;
+        t.set_mouse(config.bool_value("mouse", false))?;
         Ok(t)
+    }
+    fn set_mouse(&mut self, enabled: bool) -> Result<()> {
+        if self.mouse != enabled {
+            if enabled {
+                // Match ncurses button reporting. EnableMouseCapture also requests
+                // hover/drag events, which would switch panes on pointer motion.
+                write!(self.out, "\x1b[?1000h\x1b[?1006h")?;
+                self.out.flush()?;
+            } else {
+                execute!(self.out, event::DisableMouseCapture)?;
+            }
+            self.mouse = enabled;
+        }
+        Ok(())
     }
     fn read(&self) -> Result<Event> {
         loop {
@@ -3972,6 +4090,7 @@ impl Terminal {
         Ok(None)
     }
     fn draw(&mut self, app: &mut App) -> Result<()> {
+        self.set_mouse(app.config.bool_value("mouse", false))?;
         let lines = app.screen(false);
         queue!(self.out, cursor::MoveTo(0, 0), Clear(ClearType::All))?;
         for (i, line) in lines.iter().enumerate() {
@@ -3979,26 +4098,7 @@ impl Terminal {
             write!(self.out, "{line}")?;
             queue!(self.out, SetAttribute(Attribute::Reset))?;
         }
-        let (x, y, width, visible) = if app.split && app.other.is_some() {
-            let (vertical, parent, child) = app.pane_sizes();
-            if vertical {
-                (
-                    if app.parent_focused { 0 } else { parent + 1 },
-                    0,
-                    if app.parent_focused { parent } else { child },
-                    app.height.saturating_sub(2),
-                )
-            } else {
-                (
-                    0,
-                    if app.parent_focused { 0 } else { parent },
-                    app.width,
-                    (if app.parent_focused { parent } else { child }).saturating_sub(1),
-                )
-            }
-        } else {
-            (0, 0, app.width, app.height.saturating_sub(2))
-        };
+        let (x, y, width, visible) = app.pane_rect(app.parent_focused);
         for row in [
             y + app.view.selected.saturating_sub(app.view.top),
             y + visible,
@@ -4653,14 +4753,20 @@ fn run() -> Result<()> {
                 }
                 continue;
             }
-            Event::Mouse(m) => {
+            Event::Mouse(m)
+                if matches!(
+                    m.kind,
+                    MouseEventKind::Down(_)
+                        | MouseEventKind::Up(_)
+                        | MouseEventKind::ScrollUp
+                        | MouseEventKind::ScrollDown
+                ) =>
+            {
                 key_sequence.clear();
-                app.message.clear();
-                match m.kind {
-                    MouseEventKind::ScrollUp => Some("move-up".into()),
-                    MouseEventKind::ScrollDown => Some("move-down".into()),
-                    _ => continue,
-                }
+                let Some(action) = app.mouse_action(m) else {
+                    continue;
+                };
+                Some(action.into())
             }
             Event::Key(k) => {
                 if !key_sequence.is_empty() && k.code == KeyCode::Esc {
