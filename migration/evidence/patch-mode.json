@@ -1,0 +1,77 @@
+{
+  "scope": "Executable mode plus selected text only; full migration parity remains open",
+  "tested_source_commit": "e7fa4ed68ff5f627f4175a0a027ed8b8038c3a7b",
+  "source_content_sha256": "979df1a95f6bfa377ab2defade79b2b4a12aa1e00f6aa99966499ce86166270d",
+  "source_hash_method": "SHA256 sorted git ls-files -z rust src include compat Cargo.toml Cargo.lock Makefile tigrc; each path bytes + NUL + file bytes + NUL",
+  "raw_evidence_archive": "948d578381b368ae483c3247fa500b437588b7b2:migration/evidence/patch-mode.json",
+  "source_and_test_sha256": {
+    "rust/patch.rs": "8783893426afea8c2e69f4c5a16e6ae547236bd1d853d732fd0bd018a52214e9",
+    "rust/main.rs": "395ee3e6a5bf7a006a6841de1356759f2c38b50628ea93d24738643466559c95",
+    "rust/git.rs": "34cb7ad944dec1e42a2e6b54d9bc7b574685a0fd214ca842ebf0f7bf71863e20",
+    "src/stage.c": "f5aebfe09715f0cae621e8647efe5d7c9b29d60e7b965da3bc7e67a5f07be5bf",
+    "rust/tests/patch-mode.py": "f24f15a138d1bba46dd9675baf65b503a4bf66a97f6d37ab44a80ad30aed464b",
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+    "test/stage/default-test": "d58bba43a0248c8c2bea7551e41f8c8dec4dfd993dd8dbb156f8325d895d7493",
+    "test/stage/split-chunk-test": "0aa8614f911de18145b25164645805cc89b7eba159349bdb8181a7284c8c6969",
+    "test/stage/update-part-test": "57949ae5596c712dcfeedf32d7535b805177823814b0a648e9ecf72354723bbb"
+  },
+  "binary_sha256": {
+    "before/c/tig": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c",
+    "before/c/test-graph": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849",
+    "before/rust/tig": "b34929eb09d6cd543dcc77d5e7421ba8875287babcb7b5e1747951604466d180",
+    "before/rust/test-graph": "5c329397600718547209d88224b9ad143cb55da4182656383615acd1f414a6d8",
+    "after/c/tig": "89ad449674600616b9027456b4143db65bef61bc0e3259fa39d4f1c8c283108c",
+    "after/c/test-graph": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849",
+    "after/rust/tig": "ae67473c94f45fd002e142aeb4d0c66ee3aa086040b4d5064a8245714e8890eb",
+    "after/rust/test-graph": "5c329397600718547209d88224b9ad143cb55da4182656383615acd1f414a6d8"
+  },
+  "commands": [
+    "cargo fmt --check",
+    "cargo test --all-targets",
+    "cargo clippy --all-targets -- -D warnings",
+    "python3 rust/tests/upstream-suite.py --output <receipt> test/stage/default-test test/stage/update-part-test test/stage/split-chunk-test",
+    "python3 rust/tests/patch-mode.py --output <receipt>"
+  ],
+  "rust_checks": {"fmt_exit": 0, "test_exit": 0, "library_tests": 70, "application_tests": 26, "clippy_exit": 0, "first_party_unsafe": "forbid; no unsafe introduced"},
+  "original_script_counts": [
+    {"phase": "before", "binary": "c", "scripts_passed": 3, "assertions_passed": 21, "failures": 0, "skips": 0, "not_reached": 0, "build_exit": 0, "binaries_unchanged": true},
+    {"phase": "before", "binary": "rust", "scripts_passed": 3, "assertions_passed": 21, "failures": 0, "skips": 0, "not_reached": 0, "build_exit": 0, "binaries_unchanged": true},
+    {"phase": "after", "binary": "c", "scripts_passed": 3, "assertions_passed": 21, "failures": 0, "skips": 0, "not_reached": 0, "build_exit": 0, "binaries_unchanged": true},
+    {"phase": "after", "binary": "rust", "scripts_passed": 3, "assertions_passed": 21, "failures": 0, "skips": 0, "not_reached": 0, "build_exit": 0, "binaries_unchanged": true}
+  ],
+  "baseline_public_counts": {"c_pass": 6, "rust_refusals": 6, "worktree_preserved": 12},
+  "baseline_raw_failure": {"affected": "All six Rust line/block/hunk × stage/unstage cases", "exit_code": 1, "stderr": "tig: Partial rename, copy and mode changes are unsupported; stage the whole file\r\n"},
+  "final_index_checks": [
+    {"binary": "c", "action": "stage-update-line", "reverse": false, "mode": "100755", "exact_index_match": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false, "verdict": "PASS"},
+    {"binary": "c", "action": "stage-update-part", "reverse": false, "mode": "100755", "exact_index_match": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false, "verdict": "PASS"},
+    {"binary": "c", "action": "status-update", "reverse": false, "mode": "100755", "exact_index_match": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false, "verdict": "PASS"},
+    {"binary": "c", "action": "stage-update-line", "reverse": true, "mode": "100644", "exact_index_match": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false, "verdict": "PASS"},
+    {"binary": "c", "action": "stage-update-part", "reverse": true, "mode": "100644", "exact_index_match": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false, "verdict": "PASS"},
+    {"binary": "c", "action": "status-update", "reverse": true, "mode": "100644", "exact_index_match": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false, "verdict": "PASS"},
+    {"binary": "rust", "action": "stage-update-line", "reverse": false, "mode": "100755", "exact_index_match": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false, "verdict": "PASS"},
+    {"binary": "rust", "action": "stage-update-part", "reverse": false, "mode": "100755", "exact_index_match": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false, "verdict": "PASS"},
+    {"binary": "rust", "action": "status-update", "reverse": false, "mode": "100755", "exact_index_match": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false, "verdict": "PASS"},
+    {"binary": "rust", "action": "stage-update-line", "reverse": true, "mode": "100644", "exact_index_match": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false, "verdict": "PASS"},
+    {"binary": "rust", "action": "stage-update-part", "reverse": true, "mode": "100644", "exact_index_match": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false, "verdict": "PASS"},
+    {"binary": "rust", "action": "status-update", "reverse": true, "mode": "100644", "exact_index_match": true, "worktree_preserved": true, "exit_code": 0, "timed_out": false, "verdict": "PASS"}
+  ],
+  "final_failures_and_skips": [
+  ],
+  "remaining_gaps": [
+    "Added/deleted-file line or block selection remains refused; full text-hunk selection already exists.",
+    "Rename/copy partial selection remains refused; selected-path rename display can appear as added destination.",
+    "Binary and mode-only partial patches remain refused.",
+    "Mode-only status-update from stage view is a preexisting gap: C stages/unstages mode; Rust refuses no-hunk patches.",
+    "Non-regular old/new mode headers remain refused; no symlink/submodule parity claim."
+  ],
+  "unsupported_form_raw_errors": [
+    "tig: Binary patches are unsupported\r\n",
+    "tig: Line selection for added/deleted files is unsupported; select the hunk\r\n",
+    "tig: Patch has no text hunks\r\n"
+  ],
+  "form_observations_summary": "18 C/Rust single-line probes, all worktrees preserved; raw observations archived above and interpreted in migration/PATCH-FORMS.md. Not parity assertions.",
+  "review": {"independent_read_only": 2, "new_blockers": 0, "preexisting_gap": "mode-only status-update from stage view is refused by Rust; C updates mode"},
+  "verdict": "PASS_SCOPED; 12/12 public cases and 3/3 original scripts (21/21 assertions per binary); unsupported forms remain gaps"
+}
