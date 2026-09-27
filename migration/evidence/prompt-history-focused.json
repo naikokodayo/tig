@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "647ed220f4374ab7b50791b12d407738cb8defd4",
+  "source_commit": "e4deecbb33686e36ab26d614a38980582dcb7e23",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -26,7 +26,7 @@
         "test/tools/test-graph"
       ],
       "build_exit_code": 0,
-      "build_log": "        CC  src/tig.o\n        CC  src/types.o\n        CC  src/string.o\n        CC  src/util.o\n        CC  src/map.o\n        CC  src/argv.o\n        CC  src/io.o\n        CC  src/refdb.o\n       GEN  src/builtin-config.c\n        CC  src/builtin-config.o\n        CC  src/request.o\n        CC  src/line.o\n        CC  src/keys.o\n        CC  src/repo.o\n        CC  src/options.o\n        CC  src/draw.o\n        CC  src/prompt.o\n        CC  src/display.o\n        CC  src/view.o\n        CC  src/search.o\n        CC  src/parse.o\n        CC  src/watch.o\n        CC  src/pager.o\n        CC  src/log.o\n        CC  src/reflog.o\n        CC  src/diff.o\n        CC  src/help.o\n        CC  src/tree.o\n        CC  src/blob.o\n        CC  src/blame.o\n        CC  src/refs.o\n        CC  src/status.o\n        CC  src/stage.o\n        CC  src/main.o\n        CC  src/stash.o\n        CC  src/grep.o\n        CC  src/ui.o\n        CC  src/apps.o\n        CC  src/graph.o\n        CC  src/graph-v1.o\n        CC  src/graph-v2.o\n        CC  compat/hashtab.o\n        CC  compat/utf8proc.o\n      LINK  src/tig\n        CC  test/tools/test-graph.o\n      LINK  test/tools/test-graph\n",
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
       "results": [
         {
           "script": "test/main/search-preload-test",
@@ -126,7 +126,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.26s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.02s\n",
       "results": [
         {
           "script": "test/main/search-preload-test",
@@ -197,7 +197,7 @@
       "binaries": {
         "tig": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target/release/tig",
-          "sha256": "3585cba2fb914f23bfce501a53bf76d323bfd1816c432892ce971f73c7bdaa22"
+          "sha256": "fa81f3211e24aee898839844f86013061c0ae80d2bbd74f8e30655a5db444203"
         },
         "test-graph": {
           "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-prompt-history/outputs/tig/target/release/test-graph",
@@ -278,7 +278,7 @@
     }
   ],
   "prompt_history_verification": {
-    "rust_source_sha256": "26971ec919fb3c21dab9cf51ec4ee4e736892adf0ae3eda31f9eaf370ce5a2a8",
+    "rust_source_sha256": "a14c4b704929cade7f5f2e1e6e23aaaea18a443feaa2413b282b4401d3b3a258",
     "pty_test_sha256": "0a99a4dd3f9bb24626b6b2e14d4eed4c6064154afc0ed5e94eb18ae03ee61d3e",
     "command": "python3 rust/tests/prompt-history-pty.py target/release/tig",
     "result": "PASS: preloaded find-next and live Up history navigation on a controlling PTY",
