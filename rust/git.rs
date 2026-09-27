@@ -848,7 +848,7 @@ impl Repository {
         context: usize,
         word_diff: bool,
         diff_options: &[String],
-        file: Option<&Path>,
+        paths: (Option<&Path>, &[String]),
         width: usize,
     ) -> Result<String> {
         validate_diff_options(diff_options)?;
@@ -880,10 +880,11 @@ impl Repository {
                 OsString::from("--no-textconv"),
             ]),
         );
-        if let Some(file) = file {
+        if let Some(file) = paths.0 {
             valid_path(file)?;
             args.push(file.into());
         }
+        args.extend(paths.1.iter().map(OsString::from));
         Ok(text(&self.command(args)?))
     }
     pub fn diff(&self, staged: bool, file: Option<&Path>) -> Result<String> {
@@ -2184,7 +2185,9 @@ mod tests {
         repo.command(["commit", "-qam", "change"]).unwrap();
         for context in [0, 3, 4, 5, 8] {
             for word in [false, true] {
-                let show = repo.show("HEAD", context, word, &[], None, 80).unwrap();
+                let show = repo
+                    .show("HEAD", context, word, &[], (None, &[]), 80)
+                    .unwrap();
                 let span = if context == 0 {
                     "10".into()
                 } else {
@@ -2200,14 +2203,21 @@ mod tests {
         }
         repo.command(["config", "diff.external", "false"]).unwrap();
         assert!(repo
-            .show("HEAD", 3, false, &["--src-prefix".into()], None, 80)
+            .show("HEAD", 3, false, &["--src-prefix".into()], (None, &[]), 80)
             .unwrap()
             .contains("-line 10\n+changed 10"));
         assert!(repo
-            .show("HEAD", 3, false, &["--ext-diff".into()], None, 80)
+            .show("HEAD", 3, false, &["--ext-diff".into()], (None, &[]), 80)
             .is_err());
         assert!(repo
-            .show("HEAD", 3, true, &["--word-diff=none".into()], None, 80)
+            .show(
+                "HEAD",
+                3,
+                true,
+                &["--word-diff=none".into()],
+                (None, &[]),
+                80
+            )
             .unwrap()
             .contains("[-line-]{+changed+} 10"));
         assert_eq!(repo.history(&[], 0).unwrap().len(), 2);
@@ -2271,7 +2281,7 @@ mod tests {
         assert_eq!(blame.len(), 2);
         assert_eq!(blame[1].line, 2);
         assert!(repo
-            .show("HEAD", 3, false, &[], None, 80)
+            .show("HEAD", 3, false, &[], (None, &[]), 80)
             .unwrap()
             .contains("initial"));
         fs::rename(f.0.join(":(glob)*"), f.0.join("renamed")).unwrap();
@@ -2295,7 +2305,9 @@ mod tests {
                 original_path: None
             })
             .is_err());
-        assert!(repo.show("--output=oops", 3, false, &[], None, 80).is_err());
+        assert!(repo
+            .show("--output=oops", 3, false, &[], (None, &[]), 80)
+            .is_err());
         assert!(repo.history(&["--format=oops".into()], 1).is_err());
     }
 }
