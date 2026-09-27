@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Single-pane interactive main refresh: cancel/reap, retain, retry, failure, quit.
+"""Interactive main refresh: cancel/reap, retain, retry, failure, split, quit.
 Run: python3 rust/tests/main-refresh-pty.py target/release/tig
 Only Python stdlib; the Git wrapper never touches a real user repository.
 """
@@ -101,7 +101,8 @@ os.execv({real_git!r}, [{real_git!r}, *sys.argv[1:]])
         os.write(fd, b'R')
         deadline = time.monotonic() + 5
         while not (root / 'pid').exists() and time.monotonic() < deadline:
-            time.sleep(.01)
+            if select.select([fd], [], [], .01)[0]:
+                os.read(fd, 65536)
         assert (root / 'pid').exists(), 'Git pipes were not drained'
         return int((root / 'pid').read_text())
 
@@ -136,11 +137,65 @@ os.execv({real_git!r}, [{real_git!r}, *sys.argv[1:]])
         reaped(pid)
         assert b'refresh-new-screen' in output and b'refresh-failed-screen' not in output, output
         print('PASS: failed Git refresh retains the last successful rows')
+        (root / 'mode').unlink()
+        os.write(fd, b'\r')
+        until(b'[diff]')
+        os.write(fd, b'\t')
+        until(b'[main]')
         pid = delayed()
+        os.write(fd, b'j')
+        os.kill(pid, 0)
+        started = time.monotonic()
+        os.write(fd, b'z')
+        output = until(b'Loading stopped', 2)
+        reaped(pid)
+        assert b'[diff]' in output and b'refresh-new-screen' in output
+        assert b'refresh-failed-screen' not in output
+        print(f'PASS: split R/z responds in {time.monotonic() - started:.3f}s and retains both panes')
+        git('commit', '--allow-empty', '-qm', 'split-new')
+        (root / 'mode').unlink()
+        os.write(fd, b'R')
+        output = until(b'Loading history')
+        if b'split-new' not in output:
+            output += until(b'split-new')
+        completed = output[output.rfind(b'split-new'):]
+        if b'[diff]' not in completed:
+            completed += until(b'[diff]')
+        assert b'[diff]' in completed and b'[main]' in completed, output
+        print('PASS: completed split refresh replaces only the main pane')
+        pid = delayed('fail')
+        output = until(b'git exited with', 5)
+        reaped(pid)
+        assert b'[diff]' in output[output.rfind(b'split-new'):] and b'split-new' in output, output
+        print('PASS: failed split refresh retains both panes')
+        pid = delayed()
+        os.write(fd, b'\t')
+        until(b'[diff]')
+        reaped(pid)
+        print('PASS: changing split focus cancels and reaps the stale refresh')
+        os.write(fd, b'\t')
+        until(b'[main]')
+        pid = delayed()
+        fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 24, 100, 0, 0))
+        os.kill(process.pid, signal.SIGWINCH)
+        time.sleep(.2)
+        reaped(pid)
+        print('PASS: resizing split panes cancels and reaps the stale refresh')
+        (root / 'mode').unlink()
+        os.write(fd, b'\tq')
+        output = bytearray()
+        deadline = time.monotonic() + 2
+        quiet = time.monotonic() + .5
+        while time.monotonic() < deadline and time.monotonic() < quiet:
+            if select.select([fd], [], [], .05)[0]:
+                output.extend(os.read(fd, 65536))
+                quiet = time.monotonic() + .5
+        closed = bytes(output).rsplit(b'\x1b[2J', 1)[-1]
+        assert b'[main]' in closed and b'[diff]' not in closed, closed
+        print('PASS: closing the child pane keeps the refreshed main view')
         os.write(fd, b'Q')
         until(b'REFRESH_EXIT=0', 2)
-        reaped(pid)
-        print('PASS: quitting during refresh reaps the child')
+        print('PASS: quitting after split refresh restores the terminal')
     finally:
         os.write(release_write, b'x')
         try:
