@@ -10,6 +10,12 @@
 
 任务在各自克隆和特性分支中实施，向 `naikokodayo/tig:main` 提交 PR；主任务逐个独立复审、及时合并。不要并发修改同一个检出目录的 `rust/main.rs`。
 
+### 快速完成 Rust 功能面
+
+先以现有 C-free `cargo build --locked --release` 作为 Rust 入口，按用户工作流补齐 grep、refs、配置、命令、树与暂存等子系统；每条并行任务独占文件，交付可用功能并删除被替代的 Rust 分支。每个 PR 跑相关原版脚本和真实终端/索引安全回归，合并数个子系统后再跑一次完整 154 脚本。内部 Git trace 的逐字差异不阻塞功能实现，但仍记录为原版断言失败；路径、索引和外部命令的安全校验不延期。完成可用功能面后集中处理其余行为差异，再进行最终应用 benchmark。C 实现暂留作可运行基准，阶段门关闭后成批移除，不用重复造一份 C 兼容层。
+
+第一批并行所有权：grep 加载与视图（`rust/main.rs`、`rust/git.rs`）、refs 日期/排序（`rust/refs_view.rs` 及 refs 专属渲染）、状态回退与冲突操作（新增 `rust/status_ops.rs`）、交互文件查找（新增 `rust/file_finder.rs`）。后两者先做独立安全模型，在 grep 释放 `main.rs` 后串行接入 UI；不合并只编译但用户无法调用的死代码。下一批处理自动刷新、其余提示补全与通用视图导出。每一批优先关闭实际缺失的用户工作流，不把 Rust/C 源码行数当作完成率。
+
 1. **已合并并通过全套**：标准输入、diff 统计、分支变量、Git alias、控制字符、blame 初始差异、布局、子模块 diff 选项、主视图选项及暂存分块显示。
 2. **提示历史已合并**：加载、上下导航、限额和去重有真实终端回归；原始 `main/search-preload` 仍因完整 readline 特性未实现而跳过，`--version` 不冒称支持。
 3. **剩余四个失败脚本**：`diff/diff-highlight` 缺失程序时 Rust 保留原 diff 并报错；`main/filter-args` 与 `status/file-filter` 尚有三条内部 Git 命令逐字 trace 差异，屏幕断言均通过；`tree/file-name` 见下方安全差异。原始断言没有修改。为满足 trace 而增加无用 Git 调用不作为迁移目标。
