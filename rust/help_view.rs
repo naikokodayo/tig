@@ -265,56 +265,7 @@ fn ordered_bindings(config: &Config) -> Vec<Binding<'_>> {
     bindings
 }
 
-fn request_info() -> Vec<(String, String, String)> {
-    let mut requests = Vec::new();
-    let mut group = String::new();
-    let source = include_str!("../include/tig/request.h");
-    let source = source
-        .split("#define REQ_INFO")
-        .nth(1)
-        .unwrap_or("")
-        .split("/* User action requests. */")
-        .next()
-        .unwrap_or("");
-    for line in source.lines().map(str::trim) {
-        if let Some(rest) = line.strip_prefix("REQ_GROUP(") {
-            group = rest.split('"').nth(1).unwrap_or("").into();
-        } else if line.starts_with("VIEW_INFO(VIEW_REQ)") {
-            let views = include_str!("../include/tig/tig.h")
-                .split("#define VIEW_INFO(_)")
-                .nth(1)
-                .unwrap_or("")
-                .split("\n\n")
-                .next()
-                .unwrap_or("");
-            for view in views
-                .lines()
-                .filter_map(|line| line.trim().strip_prefix("_("))
-            {
-                if let Some(name) = view.split(',').nth(1).and_then(|s| s.split(')').next()) {
-                    let name = name.trim();
-                    requests.push((
-                        group.clone(),
-                        format!("view-{name}"),
-                        format!("Show {name} view"),
-                    ));
-                }
-            }
-        } else if let Some(rest) = line.strip_prefix("REQ_(") {
-            if let Some((name, help)) = rest.split_once(',') {
-                let name = name.trim().to_ascii_lowercase().replace('_', "-");
-                if name != "none" {
-                    requests.push((
-                        group.clone(),
-                        name,
-                        help.split('"').nth(1).unwrap_or("").into(),
-                    ));
-                }
-            }
-        }
-    }
-    requests
-}
+use crate::request::request_info;
 
 fn key_name(key: &str) -> String {
     let mut result = String::new();

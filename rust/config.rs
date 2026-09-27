@@ -1249,39 +1249,10 @@ fn validate_colors(values: &[String]) -> Result<(), String> {
     }
     Ok(())
 }
-fn known_request(name: &str) -> bool {
-    if let Some(view) = name.strip_prefix("view-") {
-        if is_view(view) {
-            return true;
-        }
-    }
-    include_str!("../include/tig/request.h")
-        .lines()
-        .any(|line| {
-            line.trim()
-                .strip_prefix("REQ_(")
-                .and_then(|s| s.split(',').next())
-                .is_some_and(|s| s.to_ascii_lowercase().replace('_', "-") == name)
-        })
-}
+use crate::request::known_request;
+
 pub fn is_view(name: &str) -> bool {
-    matches!(
-        name,
-        "main"
-            | "diff"
-            | "log"
-            | "reflog"
-            | "tree"
-            | "blob"
-            | "blame"
-            | "refs"
-            | "pager"
-            | "help"
-            | "status"
-            | "stage"
-            | "stash"
-            | "grep"
-    )
+    crate::request::is_view(name)
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
