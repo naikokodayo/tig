@@ -187,6 +187,7 @@ struct View {
     path: PathBuf,
     staged: bool,
     diff_base: Option<String>,
+    stash_diff: bool,
     untracked: bool,
     raw_patch: Vec<u8>,
     from_stdin: bool,
@@ -216,6 +217,7 @@ impl View {
             path: PathBuf::new(),
             staged: false,
             diff_base: None,
+            stash_diff: false,
             untracked: false,
             raw_patch: Vec::new(),
             from_stdin: false,
@@ -657,9 +659,42 @@ impl App {
             "diff" => {
                 let diff_options = diff_options(&self.config)?;
                 let oid = repo.revision(&self.revision)?;
-                let diff_base = if self.view.name == "stash" {
-                    Some(repo.revision(&format!("{oid}^"))?)
-                } else if self.view.name == "diff" {
+                if self.view.name == "stash" || self.view.stash_diff {
+                    let context = format!("-U{}", self.config.usize_value("diff-context", 3));
+                    let mut args = vec![
+                        "stash",
+                        "show",
+                        "--pretty=fuller",
+                        "--patch-with-stat",
+                        "--no-color",
+                        "--no-ext-diff",
+                        "--no-textconv",
+                        &context,
+                    ];
+                    args.extend(diff_options.iter().map(String::as_str));
+                    if let Some(space) = match self.config.value("ignore-space") {
+                        Some("all") => Some("--ignore-all-space"),
+                        Some("some") => Some("--ignore-space-change"),
+                        Some("at-eol") => Some("--ignore-space-at-eol"),
+                        _ => None,
+                    } {
+                        args.push(space);
+                    }
+                    args.extend([
+                        if word_diff_enabled(&self.config) {
+                            "--word-diff=plain"
+                        } else {
+                            "--word-diff=none"
+                        },
+                        oid.as_str(),
+                    ]);
+                    let text = repo.command(args)?;
+                    let mut view = View::text(name, &highlight_diff(&self.config, &text));
+                    view.revision = oid;
+                    view.stash_diff = true;
+                    return Ok(view);
+                }
+                let diff_base = if self.view.name == "diff" {
                     self.view.diff_base.clone()
                 } else {
                     None
