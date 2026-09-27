@@ -5,7 +5,9 @@
 // to the consuming views. This module never executes a configured command.
 use std::{
     collections::BTreeMap,
-    env, fs,
+    env,
+    ffi::OsString,
+    fs,
     io::{self, Write},
     path::{Path, PathBuf},
 };
@@ -1188,6 +1190,8 @@ pub struct Cli {
     pub view: String,
     /// Original Git arguments including --, preserving path/revision ambiguity for Git.
     pub git_args: Vec<String>,
+    /// Blame accepts one native filename; decode only its options/revisions.
+    pub blame_args: Vec<OsString>,
     /// Apply sequentially, as Git/Tig do with repeated -C.
     pub directories: Vec<PathBuf>,
     pub line: usize,
@@ -1205,10 +1209,11 @@ impl Cli {
             .map_or("HEAD", String::as_str)
     }
 
-    pub fn parse(args: &[String], pager_mode: bool) -> Result<Self, String> {
+    pub fn parse(args: &[OsString], pager_mode: bool) -> Result<Self, String> {
         let mut cli = Self {
             view: if pager_mode { "pager" } else { "main" }.into(),
             git_args: Vec::new(),
+            blame_args: Vec::new(),
             directories: Vec::new(),
             line: 0,
             help: false,
@@ -1222,10 +1227,10 @@ impl Cli {
             i += 1;
         }
         if let Some(command) = args.get(i) {
-            let view = match command.as_str() {
+            let view = match command.to_str().unwrap_or("") {
                 "show" => Some("diff"),
                 "status" | "blame" | "grep" | "log" | "reflog" | "stash" | "refs" => {
-                    Some(command.as_str())
+                    command.to_str()
                 }
                 _ => None,
             };
@@ -1237,7 +1242,7 @@ impl Cli {
         let mut paths = false;
         for arg in &args[i..] {
             if !paths {
-                match arg.as_str() {
+                match arg.to_str().unwrap_or("") {
                     "--" | "--end-of-options" => paths = true,
                     "-h" | "--help" => {
                         cli.help = true;
@@ -1249,7 +1254,8 @@ impl Cli {
                     }
                     _ => {
                         if let Some(n) = arg
-                            .strip_prefix('+')
+                            .to_str()
+                            .and_then(|arg| arg.strip_prefix('+'))
                             .filter(|n| !n.is_empty() && n.bytes().all(|c| c.is_ascii_digit()))
                         {
                             cli.line = n
@@ -1261,7 +1267,13 @@ impl Cli {
                     }
                 }
             }
-            cli.git_args.push(arg.clone());
+            if cli.view == "blame" {
+                cli.blame_args.push(arg.clone());
+            } else {
+                cli.git_args.push(arg.clone().into_string().map_err(|_| {
+                    "Non-UTF-8 CLI arguments are supported only for blame filenames and -C directories"
+                })?);
+            }
         }
         Ok(cli)
     }
@@ -1803,9 +1815,9 @@ bind generic <Lt> back
                 "--end-of-options",
             ),
         ] {
-            let args: Vec<String> = std::iter::once("show")
+            let args: Vec<OsString> = std::iter::once("show")
                 .chain(args)
-                .map(str::to_owned)
+                .map(OsString::from)
                 .collect();
             let mut cli = Cli::parse(&args, false).unwrap();
             Config::defaults().take_diff_options(&mut cli.git_args);
@@ -1816,12 +1828,41 @@ bind generic <Lt> back
 
     #[test]
     fn cli_preserves_git_arguments_and_separator() {
-        let args = ["-C", "repo", "show", "+12", "HEAD~2", "--", "--help", "a b"].map(String::from);
+        let args =
+            ["-C", "repo", "show", "+12", "HEAD~2", "--", "--help", "a b"].map(OsString::from);
         let c = Cli::parse(&args, false).unwrap();
         assert_eq!(c.view, "diff");
         assert_eq!(c.line, 11);
         assert!(!c.help);
         assert_eq!(c.git_args, ["HEAD~2", "--", "--help", "a b"]);
         assert!(Cli::parse(&["-C".into()], false).is_err());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn cli_keeps_native_blame_paths_and_rejects_other_native_arguments() {
+        use std::os::unix::ffi::OsStringExt;
+        let path = OsString::from_vec(b"--odd-\xff name".to_vec());
+        let args = [
+            "-C".into(),
+            path.clone(),
+            "blame".into(),
+            "+21".into(),
+            "HEAD".into(),
+            "--".into(),
+            path.clone(),
+        ];
+        let cli = Cli::parse(&args, false).unwrap();
+        assert_eq!(cli.directories, [PathBuf::from(&path)]);
+        assert_eq!(cli.line, 20);
+        assert_eq!(
+            cli.blame_args,
+            [OsString::from("HEAD"), "--".into(), path.clone()]
+        );
+        assert!(cli.git_args.is_empty());
+        for view in ["status", "show", "grep", "log"] {
+            assert!(Cli::parse(&[view.into(), "--".into(), path.clone()], false).is_err());
+        }
+        assert!(Cli::parse(&[path], false).is_err());
     }
 }

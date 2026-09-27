@@ -4636,7 +4636,7 @@ fn key_name(code: KeyCode, modifiers: KeyModifiers) -> String {
     }
 }
 fn run() -> Result<()> {
-    let args: Vec<String> = env::args_os().skip(1).map(|arg| arg.into_string().map_err(|_| "Non-UTF-8 CLI arguments are not supported yet; browse the file through the tree/status view")).collect::<std::result::Result<_,_>>()?;
+    let args: Vec<OsString> = env::args_os().skip(1).collect();
     let mut cli = Cli::parse(&args, !io::stdin().is_terminal())?;
     if cli.help {
         println!("{HELP}");
@@ -4795,8 +4795,11 @@ fn run() -> Result<()> {
         }
     } else {
         if cli.view == "blame" {
-            let invocation =
-                tig_rs::blame_options::Invocation::parse(app.repo()?, &app.args, &app.config)?;
+            let invocation = tig_rs::blame_options::Invocation::parse(
+                app.repo()?,
+                &cli.blame_args,
+                &app.config,
+            )?;
             app.revision = invocation.revision;
             app.path = invocation.path;
             app.config
