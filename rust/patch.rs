@@ -4,6 +4,7 @@
 use crate::git::{GitError, Repository, Result};
 use std::io::Write;
 use std::ops::Range;
+use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
 #[derive(Clone, Debug)]
@@ -605,7 +606,13 @@ impl Patch {
         Ok(output)
     }
 }
-fn apply_once(repo: &Repository, patch: &[u8], reverse: bool, check: bool) -> Result<()> {
+fn apply_once(
+    repo: &Repository,
+    patch: &[u8],
+    reverse: bool,
+    check: bool,
+    cached: bool,
+) -> Result<()> {
     let mut command = Command::new("git");
     command
         .current_dir(&repo.root)
@@ -613,13 +620,15 @@ fn apply_once(repo: &Repository, patch: &[u8], reverse: bool, check: bool) -> Re
             "-c",
             "apply.ignoreWhitespace=no",
             "apply",
-            "--cached",
             "--whitespace=nowarn",
         ])
         .env("LC_ALL", "C")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped());
+    if cached {
+        command.arg("--cached");
+    }
     if reverse {
         command.arg("--reverse");
     }
@@ -660,8 +669,133 @@ fn apply_once(repo: &Repository, patch: &[u8], reverse: bool, check: bool) -> Re
 pub fn apply_cached(repo: &Repository, patch: &[u8], reverse: bool) -> Result<()> {
     let parsed = Patch::parse(patch)?;
     validate_apply_paths(&parsed)?;
-    apply_once(repo, patch, reverse, true)?;
-    apply_once(repo, patch, reverse, false)
+    apply_once(repo, patch, reverse, true, true)?;
+    apply_once(repo, patch, reverse, false, true)
+}
+
+fn worktree_revert_target(patch: &[u8]) -> Result<(PathBuf, Vec<u8>)> {
+    let parsed = Patch::parse(patch)?;
+    validate_apply_paths(&parsed)?;
+    let [file] = parsed.files.as_slice() else {
+        return Err(error("Revert requires exactly one file"));
+    };
+    if file.hunks.len() != 1 || file.headers.len() != 4 {
+        return Err(error("Revert requires one regular text hunk"));
+    }
+    let mode = file.headers[1]
+        .rsplit(|byte| *byte == b' ')
+        .next()
+        .unwrap_or_default();
+    let old = canonical_path(&file.headers[2], b"--- ", b"a/")?
+        .ok_or_else(|| error("Revert requires a tracked file"))?
+        .0;
+    let new = canonical_path(&file.headers[3], b"+++ ", b"b/")?
+        .ok_or_else(|| error("Revert requires a tracked file"))?
+        .0;
+    if old != new
+        || !file.headers[1].starts_with(b"index ")
+        || !matches!(mode, b"100644" | b"100755")
+    {
+        return Err(error("Revert requires unchanged-mode regular text"));
+    }
+    Ok((crate::git::parse_git_path(old)?, mode.to_vec()))
+}
+
+/// Resolve the one validated tracked path before planning a confirmed revert.
+pub fn worktree_revert_path(patch: &[u8]) -> Result<PathBuf> {
+    worktree_revert_target(patch).map(|(path, _)| path)
+}
+
+/// Revert one selected unstaged text hunk in the expected repository-relative path.
+/// The index is left alone.
+pub fn apply_worktree_reverse(repo: &Repository, patch: &[u8], expected_path: &Path) -> Result<()> {
+    let (path, mode) = worktree_revert_target(patch)?;
+    if path != expected_path {
+        return Err(error("Selected patch does not match the expected path"));
+    }
+    let mut current = repo.root.clone();
+    for part in path.components() {
+        current.push(part);
+        let metadata = std::fs::symlink_metadata(&current)
+            .map_err(|e| error(&format!("Could not inspect revert path: {e}")))?;
+        if metadata.file_type().is_symlink() {
+            return Err(error("Revert path contains a symlink"));
+        }
+        if current == repo.root.join(&path) {
+            if !metadata.is_file() {
+                return Err(error("Revert requires a regular worktree file"));
+            }
+        } else if !metadata.is_dir() {
+            return Err(error("Revert path has a non-directory parent"));
+        }
+    }
+    let mut args = vec![
+        std::ffi::OsString::from("ls-files"),
+        "--stage".into(),
+        "-z".into(),
+        "--".into(),
+    ];
+    args.push(path.as_os_str().to_owned());
+    let index = repo.command(args)?;
+    let end = index
+        .iter()
+        .position(|byte| *byte == 0)
+        .ok_or_else(|| error("Revert requires a tracked file"))?;
+    let (entry, tail) = index.split_at(end);
+    let tab = entry
+        .iter()
+        .position(|byte| *byte == b'\t')
+        .ok_or_else(|| error("Malformed Git index entry"))?;
+    let (metadata, indexed_path) = entry.split_at(tab);
+    if tail.len() != 1
+        || &indexed_path[1..] != path.as_os_str().as_encoded_bytes()
+        || !metadata
+            .strip_prefix(mode.as_slice())
+            .is_some_and(|rest| rest.starts_with(b" "))
+        || !metadata.ends_with(b" 0")
+    {
+        return Err(error("Revert requires one regular tracked index entry"));
+    }
+    let current = repo.command([
+        "diff".into(),
+        "--no-relative".into(),
+        "--src-prefix=a/".into(),
+        "--dst-prefix=b/".into(),
+        "--no-color".into(),
+        "--no-ext-diff".into(),
+        "--no-textconv".into(),
+        "--patch".into(),
+        "--".into(),
+        path.as_os_str().to_owned(),
+    ])?;
+    let current = Patch::parse(&current)?;
+    if !current.files.iter().enumerate().any(|(file, source)| {
+        (0..source.hunks.len()).any(|hunk| {
+            if current
+                .select(file, hunk, None, false)
+                .is_ok_and(|selected| selected == patch)
+            {
+                return true;
+            }
+            let Ok(split) = current.split_hunk(file, hunk) else {
+                return false;
+            };
+            let mut bytes = source.headers.join(&b'\n');
+            bytes.push(b'\n');
+            bytes.extend(split.patch);
+            Patch::parse(&bytes).is_ok_and(|split| {
+                (0..split.files[0].hunks.len()).any(|part| {
+                    split
+                        .select(0, part, None, false)
+                        .is_ok_and(|selected| selected == patch)
+                })
+            })
+        })
+    }) {
+        return Err(error("Selected hunk no longer matches the worktree"));
+    }
+    apply_once(repo, patch, true, true, false)?;
+    apply_once(repo, patch, true, false, false)
 }
 
 #[cfg(test)]
@@ -727,6 +861,73 @@ mod tests {
         fn drop(&mut self) {
             let _ = fs::remove_dir_all(&self.root);
         }
+    }
+    #[test]
+    fn worktree_revert_changes_only_selected_hunk_and_refuses_stale_or_symlink() {
+        let f = Fixture::new();
+        let path = f.root.join("space name");
+        let working = b"alpha\nnew one\nbeta\ngamma\ndelta\nepsilon\nzeta\neta\ntheta\niota\nnew two\nkappa\n";
+        fs::write(&path, working).unwrap();
+        let patch = Patch::parse(&f.diff(false)).unwrap();
+        assert_eq!(patch.files[0].hunks.len(), 2);
+        let selected = patch.select(0, 0, None, false).unwrap();
+        let index = fs::read(f.root.join(".git/index")).unwrap();
+        assert!(apply_worktree_reverse(&f.repo, &selected, Path::new("other file")).is_err());
+        assert_eq!(fs::read(&path).unwrap(), working);
+        apply_worktree_reverse(&f.repo, &selected, Path::new("space name")).unwrap();
+        let expected = working.strip_prefix(b"alpha\nnew one\n").unwrap();
+        assert_eq!(
+            fs::read(&path).unwrap(),
+            [b"alpha\n".as_slice(), expected].concat()
+        );
+        assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), index);
+        assert!(apply_worktree_reverse(&f.repo, &selected, Path::new("space name")).is_err());
+        assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), index);
+        let shifted = [b"preface\n".as_slice(), working].concat();
+        fs::write(&path, &shifted).unwrap();
+        let later = patch.select(0, 1, None, false).unwrap();
+        apply_once(&f.repo, &later, true, true, false).unwrap();
+        assert!(apply_worktree_reverse(&f.repo, &later, Path::new("space name")).is_err());
+        assert_eq!(fs::read(&path).unwrap(), shifted);
+
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::symlink;
+            let outside = f.root.with_extension("outside");
+            fs::write(&outside, working).unwrap();
+            fs::remove_file(&path).unwrap();
+            symlink(&outside, &path).unwrap();
+            assert!(apply_worktree_reverse(&f.repo, &selected, Path::new("space name")).is_err());
+            assert_eq!(fs::read(&outside).unwrap(), working);
+            assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), index);
+            fs::remove_file(outside).unwrap();
+        }
+    }
+    #[test]
+    fn worktree_revert_accepts_selected_split_hunk() {
+        let f = Fixture::new();
+        let path = f.root.join("space name");
+        fs::write(
+            &path,
+            b"alpha\nBETA\ngamma\nDELTA\nepsilon\nzeta\neta\ntheta\niota\nkappa\n",
+        )
+        .unwrap();
+        let patch = Patch::parse(&f.diff(false)).unwrap();
+        assert_eq!(patch.files[0].hunks.len(), 1);
+        let split = patch.split_hunk(0, 0).unwrap();
+        let mut bytes = patch.files[0].headers.join(&b'\n');
+        bytes.push(b'\n');
+        bytes.extend(split.patch);
+        let split = Patch::parse(&bytes).unwrap();
+        assert_eq!(split.files[0].hunks.len(), 2);
+        let selected = split.select(0, 1, None, false).unwrap();
+        let index = fs::read(f.root.join(".git/index")).unwrap();
+        apply_worktree_reverse(&f.repo, &selected, Path::new("space name")).unwrap();
+        assert_eq!(
+            fs::read(path).unwrap(),
+            b"alpha\nBETA\ngamma\ndelta\nepsilon\nzeta\neta\ntheta\niota\nkappa\n"
+        );
+        assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), index);
     }
     #[test]
     fn single_line_hunk_reverse_and_failure_are_index_only() {

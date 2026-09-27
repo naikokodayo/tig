@@ -1808,6 +1808,31 @@ impl App {
         }
         if action.split_whitespace().next() == Some("status-revert") {
             use tig_rs::status_ops::{RevertAction, RevertPlan};
+            if self.view.name == "stage" {
+                if action != "status-revert" || self.view.staged || self.view.untracked {
+                    return Err("Select an unstaged text hunk to revert".into());
+                }
+                let raw = &self.view.raw_patch;
+                let offset = raw
+                    .split_inclusive(|byte| *byte == b'\n')
+                    .take_while(|line| !line.starts_with(b"diff --git "))
+                    .map(<[u8]>::len)
+                    .sum::<usize>();
+                let prefix_rows = raw[..offset].iter().filter(|byte| **byte == b'\n').count();
+                if offset == raw.len() || self.view.selected < prefix_rows {
+                    return Err("Select an unstaged text hunk to revert".into());
+                }
+                let patch = tig_rs::patch::Patch::parse(&raw[offset..])?;
+                let (file, hunk, _) = patch.locate(self.view.selected - prefix_rows)?;
+                let selected = patch.select(file, hunk, None, false)?;
+                let path = tig_rs::patch::worktree_revert_path(&selected)?;
+                if !self.view.path.as_os_str().is_empty() && self.view.path != path {
+                    return Err("Selected patch does not match the stage view path".into());
+                }
+                self.pending_revert =
+                    Some(RevertPlan::prepare_hunk(self.repo()?, &path, selected)?);
+                return Ok(true);
+            }
             if self.view.name != "status" {
                 return Err("File revert is available in the status view".into());
             }

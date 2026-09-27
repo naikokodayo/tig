@@ -21,7 +21,7 @@ def git(root, *args, ok=True):
     return result.stdout
 
 class Terminal:
-    def __init__(self, root, user_config='/dev/null'):
+    def __init__(self, root, user_config='/dev/null', view='status'):
         self.master, slave = pty.openpty()
         fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 30, 140, 0, 0))
         def tty():
@@ -30,14 +30,14 @@ class Terminal:
         env = dict(os.environ, TERM='xterm-256color', TIGRC_SYSTEM=str(Path(__file__).resolve().parents[2] / 'tigrc'),
                    TIGRC_USER=str(user_config), GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='/dev/null')
         env.pop('TIG_SCRIPT', None)
-        self.process = subprocess.Popen([BINARY, '-C', str(root), 'status'], env=env,
+        self.process = subprocess.Popen([BINARY, '-C', str(root), view], env=env,
             stdin=slave, stdout=slave, stderr=slave, preexec_fn=tty)
         os.close(slave)
         self.output = b''
         deadline = time.monotonic() + 5
-        while b'[status]' not in self.output and time.monotonic() < deadline:
+        while f'[{view}]'.encode() not in self.output and time.monotonic() < deadline:
             self.drain()
-        assert b'[status]' in self.output, self.output
+        assert f'[{view}]'.encode() in self.output, self.output
     def drain(self):
         end = time.monotonic() + .35
         while time.monotonic() < end:
@@ -191,4 +191,45 @@ if not IS_C:
         assert (root / 'file').read_bytes() == b'resolved\n'
         assert not git(root, 'ls-files', '--unmerged')
         checks.append('mergetool-confirmation-and-script-refusal')
+if not IS_C:
+    for mode, answer in (('file', b'n'), ('file', b'y'), ('file', b'stale'),
+                         ('aggregate', b'y'), ('split', b'y')):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            git(root, 'init', '-q')
+            git(root, 'config', 'user.name', 'Test')
+            git(root, 'config', 'user.email', 'test@example.invalid')
+            original = ''.join(f'line {n}\n' for n in range(1, 21)).encode()
+            changed = original.replace(b'line 2\n', b'changed 2\n').replace(
+                b'line 6\n' if mode == 'split' else b'line 18\n',
+                b'changed 6\n' if mode == 'split' else b'changed 18\n')
+            (root / 'file').write_bytes(original)
+            git(root, 'add', 'file')
+            git(root, 'commit', '-qm', 'base')
+            (root / 'file').write_bytes(changed)
+            index = (root / '.git/index').read_bytes()
+            app = Terminal(root, view='main' if mode == 'aggregate' else 'status')
+            app.send(b'\r' if mode == 'aggregate' else b':5\r\r')
+            assert b'[stage]' in app.output, app.output
+            app.send(b'/@@ -\r')
+            if mode == 'split':
+                app.send(b'\\')
+            app.send(b'!')
+            assert b'Revert selected unstaged hunk' in app.output, app.output
+            if answer == b'stale':
+                (root / 'file').write_bytes(changed + b'new edit\n')
+                app.send(b'y\r')
+                assert b'changed; refresh and confirm again' in app.output, app.output
+            else:
+                app.send(answer + b'\r')
+            app.close()
+            expected = (changed.replace(b'changed 2\n', b'line 2\n') if answer == b'y'
+                        else changed + (b'new edit\n' if answer == b'stale' else b''))
+            assert (root / 'file').read_bytes() == expected, app.output
+            assert (root / '.git/index').read_bytes() == index
+            backups = list((root / '.git/tig-revert').glob('*/worktree'))
+            assert len(backups) == (answer == b'y')
+            if backups:
+                assert backups[0].read_bytes() == changed
+            checks.append('stage-hunk-' + mode + '-' + answer.decode())
 print({'binary': BINARY, 'checks': checks, 'passed': len(checks)})
