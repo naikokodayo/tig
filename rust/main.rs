@@ -1524,6 +1524,7 @@ impl App {
             }
             if let Some(index) = saved {
                 self.view.top = self.previous[index].top;
+                self.view.left = self.previous[index].left;
                 self.previous.truncate(index);
             }
         }
@@ -2399,6 +2400,12 @@ impl App {
         match action {
             "none" => (),
             "quit" => return Ok(false),
+            "back" | "parent" if self.view.name == "tree" => {
+                if self.view.path.as_os_str().is_empty() {
+                    return self.action("view-close");
+                }
+                self.tree_parent()?;
+            }
             "parent" if self.view.name == "main" => {
                 if self.view.history.last().map(|pos| pos.0) != Some(self.view.selected) {
                     self.view
@@ -2773,7 +2780,6 @@ impl App {
                 }
             }
             "show-version" => self.message = format!("tig-rs {}", env!("CARGO_PKG_VERSION")),
-            "parent" if self.view.name == "tree" => self.tree_parent()?,
             "parent" if self.view.name == "blame" => self.blame_forward(true)?,
             "view-blame" if self.view.name == "blame" => self.blame_forward(false)?,
             "view-blame" if matches!(self.view.name.as_str(), "stage" | "blob" | "status") => {
@@ -5611,10 +5617,34 @@ mod tests {
         assert_eq!(app.view.path, PathBuf::from("common/src"));
         assert_eq!(app.view.rows[0], "Directory path /common/src/");
         assert_eq!(app.edit_target(), None); // Parent entry is never editable.
+        app.view.selected = app
+            .view
+            .items
+            .iter()
+            .position(
+                |item| matches!(item, Item::Tree(e) if e.path == PathBuf::from("common/src/main")),
+            )
+            .unwrap();
+        app.view.left = 7;
+        app.enter(false).unwrap();
+        assert_eq!(app.view.path, PathBuf::from("common/src/main"));
         app.action("parent").unwrap();
+        assert_eq!(app.view.path, PathBuf::from("common/src"));
+        assert_eq!(app.view.left, 7);
+        app.enter(false).unwrap();
+        assert_eq!(app.view.path, PathBuf::from("common/src/main"));
+        app.action("back").unwrap();
+        assert_eq!(app.view.path, PathBuf::from("common/src"));
+        app.action("back").unwrap();
         assert_eq!(app.view.path, PathBuf::from("common"));
         app.action("parent").unwrap();
         assert!(app.view.path.as_os_str().is_empty());
+        app.action("parent").unwrap();
+        assert_eq!(app.view.name, "main");
+        app.action("view-tree").unwrap();
+        app.action("back").unwrap();
+        assert_eq!(app.view.name, "main");
+        app.action("view-tree").unwrap();
         app.view.selected = app
             .view
             .items
