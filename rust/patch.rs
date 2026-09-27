@@ -486,13 +486,18 @@ impl Patch {
         }
         let mut selected = source.clone();
         if let Some(range) = lines {
-            if file
-                .headers
-                .iter()
-                .any(|l| l == b"--- /dev/null" || l == b"+++ /dev/null")
-            {
+            let added = file.headers.iter().any(|l| l == b"--- /dev/null");
+            let deleted = file.headers.iter().any(|l| l == b"+++ /dev/null");
+            let restore_regular = reverse
+                && file.headers.iter().any(|l| {
+                    matches!(
+                        l.as_slice(),
+                        b"deleted file mode 100644" | b"deleted file mode 100755"
+                    )
+                });
+            if added || (deleted && !restore_regular) {
                 return Err(error(
-                    "Line selection for added/deleted files is unsupported; select the hunk",
+                    "Partial selection of this added/deleted file is unsupported; select the hunk",
                 ));
             }
             let row = source
@@ -1043,6 +1048,45 @@ mod tests {
             assert!(Patch::parse(raw.as_bytes()).is_err());
         }
         assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), before);
+    }
+    #[test]
+    fn deleted_file_line_unstage_preserves_bytes_and_rejects_stale_index() {
+        let f = Fixture::new();
+        let path = f.root.join("space name");
+        fs::write(&path, b"first\nlast").unwrap();
+        f.repo.command(["add", "--", "space name"]).unwrap();
+        f.repo
+            .command(["commit", "-qm", "deleted fixture"])
+            .unwrap();
+        fs::remove_file(&path).unwrap();
+        f.repo.command(["add", "-u"]).unwrap();
+        let raw = f.diff(true);
+        let patch = Patch::parse(&raw).unwrap();
+        assert!(patch.select(0, 0, Some(0), false).is_err());
+        for (row, expected) in [(0, b"first\n".as_slice()), (1, b"last".as_slice())] {
+            let selected = patch.select(0, 0, Some(row), true).unwrap();
+            apply_cached(&f.repo, &selected, true).unwrap();
+            assert_eq!(f.index(), expected);
+            let before = fs::read(f.root.join(".git/index")).unwrap();
+            assert!(apply_cached(&f.repo, &selected, true).is_err());
+            assert_eq!(fs::read(f.root.join(".git/index")).unwrap(), before);
+            assert!(!path.exists());
+            f.repo
+                .command(["rm", "--cached", "--", "space name"])
+                .unwrap();
+        }
+        let non_regular = String::from_utf8_lossy(&raw)
+            .replace("deleted file mode 100644", "deleted file mode 120000");
+        assert!(Patch::parse(non_regular.as_bytes())
+            .unwrap()
+            .select(0, 0, Some(0), true)
+            .is_err());
+        let added = b"diff --git a/x b/x\nnew file mode 100644\n--- /dev/null\n+++ b/x\n@@ -0,0 +1,2 @@\n+first\n+last\n";
+        let added = Patch::parse(added).unwrap();
+        for reverse in [false, true] {
+            assert!(added.select(0, 0, Some(0), reverse).is_err());
+            assert!(added.select_part(0, 0, 0, reverse).is_err());
+        }
     }
     #[test]
     fn malformed_and_unsupported_patches_fail() {
