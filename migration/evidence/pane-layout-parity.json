@@ -1,0 +1,94 @@
+{
+  "scope": "Pane layout parity only; full 154-script migration gate remains open.",
+  "tested_commit": "954de3749e60ca3c60e00ec28cd460be4df786ad",
+  "integration_base": "93b31f82ce08547dddef66f6f70925f966944fc5",
+  "baseline_commit": "d59e2d52f719ef5b43ff501cadd8852119f2a61e",
+  "environment": {"platform": "Darwin arm64", "git": "git version 2.50.1 (Apple Git-155)", "init.defaultBranch": "master", "TEST_OPTS": "", "pty_rows": 30, "pty_columns": 80},
+  "source_sha256": {
+    "rust/main.rs": "ce2e5b43265839a71ab721908aea55eaf673ca332e5a72ab9ea1cc0ec26b27bf",
+    "rust/render.rs": "355c13d91a2b6401cb63cdec53f7125b9a8af3248af39b09adc904487b38d82f",
+    "rust/tests/pane-layout.py": "597d6ae6c6915032b0ffc941cb94cca319fb0c8d8450ba23ab5730dd0f020452"
+  },
+  "source_set_sha256": "e4e28d9480a566efa1ef1b55a949fc09fb3754880582ed838d188f53c3fe004f",
+  "source_set_definition": "Sort paths from git ls-files rust Cargo.toml Cargo.lock Makefile test/tools/libtest.sh; SHA-256 of concatenated UTF-8 path + NUL + file bytes + NUL (45 files).",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702"
+  },
+  "binary_routes": {
+    "c/tig": "src/tig",
+    "c/test-graph": "test/tools/test-graph",
+    "rust/tig": "target/release/tig",
+    "rust/test-graph": "target/release/test-graph"
+  },
+  "baseline_binary_sha256": {
+    "c/tig": "687fbb3569b2f629730ed57fa65a044b5ec8f806b485cd27844649f343ae43fd",
+    "c/test-graph": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849",
+    "rust/tig": "966929474b11c4425a389132962ac30d3b88eb46af7338a347df2abad4c42449",
+    "rust/test-graph": "cef42b529157a36aeaa22dfa939b47b5f10cf800da2ff5155f386f01d718ec79"
+  },
+  "tested_binary_sha256": {
+    "c/tig": "687fbb3569b2f629730ed57fa65a044b5ec8f806b485cd27844649f343ae43fd",
+    "c/test-graph": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849",
+    "rust/tig": "b5b1107a73a5fa6164f6ecf50178dc3bf9da08ae76b6d0bca926968fd7562da8",
+    "rust/test-graph": "217d4237168d74c9b0656e7661258892d2c2fde4af055742b99a05bfe12aae99"
+  },
+  "assertion_counts": "[passed, failed]; no skipped or unreached target assertions.",
+  "targets": [
+    {"script": "test/main/vertical-lines-test", "before_c": [3, 0], "before_rust": [0, 3], "after_c": [3, 0], "after_rust": [3, 0]},
+    {"script": "test/main/view-split-test", "before_c": [4, 0], "before_rust": [3, 1], "after_c": [4, 0], "after_rust": [4, 0]},
+    {"script": "test/regressions/github-434-test", "before_c": [3, 0], "before_rust": [1, 2], "after_c": [3, 0], "after_rust": [3, 0]}
+  ],
+  "paired_command": "python3 rust/tests/upstream-suite.py <the 14 scripts listed below> --output <receipt>",
+  "paired_summary": {"c_scripts_pass": 14, "rust_scripts_pass": 14, "c_assertions_pass": 100, "rust_assertions_pass": 100, "failed": 0, "skipped": 0, "unreached": 0, "exit_code": 0},
+  "paired_scripts": [
+    {"script": "test/diff/line-number-test", "c_pass": 1, "rust_pass": 1},
+    {"script": "test/diff/wrap-lines-test", "c_pass": 1, "rust_pass": 1},
+    {"script": "test/main/date-test", "c_pass": 8, "rust_pass": 8},
+    {"script": "test/main/default-test", "c_pass": 6, "rust_pass": 6},
+    {"script": "test/main/emoji-test", "c_pass": 6, "rust_pass": 6},
+    {"script": "test/main/search-test", "c_pass": 8, "rust_pass": 8},
+    {"script": "test/main/vertical-lines-test", "c_pass": 3, "rust_pass": 3},
+    {"script": "test/main/view-split-test", "c_pass": 4, "rust_pass": 4},
+    {"script": "test/reflog/default-test", "c_pass": 1, "rust_pass": 1},
+    {"script": "test/refs/default-test", "c_pass": 2, "rust_pass": 2},
+    {"script": "test/regressions/github-434-test", "c_pass": 3, "rust_pass": 3},
+    {"script": "test/stash/start-on-line-test", "c_pass": 1, "rust_pass": 1},
+    {"script": "test/tigrc/view-column-test", "c_pass": 2, "rust_pass": 2},
+    {"script": "test/tigrc/width-test", "c_pass": 54, "rust_pass": 54}
+  ],
+  "edge_command": "python3 rust/tests/pane-layout.py",
+  "edge_exit_code": 0,
+  "edge_results": [
+    "PASS: odd width and child refresh",
+    "PASS: parent refresh",
+    "PASS: selected long author",
+    "PASS: minimum child width",
+    "PASS: minimum parent width",
+    "PASS: absolute child width",
+    "PASS: scroll narrow parent",
+    "PASS: search offscreen title",
+    "PASS: unicode delimiter",
+    "PASS: scroll first column",
+    "PASS: line scroll exposes rows",
+    "PASS: relative date in narrow pane",
+    "PASS: narrow reflog author",
+    "PASS: restore parent width",
+    "PASS: lightweight describe only",
+    "PASS: annotated describe only",
+    "PASS: preserve Unicode whitespace"
+  ],
+  "validation": [
+    {"command": "cargo fmt --check", "exit_code": 0},
+    {"command": "cargo test --locked", "exit_code": 0, "tests_passed": 90},
+    {"command": "cargo clippy --locked --all-targets -- -D warnings", "exit_code": 0}
+  ],
+  "baseline_diff_excerpts": [
+    {"script": "test/main/vertical-lines-test", "changed_lines": ["-   | 2010-03-29 17:15 +0000 Jørgen Thy~ |   | Refs: [master], {origin/master}, {", "+   │ 2010-03-29 17:15 +0000 Jørgen Thyge|   | Refs: [master], {origin/master}, {"]},
+    {"script": "test/main/view-split-test", "changed_lines": ["-2010-04-07 05:37 +0 |commit 5cb3412a5e06e506840495b91acc885037a48b72", "+2010-04-07 05:37 +00|commit 5cb3412a5e06e506840495b91acc885037a48b72"]},
+    {"script": "test/regressions/github-434-test", "changed_lines": ["+Refs: v1.0-12-g2843bfd"]}
+  ],
+  "diff_excerpt_note": "Representative changed lines from the original failed comparisons; - expected C, + actual Rust. Repeated rows and passing transcripts omitted.",
+  "verdict": "PASS_SELECTED_SCRIPTS"
+}
