@@ -1,0 +1,1037 @@
+{
+  "schema": 1,
+  "slice": "Rust forwarded show stdin",
+  "base_commit": "62d518c7be3d561eed6eef69bd08e2684a41ef52",
+  "source_commit": "ecd5298d208a85dfe91e692bcdaf840677995577",
+  "source_identity": {
+    "algorithm": "sha256 of sorted compact JSON path-to-sha256 map",
+    "sha256": "c9c148b521e68b3d243a25b6e80965e8137c077ac160262a8a39913355c84b96",
+    "files": {
+      "Cargo.lock": "7f9d3e6d2f4d911c6d664fc0262cb8372c15107aef416a069d26b6c6f4a527ab",
+      "Cargo.toml": "2a4246632b36ca9defc3fb89312e983b474db8bf2775bf7699232041046a0a0a",
+      "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
+      "rust/blame_options.rs": "3428dde1443dae5234bf6f2b5786568858d304af86e265a2e58e323f2b462ae0",
+      "rust/commands.rs": "4ccff24976180c3cab67a33b5834911360b7fc60b4ed8d8ed34ebb04b5d45ed2",
+      "rust/config.rs": "adf1be06bea100489c8087d06da4ee6ffe6723ec1abedb03ceb47099cde24eab",
+      "rust/date.rs": "51d16041689246691bcfacc8a2f2654e39ae2a123c5aec770c449bfc6ced24f4",
+      "rust/file_finder.rs": "982467deb7b9369b1d2c8f2dd981fb27a384dfa252c8ac8cf9b778be99d89a78",
+      "rust/git.rs": "a597a69a4078459468c7cc3daf4802edf77f25b61df202bcf2ecd38a843a7071",
+      "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
+      "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+      "rust/grep.rs": "1106be2cb45406fb3ffc4324cd2ab5ac005b970647b2fae5532a76ad9dab866d",
+      "rust/help_view.rs": "4e493d2f6073c2b379361f1a9564b71bdd1d20fdc1e788c628d2a0ecf6dc60ec",
+      "rust/lib.rs": "05976acfe0d048e9e8f0e7ef1a773c6c6e7c7c954611cb68ef0d47f881e7e6fe",
+      "rust/line.rs": "db277d47a595ce2642455b09bd074bdfaad3204c26c7d52565692a7642726e69",
+      "rust/main.rs": "f5d686e26bcfae13d0b0cdf094fde0d7b817d0de659b8b178e0f7ff7778a9c3d",
+      "rust/model.rs": "d00793ef4520c705b5e6b51c5820285c4f593bb29885e09705deac4609f88b0f",
+      "rust/options_catalog.rs": "e914dd441803230f2b327a6eac49c8575ffd8c0f0a05f9829ec1b6748c21f162",
+      "rust/patch.rs": "481834376bfa687202f05d562f48e6958f6e7887a5203c0dde76d9febd07561a",
+      "rust/prompt.rs": "a58a905ed95dd95a6df871964cd1ab520736f32462b4805fe0fcc8aa0d150082",
+      "rust/refs_view.rs": "88d0406fe0d2ca05587ce6327b2f99a5f52d60704ae31d014e9e93655d181414",
+      "rust/render.rs": "fceae91968717a44ef2cff44bc3702a0c145ff48abff9b6e83e7cec7820aab9c",
+      "rust/request.rs": "d86fb0b900878ea116c17bd6a431b450d34999fd113770b6f9e0cb39ff88deb8",
+      "rust/status_ops.rs": "81deb4939150d8c5296b71d6df456eefc07dad306d1b6c872f7d7951ec0b3767",
+      "rust/stdin_show.rs": "4930776c25c247e073c886749a787ae53c64f9c4faef626a006803f3d8825dd3",
+      "rust/tests/blame-navigation.py": "bc7b60c9821929dca18484ccc5e912f34e10bb817807fe760641e9360b365eb7",
+      "rust/tests/blame-options.py": "fa36b3c98529b756a6c2c351ac7caaecdf94e7542843613f603f295d27e4f7f3",
+      "rust/tests/blame-review.py": "12d94d23c4a2466e4150fee7c30f38534c5c7dfdda680ff8b15492f8d734a973",
+      "rust/tests/command-variable.py": "af96d1c3ad5f02a9402ce76d5cec3f2443858aa247b19b3fe25225854a0ba3b5",
+      "rust/tests/commit-order-filter.py": "6ef83a18283dcfa477c15af9d158e67360c0d255d17b26dd35feaa28ca97033d",
+      "rust/tests/config-recovery.py": "0bd908d544c7ea3cb94a9a4e109b9b81dfdaf626e25e795ceed0eb87c829851a",
+      "rust/tests/date-compatibility.py": "730fb29be21cd0eab61e97d7789116505227d4d58fe70640af4d9acff2c205fa",
+      "rust/tests/date-percent-s.py": "3a837e0703587ba8f9909d630d700bd17f14bfc34b1e1fe105201e7600df6c4c",
+      "rust/tests/deleted-line.py": "7579519586ee8a468f7c77c443686328a4fc27b225d2c529f796bb49bf1f189d",
+      "rust/tests/diff-input.py": "a3b5c4ab386484e78f959b469c76a16e53ebbaa69983ad7f157104fa0f3474c3",
+      "rust/tests/diff-navigation.py": "ac38d3cb56fc1bad1b628465cc85d67446e0439e6317d25a3e723c621b99e639",
+      "rust/tests/diff-pipeline.py": "a41f9d885d13bce4cafca7ca384fc872162ecc0e0342cc8c7fd94f6cd699214b",
+      "rust/tests/diff-view-export.py": "eecd0e0592651fc2f8f2273216e21103bf9fd115dd353aa92b71dcf8e2c5b5b4",
+      "rust/tests/file-finder.py": "890c7bfb000bd10c7b33d162b7104e619997c2d94b9fdefb4b8c10df6886f505",
+      "rust/tests/git-alias.py": "6efffb7a05e0c2d05ef2e2114e5300df2b58e07a6644dfc4a1492e46d29fd465",
+      "rust/tests/graph-differential.py": "666efeca9ee6cd79cb8bd70cf5639f00438a6b6dff7135ad03f98e53de8d7c8e",
+      "rust/tests/graph-v1-differential.py": "9e144d33dd228875d5a90b8068871102139ce3989324d98e6ffc5ce7d8830ace",
+      "rust/tests/grep-revisions.py": "ccdfa197053cbcb49e2db32f2045d4351c2ac419afcd8846ee957c0ca40af0e3",
+      "rust/tests/key-bindings.py": "5f5db624a034e053169d928cd4f9f33e7a5f020d82633fed8903a81fbde5f5ec",
+      "rust/tests/main-command-refresh.py": "8516d8d98e1a0b483cd66d8b648cce1c51003617a37d7fcda9ac8fa3c43ce7aa",
+      "rust/tests/mode-only.py": "13e6a6d5da8e64ea2b387bb6fe0c32f56d4d7d127f275b53de49f4de03c8a490",
+      "rust/tests/pane-layout.py": "597d6ae6c6915032b0ffc941cb94cca319fb0c8d8450ba23ab5730dd0f020452",
+      "rust/tests/patch-mode.py": "f24f15a138d1bba46dd9675baf65b503a4bf66a97f6d37ab44a80ad30aed464b",
+      "rust/tests/prompt-history-pty.py": "902b132906f5ea41975fb917a50070394ebd8570a80477ef13db1a5f27f97a12",
+      "rust/tests/reflog-stash-navigation.py": "2e01d6767345a562d6218d5a8619a7eda2f2136cf24692b7ab754debf2ef90cb",
+      "rust/tests/refs-settings.py": "e372a42148b1bb6b75ad63dcacd320c824b876051449d1d9bcfbcf66325392f2",
+      "rust/tests/rename-selection.py": "3226ef2f0051fb8fa4202150980101cbd6b015a02445fc1dee181a98ab75f052",
+      "rust/tests/selected-branch.py": "4b9f76077670b19194666dcce1de4c30a4ba55b98cf4434b29b3eceb015ae359",
+      "rust/tests/split-chunk.py": "4b130fbc40462b06d609ce9c01bfc19525e92542ddae76da5c3da149211b0611",
+      "rust/tests/status-filter.py": "f59fae82a50882417f79c2d82f37275c23d1fabd1ca78a16dcd3d7d12ddf75c6",
+      "rust/tests/status-revert.py": "b8c0fbaa533ea6da7f9c496ce66df3de222126d7a0a1ab0a453bf4c74f31baeb",
+      "rust/tests/stdin-history.py": "c3c62d87506edc45539c4161381add43c7ce1da288a40c7e18a5cac3c41449bf",
+      "rust/tests/stdin-show.py": "190d4c141a60769b5413ede64dc43d8abda49d6181175b07eb25dcbc77e5b22e",
+      "rust/tests/terminal-smoke.py": "a09c21e70201587e58c116f2d9a9f7849c6472da6ebe3c0750dd56eb562173a4",
+      "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
+      "rust/tests/view-export.py": "567b105b773dcb066f64e5c80b2561fd8f2ab2e3ba52367f5b58dda86bcad002",
+      "rust/tests/watch-pty.py": "2547e0be6a00c6506784ef1b696b1615db25dbcc6e7250ce6cca529d6be378d4",
+      "rust/tests/wrap-rendering.py": "551b8200fea5d62e92a676b1b28c428ef57854449c83fb5bd5459497daaaec5e",
+      "rust/trace.rs": "4fb87248de03495a20b7d4f3863c971c30000a07c1f688d55b2625b22bcf8c23",
+      "rust/tree_view.rs": "cbc6ce461b63617cfc8e0d9af890aaa15fea14c382f930cb99a55ffbdafddb51",
+      "rust/view_export.rs": "92b2fd6fe61198b2d832305b4dbec2899ee646fa446bdf6178d89092c3b97117",
+      "rust/watch.rs": "851c479af44000c515ee5949416cb3f114f62b1b98c610d967d4e8fab296c81c",
+      "tests/watch.rs": "c278433a8eb7a01076f848e90061e1674adc5047928c95a1b463f514379f2efa",
+      "tigrc": "aa897801785995fec07f43cedb3dee06cf2124e5bd1475d6e22ba7badfcded5b"
+    }
+  },
+  "toolchain": "rustc 1.81.0 (eeb90cda1 2024-09-04)",
+  "binaries": {
+    "rust": {
+      "path": "target/release/tig",
+      "sha256": "b7331517fd601efce06c1f244da5925ad79747bba1c0649c815d2184e49009a5"
+    },
+    "c": {
+      "path": "src/tig",
+      "sha256": "74ee42647b14654cb88dbba376a015779da8ef709b02a08c2f1f82853a705a50"
+    }
+  },
+  "checks": [
+    {
+      "command": "rustup run 1.81.0 cargo fmt --all -- --check",
+      "exit": 0
+    },
+    {
+      "command": "rustup run 1.81.0 cargo test --locked",
+      "exit": 0,
+      "passed": 117
+    },
+    {
+      "command": "rustup run 1.81.0 cargo clippy --locked --all-targets -- -D warnings",
+      "exit": 0
+    },
+    {
+      "command": "PATH=<Rust 1.81.0 bin>:$PATH make rust-test-binaries",
+      "exit": 0
+    },
+    {
+      "command": "python3 rust/tests/stdin-show.py",
+      "exit": 0,
+      "scenarios": 34,
+      "executions": {
+        "c": 33,
+        "rust": 34
+      }
+    },
+    {
+      "command": "python3 rust/tests/reflog-stash-navigation.py",
+      "exit": 0,
+      "output": "PASS: reflog selects older entry, opens main, returns and refreshes\nPASS: stash selects older entry, opens diff, returns and refreshes\nPASS: paired C/Rust reflog filter ['--grep-reflog=checkout']\nPASS: paired C/Rust reflog filter ['--grep-reflog=moving from master to topic']\nPASS: paired C/Rust reflog filter ['-g']\nPASS: paired C/Rust reflog filter ['--walk-reflogs']"
+    }
+  ],
+  "pipeline_results": [
+    {
+      "case": "many-commits",
+      "mode": "c",
+      "git_calls": 10,
+      "seconds": 0.18289679199999975
+    },
+    {
+      "case": "many-commits",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "many-commits",
+      "mode": "rust",
+      "git_calls": 20,
+      "seconds": 0.3466738330000001
+    },
+    {
+      "case": "many-commits",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "tagged-blob-text",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "tagged-blob-text",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "tagged-blob-text",
+      "intentional_difference": "Do not describe invalid commit-shaped blob prose with an unrelated tag",
+      "c_export": "View: diff\nRef: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nDimensions: height=28 width=80\nPosition: offset=0 column=0 lineno=0\nline[  0] type=commit selected=1\nline[  0] cells=1 text=[commit aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]\nline[  1] type=pp-refs selected=0\nline[  1] cells=1 text=[Refs: v1-2-g22cf092]\nline[  2] type=default selected=0\nline[  2] cells=1 text=[valid blob data]\n",
+      "rust_export": "View: diff\nRef: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nDimensions: height=28 width=80\nPosition: offset=0 column=0 lineno=0\nline[  0] type=commit selected=1\nline[  0] cells=1 text=[commit aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]\nline[  1] type=default selected=0\nline[  1] cells=1 text=[valid blob data]\n",
+      "c_refresh": "View: diff\nRef: 22cf092b4840cf9ada8cba696a0653c1b3b0b418\nDimensions: height=28 width=80\nPosition: offset=0 column=0 lineno=0\nline[  0] type=commit selected=1\nline[  0] cells=1 text=[commit 22cf092b4840cf9ada8cba696a0653c1b3b0b418]\nline[  1] type=pp-refs selected=0\nline[  1] cells=1 text=[Refs: [master]]\nline[  2] type= selected=0\nline[  2] cells=1 text=[Author:     Tester <test@example.com>]\nline[  3] type= selected=0\nline[  3] cells=1 text=[AuthorDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  4] type= selected=0\nline[  4] cells=1 text=[Commit:     Tester <test@example.com>]\nline[  5] type= selected=0\nline[  5] cells=1 text=[CommitDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  6] type=default selected=0\nline[  6] cells=1 text=[]\nline[  7] type=default selected=0\nline[  7] cells=1 text=[    third]\nline[  8] type=diff-start selected=0\nline[  8] cells=1 text=[---]\nline[  9] type=diff-stat selected=0\nline[  9] cells=4 text=[ --output=literal ][| 2 ][+][-]\nline[ 10] type=diff-stat selected=0\nline[ 10] cells=4 text=[ sub/space name   ][| 3 ][++][-]\nline[ 11] type=default selected=0\nline[ 11] cells=1 text=[ 2 files changed, 3 insertions(+), 2 deletions(-)]\nline[ 12] type=default selected=0\nline[ 12] cells=1 text=[]\nline[ 13] type=diff-header selected=0\nline[ 13] cells=1 text=[diff --git a/--output=literal b/--output=literal]\nline[ 14] type=diff-index selected=0\nline[ 14] cells=1 text=[index e019be0..234496b 100644]\nline[ 15] type=diff-del-file selected=0\nline[ 15] cells=1 text=[--- a/--output=literal]\nline[ 16] type=diff-add-file selected=0\nline[ 16] cells=1 text=[+++ b/--output=literal]\nline[ 17] type=diff-chunk selected=0\nline[ 17] cells=2 text=[@@ -1 +1 @@][]\nline[ 18] type=diff-del selected=0\nline[ 18] cells=1 text=[-second]\nline[ 19] type=diff-add selected=0\nline[ 19] cells=1 text=[+third]\nline[ 20] type=diff-header selected=0\nline[ 20] cells=1 text=[diff --git a/sub/space name b/sub/space name]\nline[ 21] type=diff-index selected=0\nline[ 21] cells=1 text=[index 476a325..77f533b 100644]\nline[ 22] type=diff-del-file selected=0\nline[ 22] cells=1 text=[--- a/sub/space name]\nline[ 23] type=diff-add-file selected=0\nline[ 23] cells=1 text=[+++ b/sub/space name]\nline[ 24] type=diff-chunk selected=0\nline[ 24] cells=2 text=[@@ -1,2 +1,3 @@][]\nline[ 25] type=default selected=0\nline[ 25] cells=1 text=[ line]\nline[ 26] type=diff-del selected=0\nline[ 26] cells=1 text=[-second]\nline[ 27] type=diff-add selected=0\nline[ 27] cells=1 text=[+line]\nline[ 28] type=diff-add selected=0\nline[ 28] cells=1 text=[+third]\n",
+      "rust_refresh": "View: diff\nRef: 22cf092b4840cf9ada8cba696a0653c1b3b0b418\nDimensions: height=28 width=80\nPosition: offset=0 column=0 lineno=0\nline[  0] type=commit selected=1\nline[  0] cells=1 text=[commit 22cf092b4840cf9ada8cba696a0653c1b3b0b418]\nline[  1] type=pp-refs selected=0\nline[  1] cells=1 text=[Refs: [master], v1-2-g22cf092]\nline[  2] type= selected=0\nline[  2] cells=1 text=[Author:     Tester <test@example.com>]\nline[  3] type= selected=0\nline[  3] cells=1 text=[AuthorDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  4] type= selected=0\nline[  4] cells=1 text=[Commit:     Tester <test@example.com>]\nline[  5] type= selected=0\nline[  5] cells=1 text=[CommitDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  6] type=default selected=0\nline[  6] cells=1 text=[]\nline[  7] type=default selected=0\nline[  7] cells=1 text=[    third]\nline[  8] type=diff-start selected=0\nline[  8] cells=1 text=[---]\nline[  9] type=diff-stat selected=0\nline[  9] cells=4 text=[ --output=literal ][| 2 ][+][-]\nline[ 10] type=diff-stat selected=0\nline[ 10] cells=4 text=[ sub/space name   ][| 3 ][++][-]\nline[ 11] type=default selected=0\nline[ 11] cells=1 text=[ 2 files changed, 3 insertions(+), 2 deletions(-)]\nline[ 12] type=default selected=0\nline[ 12] cells=1 text=[]\nline[ 13] type=diff-header selected=0\nline[ 13] cells=1 text=[diff --git a/--output=literal b/--output=literal]\nline[ 14] type=diff-index selected=0\nline[ 14] cells=1 text=[index e019be0..234496b 100644]\nline[ 15] type=diff-del-file selected=0\nline[ 15] cells=1 text=[--- a/--output=literal]\nline[ 16] type=diff-add-file selected=0\nline[ 16] cells=1 text=[+++ b/--output=literal]\nline[ 17] type=diff-chunk selected=0\nline[ 17] cells=2 text=[@@ -1 +1 @@][]\nline[ 18] type=diff-del selected=0\nline[ 18] cells=1 text=[-second]\nline[ 19] type=diff-add selected=0\nline[ 19] cells=1 text=[+third]\nline[ 20] type=diff-header selected=0\nline[ 20] cells=1 text=[diff --git a/sub/space name b/sub/space name]\nline[ 21] type=diff-index selected=0\nline[ 21] cells=1 text=[index 476a325..77f533b 100644]\nline[ 22] type=diff-del-file selected=0\nline[ 22] cells=1 text=[--- a/sub/space name]\nline[ 23] type=diff-add-file selected=0\nline[ 23] cells=1 text=[+++ b/sub/space name]\nline[ 24] type=diff-chunk selected=0\nline[ 24] cells=2 text=[@@ -1,2 +1,3 @@][]\nline[ 25] type=default selected=0\nline[ 25] cells=1 text=[ line]\nline[ 26] type=diff-del selected=0\nline[ 26] cells=1 text=[-second]\nline[ 27] type=diff-add selected=0\nline[ 27] cells=1 text=[+line]\nline[ 28] type=diff-add selected=0\nline[ 28] cells=1 text=[+third]\n"
+    },
+    {
+      "case": "blob-commit-text",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "blob-commit-text",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-all",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-all",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-some",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-some",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-at-eol",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-at-eol",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-no",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-no",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "tagged-range",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "tagged-range",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "mailmap-no",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "mailmap-no",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "mailmap-yes",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "mailmap-yes",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "notes",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "notes",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "one",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "one",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-tree",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-tree",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-second-tree",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-second-tree",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-blame",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-blame",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "empty",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "empty",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "duplicate",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "duplicate",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "no-newline",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "no-newline",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-second-stat",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-second-stat",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-second-stat",
+      "intentional_difference": "C jumps to first commit; Rust stays in selected second commit",
+      "c_export": "View: diff\nRef: Changes to '--output=literal'\nDimensions: height=28 width=80\nPosition: offset=0 column=0 lineno=13\nline[  0] type=commit selected=0\nline[  0] cells=1 text=[commit 22cf092b4840cf9ada8cba696a0653c1b3b0b418]\nline[  1] type=pp-refs selected=0\nline[  1] cells=1 text=[Refs: [master]]\nline[  2] type= selected=0\nline[  2] cells=1 text=[Author:     Tester <test@example.com>]\nline[  3] type= selected=0\nline[  3] cells=1 text=[AuthorDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  4] type= selected=0\nline[  4] cells=1 text=[Commit:     Tester <test@example.com>]\nline[  5] type= selected=0\nline[  5] cells=1 text=[CommitDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  6] type=default selected=0\nline[  6] cells=1 text=[]\nline[  7] type=default selected=0\nline[  7] cells=1 text=[    third]\nline[  8] type=diff-start selected=0\nline[  8] cells=1 text=[---]\nline[  9] type=diff-stat selected=0\nline[  9] cells=4 text=[ --output=literal ][| 2 ][+][-]\nline[ 10] type=diff-stat selected=0\nline[ 10] cells=4 text=[ sub/space name   ][| 3 ][++][-]\nline[ 11] type=default selected=0\nline[ 11] cells=1 text=[ 2 files changed, 3 insertions(+), 2 deletions(-)]\nline[ 12] type=default selected=0\nline[ 12] cells=1 text=[]\nline[ 13] type=diff-header selected=1\nline[ 13] cells=1 text=[diff --git a/--output=literal b/--output=literal]\nline[ 14] type=diff-index selected=0\nline[ 14] cells=1 text=[index e019be0..234496b 100644]\nline[ 15] type=diff-del-file selected=0\nline[ 15] cells=1 text=[--- a/--output=literal]\nline[ 16] type=diff-add-file selected=0\nline[ 16] cells=1 text=[+++ b/--output=literal]\nline[ 17] type=diff-chunk selected=0\nline[ 17] cells=2 text=[@@ -1 +1 @@][]\nline[ 18] type=diff-del selected=0\nline[ 18] cells=1 text=[-second]\nline[ 19] type=diff-add selected=0\nline[ 19] cells=1 text=[+third]\nline[ 20] type=diff-header selected=0\nline[ 20] cells=1 text=[diff --git a/sub/space name b/sub/space name]\nline[ 21] type=diff-index selected=0\nline[ 21] cells=1 text=[index 476a325..77f533b 100644]\nline[ 22] type=diff-del-file selected=0\nline[ 22] cells=1 text=[--- a/sub/space name]\nline[ 23] type=diff-add-file selected=0\nline[ 23] cells=1 text=[+++ b/sub/space name]\nline[ 24] type=diff-chunk selected=0\nline[ 24] cells=2 text=[@@ -1,2 +1,3 @@][]\nline[ 25] type=default selected=0\nline[ 25] cells=1 text=[ line]\nline[ 26] type=diff-del selected=0\nline[ 26] cells=1 text=[-second]\nline[ 27] type=diff-add selected=0\nline[ 27] cells=1 text=[+line]\nline[ 28] type=diff-add selected=0\nline[ 28] cells=1 text=[+third]\nline[ 29] type=default selected=0\nline[ 29] cells=1 text=[]\nline[ 30] type=commit selected=0\nline[ 30] cells=1 text=[commit 1cb4427c7e43554925f82174d82b50e5cc064e3a]\nline[ 31] type= selected=0\nline[ 31] cells=1 text=[Author:     Tester <test@example.com>]\nline[ 32] type= selected=0\nline[ 32] cells=1 text=[AuthorDate: Wed Jan 1 00:00:00 2020 +0000]\nline[ 33] type= selected=0\nline[ 33] cells=1 text=[Commit:     Tester <test@example.com>]\nline[ 34] type= selected=0\nline[ 34] cells=1 text=[CommitDate: Wed Jan 1 00:00:00 2020 +0000]\nline[ 35] type=default selected=0\nline[ 35] cells=1 text=[]\nline[ 36] type=default selected=0\nline[ 36] cells=1 text=[    second]\nline[ 37] type=diff-start selected=0\nline[ 37] cells=1 text=[---]\nline[ 38] type=diff-stat selected=1\nline[ 38] cells=4 text=[ --output=literal ][| 2 ][+][-]\nline[ 39] type=diff-stat selected=0\nline[ 39] cells=4 text=[ sub/space name   ][| 3 ][++][-]\nline[ 40] type=default selected=0\nline[ 40] cells=1 text=[ 2 files changed, 3 insertions(+), 2 deletions(-)]\nline[ 41] type=default selected=0\nline[ 41] cells=1 text=[]\nline[ 42] type=diff-header selected=0\nline[ 42] cells=1 text=[diff --git a/--output=literal b/--output=literal]\nline[ 43] type=diff-index selected=0\nline[ 43] cells=1 text=[index 9c59e24..e019be0 100644]\nline[ 44] type=diff-del-file selected=0\nline[ 44] cells=1 text=[--- a/--output=literal]\nline[ 45] type=diff-add-file selected=0\nline[ 45] cells=1 text=[+++ b/--output=literal]\nline[ 46] type=diff-chunk selected=0\nline[ 46] cells=2 text=[@@ -1 +1 @@][]\nline[ 47] type=diff-del selected=0\nline[ 47] cells=1 text=[-first]\nline[ 48] type=diff-add selected=0\nline[ 48] cells=1 text=[+second]\nline[ 49] type=diff-header selected=0\nline[ 49] cells=1 text=[diff --git a/sub/space name b/sub/space name]\nline[ 50] type=diff-index selected=0\nline[ 50] cells=1 text=[index 9c59e24..476a325 100644]\nline[ 51] type=diff-del-file selected=0\nline[ 51] cells=1 text=[--- a/sub/space name]\nline[ 52] type=diff-add-file selected=0\nline[ 52] cells=1 text=[+++ b/sub/space name]\nline[ 53] type=diff-chunk selected=0\nline[ 53] cells=2 text=[@@ -1 +1,2 @@][]\nline[ 54] type=diff-del selected=0\nline[ 54] cells=1 text=[-first]\nline[ 55] type=diff-add selected=0\nline[ 55] cells=1 text=[+line]\nline[ 56] type=diff-add selected=0\nline[ 56] cells=1 text=[+second]\n",
+      "rust_export": "View: diff\nRef: Changes to '--output=literal'\nDimensions: height=28 width=80\nPosition: offset=22 column=0 lineno=42\nline[  0] type=commit selected=0\nline[  0] cells=1 text=[commit 22cf092b4840cf9ada8cba696a0653c1b3b0b418]\nline[  1] type=pp-refs selected=0\nline[  1] cells=1 text=[Refs: [master]]\nline[  2] type= selected=0\nline[  2] cells=1 text=[Author:     Tester <test@example.com>]\nline[  3] type= selected=0\nline[  3] cells=1 text=[AuthorDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  4] type= selected=0\nline[  4] cells=1 text=[Commit:     Tester <test@example.com>]\nline[  5] type= selected=0\nline[  5] cells=1 text=[CommitDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  6] type=default selected=0\nline[  6] cells=1 text=[]\nline[  7] type=default selected=0\nline[  7] cells=1 text=[    third]\nline[  8] type=diff-start selected=0\nline[  8] cells=1 text=[---]\nline[  9] type=diff-stat selected=0\nline[  9] cells=4 text=[ --output=literal ][| 2 ][+][-]\nline[ 10] type=diff-stat selected=0\nline[ 10] cells=4 text=[ sub/space name   ][| 3 ][++][-]\nline[ 11] type=default selected=0\nline[ 11] cells=1 text=[ 2 files changed, 3 insertions(+), 2 deletions(-)]\nline[ 12] type=default selected=0\nline[ 12] cells=1 text=[]\nline[ 13] type=diff-header selected=0\nline[ 13] cells=1 text=[diff --git a/--output=literal b/--output=literal]\nline[ 14] type=diff-index selected=0\nline[ 14] cells=1 text=[index e019be0..234496b 100644]\nline[ 15] type=diff-del-file selected=0\nline[ 15] cells=1 text=[--- a/--output=literal]\nline[ 16] type=diff-add-file selected=0\nline[ 16] cells=1 text=[+++ b/--output=literal]\nline[ 17] type=diff-chunk selected=0\nline[ 17] cells=2 text=[@@ -1 +1 @@][]\nline[ 18] type=diff-del selected=0\nline[ 18] cells=1 text=[-second]\nline[ 19] type=diff-add selected=0\nline[ 19] cells=1 text=[+third]\nline[ 20] type=diff-header selected=0\nline[ 20] cells=1 text=[diff --git a/sub/space name b/sub/space name]\nline[ 21] type=diff-index selected=0\nline[ 21] cells=1 text=[index 476a325..77f533b 100644]\nline[ 22] type=diff-del-file selected=0\nline[ 22] cells=1 text=[--- a/sub/space name]\nline[ 23] type=diff-add-file selected=0\nline[ 23] cells=1 text=[+++ b/sub/space name]\nline[ 24] type=diff-chunk selected=0\nline[ 24] cells=2 text=[@@ -1,2 +1,3 @@][]\nline[ 25] type=default selected=0\nline[ 25] cells=1 text=[ line]\nline[ 26] type=diff-del selected=0\nline[ 26] cells=1 text=[-second]\nline[ 27] type=diff-add selected=0\nline[ 27] cells=1 text=[+line]\nline[ 28] type=diff-add selected=0\nline[ 28] cells=1 text=[+third]\nline[ 29] type=default selected=0\nline[ 29] cells=1 text=[]\nline[ 30] type=commit selected=0\nline[ 30] cells=1 text=[commit 1cb4427c7e43554925f82174d82b50e5cc064e3a]\nline[ 31] type= selected=0\nline[ 31] cells=1 text=[Author:     Tester <test@example.com>]\nline[ 32] type= selected=0\nline[ 32] cells=1 text=[AuthorDate: Wed Jan 1 00:00:00 2020 +0000]\nline[ 33] type= selected=0\nline[ 33] cells=1 text=[Commit:     Tester <test@example.com>]\nline[ 34] type= selected=0\nline[ 34] cells=1 text=[CommitDate: Wed Jan 1 00:00:00 2020 +0000]\nline[ 35] type=default selected=0\nline[ 35] cells=1 text=[]\nline[ 36] type=default selected=0\nline[ 36] cells=1 text=[    second]\nline[ 37] type=diff-start selected=0\nline[ 37] cells=1 text=[---]\nline[ 38] type=diff-stat selected=0\nline[ 38] cells=4 text=[ --output=literal ][| 2 ][+][-]\nline[ 39] type=diff-stat selected=0\nline[ 39] cells=4 text=[ sub/space name   ][| 3 ][++][-]\nline[ 40] type=default selected=0\nline[ 40] cells=1 text=[ 2 files changed, 3 insertions(+), 2 deletions(-)]\nline[ 41] type=default selected=0\nline[ 41] cells=1 text=[]\nline[ 42] type=diff-header selected=1\nline[ 42] cells=1 text=[diff --git a/--output=literal b/--output=literal]\nline[ 43] type=diff-index selected=0\nline[ 43] cells=1 text=[index 9c59e24..e019be0 100644]\nline[ 44] type=diff-del-file selected=0\nline[ 44] cells=1 text=[--- a/--output=literal]\nline[ 45] type=diff-add-file selected=0\nline[ 45] cells=1 text=[+++ b/--output=literal]\nline[ 46] type=diff-chunk selected=0\nline[ 46] cells=2 text=[@@ -1 +1 @@][]\nline[ 47] type=diff-del selected=0\nline[ 47] cells=1 text=[-first]\nline[ 48] type=diff-add selected=0\nline[ 48] cells=1 text=[+second]\nline[ 49] type=diff-header selected=0\nline[ 49] cells=1 text=[diff --git a/sub/space name b/sub/space name]\nline[ 50] type=diff-index selected=0\nline[ 50] cells=1 text=[index 9c59e24..476a325 100644]\nline[ 51] type=diff-del-file selected=0\nline[ 51] cells=1 text=[--- a/sub/space name]\nline[ 52] type=diff-add-file selected=0\nline[ 52] cells=1 text=[+++ b/sub/space name]\nline[ 53] type=diff-chunk selected=0\nline[ 53] cells=2 text=[@@ -1 +1,2 @@][]\nline[ 54] type=diff-del selected=0\nline[ 54] cells=1 text=[-first]\nline[ 55] type=diff-add selected=0\nline[ 55] cells=1 text=[+line]\nline[ 56] type=diff-add selected=0\nline[ 56] cells=1 text=[+second]\n"
+    },
+    {
+      "case": "context",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "context",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "range",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "range",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "exclude",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "exclude",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "large",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "large",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "cli-path",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "cli-path",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "stdin-path",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "stdin-path",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "literal-option-path",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "literal-option-path",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "subdir-cli",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "subdir-cli",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "subdir-stdin",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "subdir-stdin",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "two-paths",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "two-paths",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "combined-revisions",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "combined-revisions",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "invalid",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "invalid",
+      "mode": "rust",
+      "exit": 1,
+      "pass": true
+    },
+    {
+      "case": "format-injection",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "format-injection",
+      "mode": "rust",
+      "exit": 1,
+      "pass": true
+    },
+    {
+      "case": "output-injection",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "output-injection",
+      "mode": "rust",
+      "exit": 1,
+      "pass": true
+    },
+    {
+      "case": "nul-injection",
+      "mode": "rust",
+      "exit": 1,
+      "pass": true
+    }
+  ],
+  "before": {
+    "source": "1058486e",
+    "binary_sha256": "92366eb52337b2f0266ae1953091b17f77017f7c215d280defdbd9c1b41e5a1d",
+    "cases": [
+      {
+        "case": "one",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "one",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "navigate-blame",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "navigate-blame",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "empty",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "empty",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "duplicate",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "duplicate",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "no-newline",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "no-newline",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "range",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "range",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "exclude",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "exclude",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "large",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "large",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "cli-path",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "cli-path",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "stdin-path",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "stdin-path",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "literal-option-path",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "literal-option-path",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "subdir-cli",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "subdir-cli",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "subdir-stdin",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "subdir-stdin",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "two-paths",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "two-paths",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "combined-revisions",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "combined-revisions",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "invalid",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "invalid",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "format-injection",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "format-injection",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "output-injection",
+        "mode": "c",
+        "exit": 0,
+        "pass": true
+      },
+      {
+        "case": "output-injection",
+        "mode": "rust",
+        "expected_rejection": true
+      },
+      {
+        "case": "nul-injection",
+        "mode": "rust",
+        "expected_rejection": true
+      }
+    ]
+  },
+  "original_scripts": {
+    "command": "PATH=<Rust 1.81.0 bin>:$PATH python3 rust/tests/upstream-suite.py test/diff/diff-context-test test/diff/diff-stat-split-test test/diff/diff-stat-test test/diff/diff-stdin-test test/diff/open-after-split-test test/main/stdin-test",
+    "verdict": "PASS_SELECTED_SCRIPTS",
+    "runs": {
+      "c": {
+        "summary": {
+          "pass": 6
+        },
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-show-stdin/work/tig/src/tig",
+            "sha256": "74ee42647b14654cb88dbba376a015779da8ef709b02a08c2f1f82853a705a50"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-show-stdin/work/tig/test/tools/test-graph",
+            "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+          }
+        },
+        "results": [
+          {
+            "script": "test/diff/diff-context-test",
+            "status": "pass",
+            "assertions": [
+              {
+                "id": "diff-default.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u4.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u5.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u10.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u8.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-default-from-main.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u10-from-main.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u4-from-main.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u5-from-main.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u8-from-main.screen#1",
+                "status": "OK"
+              }
+            ]
+          },
+          {
+            "script": "test/diff/diff-stat-split-test",
+            "status": "pass",
+            "assertions": [
+              {
+                "id": "diff-stat.screen#1",
+                "status": "OK"
+              }
+            ]
+          },
+          {
+            "script": "test/diff/diff-stat-test",
+            "status": "pass",
+            "assertions": [
+              {
+                "id": "view.data#1",
+                "status": "OK"
+              }
+            ]
+          },
+          {
+            "script": "test/diff/diff-stdin-test",
+            "status": "pass",
+            "assertions": [
+              {
+                "id": "diff.screen#1",
+                "status": "OK"
+              }
+            ]
+          },
+          {
+            "script": "test/diff/open-after-split-test",
+            "status": "pass",
+            "assertions": [
+              {
+                "id": "split.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "split-after-next.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-after-next.screen#1",
+                "status": "OK"
+              }
+            ]
+          },
+          {
+            "script": "test/main/stdin-test",
+            "status": "pass",
+            "assertions": [
+              {
+                "id": "main-stdin.screen#1",
+                "status": "OK"
+              }
+            ]
+          }
+        ]
+      },
+      "rust": {
+        "summary": {
+          "pass": 6
+        },
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-show-stdin/work/tig/target/release/tig",
+            "sha256": "b7331517fd601efce06c1f244da5925ad79747bba1c0649c815d2184e49009a5"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-09-27/tig-rust-show-stdin/work/tig/target/release/test-graph",
+            "sha256": "c80df0aaa17d80a77061271f13a90f8a82c0cb6a737f3697c19ce6699031d87c"
+          }
+        },
+        "results": [
+          {
+            "script": "test/diff/diff-context-test",
+            "status": "pass",
+            "assertions": [
+              {
+                "id": "diff-default.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u4.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u5.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u10.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u8.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-default-from-main.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u10-from-main.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u4-from-main.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u5-from-main.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-u8-from-main.screen#1",
+                "status": "OK"
+              }
+            ]
+          },
+          {
+            "script": "test/diff/diff-stat-split-test",
+            "status": "pass",
+            "assertions": [
+              {
+                "id": "diff-stat.screen#1",
+                "status": "OK"
+              }
+            ]
+          },
+          {
+            "script": "test/diff/diff-stat-test",
+            "status": "pass",
+            "assertions": [
+              {
+                "id": "view.data#1",
+                "status": "OK"
+              }
+            ]
+          },
+          {
+            "script": "test/diff/diff-stdin-test",
+            "status": "pass",
+            "assertions": [
+              {
+                "id": "diff.screen#1",
+                "status": "OK"
+              }
+            ]
+          },
+          {
+            "script": "test/diff/open-after-split-test",
+            "status": "pass",
+            "assertions": [
+              {
+                "id": "split.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "split-after-next.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-after-next.screen#1",
+                "status": "OK"
+              }
+            ]
+          },
+          {
+            "script": "test/main/stdin-test",
+            "status": "pass",
+            "assertions": [
+              {
+                "id": "main-stdin.screen#1",
+                "status": "OK"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "independent_read_only_reviews": [
+    {
+      "reviewer": "stdin_release_review",
+      "result": "No remaining P1/P2 after batched metadata fix; independent 120-changing-commit check: Rust 0.21s, C 0.16s."
+    },
+    {
+      "reviewer": "stdin_batch_final_review",
+      "result": "No remaining P1/P2; reviewed final batch validation, input transport, integration, and explicit C differences."
+    }
+  ],
+  "scope_and_limits": [
+    "Original C code and assertions unchanged; no full 154-script run or whole-application benchmark in this slice.",
+    "Input revisions and paths remain bytes; CLI non-UTF-8 argv support remains the existing application limitation.",
+    "C-like textual diff views still recognize commit-shaped prose naming a real commit; this slice does not introduce a structured Git output protocol.",
+    "The two intentional differences and raw dual exports are retained in pipeline_results; they are not claimed as byte-for-byte parity.",
+    "NUL stdin input is rejected by Rust; C truncation behavior is not used as the safety oracle."
+  ]
+}
