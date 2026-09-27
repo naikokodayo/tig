@@ -1334,6 +1334,76 @@ impl App {
         self.center_selection();
         Ok(())
     }
+    fn blame_current_file(&mut self) -> Result<()> {
+        let (path, revision, number) = match self.view.name.as_str() {
+            "blob" => {
+                if self.view.grep_source.as_ref().is_some_and(|hit| hit.cached) {
+                    return Err("Cannot blame an index-only blob".into());
+                }
+                let revision = self.view.grep_source.as_ref().map_or_else(
+                    || self.view.revision.clone(),
+                    |hit| hit.revision.clone().unwrap_or_default(),
+                );
+                (
+                    self.view.path.clone(),
+                    revision,
+                    self.view.source_index(self.view.selected) + 1,
+                )
+            }
+            "status" => {
+                let Item::Status(entry, _) = self.selected() else {
+                    return Err("Nothing to blame here".into());
+                };
+                if entry.index == '?' {
+                    return Err("Nothing to blame here".into());
+                }
+                (entry.path, String::new(), 1)
+            }
+            "stage" => {
+                if self.view.untracked {
+                    return Err("Nothing to blame here".into());
+                }
+                let rows = self.view.source_rows();
+                let selected = self.view.source_index(self.view.selected);
+                let selected = stage_stat_header(rows, selected).unwrap_or(selected);
+                let row = rows.get(selected).ok_or("No file and line to blame")?;
+                let in_hunk = rows[..=selected]
+                    .iter()
+                    .rfind(|row| row.starts_with("@@") || row.starts_with("diff "))
+                    .is_some_and(|row| row.starts_with("@@ "));
+                let deleted = in_hunk && row.starts_with('-');
+                let (path, number) =
+                    diff_target(rows, selected, deleted).ok_or("No file and line to blame")?;
+                if deleted {
+                    let (path, number) = if self.view.staged {
+                        (path, number)
+                    } else {
+                        self.repo()?.index_line_in_head(&path, number)?
+                    };
+                    (path, "HEAD".into(), number)
+                } else {
+                    (path, String::new(), number)
+                }
+            }
+            _ => unreachable!(),
+        };
+        if path.as_os_str().is_empty() {
+            return Err("No file to blame".into());
+        }
+        self.path = path;
+        self.revision = revision;
+        self.open("blame", self.width)?;
+        if let Some(parent) = self.other.take() {
+            self.previous.insert(self.previous.len() - 1, parent);
+        }
+        self.split = false;
+        self.parent_focused = false;
+        self.view.selected = number
+            .saturating_sub(1)
+            .min(self.view.rows.len().saturating_sub(1));
+        self.center_selection();
+        Ok(())
+    }
     fn trace_origin(&mut self, name: &str) -> Result<()> {
         let selected = self.view.source_index(self.view.selected);
         let rows = self.view.source_rows();
@@ -2597,6 +2667,12 @@ impl App {
             "parent" if self.view.name == "tree" => self.tree_parent()?,
             "parent" if self.view.name == "blame" => self.blame_forward(true)?,
             "view-blame" if self.view.name == "blame" => self.blame_forward(false)?,
+            "view-blame" if matches!(self.view.name.as_str(), "stage" | "blob" | "status") => {
+                if let Err(error) = self.blame_current_file() {
+                    self.sync_context();
+                    self.message = error.to_string();
+                }
+            }
             "view-blame" if self.view.name == "grep" => {
                 if let Item::Grep(hit) = self.selected() {
                     self.select_context();
