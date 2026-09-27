@@ -46,6 +46,7 @@ with tempfile.TemporaryDirectory(prefix='tig-grep-revisions-') as temporary:
     (repo / 'sub/file.txt').write_text('WRONG nested worktree\n')
     patterns = directory / 'patterns'
     patterns.write_text('NEEDLE\n')
+    (repo / 'e').write_text('NEEDLE\n')
     config = directory / 'tigrc'
     config.write_text('set vertical-split = no\nset line-graphics = ascii\n')
     env['TIGRC_USER'] = str(config)
@@ -68,6 +69,11 @@ with tempfile.TemporaryDirectory(prefix='tig-grep-revisions-') as temporary:
             assert blob.read_bytes() == refreshed.read_bytes(), (arguments, 'blob refresh changed source')
         return screen.read_bytes(), blob.read_bytes() if enter else b''
     cases = [
+        ['-inw', 'needle', 'HEAD', '--', 'file.txt'],
+        ['-inFeNEEDLE', 'HEAD', '--', 'file.txt'],
+        ['-infe', 'HEAD', '--', 'file.txt'],
+        ['-inf', str(patterns), 'HEAD', '--', 'file.txt'],
+        ['-inm1', 'needle', 'HEAD', '--', 'file.txt'],
         ['-i', 'needle', 'HEAD', '--', 'file.txt'],
         ['-e', 'NEEDLE', 'HEAD', '--', 'file.txt'],
         ['-F', '-eNEEDLE', 'HEAD', '--', 'file.txt'],
@@ -83,7 +89,7 @@ with tempfile.TemporaryDirectory(prefix='tig-grep-revisions-') as temporary:
         assert c == rust, (arguments, c, rust)
         assert b'NEEDLE committed' in rust[1] and b'WRONG worktree' not in rust[1]
         checks.append({'argv': arguments, 'route': 'paired screens and selected revision blob', 'pass': True})
-    for flags in [['-A1'], ['-B', '1'], ['--context=1'], ['-1'], ['-m1', '-C2']]:
+    for flags in [['-inA1'], ['-inB', '1'], ['-inC1'], ['-in1'], ['-inm1', '-C2'], ['-A1'], ['-B', '1'], ['--context=1'], ['-1'], ['-m1', '-C2']]:
         arguments = [*flags, '-e', 'NEEDLE', 'HEAD', '--', 'context.txt']
         c = run('c', arguments)
         rust = run('rust', arguments)
@@ -99,8 +105,10 @@ with tempfile.TemporaryDirectory(prefix='tig-grep-revisions-') as temporary:
         (['-e', 'HEAD', '-e', 'NEEDLE', '--', 'HEAD:literal'], b'NEEDLE colon worktree'),
         (['-i', 'needle', 'literal:colon'], b'NEEDLE implicit colon worktree'),
         (['--cached', '-C1', '-e', 'NEEDLE', '--', 'file.txt'], b'NEEDLE staged'),
+        (['--cached', '-inC1', '-e', 'NEEDLE', '--', 'file.txt'], b'NEEDLE staged'),
         (['--untracked', '-A1', '-e', 'NEEDLE', '--', 'untracked.txt'], b'NEEDLE new file'),
         (['-C1', '-e', 'NEEDLE', '--', '--\nfile'], b'NEEDLE separator path'),
+        (['-inC1', '-e', 'NEEDLE', '--', '--\nfile'], b'NEEDLE separator path'),
         (['-e', 'NEEDLE', '--and', '--not', '-e', 'missing', 'HEAD:sub'], b'NEEDLE nested committed'),
     ]:
         _, blob = run('rust', arguments)

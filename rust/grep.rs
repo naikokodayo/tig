@@ -1,6 +1,7 @@
 // Copyright (c) 2006-2026 Jonas Fonseca <jonas.fonseca@gmail.com>
 // Safe Rust migration of Tig. SPDX-License-Identifier: GPL-2.0-or-later
 use crate::config::Config;
+use std::collections::VecDeque;
 use std::path::{Component, PathBuf};
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
@@ -38,8 +39,34 @@ impl GrepOptions {
         let mut pattern_seen = false;
         let mut positional = false;
         let mut only_matching = false;
-        let mut args = args.iter();
-        while let Some(arg) = args.next() {
+        let mut args: VecDeque<_> = args.iter().cloned().collect();
+        while let Some(mut arg) = args.pop_front() {
+            // Peel only argument-free short flags. Value-taking flags retain the
+            // entire suffix (including leading dashes or Unicode) as their value.
+            if !positional
+                && arg.len() > 2
+                && arg.starts_with('-')
+                && arg.as_bytes()[2] != b'-'
+                && matches!(
+                    arg.as_bytes()[1],
+                    b'i' | b'w'
+                        | b'v'
+                        | b'F'
+                        | b'E'
+                        | b'P'
+                        | b'G'
+                        | b'a'
+                        | b'I'
+                        | b'o'
+                        | b'r'
+                        | b'n'
+                        | b'H'
+                        | b'z'
+                )
+            {
+                args.push_front(format!("-{}", &arg[2..]));
+                arg.truncate(2);
+            }
             if arg == "--" {
                 if !pattern_seen {
                     return Err(
@@ -47,21 +74,21 @@ impl GrepOptions {
                     );
                 }
                 options.args.push(arg.clone());
-                options.args.extend(args.cloned());
+                options.args.extend(args);
                 break;
             }
             if matches!(arg.as_str(), "-e" | "--regexp" | "-f" | "--file") && !positional {
                 let value = args
-                    .next()
+                    .pop_front()
                     .ok_or("Missing Git grep pattern or pattern file")?;
                 let flag = if arg == "--regexp" {
                     "-e"
                 } else if arg == "--file" {
                     "-f"
                 } else {
-                    arg
+                    &arg
                 };
-                options.args.extend([flag.into(), value.clone()]);
+                options.args.extend([flag.into(), value]);
                 pattern_seen = true;
             } else if !positional
                 && (arg.starts_with("-e")
@@ -103,11 +130,12 @@ impl GrepOptions {
                     "-A" | "-B" | "-C" | "--after-context" | "--before-context" | "--context"
                     | "-m" | "--max-count" | "--max-depth" | "--threads" => {
                         let value = inline
-                            .or_else(|| args.next().map(String::as_str))
+                            .map(str::to_owned)
+                            .or_else(|| args.pop_front())
                             .ok_or("Missing Git grep numeric option value")?;
                         if matches!(name, "-m" | "--max-count" | "--max-depth" | "--threads") {
                             // Git validates its own numeric options, including --max-depth=-1.
-                            options.args.extend([name.into(), value.into()]);
+                            options.args.extend([name.into(), value]);
                             continue;
                         }
                         let count = value
@@ -428,6 +456,64 @@ mod tests {
             vec!["needle", "-i"],
             vec!["--no-index", "needle"],
             vec!["-o", "-C1", "needle"],
+        ] {
+            assert!(
+                GrepOptions::parse(&args.into_iter().map(String::from).collect::<Vec<_>>())
+                    .is_err()
+            );
+        }
+    }
+
+    #[test]
+    fn short_clusters_preserve_values_and_boundaries() {
+        for (cluster, expanded) in [
+            (
+                vec!["-inwF", "needle"],
+                vec!["-i", "-n", "-w", "-F", "needle"],
+            ),
+            (vec!["-ivG", "needle"], vec!["-i", "-v", "-G", "needle"]),
+            (
+                vec!["-aIEPrHzo", "needle"],
+                vec!["-a", "-I", "-E", "-P", "-r", "-H", "-z", "-o", "needle"],
+            ),
+            (vec!["-ine作者", "HEAD"], vec!["-i", "-n", "-e作者", "HEAD"]),
+            (
+                vec!["-ine", "-iv", "HEAD"],
+                vec!["-i", "-n", "-e", "-iv", "HEAD"],
+            ),
+            (vec!["-ife", "HEAD"], vec!["-i", "-fe", "HEAD"]),
+            (vec!["-if", "-in", "HEAD"], vec!["-i", "-f", "-in", "HEAD"]),
+            (vec!["-inC2", "needle"], vec!["-i", "-n", "-C2", "needle"]),
+            (vec!["-iA", "2", "needle"], vec!["-i", "-A", "2", "needle"]),
+            (vec!["-iB2", "needle"], vec!["-i", "-B2", "needle"]),
+            (vec!["-im1", "needle"], vec!["-i", "-m1", "needle"]),
+            (vec!["-in2", "needle"], vec!["-i", "-n", "-2", "needle"]),
+            (vec!["-ie--", "--", "-in"], vec!["-i", "-e--", "--", "-in"]),
+        ] {
+            let parse = |args: Vec<&str>| {
+                GrepOptions::parse(&args.into_iter().map(String::from).collect::<Vec<_>>()).unwrap()
+            };
+            let actual = parse(cluster);
+            let expected = parse(expanded);
+            assert_eq!(actual.args, expected.args);
+            assert_eq!(actual.operands, expected.operands);
+            assert_eq!(
+                (actual.before, actual.after),
+                (expected.before, expected.after)
+            );
+        }
+        for args in [
+            vec!["-ie"],
+            vec!["-if"],
+            vec!["-iC"],
+            vec!["-ic", "needle"],
+            vec!["-il", "needle"],
+            vec!["-iq", "needle"],
+            vec!["-i--cached", "needle"],
+            vec!["-i-", "needle"],
+            vec!["-i作者", "needle"],
+            vec!["-ioC1", "needle"],
+            vec!["needle", "-in"],
         ] {
             assert!(
                 GrepOptions::parse(&args.into_iter().map(String::from).collect::<Vec<_>>())
