@@ -38,6 +38,7 @@ impl GrepOptions {
     pub fn parse(args: &[String]) -> Result<Self> {
         let mut options = Self::default();
         let mut pattern_seen = false;
+        let mut pattern_delimited = false;
         let mut positional = false;
         let mut only_matching = false;
         let mut args: VecDeque<_> = args.iter().cloned().collect();
@@ -68,11 +69,17 @@ impl GrepOptions {
                 args.push_front(format!("-{}", &arg[2..]));
                 arg.truncate(2);
             }
+            if pattern_delimited && !pattern_seen {
+                options.args.push(arg);
+                pattern_seen = true;
+                continue;
+            }
             if arg == "--" {
                 if !pattern_seen {
-                    return Err(
-                        "Git grep '--' before a pattern is not supported in the Rust view".into(),
-                    );
+                    pattern_delimited = true;
+                    positional = true;
+                    options.args.push(arg);
+                    continue;
                 }
                 options.args.push(arg.clone());
                 options.args.extend(args);
@@ -219,6 +226,9 @@ impl GrepOptions {
             return Err(
                 "Git grep context with --only-matching is not supported in the Rust view".into(),
             );
+        }
+        if pattern_delimited && !pattern_seen {
+            return Err("Missing Git grep pattern".into());
         }
         Ok(options)
     }
@@ -441,6 +451,9 @@ mod tests {
                 vec!["HEAD"],
             ),
             (vec!["-e", "--", "HEAD"], vec!["HEAD"]),
+            (vec!["--", "-foo"], vec![]),
+            (vec!["--", "-foo", "HEAD", "--", "file"], vec!["HEAD"]),
+            (vec!["--", "--", "HEAD"], vec!["HEAD"]),
             (vec!["--max-depth=-1", "needle", "HEAD"], vec!["HEAD"]),
             (
                 vec!["-e", "one", "--and", "--not", "-e", "two", "HEAD"],
@@ -450,12 +463,15 @@ mod tests {
             let args: Vec<_> = args.into_iter().map(String::from).collect();
             assert_eq!(GrepOptions::parse(&args).unwrap().operands, expected);
         }
+        let args = ["--", "-foo", "HEAD", "--", "file"].map(str::to_owned);
+        assert_eq!(GrepOptions::parse(&args).unwrap().args, args);
         for args in [
-            vec!["--", "needle"],
+            vec!["--"],
             vec!["-C", "-1", "needle"],
             vec!["-e"],
             vec!["--heading", "needle"],
             vec!["needle", "-i"],
+            vec!["--", "-foo", "-i"],
             vec!["--no-index", "needle"],
             vec!["-o", "-C1", "needle"],
         ] {
