@@ -36,4 +36,6 @@ pub mod view_export;
 
 pub mod blame_options;
 
+pub mod blob_editor;
+
 pub mod stdin_show;

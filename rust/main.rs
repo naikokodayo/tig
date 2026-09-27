@@ -195,6 +195,7 @@ struct View {
     stash_diff: bool,
     untracked: bool,
     raw_patch: Vec<u8>,
+    blob_data: Option<Vec<u8>>,
     from_stdin: bool,
     forwarded_stdin: Option<Vec<String>>,
     sort_field: Option<String>,
@@ -226,6 +227,7 @@ impl View {
             stash_diff: false,
             untracked: false,
             raw_patch: Vec::new(),
+            blob_data: None,
             from_stdin: false,
             forwarded_stdin: None,
             sort_field: None,
@@ -377,6 +379,7 @@ struct App {
     finder: Option<FileFinder>,
     previous: Vec<View>,
     pending_command: Option<tig_rs::commands::PreparedCommand>,
+    pending_blob_editor: Option<tig_rs::blob_editor::BlobEditorSnapshot>,
     pending_revert: Option<tig_rs::status_ops::RevertPlan>,
     pending_mergetool: Option<tig_rs::status_ops::MergetoolPlan>,
     prompt_answers: Vec<String>,
@@ -417,7 +420,7 @@ impl App {
             view.sort_reverse = self.view.sort_reverse;
         }
         view.args = self.args.clone();
-        if name != "diff" {
+        if name != "diff" && name != "tree" && !(name == "blob" && view.grep_source.is_none()) {
             view.revision = self.revision.clone();
         }
         view.path = self.path.clone();
@@ -692,6 +695,8 @@ impl App {
             "status" => return self.status_view(self.view.name == "status" && self.view.untracked),
 
             "tree" => {
+                let revision = repo.revision(&self.revision)?;
+                v.revision = revision.clone();
                 let sort = if self.view.name == name {
                     self.view.sort_field.as_deref()
                 } else {
@@ -700,7 +705,7 @@ impl App {
                 for row in tig_rs::tree_view::load(
                     repo,
                     &self.config,
-                    &self.revision,
+                    &revision,
                     &self.path,
                     self.width,
                     sort,
@@ -873,17 +878,22 @@ impl App {
                 if let Some(hit) = &self.view.grep_source {
                     let bytes = repo.grep_blob(hit)?;
                     let mut view = View::text(name, &String::from_utf8_lossy(&bytes));
+                    view.blob_data = Some(bytes);
                     view.grep_source = Some(hit.clone());
                     return Ok(view);
                 }
                 let parent = self.path.parent().unwrap_or(std::path::Path::new(""));
+                let revision = repo.revision(&self.revision)?;
                 let entry = repo
-                    .tree(&self.revision, parent)?
+                    .tree(&revision, parent)?
                     .into_iter()
                     .find(|entry| entry.path == self.path)
                     .ok_or("No selected blob")?;
                 let bytes = repo.blob(&entry.oid)?;
-                return Ok(View::text(name, &String::from_utf8_lossy(&bytes)));
+                let mut view = View::text(name, &String::from_utf8_lossy(&bytes));
+                view.blob_data = Some(bytes);
+                view.revision = revision;
+                return Ok(view);
             }
             "log" => {
                 let mut args = vec![
@@ -981,6 +991,7 @@ impl App {
                 let entry = finder.selected().ok_or("No file selected")?;
                 let bytes = self.repo()?.blob(&entry.oid)?;
                 let mut next = View::text("blob", &String::from_utf8_lossy(&bytes));
+                next.blob_data = Some(bytes);
                 next.path = entry.path.clone();
                 next.revision = finder.revision;
                 next.args = self.args.clone();
@@ -1021,6 +1032,9 @@ impl App {
             }
         };
         self.tree_initialized |= name == "tree";
+        if name == "tree" || (name == "blob" && next.grep_source.is_none()) {
+            self.revision = next.revision.clone();
+        }
         self.previous.push(std::mem::replace(&mut self.view, next));
         Ok(())
     }
@@ -1453,6 +1467,7 @@ impl App {
                 } else {
                     let bytes = self.repo()?.blob(&e.oid)?;
                     let mut v = View::text("blob", &String::from_utf8_lossy(&bytes));
+                    v.blob_data = Some(bytes);
                     v.path = self.path.clone();
                     v.revision = self.revision.clone();
                     v.wrap_text(&self.config, child_width);
@@ -1488,6 +1503,7 @@ impl App {
                 };
                 self.revision = hit.revision.unwrap_or_else(|| "HEAD".into());
                 let mut view = View::text("blob", &String::from_utf8_lossy(&bytes));
+                view.blob_data = Some(bytes);
                 view.grep_source = Some(source);
                 view.path = self.path.clone();
                 view.revision = self.revision.clone();
@@ -1631,7 +1647,7 @@ impl App {
                 _ => None,
             },
             "tree" => match self.selected() {
-                Item::Tree(entry) if entry.kind != "tree" => Some((entry.path, 0)),
+                Item::Tree(entry) if entry.kind == "blob" => Some((entry.path, 0)),
                 _ => None,
             },
             "grep" => match self.selected() {
@@ -1674,11 +1690,73 @@ impl App {
         if !path
             .components()
             .all(|part| matches!(part, std::path::Component::Normal(_)))
-            || !self.repo()?.root.join(&path).is_file()
         {
             self.message = format!("Failed to open file: {}", path.display());
             return Ok(());
         }
+        let repo = self.repo()?;
+        let snapshot_bytes = match self.view.name.as_str() {
+            "tree" => match self.selected() {
+                Item::Tree(entry)
+                    if entry.kind == "blob"
+                        && (repo.bare
+                            || repo.revision(&self.view.revision)? != repo.revision("HEAD")?) =>
+                {
+                    Some(repo.blob(&entry.oid)?)
+                }
+                _ => None,
+            },
+            "blob" => {
+                let bytes = self.view.blob_data.as_ref().ok_or("No displayed blob")?;
+                if let Some(hit) = &self.view.grep_source {
+                    (hit.cached || hit.revision.is_some()).then(|| bytes.clone())
+                } else {
+                    let historical =
+                        repo.revision(&self.view.revision)? != repo.revision("HEAD")?;
+                    let dirty = !historical
+                        && !repo.bare
+                        && !repo
+                            .command([
+                                OsString::from("status"),
+                                OsString::from("--short"),
+                                OsString::from("--"),
+                                path.as_os_str().to_owned(),
+                            ])?
+                            .is_empty();
+                    (historical || repo.bare || dirty).then(|| bytes.clone())
+                }
+            }
+            "grep" => match self.selected() {
+                Item::Grep(hit) if hit.cached || hit.revision.is_some() => {
+                    Some(repo.grep_blob(&hit)?)
+                }
+                _ => None,
+            },
+            _ => None,
+        };
+        let (editor_path, snapshot) = if let Some(bytes) = snapshot_bytes {
+            let snapshot = tig_rs::blob_editor::prepare_bytes(
+                &bytes,
+                path.file_name().unwrap_or(std::ffi::OsStr::new("unknown")),
+            )?;
+            (snapshot.path().to_path_buf(), Some(snapshot))
+        } else {
+            let mut full = repo.root.clone();
+            let safe = path.components().all(|part| {
+                full.push(part);
+                fs::symlink_metadata(&full).is_ok_and(|metadata| !metadata.file_type().is_symlink())
+            });
+            if !safe || !full.is_file() {
+                self.message = format!("Failed to open file: {}", path.display());
+                return Ok(());
+            }
+            let editor_path = if path.to_string_lossy().starts_with('-') {
+                PathBuf::from(".").join(path)
+            } else {
+                path
+            };
+            (editor_path, None)
+        };
         let configured_editor = self
             .repo()?
             .command(["config", "--get", "core.editor"])
@@ -1700,12 +1778,8 @@ impl App {
         if line != 0 && self.config.bool_value("editor-line-number", true) {
             argv.push(format!("+{line}").into());
         }
-        let editor_path = if path.to_string_lossy().starts_with('-') {
-            PathBuf::from(".").join(path)
-        } else {
-            path
-        };
         argv.push(editor_path.into_os_string());
+        self.pending_blob_editor = snapshot;
         self.pending_command = Some(tig_rs::commands::PreparedCommand {
             argv,
             silent: false,
@@ -2743,6 +2817,7 @@ impl App {
                 }
                 self.finish_revert(false)?;
                 if let Some(command) = self.pending_command.take() {
+                    let _blob_editor = self.pending_blob_editor.take();
                     if command.silent && !command.echo {
                         command.run_allow_nonzero(self.repo()?, false, true)?;
                     } else {
@@ -3027,6 +3102,81 @@ mod editor_tests {
     use std::path::PathBuf;
 
     #[test]
+    fn moving_head_cannot_change_the_displayed_edit_target() {
+        let root = std::env::temp_dir().join(format!(
+            "tig-editor-head-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir(&root).unwrap();
+        let git = |args: &[&str]| {
+            let output = std::process::Command::new("git")
+                .current_dir(&root)
+                .args(args)
+                .output()
+                .unwrap();
+            assert!(
+                output.status.success(),
+                "{}",
+                String::from_utf8_lossy(&output.stderr)
+            );
+            String::from_utf8(output.stdout).unwrap().trim().to_owned()
+        };
+        git(&["init", "-q"]);
+        git(&["config", "user.name", "Test"]);
+        git(&["config", "user.email", "test@example.invalid"]);
+        std::fs::write(root.join("file"), b"old\n").unwrap();
+        git(&["add", "file"]);
+        git(&["commit", "-qm", "old"]);
+        let old = git(&["rev-parse", "HEAD"]);
+        std::fs::write(root.join("file"), b"new\n").unwrap();
+        git(&["commit", "-qam", "new"]);
+        let new = git(&["rev-parse", "HEAD"]);
+        let mut app = App {
+            watch: tig_rs::watch::Watch::default(),
+            repo: Some(tig_rs::git::Repository::discover(&root).unwrap()),
+            config: Config::defaults(),
+            view: View::new("main"),
+            help: None,
+            tree_initialized: false,
+            finder: None,
+            previous: vec![],
+            pending_command: None,
+            pending_blob_editor: None,
+            pending_revert: None,
+            pending_mergetool: None,
+            prompt_answers: vec![],
+            other: None,
+            split: false,
+            parent_focused: false,
+            revision: "HEAD".into(),
+            path: PathBuf::new(),
+            args: vec![],
+            message: String::new(),
+            search: String::new(),
+            width: 80,
+            height: 20,
+        };
+        app.open("tree", 80).unwrap();
+        assert_eq!(app.view.revision, new);
+        git(&["reset", "--hard", &old]);
+        app.edit().unwrap();
+        let snapshot = app.pending_blob_editor.take().unwrap();
+        assert_eq!(std::fs::read(snapshot.path()).unwrap(), b"new\n");
+        app.pending_command = None;
+        app.enter(true).unwrap();
+        assert_eq!(app.view.blob_data.as_deref(), Some(&b"new\n"[..]));
+        app.edit().unwrap();
+        let snapshot = app.pending_blob_editor.take().unwrap();
+        assert_eq!(std::fs::read(snapshot.path()).unwrap(), b"new\n");
+        assert_eq!(std::fs::read(root.join("file")).unwrap(), b"old\n");
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
     fn blame_history_path_is_not_a_worktree_edit_target() {
         let raw = format!("{} 1 1\nfilename old/file\n\tcontent\n", "a".repeat(40));
         let line = tig_rs::git::parse_blame(raw.as_bytes()).unwrap().remove(0);
@@ -3043,6 +3193,7 @@ mod editor_tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_blob_editor: None,
             pending_revert: None,
             pending_mergetool: None,
             prompt_answers: vec![],
@@ -3218,6 +3369,7 @@ mod editor_tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_blob_editor: None,
             pending_revert: None,
             pending_mergetool: None,
             prompt_answers: vec![],
@@ -4065,6 +4217,7 @@ fn run() -> Result<()> {
         finder: None,
         previous: vec![],
         pending_command: None,
+        pending_blob_editor: None,
         pending_revert: None,
         pending_mergetool: None,
         prompt_answers: vec![],
@@ -4186,6 +4339,9 @@ fn run() -> Result<()> {
                 error
             }
         })?;
+        if cli.view == "tree" || (cli.view == "blob" && app.view.grep_source.is_none()) {
+            app.revision = app.view.revision.clone();
+        }
         if cli.view == "grep" && app.view.rows.is_empty() {
             app.message = "No matches found".into();
         }
@@ -4314,6 +4470,7 @@ fn run() -> Result<()> {
             }
         }
         if let Some(command) = app.pending_command.take() {
+            let _blob_editor = app.pending_blob_editor.take();
             let mergetool = app.pending_mergetool.take();
             let confirmed = if command.confirm {
                 let answer = terminal.prompt(
@@ -4457,6 +4614,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_blob_editor: None,
             pending_revert: None,
             pending_mergetool: None,
             prompt_answers: vec![],
@@ -4733,6 +4891,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_blob_editor: None,
             pending_revert: None,
             pending_mergetool: None,
             prompt_answers: vec![],
@@ -4794,6 +4953,7 @@ mod tests {
             "Unicode filename",
         ])
         .unwrap();
+        app.revision = "HEAD".into();
         app.path = "-- foo bar".into();
         app.open("tree", app.width).unwrap();
         app.view.selected = 2;
@@ -4822,6 +4982,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_blob_editor: None,
             pending_revert: None,
             pending_mergetool: None,
             prompt_answers: vec![],
@@ -4869,6 +5030,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_blob_editor: None,
             pending_revert: None,
             pending_mergetool: None,
             prompt_answers: vec![],
@@ -4935,6 +5097,7 @@ mod tests {
                 path: PathBuf::from("file.txt"),
                 revision: Some("HEAD:sub".into()),
                 cached: false,
+                source_oid: None,
                 line: 1,
                 text: "hit".into(),
             }),
@@ -4949,6 +5112,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_blob_editor: None,
             pending_revert: None,
             pending_mergetool: None,
             prompt_answers: vec![],
@@ -5005,6 +5169,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_blob_editor: None,
             pending_revert: None,
             pending_mergetool: None,
             prompt_answers: vec![],
@@ -5179,6 +5344,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_blob_editor: None,
             pending_revert: None,
             pending_mergetool: None,
             prompt_answers: vec![],
@@ -5260,6 +5426,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_blob_editor: None,
             pending_revert: None,
             pending_mergetool: None,
             prompt_answers: vec![],

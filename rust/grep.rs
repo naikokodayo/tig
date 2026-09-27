@@ -11,6 +11,7 @@ pub struct GrepLine {
     pub path: PathBuf,
     pub revision: Option<String>,
     pub cached: bool,
+    pub source_oid: Option<String>,
     pub line: usize,
     pub text: String,
 }
@@ -270,6 +271,7 @@ pub(crate) fn grep_rows(bytes: &[u8], revisions: &[String]) -> Result<Vec<GrepLi
             path,
             revision,
             cached: false,
+            source_oid: None,
             line,
             text,
         });
