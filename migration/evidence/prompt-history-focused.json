@@ -1,14 +1,14 @@
 {
-  "scope": "Focused original C/Rust search scripts plus controlling-PTY Rust regression; full parity remains blocked",
-  "tested_source_commit": "e4deecbb33686e36ab26d614a38980582dcb7e23",
+  "scope": "Focused original C/Rust search scripts plus controlling-PTY Rust history regression; full parity remains blocked",
+  "tested_source_commit": "45438e9af5229394dd5f50a7be246eb04ee41d16",
   "sha256": {
-    "rust/main.rs": "a14c4b704929cade7f5f2e1e6e23aaaea18a443feaa2413b282b4401d3b3a258",
-    "rust/tests/prompt-history-pty.py": "0a99a4dd3f9bb24626b6b2e14d4eed4c6064154afc0ed5e94eb18ae03ee61d3e",
+    "rust/main.rs": "bda0c379729921b37a962e92c99514b4ff10cb67cae9345da4f2ac6630723294",
+    "rust/tests/prompt-history-pty.py": "0698123b9c2f5c7d50c0c4f4bd14b038cbff1044f4c82ac8beb786a6b7800484",
     "test/main/search-preload-test": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
     "test/main/search-test": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
     "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
     "C tig binary": "8673b0c2688da4e890598f5a69237175a9a13b0074353b9f3217583a039a7b7a",
-    "Rust tig binary": "fa81f3211e24aee898839844f86013061c0ae80d2bbd74f8e30655a5db444203"
+    "Rust tig binary": "2531b7353a6a0ca85469acc22095e28b4ca40f36f1a2e4b9244f40d4e8cdaebf"
   },
   "commands": [
     "cargo fmt --check",
@@ -24,8 +24,9 @@
     "pty": {
       "platform": "Darwin arm64; controlling 80x30 PTY",
       "preload": "PASS: preexisting .tig_history entry drives :find-next to commit 2 of 3 before a prompt opens",
-      "navigation": "PASS: live Up recalls needle, editing and Enter append needlex",
-      "preservation": "PASS: original needle entry remains unchanged before appended needlex"
+      "limit_and_dedupe": "PASS: history-size=2 compacts old,needle,needle to needle on disk at exit",
+      "navigation": "PASS: live Up recalls needle; editing and Enter leave exactly needle,needlex on disk",
+      "unreadable_history": "PASS: invalid UTF-8 history bytes remain unchanged after exit"
     },
     "original_scripts": {
       "C": {
