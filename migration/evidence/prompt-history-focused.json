@@ -1,14 +1,14 @@
 {
   "scope": "Focused original C/Rust search scripts plus controlling-PTY Rust history regression; full parity remains blocked",
-  "tested_source_commit": "45438e9af5229394dd5f50a7be246eb04ee41d16",
+  "tested_source_commit": "69133103fe8d5f1b69501929c5bba51ca7dec67b",
   "sha256": {
-    "rust/main.rs": "bda0c379729921b37a962e92c99514b4ff10cb67cae9345da4f2ac6630723294",
-    "rust/tests/prompt-history-pty.py": "0698123b9c2f5c7d50c0c4f4bd14b038cbff1044f4c82ac8beb786a6b7800484",
+    "rust/main.rs": "bfbfd88a1b3bee86e466c7aec84d0ec62572c668cc292cca1a1b2877df5283d1",
+    "rust/tests/prompt-history-pty.py": "d24468add05ceadf9b43649cf4287fd15d5c9fdaa477a3941d5a5e6c3b835061",
     "test/main/search-preload-test": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
     "test/main/search-test": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
     "rust/tests/upstream-suite.py": "8070849f857a5cd5a8d42b519c091eaa87c39a43048daca702abd163f74cf702",
     "C tig binary": "8673b0c2688da4e890598f5a69237175a9a13b0074353b9f3217583a039a7b7a",
-    "Rust tig binary": "2531b7353a6a0ca85469acc22095e28b4ca40f36f1a2e4b9244f40d4e8cdaebf"
+    "Rust tig binary": "7e5c2fc02179c37491edb0d5cd4c5a2141f6b5b8126cb81a6f73a157c44adb6b"
   },
   "commands": [
     "cargo fmt --check",
@@ -26,7 +26,10 @@
       "preload": "PASS: preexisting .tig_history entry drives :find-next to commit 2 of 3 before a prompt opens",
       "limit_and_dedupe": "PASS: history-size=2 compacts old,needle,needle to needle on disk at exit",
       "navigation": "PASS: live Up recalls needle; editing and Enter leave exactly needle,needlex on disk",
-      "unreadable_history": "PASS: invalid UTF-8 history bytes remain unchanged after exit"
+      "unreadable_history": "PASS: invalid UTF-8 history bytes remain unchanged after exit",
+      "protected_file": "PASS: existing 0400 .tig_history remains byte-for-byte unchanged and retains mode",
+      "symlink": "PASS: symlink remains a symlink and its target bytes are unchanged",
+      "first_write": "PASS: missing fallback .tig_history is created after accepting a prompt"
     },
     "original_scripts": {
       "C": {
