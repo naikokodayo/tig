@@ -3658,22 +3658,45 @@ impl Terminal {
     }
     fn prompt(&mut self, app: &mut App, prefix: &str) -> Result<Option<String>> {
         let mut value = String::new();
+        let mut point = 0;
         let mut position = self.history.entries.len();
         let mut draft = String::new();
         loop {
+            let line = clip(&format!("{prefix}{value}"), 0, usize::MAX);
+            let caret = cell_width(&clip(
+                &format!("{prefix}{}", &value[..point]),
+                0,
+                usize::MAX,
+            ));
+            let wanted = caret.saturating_sub(app.width.saturating_sub(1));
+            let mut skip = 0;
+            for c in line.chars() {
+                if skip >= wanted {
+                    break;
+                }
+                skip += c.width().unwrap_or(0);
+            }
             queue!(
                 self.out,
                 cursor::MoveTo(0, app.height.saturating_sub(1) as u16),
                 Clear(ClearType::CurrentLine)
             )?;
-            write!(
+            write!(self.out, "{}", clip(&line, skip, app.width))?;
+            queue!(
                 self.out,
-                "{}",
-                clip(&format!("{prefix}{value}"), 0, app.width)
+                cursor::MoveTo(
+                    caret.saturating_sub(skip) as u16,
+                    app.height.saturating_sub(1) as u16
+                ),
+                cursor::Show
             )?;
             self.out.flush()?;
-            if let Event::Key(k) = self.read()? {
-                match k.code {
+            match self.read()? {
+                Event::Resize(w, h) => {
+                    app.width = w as usize;
+                    app.height = h as usize;
+                }
+                Event::Key(k) => match k.code {
                     KeyCode::Enter => {
                         if self.history.limit > 0
                             && !value.is_empty()
@@ -3684,15 +3707,20 @@ impl Terminal {
                                 self.history.entries.remove(0);
                             }
                         }
+                        queue!(self.out, cursor::Hide)?;
                         return Ok(Some(value));
                     }
-                    KeyCode::Esc => return Ok(None),
+                    KeyCode::Esc => {
+                        queue!(self.out, cursor::Hide)?;
+                        return Ok(None);
+                    }
                     KeyCode::Up if position > 0 => {
                         if position == self.history.entries.len() {
                             draft = value.clone();
                         }
                         position -= 1;
                         value.clone_from(&self.history.entries[position]);
+                        point = value.len();
                     }
                     KeyCode::Down if position < self.history.entries.len() => {
                         position += 1;
@@ -3702,16 +3730,45 @@ impl Terminal {
                             .get(position)
                             .cloned()
                             .unwrap_or_else(|| draft.clone());
+                        point = value.len();
                     }
                     KeyCode::Backspace => {
-                        value.pop();
+                        if let Some((previous, _)) = value[..point].char_indices().last() {
+                            value.remove(previous);
+                            point = previous;
+                        }
                     }
                     KeyCode::Char('c') if k.modifiers.contains(KeyModifiers::CONTROL) => {
-                        return Ok(None)
+                        queue!(self.out, cursor::Hide)?;
+                        return Ok(None);
                     }
-                    KeyCode::Char(c) => value.push(c),
+                    KeyCode::Left => {
+                        point = value[..point].char_indices().last().map_or(0, |(i, _)| i)
+                    }
+                    KeyCode::Right if point < value.len() => {
+                        point += value[point..].chars().next().unwrap().len_utf8()
+                    }
+                    KeyCode::Home => point = 0,
+                    KeyCode::End => point = value.len(),
+                    KeyCode::Char('a') if k.modifiers.contains(KeyModifiers::CONTROL) => point = 0,
+                    KeyCode::Char('e') if k.modifiers.contains(KeyModifiers::CONTROL) => {
+                        point = value.len()
+                    }
+                    KeyCode::Delete if point < value.len() => {
+                        value.remove(point);
+                    }
+                    KeyCode::Char(c)
+                        if !k
+                            .modifiers
+                            .intersects(KeyModifiers::CONTROL | KeyModifiers::ALT)
+                            && !c.is_control() =>
+                    {
+                        value.insert(point, c);
+                        point += c.len_utf8();
+                    }
                     _ => (),
-                }
+                },
+                _ => (),
             }
         }
     }

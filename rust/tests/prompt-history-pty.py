@@ -93,6 +93,10 @@ def main():
         history.unlink()
         run(binary, repo, home, keys=b"/needle\rQ")
         assert history.read_text() == "needle\n"
+        run(binary, repo, home, keys="/ab\x1b[D\u00e9\x01Z\x05Y\x1b[D\x1b[D\x7f\rQ".encode())
+        assert history.read_text().splitlines()[-1] == "ZabY"
+        run(binary, repo, home, keys=b"/abc\x01\x1b[C\x1b[3~\rQ")
+        assert history.read_text().splitlines()[-1] == "ac"
 
 
 if __name__ == "__main__":
