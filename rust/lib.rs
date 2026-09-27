@@ -26,3 +26,5 @@ pub mod tree_view;
 pub mod grep;
 
 pub mod file_finder;
+
+pub mod status_ops;

@@ -80,7 +80,7 @@ fn highlight_diff(config: &Config, input: &[u8]) -> String {
         }
     }
 }
-const HELP: &str = "Tig Rust migration (compatibility work in progress)\n\nUsage: tig [-C path] [log|show|reflog|blame|grep|refs|stash|status] [arguments]\n       git show | tig\n\nKeys: j/k move, Enter open, q back/quit, Q quit, / search, n next match\n      m history, d diff, s status, t tree, r refs, b blame, h help, R refresh\n      u stage/unstage selected file in status; horizontal arrows scroll\n\nThis version is not yet a drop-in replacement for upstream Tig. See MIGRATION.md.";
+const HELP: &str = "Tig Rust migration (compatibility work in progress)\n\nUsage: tig [-C path] [log|show|reflog|blame|grep|refs|stash|status] [arguments]\n       git show | tig\n\nKeys: j/k move, Enter open, q back/quit, Q quit, / search, n next match\n      m history, d diff, s status, t tree, r refs, b blame, h help, R refresh\n      u stage/unstage; ! revert selected unstaged file (confirmation required)\n      Conflicts: :status-revert ours or :status-revert theirs, then u\n      Horizontal arrows scroll\n\nThis version is not yet a drop-in replacement for upstream Tig. See MIGRATION.md.";
 
 #[derive(Clone)]
 enum Item {
@@ -358,6 +358,7 @@ struct App {
     finder: Option<FileFinder>,
     previous: Vec<View>,
     pending_command: Option<tig_rs::commands::PreparedCommand>,
+    pending_revert: Option<tig_rs::status_ops::RevertPlan>,
     prompt_answers: Vec<String>,
     other: Option<View>,
     split: bool,
@@ -1484,6 +1485,30 @@ impl App {
         });
         Ok(())
     }
+    fn finish_revert(&mut self, confirmed: bool) -> Result<()> {
+        use tig_rs::status_ops::RevertOutcome;
+        if let Some(plan) = self.pending_revert.take() {
+            self.message = match plan.execute(self.repo()?, confirmed)? {
+                RevertOutcome::Cancelled => "Revert cancelled".into(),
+                RevertOutcome::Applied {
+                    backup,
+                    needs_stage,
+                } => {
+                    self.refresh_parent()?;
+                    self.action("refresh")?;
+                    format!(
+                        "{}Recovery: {backup:?}",
+                        if needs_stage {
+                            "Use u (status-update) to mark resolved. "
+                        } else {
+                            ""
+                        }
+                    )
+                }
+            };
+        }
+        Ok(())
+    }
     fn action(&mut self, action: &str) -> Result<bool> {
         let was_split = self.split && self.other.is_some();
         if let Some(text) = action
@@ -1534,6 +1559,33 @@ impl App {
             return Ok(true);
         }
         let action = action.strip_prefix(':').unwrap_or(action);
+        if action.split_whitespace().next() == Some("status-revert") {
+            use tig_rs::status_ops::{RevertAction, RevertPlan};
+            if self.view.name != "status" {
+                return Err("File revert is available in the status view".into());
+            }
+            let action = match action
+                .split_whitespace()
+                .skip(1)
+                .collect::<Vec<_>>()
+                .as_slice()
+            {
+                [] => RevertAction::Unstaged,
+                ["ours"] => RevertAction::Ours,
+                ["theirs"] => RevertAction::Theirs,
+                _ => return Err("Usage: status-revert [ours|theirs]".into()),
+            };
+            let Item::Status(entry, staged) = self.selected() else {
+                return Err("Select one unstaged file to revert".into());
+            };
+            if entry.conflicted() && action == RevertAction::Unstaged {
+                return Err(
+                    "Choose :status-revert ours or :status-revert theirs, then confirm".into(),
+                );
+            }
+            self.pending_revert = Some(RevertPlan::prepare(self.repo()?, &entry, staged, action)?);
+            return Ok(true);
+        }
         if action == "exec" {
             self.message = "Failed to execute command: No arguments".into();
             return Ok(true);
@@ -2354,6 +2406,7 @@ impl App {
                 if !self.action(&action)? {
                     break;
                 }
+                self.finish_revert(false)?;
                 if let Some(command) = self.pending_command.take() {
                     if command.silent && !command.echo {
                         command.run_allow_nonzero(self.repo()?, false, true)?;
@@ -2648,6 +2701,7 @@ mod editor_tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_revert: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -2820,6 +2874,7 @@ mod editor_tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_revert: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -3628,6 +3683,7 @@ fn run() -> Result<()> {
         finder: None,
         previous: vec![],
         pending_command: None,
+        pending_revert: None,
         prompt_answers: vec![],
         other: None,
         split: false,
@@ -3880,6 +3936,15 @@ fn run() -> Result<()> {
                 Err(e) => app.message = e.to_string(),
             }
         }
+        if let Some(plan) = &app.pending_revert {
+            let prompt = plan.prompt();
+            let answer = terminal.prompt(&mut app, &prompt)?;
+            let confirmed =
+                answer.is_some_and(|answer| matches!(answer.as_str(), "y" | "Y" | "yes"));
+            if let Err(error) = app.finish_revert(confirmed) {
+                app.message = error.to_string();
+            }
+        }
         if let Some(command) = app.pending_command.take() {
             let confirmed = if command.confirm {
                 let answer = terminal.prompt(
@@ -4004,6 +4069,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_revert: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -4253,6 +4319,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_revert: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -4339,6 +4406,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_revert: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -4383,6 +4451,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_revert: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -4460,6 +4529,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_revert: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -4513,6 +4583,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_revert: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -4684,6 +4755,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_revert: None,
             prompt_answers: vec![],
             other: Some(parent),
             split: true,
@@ -4762,6 +4834,7 @@ mod tests {
             finder: None,
             previous: vec![],
             pending_command: None,
+            pending_revert: None,
             prompt_answers: vec![],
             other: Some(View::text("main", "parent\nother commit")),
             split: true,
