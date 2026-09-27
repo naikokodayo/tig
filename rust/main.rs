@@ -369,6 +369,7 @@ struct App {
     previous: Vec<View>,
     pending_command: Option<tig_rs::commands::PreparedCommand>,
     pending_revert: Option<tig_rs::status_ops::RevertPlan>,
+    pending_mergetool: Option<tig_rs::status_ops::MergetoolPlan>,
     prompt_answers: Vec<String>,
     other: Option<View>,
     split: bool,
@@ -1654,6 +1655,45 @@ impl App {
             return Ok(true);
         }
         let action = action.strip_prefix(':').unwrap_or(action);
+        if action == "status-merge" {
+            if self.view.name != "status" {
+                return Err("Merging is available in the status view".into());
+            }
+            let Item::Status(entry, _) = self.selected() else {
+                return Err("Select an unmerged file".into());
+            };
+            if !entry.conflicted() {
+                return Err("Merging only possible for files with unmerged status ('U')".into());
+            }
+            if entry.path.as_os_str().is_empty()
+                || !entry
+                    .path
+                    .components()
+                    .all(|part| matches!(part, Component::Normal(_)))
+                || !self.repo()?.status_filtered(&[], true)?.contains(&entry)
+            {
+                return Err("Conflict changed; refresh the status view".into());
+            }
+            self.pending_mergetool = Some(tig_rs::status_ops::MergetoolPlan::prepare(
+                self.repo()?,
+                &entry,
+            )?);
+            self.pending_command = Some(tig_rs::commands::PreparedCommand {
+                argv: vec![
+                    "git".into(),
+                    "--literal-pathspecs".into(),
+                    "mergetool".into(),
+                    "--".into(),
+                    entry.path.into_os_string(),
+                ],
+                silent: false,
+                confirm: true,
+                exit: false,
+                echo: false,
+                quick: true,
+            });
+            return Ok(true);
+        }
         if action.split_whitespace().next() == Some("status-revert") {
             use tig_rs::status_ops::{RevertAction, RevertPlan};
             if self.view.name != "status" {
@@ -2836,6 +2876,7 @@ mod editor_tests {
             previous: vec![],
             pending_command: None,
             pending_revert: None,
+            pending_mergetool: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -3010,6 +3051,7 @@ mod editor_tests {
             previous: vec![],
             pending_command: None,
             pending_revert: None,
+            pending_mergetool: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -3829,6 +3871,7 @@ fn run() -> Result<()> {
         previous: vec![],
         pending_command: None,
         pending_revert: None,
+        pending_mergetool: None,
         prompt_answers: vec![],
         other: None,
         split: false,
@@ -4082,6 +4125,7 @@ fn run() -> Result<()> {
             }
         }
         if let Some(command) = app.pending_command.take() {
+            let mergetool = app.pending_mergetool.take();
             let confirmed = if command.confirm {
                 let answer = terminal.prompt(
                     &mut app,
@@ -4097,6 +4141,12 @@ fn run() -> Result<()> {
             };
             if !confirmed {
                 continue;
+            }
+            if let Some(plan) = &mergetool {
+                if let Err(error) = plan.check(app.repo()?) {
+                    app.message = error.to_string();
+                    continue;
+                }
             }
             let result = if command.silent || command.echo {
                 if command.silent && !command.echo {
@@ -4128,7 +4178,12 @@ fn run() -> Result<()> {
                     if command.exit {
                         break;
                     }
-                    if let Err(error) = app.refresh_after_command() {
+                    let refresh = if mergetool.is_some() {
+                        app.refresh_views()
+                    } else {
+                        app.refresh_after_command()
+                    };
+                    if let Err(error) = refresh {
                         app.message = error.to_string();
                     } else if command.echo {
                         app.message = String::from_utf8_lossy(&output.stdout)
@@ -4139,7 +4194,11 @@ fn run() -> Result<()> {
                     }
                 }
                 Err(error) => {
-                    let _ = app.refresh_after_command();
+                    if mergetool.is_some() {
+                        let _ = app.refresh_views();
+                    } else {
+                        let _ = app.refresh_after_command();
+                    }
                     app.message = error.to_string();
                 }
             }
@@ -4210,6 +4269,7 @@ mod tests {
             previous: vec![],
             pending_command: None,
             pending_revert: None,
+            pending_mergetool: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -4461,6 +4521,7 @@ mod tests {
             previous: vec![],
             pending_command: None,
             pending_revert: None,
+            pending_mergetool: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -4549,6 +4610,7 @@ mod tests {
             previous: vec![],
             pending_command: None,
             pending_revert: None,
+            pending_mergetool: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -4595,6 +4657,7 @@ mod tests {
             previous: vec![],
             pending_command: None,
             pending_revert: None,
+            pending_mergetool: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -4674,6 +4737,7 @@ mod tests {
             previous: vec![],
             pending_command: None,
             pending_revert: None,
+            pending_mergetool: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -4729,6 +4793,7 @@ mod tests {
             previous: vec![],
             pending_command: None,
             pending_revert: None,
+            pending_mergetool: None,
             prompt_answers: vec![],
             other: None,
             split: false,
@@ -4902,6 +4967,7 @@ mod tests {
             previous: vec![],
             pending_command: None,
             pending_revert: None,
+            pending_mergetool: None,
             prompt_answers: vec![],
             other: Some(parent),
             split: true,
@@ -4982,6 +5048,7 @@ mod tests {
             previous: vec![],
             pending_command: None,
             pending_revert: None,
+            pending_mergetool: None,
             prompt_answers: vec![],
             other: Some(View::text("main", "parent\nother commit")),
             split: true,

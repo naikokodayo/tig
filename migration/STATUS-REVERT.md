@@ -24,7 +24,17 @@ concurrent parent-directory replacement or Git index writers; external mutation
 during execution is outside this slice's concurrency guarantee. Chunk revert,
 symlinks, submodules, and automatic mergetool invocation remain unsupported.
 
+For an unmerged status row, `M` / `:status-merge` launches the configured Git
+mergetool after explicit confirmation. Tig restores the terminal and reloads
+status afterward. Scripted commands cannot confirm this external operation.
+
 Validation: five real-Git backend tests plus `python3
 rust/tests/status-revert.py target/release/tig` exercise the actual terminal.
 The same probe's `--c` option covers ordinary upstream confirmation/cancellation.
 Original status filename, refresh, and worktree scripts remain unchanged.
+
+Mergetool implementation `6abffd59d51f0bc8d488ae2d10e9e5a56fd3acb3` builds
+`tig` SHA-256 `476b6cb23e49ec73c757e077298a534c4af96b08977f8f847487d67c98a7ec3c`.
+Rust formatting, 114 unit tests, Clippy, release build, and nine status PTY
+checks passed. The three unchanged original status scripts `file-name`,
+`refresh`, and `worktree` passed 17/17 assertions in both C and Rust.
