@@ -22,24 +22,29 @@ with tempfile.TemporaryDirectory(prefix='tig-reflog-stash-') as temporary:
     git('init', '-q')
     for subject in ('first', 'second'):
         (repo / 'file').write_text(subject + '\n')
-        git('add', 'file')
+        (repo / 'a-ws').write_text('one two\n')
+        git('add', 'file', 'a-ws')
         git('commit', '-qm', subject)
     old = git('rev-parse', 'HEAD')
     for subject in ('older', 'newer'):
         (repo / 'file').write_text(subject + '\n')
         if subject == 'older':
+            (repo / 'a-ws').write_text('one  two\n')
             (repo / 'extra').write_text('untracked stash content\n')
         git('stash', 'push', '-uqm', subject)
     git('config', 'stash.showIncludeUntracked', 'true')
-    (repo / 'config').write_text('set show-changes = no\n')
+    (repo / 'config').write_text('set show-changes = no\nset ignore-space = all\n')
     env['TIGRC_USER'] = str(repo / 'config')
     for name, reference, child, expected in (
             ('reflog', 'HEAD@{1}', 'main', old),
             ('stash', 'stash@{1}', 'diff', '+older')):
+        stash_checks = (f':save-view {repo / "stash-before"}\n:refresh\n'
+                        + f':save-view {repo / "stash-after"}\n') if name == 'stash' else ''
         (repo / 'steps').write_text(
             ':move-down\n' + f':save-display {repo / "selected"}\n'
             + ':enter\n' + f':save-display {repo / "child"}\n'
-            + ':view-close\n:refresh\n' + f':save-display {repo / "returned"}\n:quit\n')
+            + stash_checks + ':view-close\n:refresh\n'
+            + f':save-display {repo / "returned"}\n:quit\n')
         code, timed_out, transcript = upstream.terminal(
             [str(ROOT / 'target/release/tig'), '-C', str(repo), name], env, 10)
         assert code == 0 and not timed_out, (name, code, transcript)
@@ -50,11 +55,18 @@ with tempfile.TemporaryDirectory(prefix='tig-reflog-stash-') as temporary:
         assert f'[{child}]' in screen and expected in screen, screen
         if name == 'stash':
             assert 'untracked stash content' in screen, screen
-            (repo / 'steps').write_text(':move-down\n:enter\n' + f':save-display {repo / "child-c"}\n:quit\n')
+            for file in ('stash-before', 'stash-after'):
+                data = (repo / file).read_text()
+                assert 'untracked stash content' in data and 'a-ws' not in data, (file, data)
+            (repo / 'steps').write_text(':move-down\n:enter\n'
+                + f':save-display {repo / "child-c"}\n'
+                + f':save-view {repo / "stash-c-before"}\n:quit\n')
             code, timed_out, transcript = upstream.terminal(
                 [str(ROOT / 'src/tig'), '-C', str(repo), name], env, 10)
             assert code == 0 and not timed_out, (name, code, transcript)
             assert 'untracked stash content' in (repo / 'child-c').read_text()
+            data = (repo / 'stash-c-before').read_text()
+            assert 'untracked stash content' in data and 'a-ws' not in data, data
         assert f'[{name}]' in returned and reference in returned, returned
         print(f'PASS: {name} selects older entry, opens {child}, returns and refreshes')
 
