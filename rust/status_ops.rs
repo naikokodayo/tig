@@ -30,6 +30,7 @@ pub struct RevertPlan {
     action: RevertAction,
     before: Snapshot,
     target_present: bool,
+    hunk: Option<Vec<u8>>,
 }
 #[derive(Debug)]
 pub struct MergetoolPlan {
@@ -173,13 +174,32 @@ impl RevertPlan {
             action,
             before,
             target_present: stages[wanted],
+            hunk: None,
+        })
+    }
+    pub fn prepare_hunk(repo: &Repository, path: &Path, patch: Vec<u8>) -> Result<Self> {
+        let before = snapshot(repo, path)?;
+        if before.worktree.is_none() {
+            return Err(error("Revert requires a regular worktree file"));
+        }
+        Ok(Self {
+            root: repo.root.clone(),
+            path: path.to_path_buf(),
+            action: RevertAction::Unstaged,
+            before,
+            target_present: true,
+            hunk: Some(patch),
         })
     }
     pub fn prompt(&self) -> String {
-        let operation = match self.action {
-            RevertAction::Unstaged => "Revert unstaged changes",
-            RevertAction::Ours => "Use ours in the worktree",
-            RevertAction::Theirs => "Use theirs in the worktree",
+        let operation = if self.hunk.is_some() {
+            "Revert selected unstaged hunk"
+        } else {
+            match self.action {
+                RevertAction::Unstaged => "Revert unstaged changes",
+                RevertAction::Ours => "Use ours in the worktree",
+                RevertAction::Theirs => "Use theirs in the worktree",
+            }
         };
         format!(
             "{operation} for {:?}{}? A recovery copy will be kept. [y/N] ",
@@ -219,13 +239,22 @@ impl RevertPlan {
             fs::write(backup.join("index-entries"), &self.before.index)
                 .map_err(|e| error(e.to_string()))?;
             fs::write(backup.join("README"), format!("Repository: {:?}\nPath: {:?}\nAction: {:?}\nOriginal index records: index-entries (git ls-files --stage -z format).\nOriginal worktree file, if present: worktree.\n", repo.root, self.path, self.action)).map_err(|e| error(e.to_string()))?;
-            if self.before.worktree.is_some() {
+            if let Some((bytes, permissions)) = &self.before.worktree {
                 // Rename preserves bytes/mode and a concurrently open editor's
                 // inode. Cross-filesystem backups fail before discarding data.
-                fs::rename(repo.root.join(&self.path), backup.join("worktree"))
-                    .map_err(|e| error(e.to_string()))?;
+                if self.hunk.is_some() {
+                    let saved = backup.join("worktree");
+                    fs::write(&saved, bytes).map_err(|e| error(e.to_string()))?;
+                    fs::set_permissions(&saved, permissions.clone())
+                        .map_err(|e| error(e.to_string()))?;
+                } else {
+                    fs::rename(repo.root.join(&self.path), backup.join("worktree"))
+                        .map_err(|e| error(e.to_string()))?;
+                }
             }
-            if self.target_present {
+            if let Some(patch) = &self.hunk {
+                crate::patch::apply_worktree_reverse(repo, patch, &self.path)?;
+            } else if self.target_present {
                 let mut args = vec![OsString::from("checkout-index")];
                 match self.action {
                     RevertAction::Unstaged => (),
