@@ -172,6 +172,9 @@ struct WrappedText {
     source: Vec<String>,
     // Source row and continuation marker for each displayed row.
     lines: Vec<(usize, bool)>,
+    // Like C draw_view_line, redraw updates only the visible rows' flags.
+    selected: Vec<bool>,
+    reference: String,
 }
 
 #[derive(Clone)]
@@ -327,19 +330,32 @@ impl View {
         self.selected = selected;
         self.top = top;
         self.line_numbers = (1..=self.rows.len()).collect();
+        self.row_types = if self.name == "diff" {
+            tig_rs::render::diff_rows(&self.rows)
+                .map(|(kind, _)| kind)
+                .collect()
+        } else {
+            vec!["default"; self.rows.len()]
+        };
         if enabled {
             let source = std::mem::take(&mut self.rows);
+            let source_types = std::mem::take(&mut self.row_types);
             let mut lines = Vec::new();
             self.line_numbers.clear();
             let mut number = 0;
             for (index, text) in source.iter().enumerate() {
                 let first = self.rows.len();
-                for (part, chunk) in tig_rs::render::wrap_line(text, width, tab_size, first != 0)
-                    .into_iter()
-                    .enumerate()
-                {
+                let kind = source_types[index];
+                // C creates these typed boxes directly, bypassing pager_wrap_line.
+                let chunks = if matches!(kind, "diff-stat" | "diff-chunk" | "pp-refs") {
+                    vec![text.as_str()]
+                } else {
+                    tig_rs::render::wrap_line(text, width, tab_size, first != 0)
+                };
+                for (part, chunk) in chunks.into_iter().enumerate() {
                     let continued = first != 0 && part != 0;
                     self.rows.push(chunk.into());
+                    self.row_types.push(kind);
                     lines.push((index, continued));
                     // C's first row uses zero as the continuation sentinel.
                     if !continued {
@@ -353,12 +369,13 @@ impl View {
                 tab_size,
                 source,
                 lines,
+                selected: vec![false; self.rows.len()],
+                reference: self.revision.clone(),
             });
             self.selected = self.display_index(selected);
             self.top = self.display_index(top);
         }
         self.items = vec![Item::Text; self.rows.len()];
-        self.row_types = vec!["default"; self.rows.len()];
     }
     fn redraw_stdin(&mut self, config: &Config, width: usize) -> Result<()> {
         let commits: Vec<_> = self
@@ -2250,22 +2267,11 @@ impl App {
             } else {
                 self.other.as_ref()
             };
-            let mut reference = view_reference(&self.view);
-            if self.view.name == "diff" && self.view.wrapping.is_some() && self.view.selected == 0 {
-                if let Some(id) = self
-                    .view
-                    .rows
-                    .first()
-                    .and_then(|row| row.strip_prefix("commit "))
-                {
-                    reference = id.into();
-                }
-            }
             let mut data = tig_rs::view_export::header(
                 &self.view.name,
                 previous.map(|view| view.name.as_str()),
                 parent.map(|view| view.name.as_str()),
-                &reference,
+                &view_reference(&self.view),
                 (width, height),
                 (self.view.top, self.view.left, self.view.selected),
             );
@@ -2279,6 +2285,7 @@ impl App {
                         self.view.selected,
                         &self.view.rows,
                         wrapped.map_or(&[][..], |wrap| wrap.lines.as_slice()),
+                        wrapped.map_or(&[][..], |wrap| wrap.selected.as_slice()),
                     )?);
                 }
                 "log" => data.push_str(&tig_rs::view_export::log_data(
@@ -3979,11 +3986,14 @@ fn view_reference(view: &View) -> String {
         {
             "Press '<Enter>' to jump to file diff".into()
         }
-        _ if view.name == "diff" => {
-            diff_edit_target(view.source_rows(), view.source_index(view.selected))
-                .map(|(path, _)| format!("Changes to '{}'", path.display()))
-                .unwrap_or_else(|| view.revision.clone())
-        }
+        _ if view.name == "diff" => diff_edit_target(&view.rows, view.selected)
+            .map(|(path, _)| format!("Changes to '{}'", path.display()))
+            .unwrap_or_else(|| {
+                view.wrapping
+                    .as_ref()
+                    .map_or(&view.revision, |wrap| &wrap.reference)
+                    .clone()
+            }),
         _ if view.name == "stage"
             && !view.untracked
             && stage_stat_header(&view.rows, view.selected).is_some() =>
@@ -4039,6 +4049,22 @@ fn pane_screen(
     view.rendered_top = view.top;
     if let Some(row_width) = view.commit_row_widths.get_mut(view.selected) {
         *row_width = width;
+    }
+    if let Some(wrap) = &mut view.wrapping {
+        for index in view.top..(view.top + visible).min(wrap.selected.len()) {
+            wrap.selected[index] = index == view.selected;
+        }
+        if view.name == "diff" && view.row_types.get(view.selected) == Some(&"commit") {
+            // C pager_select reads the displayed commit fragment, retaining the
+            // previous reference when no identifier remains after byte 7.
+            if let Some(id) = view.rows[view.selected].get(7..).and_then(|text| {
+                text.trim_start_matches(|c: char| !c.is_ascii_alphanumeric())
+                    .split_whitespace()
+                    .next()
+            }) {
+                wrap.reference = id.chars().take(40).collect();
+            }
+        }
     }
     let line_numbers = pager_line_numbers(config, view);
     let separator = if !saved && config.value("line-graphics") != Some("ascii") {
@@ -6405,9 +6431,15 @@ mod tests {
         view.wrap_text(&config, 10);
         assert_eq!(view.rows[0], "commit 012");
         assert!(!view.wrapping.as_ref().unwrap().lines[1].1);
+        for index in [4, 10] {
+            let displayed = view.display_index(index);
+            assert_eq!(view.rows[displayed], view.source_rows()[index]);
+            assert_eq!(view.display_index(index + 1), displayed + 1);
+        }
         let title = view.display_index(2);
         assert!(view.wrapping.as_ref().unwrap().lines[title + 1].1);
         view.selected = view.display_index(11) + 1;
+        assert_eq!(view.row_types[view.selected], "diff-add");
         view.move_by(-1);
         assert_eq!(view.source_index(view.selected), 11);
         assert_eq!(

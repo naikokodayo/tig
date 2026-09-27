@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real C/Rust save-view headers and fail-closed wrapped export regression."""
+"""Real Git/PTY comparisons for diff wrapping, typed exports and safe errors."""
 import argparse
 import hashlib
 import importlib.util
@@ -26,7 +26,7 @@ with tempfile.TemporaryDirectory(prefix='tig-view-export-') as temporary:
                GIT_AUTHOR_DATE='2020-01-01T00:00:00+0000', GIT_COMMITTER_DATE='2020-01-01T00:00:00+0000',
                COLUMNS='40', LINES='30')
     def git(*arguments):
-        subprocess.run(['git', '-C', str(repo), *arguments], env=env, check=True, capture_output=True)
+        return subprocess.run(['git', '-C', str(repo), *arguments], env=env, check=True, capture_output=True).stdout
     git('init', '-q')
     git('config', 'user.name', 'Export Tester')
     git('config', 'user.email', 'export@example.invalid')
@@ -34,15 +34,27 @@ with tempfile.TemporaryDirectory(prefix='tig-view-export-') as temporary:
         (repo / 'file').write_text(content + '\n')
         git('add', 'file')
         git('-c', 'commit.gpgsign=false', 'commit', '-qm', 'Export long lines')
+    original = git('rev-parse', 'HEAD').decode().strip()
+    long_name = 'long_' + 'filename_' * 9 + '.py'
+    for content in ('old', 'new'):
+        (repo / long_name).write_text('def ' + 'function_' * 10 + '():\n' +
+                                     '    context\n' * 10 + '    ' + content * 40 + '\n' +
+                                     '    context\n' * 10)
+        git('add', long_name)
+        git('-c', 'commit.gpgsign=false', 'commit', '-qm', 'Long stat and hunk cells')
+    long_patch = git('show', '--format=fuller', '--stat=120', '--patch', 'HEAD')
+    git('reset', '--hard', original)
     config = directory / 'tigrc'
     steps = directory / 'steps'
     env.update(TIGRC_USER=str(config), TIG_SCRIPT=str(steps))
     for case, wrapped, width in [("ordinary", False, 40), ("wrapped", True, 40),
-                                 ("wrapped-selected", True, 40), ("wrapped-existing", True, 40),
+                                 ("wrapped-selected", True, 40), ("wrapped-in-view", True, 40),
+                                 ("wrapped-existing", True, 40),
                                  ("split", False, 181), ("metadata", False, 80),
                                  ("custom", False, 80), ("collision", False, 80),
-                                 ("runtime-color", False, 80)]:
-        if args.before and case != 'wrapped':
+                                 ("runtime-color", False, 80), ("long-cells", True, 40),
+                                 ("long-cells-selected", True, 40), ("long-cells-unwrapped", False, 40)]:
+        if args.before and case not in ('wrapped', 'long-cells'):
             continue
         env["COLUMNS"] = str(width)
         config.write_text(f'set wrap-lines = {"yes" if wrapped else "no"}\n')
@@ -52,13 +64,15 @@ with tempfile.TemporaryDirectory(prefix='tig-view-export-') as temporary:
         captures = {}
         for mode, binary in [('c', ROOT / 'src/tig'), ('rust', args.rust_binary.resolve())]:
             output = directory / f'{mode}-{case}.data'
+            screen = directory / f'{mode}-{case}.screen'
             # Unsupported colors must not truncate an existing destination.
             if case in ('custom', 'collision', 'runtime-color', 'wrapped-existing'):
                 output.write_text('untouched\n')
             steps.write_text((':enter\n' if case == 'split' else
-                              ':move-last-line\n' if case == 'wrapped-selected' else
+                              ':move-last-line\n' if case in ('wrapped-selected', 'long-cells-selected') else
+                              ':move-down\n' * 4 if case == 'wrapped-in-view' else
                               ':color "diff-stat" red default\n' if case == 'runtime-color' else '') +
-                             f':save-view {output}\n:quit\n')
+                             f':save-display {screen}\n:save-view {output}\n:quit\n')
             command = [str(binary), '-C', str(repo), *(['log'] if case == 'split' else ['show', 'HEAD'])]
             if case in ('metadata', 'custom', 'collision', 'runtime-color'):
                 source = directory / 'input'
@@ -67,9 +81,15 @@ with tempfile.TemporaryDirectory(prefix='tig-view-export-') as temporary:
                                                        'AuthorDate: ', 'CommitDate: ', 'TaggerDate: ')) + ('custom input\n' if case == 'custom' else 'diff-stat metadata\n'))
                 command = ['/bin/sh', '-c', 'exec "$1" -C "$2" show < "$3"',
                            'sh', str(binary), str(repo), str(source)]
+            if case.startswith('long-cells'):
+                source = directory / 'long-patch'
+                source.write_bytes(long_patch)
+                command = ['/bin/sh', '-c', 'exec "$1" -C "$2" show < "$3"',
+                           'sh', str(binary), str(repo), str(source)]
             code, timed_out, transcript = h.terminal(command, env, 20)
             captures[mode] = {'exit_code': code, 'timed_out': timed_out,
-                              'transcript': transcript, 'data': output.read_text() if output.exists() else ''}
+                              'transcript': transcript, 'data': output.read_text() if output.exists() else '',
+                              'screen': screen.read_text()}
             assert not timed_out, captures[mode]
         c, rust = captures['c'], captures['rust']
         assert c['exit_code'] == 0, c
@@ -88,6 +108,14 @@ with tempfile.TemporaryDirectory(prefix='tig-view-export-') as temporary:
         elif case == 'wrapped-existing':
             assert rust['exit_code'] != 0 and rust['data'] == 'untouched\n', rust
             assert 'File exists' in rust['transcript'], rust
+        elif case.startswith('long-cells'):
+            assert f'text=[ {long_name} ]' in c['data'], c
+            assert 'cells=2 text=[@@ ' in c['data'] and '[ def function_' in c['data'], c
+            if args.before:
+                assert rust['exit_code'] != 0 and not rust['data'], rust
+            else:
+                assert rust['exit_code'] == 0 and rust['data'] == c['data'], captures
+                assert rust['screen'] == c['screen'], captures
         elif wrapped:
             assert 'line[  1] type=commit' in c['data'], c
             assert c['data'].count('type=diff-add selected=') == 4, c
