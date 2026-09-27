@@ -1322,14 +1322,15 @@ impl App {
         self.center_selection();
         Ok(())
     }
-    fn trace_blame(&mut self) -> Result<()> {
+    fn trace_origin(&mut self, name: &str) -> Result<()> {
         let selected = self.view.source_index(self.view.selected);
         let rows = self.view.source_rows();
         let row = rows.get(selected).ok_or("No selected diff line")?;
         let hunk = rows[..=selected].iter().rfind(|row| {
             row.starts_with("@@") || row.starts_with("diff ") || row.starts_with("commit ")
         });
-        if row.starts_with("@@") || !hunk.is_some_and(|row| row.starts_with("@@ ")) {
+        let stat = diff_stat_header(rows, selected).is_some();
+        if !stat && (row.starts_with("@@") || !hunk.is_some_and(|row| row.starts_with("@@ "))) {
             return Err("The line to trace must be inside an ordinary diff chunk".into());
         }
         let old = row.starts_with('-');
@@ -1339,21 +1340,29 @@ impl App {
             .rev()
             .find_map(|row| row.strip_prefix("commit "))
             .unwrap_or(&self.view.revision);
-        let revision = if old {
+        let revision = if old && !stat {
             format!("{revision}^")
         } else {
             revision.to_owned()
         };
-        let origin = self
-            .repo()?
-            .blame(Some(&revision), &path, &[])?
-            .into_iter()
-            .find(|line| line.line == number)
-            .ok_or("No blame for selected line")?;
-        self.revision = origin.oid;
-        self.path = origin.filename;
-        self.open("blame", self.width)?;
-        self.view.selected = origin.original_line.saturating_sub(1);
+        let (revision, path, number) = if stat {
+            (revision, path, 1)
+        } else {
+            let origin = self
+                .repo()?
+                .blame(Some(&revision), &path, &[])?
+                .into_iter()
+                .find(|line| line.line == number)
+                .ok_or("No blame for selected line")?;
+            (origin.oid, origin.filename, origin.original_line)
+        };
+        self.revision = revision;
+        self.path = path;
+        self.open(name, self.width)?;
+        self.view.selected = self
+            .view
+            .display_index(number.saturating_sub(1))
+            .min(self.view.rows.len().saturating_sub(1));
         self.center_selection();
         Ok(())
     }
@@ -2581,8 +2590,26 @@ impl App {
                     self.center_selection();
                 }
             }
-            "view-blame" if matches!(self.view.name.as_str(), "diff" | "log" | "pager") => {
-                self.trace_blame()?
+            "view-blame" | "view-blob"
+                if self.view.name == "diff"
+                    || (action == "view-blame"
+                        && matches!(self.view.name.as_str(), "log" | "pager")) =>
+            {
+                self.trace_origin(&action[5..])?
+            }
+            "view-blob" if self.view.name == "stage" => {
+                let rows = self.view.source_rows();
+                let selected = self.view.source_index(self.view.selected);
+                let (path, number) =
+                    diff_target(rows, selected, true).ok_or("No historical blob for this line")?;
+                self.path = path;
+                self.revision = "HEAD".into();
+                self.open("blob", self.width)?;
+                self.view.selected = self
+                    .view
+                    .display_index(number.saturating_sub(1))
+                    .min(self.view.rows.len().saturating_sub(1));
+                self.center_selection();
             }
             "screen-redraw" => (),
             "view-diff" if self.view.name == "diff" => {
