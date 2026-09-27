@@ -27,7 +27,10 @@ with tempfile.TemporaryDirectory(prefix='tig-reflog-stash-') as temporary:
     old = git('rev-parse', 'HEAD')
     for subject in ('older', 'newer'):
         (repo / 'file').write_text(subject + '\n')
-        git('stash', 'push', '-qm', subject)
+        if subject == 'older':
+            (repo / 'extra').write_text('untracked stash content\n')
+        git('stash', 'push', '-uqm', subject)
+    git('config', 'stash.showIncludeUntracked', 'true')
     (repo / 'config').write_text('set show-changes = no\n')
     env['TIGRC_USER'] = str(repo / 'config')
     for name, reference, child, expected in (
@@ -45,6 +48,13 @@ with tempfile.TemporaryDirectory(prefix='tig-reflog-stash-') as temporary:
         returned = (repo / 'returned').read_text()
         assert reference in selected, selected
         assert f'[{child}]' in screen and expected in screen, screen
+        if name == 'stash':
+            assert 'untracked stash content' in screen, screen
+            (repo / 'steps').write_text(':move-down\n:enter\n' + f':save-display {repo / "child-c"}\n:quit\n')
+            code, timed_out, transcript = upstream.terminal(
+                [str(ROOT / 'src/tig'), '-C', str(repo), name], env, 10)
+            assert code == 0 and not timed_out, (name, code, transcript)
+            assert 'untracked stash content' in (repo / 'child-c').read_text()
         assert f'[{name}]' in returned and reference in returned, returned
         print(f'PASS: {name} selects older entry, opens {child}, returns and refreshes')
 
