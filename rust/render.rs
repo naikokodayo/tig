@@ -241,9 +241,13 @@ pub fn render_blame(
         .settings
         .get("blame-view")
         .ok_or("blame-view is not configured")?;
-    let show_filename = lines
-        .first()
-        .is_some_and(|first| lines.iter().any(|line| line.filename != first.filename));
+    let show_filename = config
+        .settings
+        .get("blame-options")
+        .is_some_and(|args| args.iter().any(|arg| arg.starts_with("-C")))
+        || lines
+            .first()
+            .is_some_and(|first| lines.iter().any(|line| line.filename != first.filename));
     let separator = line_number_separator(config);
     let mut rows = vec![String::new(); lines.len()];
     for spec in specs {

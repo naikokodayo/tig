@@ -1,0 +1,170 @@
+{
+  "scope": "C src/blame.c argument chain: copy following, ordering, revision bounds and configured blame options; focused parity only",
+  "source_commit": "9fb040f468cf372de8fa76ffbb1215b731b0d5c1",
+  "base_commit": "c69ad8547330ddf19f2ae94cef502e91d4298976",
+  "source_sha256": "22227eff08c9a6bf6364c416e9b4564f66f7f62f7bc3a3e9f4ad6711802d8787",
+  "source_hash_recipe": "SHA256 of sorted tracked Rust .rs, Cargo.toml, Cargo.lock, tigrc: UTF-8 path + NUL + file bytes + NUL",
+  "binaries": {
+    "c": "c9c627bf50c9649eab8fff30b8c8f80143e29f4fc0b3234fff2bc6a365632578",
+    "rust": "305708d425d5833048e409627d757937468664351f0a784dd29e9de62537b42f"
+  },
+  "before": {
+    "source_commit": "1058486ee325c8b5daba2a8ddd7eaa04c5745a0c",
+    "command": "tig -C REPO blame -C HEAD -- rust/git.rs",
+    "results": [
+      {
+        "mode": "c",
+        "sha256": "c9c627bf50c9649eab8fff30b8c8f80143e29f4fc0b3234fff2bc6a365632578",
+        "exit": 0,
+        "timeout": false,
+        "diagnostic": null
+      },
+      {
+        "mode": "rust_before",
+        "sha256": "92366eb52337b2f0266ae1953091b17f77017f7c215d280defdbd9c1b41e5a1d",
+        "exit": 1,
+        "timeout": false,
+        "diagnostic": "tig: Rust blame currently supports [revision] -- path only\r\n"
+      }
+    ]
+  },
+  "validation": {
+    "toolchain": "Rust 1.81.0 aarch64-apple-darwin",
+    "commands": [
+      "rustup run 1.81.0 cargo fmt --check",
+      "rustup run 1.81.0 cargo test --locked",
+      "rustup run 1.81.0 cargo clippy --locked --all-targets -- -D warnings",
+      "rustup run 1.81.0 cargo build --locked --release",
+      "python3 rust/tests/blame-options.py",
+      "PATH=<Rust 1.81 bin>:$PATH python3 rust/tests/upstream-suite.py test/blame/*-test --output ../blame-upstream.json"
+    ],
+    "all_exit_codes": 0,
+    "rust_tests": 114,
+    "pty": {
+      "checks": [
+        "CLI repeated copy detection and auto filename",
+        "configured copy detection",
+        "copy option displays single source filename",
+        "CLI options replace configured options",
+        "copied line navigation",
+        "two-dot revision bounds",
+        "explicit revision bounds",
+        "reverse CLI",
+        "reverse config",
+        "CLI order overrides reverse config",
+        "line range",
+        "ignore revision",
+        "age bound",
+        "revision flags retain configured copy detection",
+        "bounds retained when navigating parent",
+        "implicit revision includes worktree",
+        "unsafe options, ambiguous revisions and invalid paths fail closed",
+        "read-only operations preserve index and worktree"
+      ],
+      "passed": 18
+    },
+    "original_scripts": [
+      {
+        "script": "test/blame/blob-blame-test",
+        "sha256": "a932f97f6963a0962c69b2064371d897bba836ce4a3a93a454b7d994b62b55e6",
+        "c": "pass",
+        "rust": "pass",
+        "c_assertions": {
+          "OK": 1
+        },
+        "rust_assertions": {
+          "OK": 1
+        }
+      },
+      {
+        "script": "test/blame/default-test",
+        "sha256": "79bb404e69aeaf2c1d7ebe1b248bcb94454284bdbd854490b747b8e34f0c4a5d",
+        "c": "pass",
+        "rust": "pass",
+        "c_assertions": {
+          "OK": 4
+        },
+        "rust_assertions": {
+          "OK": 4
+        }
+      },
+      {
+        "script": "test/blame/initial-diff-test",
+        "sha256": "13f0d337f1954eb9f30b30d9009862fb24f69753cf4cc6a62f4ab998b5cbd193",
+        "c": "pass",
+        "rust": "pass",
+        "c_assertions": {
+          "OK": 2
+        },
+        "rust_assertions": {
+          "OK": 2
+        }
+      },
+      {
+        "script": "test/blame/navigation-parent-test",
+        "sha256": "3cb5b99c305ca3c2d44defdf7a8a74dfc47cdbdffa148a1c3019d812e38cbc10",
+        "c": "pass",
+        "rust": "pass",
+        "c_assertions": {
+          "OK": 1
+        },
+        "rust_assertions": {
+          "OK": 1
+        }
+      },
+      {
+        "script": "test/blame/revargs-test",
+        "sha256": "05be7f205f0ee2687b231892da52af3c1517712d8aab2de874e39e39d8cc2f3d",
+        "c": "pass",
+        "rust": "pass",
+        "c_assertions": {
+          "OK": 2
+        },
+        "rust_assertions": {
+          "OK": 2
+        }
+      },
+      {
+        "script": "test/blame/start-on-line-test",
+        "sha256": "a567fd6137af1ea7dc38f7cdf5a55cb82440ec87a52e5086b88867fe3c9edd13",
+        "c": "pass",
+        "rust": "pass",
+        "c_assertions": {
+          "OK": 1
+        },
+        "rust_assertions": {
+          "OK": 1
+        }
+      },
+      {
+        "script": "test/blame/stash-test",
+        "sha256": "b402fe7909895fd01ceb41d020889731e350c78d0cf58d45c89b55351e1079ac",
+        "c": "pass",
+        "rust": "pass",
+        "c_assertions": {
+          "OK": 3
+        },
+        "rust_assertions": {
+          "OK": 3
+        }
+      }
+    ]
+  },
+  "reviews": [
+    {
+      "role": "independent read-only Reviewer",
+      "scope": "C/Rust argument, configuration, navigation, rendering parity; correctness and minimal scope",
+      "result": "No material findings; final source reviewed"
+    },
+    {
+      "role": "independent read-only Reviewer",
+      "scope": "argv/revision/path safety, Git external execution and read/write boundary",
+      "result": "No introduced material findings; independently ran 18 focused checks"
+    }
+  ],
+  "limits": [
+    "Full 154-script parity gate was not rerun; this is scoped evidence.",
+    "Unknown/output-changing/file-input/textconv options fail closed. No unsafe or new dependencies.",
+    "Existing strict repository-relative path checks remain: ../ and some macOS /var alias spellings can be rejected, also reproduced on origin/main."
+  ]
+}

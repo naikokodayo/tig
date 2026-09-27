@@ -32,3 +32,5 @@ pub mod status_ops;
 pub mod watch;
 
 pub mod view_export;
+
+pub mod blame_options;
