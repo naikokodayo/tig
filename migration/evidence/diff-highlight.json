@@ -1,0 +1,455 @@
+{
+  "schema": 1,
+  "scope": "diff-highlight failure behavior only; original assertions unchanged",
+  "base_commit": "b3b45792505c4089c3db361b651abc7b1a323774",
+  "source_content_sha256": "4526464232a3b1dabae0a327d1926028c8b0c50731b84b1b8084ca5119f16822",
+  "source_hash_rule": "sorted git ls-files rust src include Cargo.toml Cargo.lock Makefile tigrc test/diff test/tools, plus rust/tests/diff-highlight-failure.py; concatenate each UTF-8 path + NUL + SHA256(file) bytes, then SHA256",
+  "changed_source_sha256": {
+    "rust/main.rs": "4d42a41fe516a1b571dee32576052acd2dc33a16b977678b84f50a252ab821ff",
+    "rust/tests/diff-highlight-failure.py": "24924204d42cea4888699a416891ff1f1bd802fcc8677650198c3a46638eb42a"
+  },
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "baseline": {
+    "c": {
+      "source_commit": "b3b45792505c4089c3db361b651abc7b1a323774",
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-highlight/work/tig/src/tig",
+          "sha256": "515e7d44d84328b4a782add0b1c167ebfd9aadc27a1c863509c2f12ec576b31d"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-highlight/work/tig/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "assertion_counts": {
+        "OK": 6,
+        "FAIL": 0
+      },
+      "results": [
+        {
+          "script": "test/diff/diff-highlight-test",
+          "status": "pass",
+          "receipt": "  [OK] diff-highlight-true.screen assertion\n  [OK] diff-highlight-true.stderr assertion\n  [OK] diff-highlight-custom.screen assertion\n  [OK] diff-highlight-custom.stderr assertion\n  [OK] diff-highlight-misconfigured.screen assertion\n  [OK] diff-highlight-misconfigured.stderr assertion\n"
+        }
+      ]
+    },
+    "rust": {
+      "source_commit": "b3b45792505c4089c3db361b651abc7b1a323774",
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-highlight/work/tig/target/release/tig",
+          "sha256": "c6ad35c2befbee27ffcb8e86bed12c9b6ab45e4d7c7bdcbdcede5e1d52497f56"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-highlight/work/tig/target/release/test-graph",
+          "sha256": "dd339d89441b1bbd707dc4b7802a2e3239aec9823a552ef03539788dbe5e5bc8"
+        }
+      },
+      "assertion_counts": {
+        "OK": 4,
+        "FAIL": 2
+      },
+      "results": [
+        {
+          "script": "test/diff/diff-highlight-test",
+          "status": "fail",
+          "receipt": "  [OK] diff-highlight-true.screen assertion\n  [OK] diff-highlight-true.stderr assertion\n  [OK] diff-highlight-custom.screen assertion\n  [OK] diff-highlight-custom.stderr assertion\n[FAIL] diff-highlight-misconfigured.screen != expected/diff-highlight-misconfigured.screen\n\u001b[1mdiff --git a/expected/diff-highlight-misconfigured.screen b/diff-highlight-misconfigured.screen\u001b[m\n\u001b[1mindex e314d0b..77927d3 100644\u001b[m\n\u001b[1m--- a/expected/diff-highlight-misconfigured.screen\u001b[m\n\u001b[1m+++ b/diff-highlight-misconfigured.screen\u001b[m\n\u001b[36m@@ -1,29 +1,29 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthor:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthorDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommit:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommitDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\n  \u001b[m\n\u001b[32m+\u001b[m\u001b[32m    Add type parameter for js.Dynamic\u001b[m\n\u001b[32m+\u001b[m\u001b[32m---\u001b[m\n\u001b[32m+\u001b[m\u001b[32m common/src/main/scala/org/scalajs/benchmark/Benchmark.scala | 2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[m\n  \u001b[m\n\u001b[32m+\u001b[m\u001b[32mdiff --git a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala b/commo\u001b[m\n\u001b[32m+\u001b[m\u001b[32mindex 65f914a..3aa4320 100644\u001b[m\n\u001b[32m+\u001b[m\u001b[32m--- a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+++ b/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -15,7 +15,7 @@ object Benchmark {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   val benchmarks = js.Array[Benchmark]()\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   val benchmarkApps = js.Array[BenchmarkApp]()\u001b[m\n  \u001b[m\n\u001b[32m+\u001b[m\u001b[32m-  val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+  val global = js.Dynamic.global.asInstanceOf[js.Dictionary[js.Any]]\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   global(\"runScalaJSBenchmarks\") = runBenchmarks _\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   global(\"initScalaJSBenchmarkApps\") = initBenchmarkApps _\u001b[m\n  \u001b[m\n  \u001b[m\n  \u001b[m\n  \u001b[m\n  \u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-[diff]                                                                        0%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[diff] a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff - line 1 of 24              100%\u001b[m\n[FAIL] diff-highlight-misconfigured.stderr != expected/diff-highlight-misconfigured.stderr\n\u001b[1mdiff --git a/expected/diff-highlight-misconfigured.stderr b/diff-highlight-misconfigured.stderr\u001b[m\n\u001b[1mindex e69de29..f69c014 100644\u001b[m\n\u001b[1m--- a/expected/diff-highlight-misconfigured.stderr\u001b[m\n\u001b[1m+++ b/diff-highlight-misconfigured.stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig warning: Failed to run the diff-highlight program: program-that-does-not-exist\u001b[m\n"
+        }
+      ]
+    }
+  },
+  "final": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-highlight/work/tig/src/tig",
+          "sha256": "515e7d44d84328b4a782add0b1c167ebfd9aadc27a1c863509c2f12ec576b31d"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-highlight/work/tig/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "assertion_counts": {
+        "OK": 16,
+        "FAIL": 0
+      },
+      "script_counts": {
+        "pass": 2,
+        "skip": 1
+      },
+      "results": [
+        {
+          "script": "test/diff/diff-context-test",
+          "script_sha256": "70d66cc7fbbace58b14cf4c12613de5bc00f084e3ed9d043e2b886daad275dd4",
+          "status": "pass",
+          "exit_code": 0,
+          "timed_out": false,
+          "assertions": [
+            {
+              "id": "diff-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-default-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8-from-main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt": "  [OK] diff-default.screen assertion\n  [OK] diff-u4.screen assertion\n  [OK] diff-u5.screen assertion\n  [OK] diff-u10.screen assertion\n  [OK] diff-u8.screen assertion\n  [OK] diff-default-from-main.screen assertion\n  [OK] diff-u10-from-main.screen assertion\n  [OK] diff-u4-from-main.screen assertion\n  [OK] diff-u5-from-main.screen assertion\n  [OK] diff-u8-from-main.screen assertion\n",
+          "skip": ""
+        },
+        {
+          "script": "test/diff/diff-highlight-color-test",
+          "script_sha256": "b77a1d9d2f386e0bb3ace67fd36d0086437571f21ef04cd8788c41d293afa924",
+          "status": "skip",
+          "exit_code": 0,
+          "timed_out": false,
+          "assertions": [],
+          "receipt": "",
+          "skip": "The test requires diff-highlight, usually found in share/git-core-contrib\n"
+        },
+        {
+          "script": "test/diff/diff-highlight-test",
+          "script_sha256": "eab9213bd2b38ed296eb372ed16d7f9397538ffb3b54f0bb1b36d7ccc7040b02",
+          "status": "pass",
+          "exit_code": 0,
+          "timed_out": false,
+          "assertions": [
+            {
+              "id": "diff-highlight-true.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-true.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-custom.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-custom.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-misconfigured.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-misconfigured.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt": "  [OK] diff-highlight-true.screen assertion\n  [OK] diff-highlight-true.stderr assertion\n  [OK] diff-highlight-custom.screen assertion\n  [OK] diff-highlight-custom.stderr assertion\n  [OK] diff-highlight-misconfigured.screen assertion\n  [OK] diff-highlight-misconfigured.stderr assertion\n",
+          "skip": ""
+        }
+      ]
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-highlight/work/tig/target/release/tig",
+          "sha256": "a57bd4b6ab58d411c6ae437db6f7a31686ab956e88795a8d2c0a2ebe8bd301fa"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-highlight/work/tig/target/release/test-graph",
+          "sha256": "dd339d89441b1bbd707dc4b7802a2e3239aec9823a552ef03539788dbe5e5bc8"
+        }
+      },
+      "binaries_unchanged": true,
+      "assertion_counts": {
+        "OK": 16,
+        "FAIL": 0
+      },
+      "script_counts": {
+        "pass": 2,
+        "skip": 1
+      },
+      "results": [
+        {
+          "script": "test/diff/diff-context-test",
+          "script_sha256": "70d66cc7fbbace58b14cf4c12613de5bc00f084e3ed9d043e2b886daad275dd4",
+          "status": "pass",
+          "exit_code": 0,
+          "timed_out": false,
+          "assertions": [
+            {
+              "id": "diff-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-default-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u10-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u4-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u5-from-main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-u8-from-main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt": "  [OK] diff-default.screen assertion\n  [OK] diff-u4.screen assertion\n  [OK] diff-u5.screen assertion\n  [OK] diff-u10.screen assertion\n  [OK] diff-u8.screen assertion\n  [OK] diff-default-from-main.screen assertion\n  [OK] diff-u10-from-main.screen assertion\n  [OK] diff-u4-from-main.screen assertion\n  [OK] diff-u5-from-main.screen assertion\n  [OK] diff-u8-from-main.screen assertion\n",
+          "skip": ""
+        },
+        {
+          "script": "test/diff/diff-highlight-color-test",
+          "script_sha256": "b77a1d9d2f386e0bb3ace67fd36d0086437571f21ef04cd8788c41d293afa924",
+          "status": "skip",
+          "exit_code": 0,
+          "timed_out": false,
+          "assertions": [],
+          "receipt": "",
+          "skip": "The test requires diff-highlight, usually found in share/git-core-contrib\n"
+        },
+        {
+          "script": "test/diff/diff-highlight-test",
+          "script_sha256": "eab9213bd2b38ed296eb372ed16d7f9397538ffb3b54f0bb1b36d7ccc7040b02",
+          "status": "pass",
+          "exit_code": 0,
+          "timed_out": false,
+          "assertions": [
+            {
+              "id": "diff-highlight-true.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-true.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-custom.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-custom.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-misconfigured.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-highlight-misconfigured.stderr#1",
+              "status": "OK"
+            }
+          ],
+          "receipt": "  [OK] diff-highlight-true.screen assertion\n  [OK] diff-highlight-true.stderr assertion\n  [OK] diff-highlight-custom.screen assertion\n  [OK] diff-highlight-custom.stderr assertion\n  [OK] diff-highlight-misconfigured.screen assertion\n  [OK] diff-highlight-misconfigured.stderr assertion\n",
+          "skip": ""
+        }
+      ]
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/diff/diff-context-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "diff-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u4.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u5.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u10.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u8.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-default-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u10-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u4-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u5-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-u8-from-main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/diff/diff-highlight-color-test",
+      "c_status": "skip",
+      "rust_status": "skip",
+      "assertions": []
+    },
+    {
+      "script": "test/diff/diff-highlight-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "diff-highlight-true.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-highlight-true.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-highlight-custom.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-highlight-custom.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-highlight-misconfigured.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-highlight-misconfigured.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ],
+  "checks": {
+    "cargo fmt --all -- --check": "pass",
+    "cargo test --all-targets": {
+      "passed": 125,
+      "failed": 0
+    },
+    "cargo clippy --all-targets -- -D warnings": "pass",
+    "python3 rust/tests/diff-pipeline.py": {
+      "paired_checks_passed": 4
+    },
+    "python3 rust/tests/diff-highlight-failure.py": {
+      "checks": [
+        "missing",
+        "empty-failure",
+        "partial-failure",
+        "early-close",
+        "stderr-success",
+        "c-terminal-restored",
+        "rust-terminal-restored"
+      ],
+      "passed": 7,
+      "skips": [
+        "filesystem rejects non-UTF-8 repository paths"
+      ]
+    }
+  },
+  "residuals": [
+    "No full 154-script parity claim.",
+    "Original diff-highlight-color-test explicitly skips in both implementations: installed diff-highlight unavailable.",
+    "APFS rejects non-UTF-8 directory names with EILSEQ; supplementary test records explicit skip and continues using a Unicode path. Lossless non-UTF-8 fixture remains available on supporting filesystems."
+  ],
+  "command": "python3 rust/tests/upstream-suite.py test/diff/diff-highlight-test test/diff/diff-highlight-color-test test/diff/diff-context-test --output ../highlight-after.json",
+  "verdict": "PASS_DIFF_HIGHLIGHT_FAILURE_SLICE; COLOR_SKIP_RETAINS_BLOCKED_PARITY_GATE"
+}
