@@ -449,31 +449,27 @@ pub fn classify_cli_args(cwd: &Path, args: &[String]) -> Result<Vec<String>> {
     let files = query("--no-revs", "--no-flags")?;
     let flags = query("--flags", "--no-revs")?;
     let symbolic = query("--symbolic", "--revs-only")?;
-    // Git's LF protocol cannot delimit LF-containing filenames. Match each
-    // result against original argv boundaries instead of splitting those bytes.
-    let mut paths = Vec::new();
-    let mut rest = files.as_slice();
-    if let Some(separator) = remaining.iter().position(|arg| arg == "--") {
-        paths.extend_from_slice(&remaining[separator + 1..]);
-        let expected: Vec<u8> = paths
-            .iter()
+    // Once Git reaches an implicit filename, the rest of argv is paths.
+    // Match that whole suffix, never split its LF protocol into filename bytes.
+    let encoded = |args: &[String]| -> Vec<u8> {
+        args.iter()
             .flat_map(|arg| arg.bytes().chain([b'\n']))
-            .collect();
-        if files != expected {
+            .collect()
+    };
+    let paths = if let Some(separator) = remaining.iter().position(|arg| arg == "--") {
+        let paths = &remaining[separator + 1..];
+        if files != encoded(paths) {
             return Err(GitError("Git returned unexpected explicit paths".into()));
         }
-        rest = &[];
-    }
-    while !rest.is_empty() {
-        let matched = remaining
-            .iter()
-            .filter(|arg| arg.as_str() != "--")
-            .filter(|arg| rest.starts_with(arg.as_bytes()) && rest.get(arg.len()) == Some(&b'\n'))
-            .max_by_key(|arg| arg.len())
-            .ok_or_else(|| GitError("Git returned an unexpected filename argument".into()))?;
-        paths.push(matched.clone());
-        rest = &rest[matched.len() + 1..];
-    }
+        paths.to_vec()
+    } else if files.is_empty() {
+        Vec::new()
+    } else {
+        let first = (0..remaining.len())
+            .find(|&i| files == encoded(&remaining[i..]))
+            .ok_or_else(|| GitError("Git returned unexpected implicit paths".into()))?;
+        remaining[first..].to_vec()
+    };
     // Revision ranges may be expanded by Git. Retain the user's option boundary.
     if remaining.iter().any(|arg| arg == "--end-of-options") {
         return Ok(args.to_vec());
@@ -2115,6 +2111,14 @@ mod tests {
             ["--exclude=refs/heads/other", "--all", "--", "subdir"]
         );
         assert_eq!(classify(&["subdir"]), ["--", "subdir"]);
+        for name in ["a", "b", "a\nb"] {
+            fs::write(fixture.0.join(name), "base").unwrap();
+        }
+        repo.command(["add", "."]).unwrap();
+        repo.command(["commit", "-qm", "ambiguous LF boundaries"])
+            .unwrap();
+        assert_eq!(classify(&["a", "b", "a\nb"]), ["--", "a", "b", "a\nb"]);
+
         assert_eq!(
             classify(&["HEAD", "file\nname"]),
             ["HEAD", "--", "file\nname"]
