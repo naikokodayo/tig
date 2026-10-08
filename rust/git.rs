@@ -2675,10 +2675,22 @@ mod tests {
             cancelled: std::sync::atomic::AtomicBool::new(false),
             child: std::sync::Mutex::new(None),
         });
+        let fixture = Fixture::new();
+        let ready = fixture.0.join("descendant-ready");
+        let marker = ready.clone();
         let process = cancellation.clone();
         let worker = std::thread::spawn(move || {
             HISTORY_PROCESS.with(|state| *state.borrow_mut() = Some(process));
-            let output = command_output(Command::new("sh").args(["-c", "sleep 30 & wait"]), None)?;
+            let output = command_output(
+                Command::new("sh")
+                    .args([
+                        "-c",
+                        "sleep 30 & printf '%s\\n' \"$!\" > \"$1\"; wait",
+                        "tig-cancel-fixture",
+                    ])
+                    .arg(marker),
+                None,
+            )?;
             assert!(!output.status.success());
             Ok(Vec::new())
         });
@@ -2687,7 +2699,11 @@ mod tests {
             cancellation,
         };
         let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
-        while refresh.cancellation.child.lock().unwrap().is_none() {
+        // Exercise cancellation after the pipe-owning descendant actually exists,
+        // rather than racing the shell's startup fork under a busy CI scheduler.
+        while refresh.cancellation.child.lock().unwrap().is_none()
+            || !fs::read(&ready).is_ok_and(|bytes| bytes.ends_with(b"\n"))
+        {
             assert!(std::time::Instant::now() < deadline);
             std::thread::sleep(std::time::Duration::from_millis(5));
         }
