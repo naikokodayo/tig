@@ -149,6 +149,12 @@ pub struct HistoryRefresh {
     stderr: Option<std::thread::JoinHandle<std::io::Result<Vec<u8>>>>,
     unborn: bool,
     first_parent: bool,
+    wire: HistoryWire,
+}
+struct HistoryWire {
+    notes: bool,
+    annotations: std::collections::HashSet<String>,
+    metadata: Option<Command>,
 }
 fn drain(
     mut pipe: impl std::io::Read + Send + 'static,
@@ -187,7 +193,7 @@ impl HistoryRefresh {
                 text(&stderr).trim()
             )));
         }
-        repo.finish_history(&stdout, self.unborn, self.first_parent)
+        repo.finish_history(&stdout, self.unborn, self.first_parent, &mut self.wire)
             .map(Some)
     }
 }
@@ -385,6 +391,30 @@ impl HistoryOptions {
     }
 }
 
+fn git_option_takes_value(arg: &str) -> bool {
+    matches!(
+        arg,
+        "--since"
+            | "--after"
+            | "--until"
+            | "--before"
+            | "--author"
+            | "--committer"
+            | "--grep"
+            | "--grep-reflog"
+            | "--max-count"
+            | "--skip"
+            | "--min-parents"
+            | "--max-parents"
+            | "--glob"
+            | "--exclude"
+            | "-n"
+            | "-G"
+            | "-S"
+            | "-L"
+    )
+}
+
 /// Let Git split implicit filenames from revisions before views consume arguments.
 /// Explicit path arguments stay intact, including embedded LF bytes.
 pub fn classify_cli_args(cwd: &Path, args: &[String]) -> Result<Vec<String>> {
@@ -402,27 +432,7 @@ pub fn classify_cli_args(cwd: &Path, args: &[String]) -> Result<Vec<String>> {
         }
         // Keep separate option values as one argv pair; Git's rev-parse does not
         // understand log's value-taking options (and may interpret values as paths).
-        let takes_value = matches!(
-            arg.as_str(),
-            "--since"
-                | "--after"
-                | "--until"
-                | "--before"
-                | "--author"
-                | "--committer"
-                | "--grep"
-                | "--grep-reflog"
-                | "--max-count"
-                | "--skip"
-                | "--min-parents"
-                | "--max-parents"
-                | "--glob"
-                | "--exclude"
-                | "-n"
-                | "-G"
-                | "-S"
-                | "-L"
-        );
+        let takes_value = git_option_takes_value(arg);
         if crate::config::is_revision_flag(arg) || takes_value {
             revisions.push(arg.clone());
             if takes_value {
@@ -796,13 +806,103 @@ impl Repository {
         input: Option<&[u8]>,
         notes: &str,
     ) -> Result<Vec<Commit>> {
-        let (command, unborn, first_parent) =
+        let (command, unborn, first_parent, mut wire) =
             self.history_command(revisions, limit, order, notes)?;
         self.finish_history(
             &run_command_with_input(command, input)?,
             unborn,
             first_parent,
+            &mut wire,
         )
+    }
+    fn history_annotations(&self, notes: &str) -> Result<std::collections::HashSet<String>> {
+        let mut command = git_command(
+            &self.root,
+            [
+                "config",
+                "--null",
+                "--get-regexp",
+                "^notes[.](ref|displayref)$",
+            ],
+        )?;
+        let config = crate::trace::output(&mut command).map_err(|e| GitError(e.to_string()))?;
+        if !config.status.success() && config.status.code() != Some(1) {
+            return Err(GitError(format!(
+                "Could not read notes config: {}",
+                text(&config.stderr)
+            )));
+        }
+        let mut default = OsString::from("refs/notes/commits");
+        let mut display = Vec::new();
+        for entry in config.stdout.split(|b| *b == 0).filter(|e| !e.is_empty()) {
+            let split = entry
+                .iter()
+                .position(|b| *b == b'\n')
+                .ok_or_else(|| GitError("Malformed notes config".into()))?;
+            let value = path(&entry[split + 1..])?.into_os_string();
+            match &entry[..split] {
+                b"notes.ref" => default = value,
+                b"notes.displayref" => display.push(value),
+                _ => return Err(GitError("Unexpected notes config key".into())),
+            }
+        }
+        if let Some(value) = std::env::var_os("GIT_NOTES_REF") {
+            default = value;
+        }
+        if let Some(value) = std::env::var_os("GIT_NOTES_DISPLAY_REF") {
+            display = value
+                .as_encoded_bytes()
+                .split(|b| *b == b':')
+                .map(|value| path(value).map(PathBuf::into_os_string))
+                .collect::<Result<_>>()?;
+        }
+        display.insert(0, default);
+        if !matches!(notes, "yes" | "true" | "1" | "") {
+            display.push(notes.into());
+        }
+        let mut refs = std::collections::BTreeSet::new();
+        for mut pattern in display {
+            if !pattern.as_encoded_bytes().starts_with(b"refs/") {
+                let mut full = OsString::from("refs/notes/");
+                full.push(pattern);
+                pattern = full;
+            }
+            let glob = pattern
+                .as_encoded_bytes()
+                .iter()
+                .any(|b| b"*?[".contains(b));
+            let output = self.command([
+                OsStr::new("for-each-ref"),
+                OsStr::new("--format=%(refname)"),
+                &pattern,
+            ])?;
+            for name in output
+                .split(|b| *b == b'\n')
+                .filter(|name| !name.is_empty())
+            {
+                if glob || name == pattern.as_encoded_bytes() {
+                    refs.insert(path(name)?.into_os_string());
+                }
+            }
+        }
+        let mut result = std::collections::HashSet::new();
+        for name in refs {
+            let mut arg = OsString::from("--ref=");
+            arg.push(name);
+            let output = self.command([OsStr::new("notes"), &arg, OsStr::new("list")])?;
+            for row in output.split(|b| *b == b'\n').filter(|row| !row.is_empty()) {
+                let fields: Vec<_> = row.split(|b| *b == b' ').collect();
+                if fields.len() != 2
+                    || fields.iter().any(|oid| {
+                        !matches!(oid.len(), 40 | 64) || !oid.iter().all(u8::is_ascii_hexdigit)
+                    })
+                {
+                    return Err(GitError("Malformed notes mapping".into()));
+                }
+                result.insert(text(fields[1]));
+            }
+        }
+        Ok(result)
     }
     fn history_command(
         &self,
@@ -810,7 +910,7 @@ impl Repository {
         limit: usize,
         order: &str,
         notes: &str,
-    ) -> Result<(Command, bool, bool)> {
+    ) -> Result<(Command, bool, bool, HistoryWire)> {
         let options = HistoryOptions::parse(revisions)?;
         let order_arg = match order {
             "auto" | "topo" => Some("--topo-order"),
@@ -821,24 +921,40 @@ impl Repository {
             _ => return Err(GitError(format!("Invalid commit order: {order}"))),
         };
         let show_notes = !matches!(notes, "no" | "false" | "0");
-        let notes_format = if show_notes { "%N" } else { "" };
-        let mut args = vec![
-            "log".to_owned(),
-            "--parents".into(),
-            "--no-show-signature".into(),
-            "--decorate=full".into(),
-            format!("--format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI%x00{notes_format}"),
-            "-z".into(),
-        ];
+        let split = revisions
+            .iter()
+            .position(|arg| arg == "--")
+            .unwrap_or(revisions.len());
+        let mut args = vec!["log".to_owned(), "--encoding=UTF-8".into()];
+        if let Some(order_arg) = order_arg {
+            args.push(order_arg.into());
+        }
+        let mut leading = 0;
+        while leading < split {
+            let arg = &revisions[leading];
+            if arg == "--end-of-options" || !arg.starts_with('-') {
+                break;
+            }
+            leading += 1;
+            if git_option_takes_value(arg) {
+                leading += 1;
+            }
+        }
+        leading = leading.min(split);
+        args.extend_from_slice(&revisions[..leading]);
+        args.extend(["--date=raw".into(), "--parents".into(), "--no-color".into()]);
         if show_notes {
             args.push(match notes {
                 "yes" | "true" | "1" | "" => "--show-notes".into(),
                 reference => format!("--show-notes={reference}"),
             });
         }
-        if let Some(order_arg) = order_arg {
-            args.push(order_arg.into());
-        }
+        let format = "--pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s";
+        args.push(if show_notes {
+            format!("{format}%x00%N%x03")
+        } else {
+            format.into()
+        });
         if options.merge {
             args.push("--boundary".into());
         }
@@ -852,13 +968,76 @@ impl Repository {
             args.extend(["--all".into(), "--max-count=0".into()]);
         }
         // Preserve Git's revision/path disambiguation when no -- was supplied.
-        args.extend(revisions.iter().cloned());
+        args.extend_from_slice(&revisions[leading..split]);
+        if split < revisions.len() || leading == split {
+            args.push("--".into());
+        }
+        if split < revisions.len() {
+            args.extend_from_slice(&revisions[split + 1..]);
+        }
         let directory = if revisions.iter().any(|arg| arg == "--") {
             &self.root
         } else {
             &self.invocation
         };
-        Ok((git_command(directory, args)?, unborn, options.first_parent))
+        let annotations = if show_notes {
+            self.history_annotations(notes)?
+        } else {
+            std::collections::HashSet::new()
+        };
+        let metadata = if annotations.is_empty() {
+            None
+        } else {
+            // C's unescaped %N cannot frame arbitrary note blobs. Keep its real
+            // log command, but obtain authoritative selection/parents/identities
+            // through a notes-free traversal when active note mappings exist.
+            let mut metadata = args.clone();
+            if split < revisions.len() || leading == split {
+                metadata[0] = "rev-list".into();
+                metadata.insert(1, "--no-commit-header".into());
+            } // The API also permits implicit paths; log preserves that disambiguation.
+            metadata.retain(|arg| !arg.starts_with("--show-notes"));
+            for arg in &mut metadata {
+                if arg.starts_with("--pretty=") {
+                    *arg = format!("{format}%x00%x03");
+                }
+            }
+            if !options.has_revision && !unborn {
+                let separator = metadata
+                    .iter()
+                    .position(|arg| arg == "--")
+                    .expect("history path boundary");
+                metadata.insert(separator, "HEAD".into());
+            }
+            Some(git_command(directory, metadata)?)
+        };
+        let mut command = git_command(directory, args)?;
+        // Keep configured signatures from entering this metadata wire format.
+        let count = std::env::var("GIT_CONFIG_COUNT")
+            .unwrap_or_else(|_| "0".into())
+            .parse::<usize>()
+            .map_err(|_| GitError("Invalid GIT_CONFIG_COUNT".into()))?
+            + 1;
+        command
+            .env(
+                "GIT_CONFIG_COUNT",
+                count
+                    .checked_add(1)
+                    .ok_or_else(|| GitError("Invalid GIT_CONFIG_COUNT".into()))?
+                    .to_string(),
+            )
+            .env(format!("GIT_CONFIG_KEY_{count}"), "log.showSignature")
+            .env(format!("GIT_CONFIG_VALUE_{count}"), "false");
+        Ok((
+            command,
+            unborn,
+            options.first_parent,
+            HistoryWire {
+                notes: show_notes,
+                annotations,
+                metadata,
+            },
+        ))
     }
     pub fn start_history(
         &self,
@@ -866,7 +1045,7 @@ impl Repository {
         order: &str,
         notes: &str,
     ) -> Result<HistoryRefresh> {
-        let (mut command, unborn, first_parent) =
+        let (mut command, unborn, first_parent, wire) =
             self.history_command(revisions, 0, order, notes)?;
         command.stdout(Stdio::piped()).stderr(Stdio::piped());
         crate::trace::command(&command);
@@ -879,6 +1058,7 @@ impl Repository {
             stderr: Some(stderr),
             unborn,
             first_parent,
+            wire,
         })
     }
     fn finish_history(
@@ -886,8 +1066,37 @@ impl Repository {
         bytes: &[u8],
         unborn: bool,
         first_parent: bool,
+        wire: &mut HistoryWire,
     ) -> Result<Vec<Commit>> {
-        let mut result = parse_history(bytes)?;
+        let metadata = wire
+            .metadata
+            .take()
+            .map(|command| run_command_with_input(command, None))
+            .transpose()?;
+        let mut result = if let Some(metadata) = metadata.as_deref() {
+            let (compact, prefixes) = compact_history(metadata)?;
+            // Consume the actual C-format log too: every authoritative metadata
+            // prefix must occur in its output in traversal order. Notes may contain
+            // lookalike prefixes, but can never select or alter commit metadata.
+            let mut remaining = bytes;
+            for prefix in prefixes {
+                let offset = remaining
+                    .windows(prefix.len())
+                    .position(|window| window == prefix)
+                    .ok_or_else(|| {
+                        GitError("History changed between notes and metadata queries".into())
+                    })?;
+                remaining = &remaining[offset + prefix.len()..];
+            }
+            parse_raw_history(&text(&compact))?
+        } else if wire.notes {
+            parse_history(bytes)?
+        } else {
+            parse_raw_history(&text(bytes))?
+        };
+        for commit in &mut result {
+            commit.annotated = wire.annotations.contains(&commit.oid);
+        }
         let references = self.refs()?;
         let upstream = self.upstream()?;
         decorate_history(&mut result, &references, &upstream);
@@ -938,7 +1147,7 @@ impl Repository {
             metadata.push(0); // Reflog rows do not carry main-view annotations.
             selectors.push(text(row[10]));
         }
-        let mut commits = parse_history(&metadata)?;
+        let mut commits = parse_reflog_metadata(&metadata)?;
         let upstream = self.upstream()?;
         decorate_history(&mut commits, &self.refs()?, &upstream);
         Ok((commits, selectors))
@@ -1609,7 +1818,56 @@ pub fn parse_tree(bytes: &[u8]) -> Result<Vec<TreeEntry>> {
         })
         .collect()
 }
+/// Parse the compact upstream wire only when notes are known absent. Notes
+/// mappings require an authoritative notes-free traversal, not guessed delimiters.
 pub fn parse_history(bytes: &[u8]) -> Result<Vec<Commit>> {
+    parse_raw_history(&text(&compact_history(bytes)?.0))
+}
+fn compact_history(mut bytes: &[u8]) -> Result<(Vec<u8>, Vec<Vec<u8>>)> {
+    let mut compact = Vec::new();
+    let mut prefixes = Vec::new();
+    while !bytes.is_empty() {
+        let fields: Vec<_> = bytes.splitn(5, |b| *b == 0).collect();
+        if fields.len() != 5 {
+            return Err(GitError("Truncated compact history".into()));
+        }
+        let rest = fields[4]
+            .strip_prefix(b"\x03")
+            .ok_or_else(|| GitError("Unframed history notes".into()))?;
+        if !rest.is_empty() && rest != b"\n" && !rest.starts_with(b"\ncommit ") {
+            return Err(GitError("Malformed compact history boundary".into()));
+        }
+        let header = fields[0];
+        let start = header
+            .windows(b"commit ".len())
+            .position(|w| w == b"commit ")
+            .ok_or_else(|| GitError("Missing compact history header".into()))?;
+        // rev-list --parents emits rewritten parent IDs even with its commit
+        // header disabled. Its custom %P carries the same traversal metadata.
+        if header[..start]
+            .split(|b| b.is_ascii_whitespace())
+            .filter(|id| !id.is_empty())
+            .any(|id| !matches!(id.len(), 40 | 64) || !id.iter().all(u8::is_ascii_hexdigit))
+        {
+            return Err(GitError("Malformed history parent prefix".into()));
+        }
+        let before = compact.len();
+        for (i, field) in fields[..4].iter().enumerate() {
+            if i != 0 {
+                compact.push(0);
+            }
+            compact.extend_from_slice(if i == 0 { &field[start..] } else { field });
+        }
+        let mut prefix = compact[before..].to_vec();
+        prefix.push(0);
+        prefixes.push(prefix);
+        compact.push(b'\n');
+        bytes = rest.strip_prefix(b"\n").unwrap_or(rest);
+    }
+    Ok((compact, prefixes))
+}
+
+fn parse_reflog_metadata(bytes: &[u8]) -> Result<Vec<Commit>> {
     let f: Vec<_> = records(bytes)?.collect();
     if f.len() % 11 != 0 {
         return Err(GitError("Malformed history fields".into()));
@@ -1913,7 +2171,7 @@ mod tests {
         assert!(refs[0].current);
         assert_eq!(refs[2].target, oid);
         let commit = |id: &str| {
-            parse_history(format!("{id}\0\0Author\02020-01-01T00:00:00+00:00\0Title\0stale\0a@b\0Author\0a@b\02020-01-01T00:00:00+00:00\0\0").as_bytes()).unwrap().remove(0)
+            parse_reflog_metadata(format!("{id}\0\0Author\02020-01-01T00:00:00+00:00\0Title\0stale\0a@b\0Author\0a@b\02020-01-01T00:00:00+00:00\0\0").as_bytes()).unwrap().remove(0)
         };
         let mut commits = vec![commit(&oid), commit(&replaced)];
         decorate_history(&mut commits, &refs, "");
@@ -2186,6 +2444,92 @@ mod tests {
             .history(&["--grep".into(), "before\nafter".into()], 0)
             .is_ok());
     }
+    #[test]
+    fn history_notes_cannot_inject_commits_or_metadata() {
+        let fixture = Fixture::new();
+        let repo = fixture.repo();
+        for subject in ["real base", "real head"] {
+            repo.command(["commit", "--allow-empty", "-qm", subject])
+                .unwrap();
+        }
+        let base = repo.revision("HEAD^").unwrap();
+        let spoof = format!("\x03\ncommit > {base}\0Fake <fake@invalid> 0 +0000\0Fake <fake@invalid> 0 +0000\0injected\0\x03");
+        let note = text(trim_lf(
+            &run_with_input(
+                &repo.root,
+                ["hash-object", "-w", "--stdin"],
+                Some(spoof.as_bytes()),
+            )
+            .unwrap(),
+        ));
+        repo.command(["notes", "add", "-C", &note, "HEAD"]).unwrap();
+        let commits = repo.history_ordered(&[], 0, "topo", "yes").unwrap();
+        assert_eq!(commits.len(), 2);
+        assert_eq!(
+            commits
+                .iter()
+                .map(|c| c.subject.as_str())
+                .collect::<Vec<_>>(),
+            ["real head", "real base"]
+        );
+        assert!(commits[0].annotated && !commits[1].annotated);
+        assert!(commits
+            .iter()
+            .all(|c| c.author == "Test User" && c.committer == "Test User"));
+        let mut refresh = repo.start_history(&[], "topo", "yes").unwrap();
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+        loop {
+            if let Some(commits) = refresh.poll(&repo).unwrap() {
+                assert_eq!(commits.len(), 2);
+                assert_eq!(commits[0].subject, "real head");
+                break;
+            }
+            assert!(std::time::Instant::now() < deadline);
+            std::thread::sleep(std::time::Duration::from_millis(5));
+        }
+    }
+    #[test]
+    fn history_notes_display_refs_match_native_git() {
+        let fixture = Fixture::new();
+        let repo = fixture.repo();
+        repo.command(["commit", "--allow-empty", "-qm", "base"])
+            .unwrap();
+        let base = repo.revision("HEAD").unwrap();
+        repo.command(["notes", "--ref=review/topic", "add", "-m", "nested"])
+            .unwrap();
+        repo.command(["commit", "--allow-empty", "-qm", "head"])
+            .unwrap();
+        let head = repo.revision("HEAD").unwrap();
+        repo.command(["notes", "add", "-m", "default"]).unwrap();
+        for pattern in [
+            "refs/notes/review/*",
+            "refs/notes/review/",
+            "refs/notes/review/topic",
+        ] {
+            repo.command(["config", "notes.displayRef", pattern])
+                .unwrap();
+            let annotations = repo.history_annotations("yes").unwrap();
+            for oid in [&base, &head] {
+                let native = repo
+                    .command(["show", "--no-patch", "--show-notes", "--format=%N", oid])
+                    .unwrap();
+                assert_eq!(
+                    annotations.contains(oid),
+                    !trim_lf(&native).is_empty(),
+                    "{pattern}: {oid}"
+                );
+            }
+        }
+        repo.command(["config", "notes.ref", "refs/notes/review/topic"])
+            .unwrap();
+        repo.command(["config", "--unset-all", "notes.displayRef"])
+            .unwrap();
+        assert_eq!(
+            repo.history_annotations("yes").unwrap(),
+            [base].into_iter().collect()
+        );
+    }
+
     #[test]
     fn history_notes_follow_selected_ref_without_leaking_into_fields() {
         let f = Fixture::new();
