@@ -67,23 +67,23 @@ fn highlight_diff(config: &Config, input: &[u8]) -> String {
         .env("GIT_CONFIG", "/dev/null")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
+        .stderr(Stdio::null())
         .spawn()
         .and_then(|mut child| {
             let mut stdin = child.stdin.take().expect("piped highlight stdin");
-            let (output, written) = std::thread::scope(|scope| {
+            std::thread::scope(|scope| {
+                // A filter may close stdin early and still produce useful output.
                 let writer = scope.spawn(move || stdin.write_all(input));
-                (child.wait_with_output(), writer.join())
-            });
-            written.map_err(|_| io::Error::other("highlight writer panicked"))??;
-            output
+                let output = child.wait_with_output();
+                let _ = writer.join();
+                output
+            })
         });
-    match result {
-        Ok(output) if output.status.success() => String::from_utf8_lossy(&output.stdout).into(),
-        _ => {
-            eprintln!("tig warning: Failed to run the diff-highlight program: {program}");
-            String::from_utf8_lossy(input).into()
-        }
-    }
+    // C displays the filter's stdout, including partial output on failure.
+    // An unavailable filter therefore leaves an empty view, with no stderr warning.
+    result
+        .map(|output| String::from_utf8_lossy(&output.stdout).into())
+        .unwrap_or_default()
 }
 const HELP: &str = "Tig Rust migration (compatibility work in progress)\n\nUsage: tig [-C path] [log|show|reflog|blame|grep|refs|stash|status] [arguments]\n       git show | tig\n\nKeys: j/k move, Enter open, q back/quit, Q quit, / search, n next match\n      m history, d diff, s status, t tree, r refs, b blame, h help, R refresh\n      u stage/unstage; ! revert selected unstaged file (confirmation required)\n      Conflicts: :status-revert ours or :status-revert theirs, then u\n      Horizontal arrows scroll\n\nThis version is not yet a drop-in replacement for upstream Tig. See MIGRATION.md.";
 
@@ -4029,6 +4029,7 @@ fn view_reference(view: &View) -> String {
         {
             "Press '<Enter>' to jump to file diff".into()
         }
+        _ if view.name == "diff" && view.rows.is_empty() => String::new(),
         _ if view.name == "diff" => diff_edit_target(&view.rows, view.selected)
             .map(|(path, _)| format!("Changes to '{}'", path.display()))
             .unwrap_or_else(|| {
@@ -5406,10 +5407,10 @@ mod tests {
     }
 
     #[test]
-    fn failed_highlighter_keeps_the_original_diff() {
+    fn unavailable_highlighter_leaves_an_empty_diff() {
         let mut config = Config::defaults();
         config.parse("set diff-highlight = program-that-does-not-exist");
-        assert_eq!(highlight_diff(&config, b"diff content\n"), "diff content\n");
+        assert_eq!(highlight_diff(&config, b"diff content\n"), "");
         config.parse("set diff-highlight = wc\nset diff-options = --word-diff=plain");
         assert_eq!(highlight_diff(&config, b"diff content\n"), "diff content\n");
         for option in [
