@@ -4889,6 +4889,12 @@ fn run() -> Result<()> {
     for message in &config.diagnostics {
         eprintln!("tig warning: {message}");
     }
+    if matches!(
+        cli.view.as_str(),
+        "main" | "status" | "diff" | "log" | "reflog"
+    ) {
+        cli.git_args = tig_rs::git::classify_cli_args(&env::current_dir()?, &cli.git_args)?;
+    }
     if cli.view == "status" && !cli.git_args.iter().any(|arg| arg == "--") {
         cli.git_args.insert(0, "--".into());
     }

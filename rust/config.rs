@@ -1185,6 +1185,82 @@ pub fn is_view(name: &str) -> bool {
     crate::request::is_view(name)
 }
 
+/// Revision filters Tig removes before asking Git to classify other arguments.
+pub(crate) fn is_revision_flag(arg: &str) -> bool {
+    const FLAGS: &[&str] = &[
+        "--after=",
+        "--all",
+        "--all-match",
+        "--ancestry-path",
+        "--author-date-order",
+        "--basic-regexp",
+        "--before=",
+        "--boundary",
+        "--branches",
+        "--branches=",
+        "--cherry",
+        "--cherry-mark",
+        "--cherry-pick",
+        "--committer=",
+        "--date-order",
+        "--dense",
+        "--exclude=",
+        "--extended-regexp",
+        "--first-parent",
+        "--fixed-strings",
+        "--full-history",
+        "--graph",
+        "--glob=",
+        "--left-only",
+        "--max-parents=",
+        "--max-age=",
+        "--merge",
+        "--merges",
+        "--min-parents=",
+        "--no-max-parents",
+        "--no-min-parents",
+        "--no-walk",
+        "--perl-regexp",
+        "--pickaxe-all",
+        "--pickaxe-regex",
+        "--reflog",
+        "--regexp-ignore-case",
+        "--remotes",
+        "--remotes=",
+        "--remove-empty",
+        "--reverse",
+        "--right-only",
+        "--simplify-by-decoration",
+        "--simplify-merges",
+        "--since=",
+        "--skip=",
+        "--sparse",
+        "--stdin",
+        "--tags",
+        "--tags=",
+        "--topo-order",
+        "--until=",
+        "-E",
+        "-F",
+        "-i",
+        "--no-merges",
+        "--follow",
+        "--author=",
+        "--walk-reflogs",
+        "-g",
+        "--grep-reflog=",
+        "--grep=",
+        "-G",
+        "-S",
+        "-L",
+    ];
+    FLAGS.iter().any(|flag| {
+        arg == *flag
+            || ((flag.ends_with('=') || matches!(*flag, "-G" | "-S" | "-L"))
+                && arg.starts_with(flag))
+    })
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Cli {
     pub view: String,
