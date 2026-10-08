@@ -215,9 +215,6 @@ fn command_output(command: &mut Command, input: Option<&[u8]>) -> Result<std::pr
                 .lock()
                 .map_err(|_| GitError("History process lock poisoned".into()))?;
             let child = slot.as_mut().expect("active history query");
-            if cancellation.cancelled.load(Ordering::Acquire) {
-                stop_history_child(child);
-            }
             // Keep the leader PID unreaped while descendants may hold pipes;
             // cancellation can then safely address its isolated process group.
             if stdout.is_finished()
@@ -259,8 +256,11 @@ fn stop_history_child(child: &mut std::process::Child) {
     {
         // Native group signalling avoids first-party unsafe FFI. The isolated
         // leader remains unreaped until all inherited output pipes reach EOF.
-        let _ = Command::new("/bin/kill")
-            .arg("-KILL")
+        let mut signal = Command::new("/bin/kill");
+        signal.arg("-KILL");
+        #[cfg(target_os = "linux")]
+        signal.arg("--"); // procps kill otherwise interprets -PID as an option.
+        let _ = signal
             .arg(format!("-{}", child.id()))
             .stdout(Stdio::null())
             .stderr(Stdio::null())
@@ -293,6 +293,9 @@ impl Drop for HistoryRefresh {
         if let Ok(mut slot) = self.cancellation.child.lock() {
             if let Some(child) = slot.as_mut() {
                 stop_history_child(child);
+                // Match the UI's stopped-loading guarantee: reap the leader
+                // before returning, while readers finish off the UI thread.
+                let _ = child.wait();
             }
         }
     }
