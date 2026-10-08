@@ -1,0 +1,266 @@
+{
+  "schema": 1,
+  "scope": "Current tree/file-name safety difference; not full migration parity acceptance",
+  "runtime_source_commit": "b3b45792505c4089c3db361b651abc7b1a323774",
+  "source_sha256": {
+    "Cargo.lock": "7f9d3e6d2f4d911c6d664fc0262cb8372c15107aef416a069d26b6c6f4a527ab",
+    "Cargo.toml": "2a4246632b36ca9defc3fb89312e983b474db8bf2775bf7699232041046a0a0a",
+    "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
+    "rust/blame_options.rs": "9541a99a6d38a03ba9a9710760a7950c725e68b6282b6051ae92c8210b924dcb",
+    "rust/blob_editor.rs": "70f69440bb6e9e1d537b3ee4b2f4868786a7e09f627737779e6fb79ae7b9b499",
+    "rust/commands.rs": "4ccff24976180c3cab67a33b5834911360b7fc60b4ed8d8ed34ebb04b5d45ed2",
+    "rust/config.rs": "366992d4f493ea388af96fc05cc5c01bf521a36dc65ce071ddec55ee0f184579",
+    "rust/date.rs": "51d16041689246691bcfacc8a2f2654e39ae2a123c5aec770c449bfc6ced24f4",
+    "rust/file_finder.rs": "982467deb7b9369b1d2c8f2dd981fb27a384dfa252c8ac8cf9b778be99d89a78",
+    "rust/git.rs": "ac65417e40791a6dbbcd06218025bd5e8f51eb39ce0e51ae4a4a902767262357",
+    "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
+    "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+    "rust/grep.rs": "835e77161ee3a9b1c28e8050bddefaa84bc84a9c86eebb8e8a8ee76825f51b77",
+    "rust/help_view.rs": "4e493d2f6073c2b379361f1a9564b71bdd1d20fdc1e788c628d2a0ecf6dc60ec",
+    "rust/lib.rs": "4a12641eb6ee98eec473f7808d497f85d65ccfabc417efab26385be5ddcc2557",
+    "rust/line.rs": "db277d47a595ce2642455b09bd074bdfaad3204c26c7d52565692a7642726e69",
+    "rust/main.rs": "a45bb0cdfdc0bfc94ba65855b002bf159304232df896fb475210ea28678877a9",
+    "rust/model.rs": "d00793ef4520c705b5e6b51c5820285c4f593bb29885e09705deac4609f88b0f",
+    "rust/options_catalog.rs": "8f070a0695a25a17329c29b002ff820c79eda73c6eab57ade9547ae623d86f5f",
+    "rust/patch.rs": "255874e94a4ffa35c71c2233083ae0d3018e675687a0a948dcebcbd550f86e46",
+    "rust/prompt.rs": "aa9878efbdb6135469e3e5593d028d55ad5ed66ce0c8baa269c282e076595bc5",
+    "rust/refs_view.rs": "88d0406fe0d2ca05587ce6327b2f99a5f52d60704ae31d014e9e93655d181414",
+    "rust/render.rs": "527340b05ebeb478ec2b1992e68c29265ead2b89e9192879676f9cd0c2efa05d",
+    "rust/request.rs": "d86fb0b900878ea116c17bd6a431b450d34999fd113770b6f9e0cb39ff88deb8",
+    "rust/status_ops.rs": "5e5f34a7a66387ec44cf14775e7f141262f01ab58fd5388dacbf303a3be4ef7b",
+    "rust/stdin_show.rs": "4930776c25c247e073c886749a787ae53c64f9c4faef626a006803f3d8825dd3",
+    "rust/tests/historical-editor.py": "aa92223e55def984015a5929ddbd48d9f286bf3850e71f5144e726283b1799bb",
+    "rust/tests/upstream-suite.py": "40f68213956d46c2611e10ac1ebe48c72d1bb6a24443705a2db452d92d1a7663",
+    "rust/trace.rs": "4fb87248de03495a20b7d4f3863c971c30000a07c1f688d55b2625b22bcf8c23",
+    "rust/tree_view.rs": "cbc6ce461b63617cfc8e0d9af890aaa15fea14c382f930cb99a55ffbdafddb51",
+    "rust/view_export.rs": "92b2fd6fe61198b2d832305b4dbec2899ee646fa446bdf6178d89092c3b97117",
+    "rust/watch.rs": "851c479af44000c515ee5949416cb3f114f62b1b98c610d967d4e8fab296c81c",
+    "src/tree.c": "92f70af66a7c8d4cc2bf5da5dd5e80f25227454f1553aa749b2fd3e6959db85e",
+    "test/tree/file-name-test": "92f13ad7be65e397e220fd1ceb9aa8effbcb873d7697b42a552d411506a18e35",
+    "tigrc": "aa897801785995fec07f43cedb3dee06cf2124e5bd1475d6e22ba7badfcded5b"
+  },
+  "verdict": "ORIGINAL_PARITY_BLOCKED; SAFE_PATH_CHECKS_PASS_FOR_SUPPORTED_FILENAMES",
+  "classification": {
+    "safety_improvement": "Rust ls-tree -z and raw history paths retain names and metadata. Reproducing C text-path truncation would corrupt selected file paths.",
+    "display_compatibility": "first-child-dir.screen remains FAIL: Rust renders as测试asd with Committer/date; C expects /as followed by octal escapes and closing quote, without history metadata.",
+    "true_regression": "None found in this scoped reproduction; this does not establish complete Tig parity."
+  },
+  "root_cause": {
+    "C": "src/tree.c:277-284 strips strlen(directory) from a C-quoted ls-tree pathname; :194-205 fails to match the differently quoted log name for metadata.",
+    "Rust": "rust/git.rs Repository::tree uses ls-tree -z and PathBuf; rust/tree_view.rs annotate matches raw paths, draw sanitizes only display; rust/main.rs edit/Enter use Item::Tree path and leading-dash editor args get ./ prefix."
+  },
+  "paired_original": {
+    "schema": 1,
+    "source_commit": "b3b45792505c4089c3db361b651abc7b1a323774",
+    "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+    "harness_sha256": {
+      "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+      "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+      "rust/tests/upstream-suite.py": "40f68213956d46c2611e10ac1ebe48c72d1bb6a24443705a2db452d92d1a7663"
+    },
+    "rust_complete": false,
+    "parity_gate": "BLOCKED",
+    "script_timeout_seconds": 120,
+    "environment": {
+      "platform": "Darwin arm64",
+      "git": "git version 2.50.1 (Apple Git-155)",
+      "init.defaultBranch": "master",
+      "TEST_OPTS": "",
+      "pty_rows": 30,
+      "pty_columns": 80
+    },
+    "runs": {
+      "c": {
+        "build_command": [
+          "make",
+          "src/tig",
+          "test/tools/test-graph"
+        ],
+        "build_exit_code": 0,
+        "build_log": "        CC  src/tig.o\n        CC  src/types.o\n        CC  src/string.o\n        CC  src/util.o\n        CC  src/map.o\n        CC  src/argv.o\n        CC  src/io.o\n        CC  src/refdb.o\n       GEN  src/builtin-config.c\n        CC  src/builtin-config.o\n        CC  src/request.o\n        CC  src/line.o\n        CC  src/keys.o\n        CC  src/repo.o\n        CC  src/options.o\n        CC  src/draw.o\n        CC  src/prompt.o\n        CC  src/display.o\n        CC  src/view.o\n        CC  src/search.o\n        CC  src/parse.o\n        CC  src/watch.o\n        CC  src/pager.o\n        CC  src/log.o\n        CC  src/reflog.o\n        CC  src/diff.o\n        CC  src/help.o\n        CC  src/tree.o\n        CC  src/blob.o\n        CC  src/blame.o\n        CC  src/refs.o\n        CC  src/status.o\n        CC  src/stage.o\n        CC  src/main.o\n        CC  src/stash.o\n        CC  src/grep.o\n        CC  src/ui.o\n        CC  src/apps.o\n        CC  src/graph.o\n        CC  src/graph-v1.o\n        CC  src/graph-v2.o\n        CC  compat/hashtab.o\n        CC  compat/utf8proc.o\n      LINK  src/tig\n        CC  test/tools/test-graph.o\n      LINK  test/tools/test-graph\n",
+        "results": [
+          {
+            "script": "test/tree/file-name-test",
+            "script_sha256": "92f13ad7be65e397e220fd1ceb9aa8effbcb873d7697b42a552d411506a18e35",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 4
+            },
+            "assertions": [
+              {
+                "id": "root-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "first-child-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "second-child-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "second-child-dir-first-file.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/tree/file-name-test/.test-result",
+            "receipt": "  [OK] root-dir.screen assertion\n  [OK] first-child-dir.screen assertion\n  [OK] second-child-dir.screen assertion\n  [OK] second-child-dir-first-file.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          }
+        ],
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-tree-paths/tig/src/tig",
+            "sha256": "515e7d44d84328b4a782add0b1c167ebfd9aadc27a1c863509c2f12ec576b31d"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-tree-paths/tig/test/tools/test-graph",
+            "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+          }
+        },
+        "binaries_unchanged": true,
+        "summary": {
+          "pass": 1
+        }
+      },
+      "rust": {
+        "build_command": [
+          "make",
+          "rust-test-binaries"
+        ],
+        "build_exit_code": 0,
+        "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-10-07/tig-github-tree-paths/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-10-07/tig-github-tree-paths/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-10-07/tig-github-tree-paths/tig/target/release/test-graph\"\n   Compiling libc v0.2.189\n   Compiling autocfg v1.5.1\n   Compiling parking_lot_core v0.9.12\n   Compiling signal-hook v0.3.18\n   Compiling cfg-if v1.0.5\n   Compiling memchr v2.8.3\n   Compiling log v0.4.34\n   Compiling rustix v0.38.44\n   Compiling smallvec v1.16.2\n   Compiling scopeguard v1.2.0\n   Compiling lock_api v0.4.14\n   Compiling regex-syntax v0.8.11\n   Compiling bitflags v2.13.2\n   Compiling unicode-segmentation v1.12.0\n   Compiling unicode-width v0.2.0\n   Compiling num-traits v0.2.19\n   Compiling aho-corasick v1.1.5\n   Compiling chrono v0.4.45\n   Compiling errno v0.3.14\n   Compiling mio v1.2.3\n   Compiling signal-hook-registry v1.4.8\n   Compiling parking_lot v0.12.5\n   Compiling signal-hook-mio v0.2.5\n   Compiling regex-automata v0.4.18\n   Compiling crossterm v0.28.1\n   Compiling regex v1.13.1\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-10-07/tig-github-tree-paths/tig)\n    Finished `release` profile [optimized] target(s) in 5m 09s\n",
+        "results": [
+          {
+            "script": "test/tree/file-name-test",
+            "script_sha256": "92f13ad7be65e397e220fd1ceb9aa8effbcb873d7697b42a552d411506a18e35",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "fail",
+            "reasons": [
+              "failed_checks"
+            ],
+            "checks": {
+              "OK": 3,
+              "FAIL": 1
+            },
+            "assertions": [
+              {
+                "id": "root-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "first-child-dir.screen#1",
+                "status": "FAIL"
+              },
+              {
+                "id": "second-child-dir.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "second-child-dir-first-file.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/tree/file-name-test/.test-result",
+            "receipt": "  [OK] root-dir.screen assertion\n[FAIL] first-child-dir.screen != expected/first-child-dir.screen\n\u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\n\u001b[1mindex 0a482af..edac9b5 100644\u001b[m\n\u001b[1m--- a/expected/first-child-dir.screen\u001b[m\n\u001b[1m+++ b/first-child-dir.screen\u001b[m\n\u001b[36m@@ -1,7 +1,7 @@\u001b[m\n Directory path /-- foo bar/\u001b[m\n drwxr-xr-x                                    ..\u001b[m\n -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\n\u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\n\u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\n  \u001b[m\n  \u001b[m\n  \u001b[m\n  [OK] second-child-dir.screen assertion\n  [OK] second-child-dir-first-file.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": "| Failed 1 out of 4 test(s)\r\n|   [OK] root-dir.screen assertion\r\n| [FAIL] first-child-dir.screen != expected/first-child-dir.screen\r\n| \u001b[1mdiff --git a/expected/first-child-dir.screen b/first-child-dir.screen\u001b[m\r\n| \u001b[1mindex 0a482af..edac9b5 100644\u001b[m\r\n| \u001b[1m--- a/expected/first-child-dir.screen\u001b[m\r\n| \u001b[1m+++ b/first-child-dir.screen\u001b[m\r\n| \u001b[36m@@ -1,7 +1,7 @@\u001b[m\r\n|  Directory path /-- foo bar/\u001b[m\r\n|  drwxr-xr-x                                    ..\u001b[m\r\n|  -rw-r--r-- Committer 0 2009-02-13 23:31 +0000 -- boo far\u001b[m\r\n| \u001b[31m--rw-r--r--           0                        /as\\346\\265\\213\\350\\257\\225asd\"\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-rw-r--r-- Committer 0 2009-02-13 23:31 +0000 as测试asd\u001b[m\r\n|   \u001b[m\r\n|   \u001b[m\r\n|   \u001b[m\r\n|   [OK] second-child-dir.screen assertion\r\n|   [OK] second-child-dir-first-file.screen assertion\r\n"
+          }
+        ],
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-tree-paths/tig/target/release/tig",
+            "sha256": "e9e6725eb0e0849dad7be5c208e60070b79b8d95ecb177268f504c0689b113fd"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-tree-paths/tig/target/release/test-graph",
+            "sha256": "dd339d89441b1bbd707dc4b7802a2e3239aec9823a552ef03539788dbe5e5bc8"
+          }
+        },
+        "binaries_unchanged": true,
+        "summary": {
+          "fail": 1
+        }
+      }
+    },
+    "mapping": [
+      {
+        "script": "test/tree/file-name-test",
+        "c_status": "pass",
+        "rust_status": "fail",
+        "assertions": [
+          {
+            "id": "root-dir.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "first-child-dir.screen#1",
+            "c": "OK",
+            "rust": "FAIL"
+          },
+          {
+            "id": "second-child-dir.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          },
+          {
+            "id": "second-child-dir-first-file.screen#1",
+            "c": "OK",
+            "rust": "OK"
+          }
+        ]
+      }
+    ]
+  },
+  "safe_paths": {
+    "command": "python3 rust/tests/historical-editor.py target/release/tig",
+    "binary_sha256": "e9e6725eb0e0849dad7be5c208e60070b79b8d95ecb177268f504c0689b113fd",
+    "script_sha256": "aa92223e55def984015a5929ddbd48d9f286bf3850e71f5144e726283b1799bb",
+    "checks_pass": 4,
+    "cases": [
+      "-- foo bar/-- boo far: direct tree edit and blob open/edit",
+      "-- foo bar/as测试asd: direct tree edit and blob open/edit"
+    ],
+    "oracles": [
+      "directory and selected file display names and per-row author metadata",
+      "exact editor path bytes including protective ./ prefix",
+      "editor content and opened blob content",
+      "unchanged index and worktree content"
+    ],
+    "output": "warning: in the working copy of 'file', LF will be replaced by CRLF the next time Git touches it\nnon-UTF-8 worktree filename unavailable: [Errno 92] Illegal byte sequence: b'/var/folders/3h/_2qk5d6x0k7bs9pn0cjbxc1c0000gn/T/tmp96oz6ikl/names/-- foo bar/raw-\\xff'\nfilename display/metadata/blob/editor: 4 checks passed\nhistorical/dirty/bare snapshots and clean filtered worktree editor: OK\n",
+    "non_utf8": "NOT VERIFIED: macOS filesystem rejected raw-0xff with errno 92. The same script runs two additional cases where byte filenames can be created; unsupported filename errors are explicit, unrelated errors fail closed.",
+    "coverage_limit": "No Linux raw-byte terminal execution in this receipt; display is deliberately lossy for invalid UTF-8, selected path remains separate. This alternative oracle is not an original assertion pass or accepted exception."
+  },
+  "validation": {
+    "cargo fmt --check": "PASS",
+    "cargo test --locked": {
+      "exit_code": 0,
+      "passed": 125,
+      "failed": 0
+    },
+    "cargo clippy --locked --all-targets -- -D warnings": "PASS",
+    "release_build": "PASS via paired runner",
+    "debug_safe_paths": "PASS, same four cases",
+    "original_reference_unchanged": true
+  },
+  "independent_review": {
+    "reviewer": "separate read-only Reviewer agent, fresh context",
+    "verdict": "No material findings; independently ran debug historical-editor test.",
+    "limitations": "One independent reviewer; no runtime code change."
+  },
+  "evidence_cleanup": "Removed unreferenced final-main-sync.json, a stale duplicate checkpoint. Earlier source-bound receipts and referenced raw failure/red-regression data remain historical evidence, not current acceptance. Git preserves the removed file.",
+  "remaining": [
+    "Original first-child-dir.screen assertion still fails; parity gate remains blocked.",
+    "Explicit acceptance of safe-path difference belongs to coordinator/user; this receipt does not grant it.",
+    "Non-UTF-8 terminal/editor path remains unverified on this host."
+  ]
+}
