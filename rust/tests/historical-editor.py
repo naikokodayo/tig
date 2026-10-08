@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Check historical edit targets against real Git and a controlling terminal."""
+import errno
 import fcntl
 import os
 from pathlib import Path
@@ -114,4 +115,55 @@ with tempfile.TemporaryDirectory() as directory:
     run(filtered, script, editor, capture)
     assert capture.read_bytes() == b"line\r\n"
     assert Path(str(capture) + ".path").read_text() == "file"
+    # The original file-name screen expects C's quoted-path truncation. These
+    # checks independently verify the displayed name and the real editor/blob.
+    names = root / "names"
+    names.mkdir()
+    git(names, "init", "-q")
+    git(names, "config", "user.name", "Path Fixture")
+    git(names, "config", "user.email", "paths@example.invalid")
+    folder = names / "-- foo bar"
+    folder.mkdir()
+    files = [b"-- boo far", "as测试asd".encode()]
+    try:
+        fd = os.open(os.fsencode(folder) + b"/raw-\xff", os.O_WRONLY | os.O_CREAT, 0o600)
+        os.close(fd)
+        files.append(b"raw-\xff")
+    except OSError as error:
+        if error.errno not in (errno.EILSEQ, errno.EINVAL, errno.ENOTSUP):
+            raise
+        print(f"non-UTF-8 worktree filename unavailable: {error}")
+    for i, name in enumerate(files):
+        with open(os.fsencode(folder) + b"/" + name, "wb") as file:
+            file.write(f"path payload {i}\n".encode())
+    git(names, "add", "--", "-- foo bar")
+    git(names, "commit", "-qm", "path fixture")
+    index = git(names, "ls-files", "--stage", "-z")
+    screen = root / "names.screen"
+    blob = root / "blob.screen"
+    root_screen = root / "root.screen"
+    for i, name in enumerate(files):
+        for open_blob in (False, True):
+            script.write_text(f":view-tree\n:save-display {root_screen}\n:enter\n"
+                              + f":goto {i + 3}\n"
+                              + f":save-display {screen}\n"
+                              + (f":enter\n:save-display {blob}\n" if open_blob else "")
+                              + ":edit\n:quit\n")
+            run(names, script, editor, capture)
+            directory_row = root_screen.read_text().splitlines()[1]
+            assert directory_row.endswith("-- foo bar") and "Path Fixture" in directory_row, directory_row
+            display = screen.read_text()
+            row = next(line for line in display.splitlines()
+                       if line.endswith(name.decode(errors="replace")))
+            assert "Path Fixture" in row, row
+            assert "Path Fixture" in display.splitlines()[2], display
+            expected = f"path payload {i}\n".encode()
+            assert capture.read_bytes() == expected
+            assert Path(str(capture) + ".path").read_bytes() == b"./-- foo bar/" + name
+            if open_blob:
+                assert expected.decode().strip() in blob.read_text()
+            assert git(names, "ls-files", "--stage", "-z") == index
+            with open(os.fsencode(folder) + b"/" + name, "rb") as file:
+                assert file.read() == expected
+    print(f"filename display/metadata/blob/editor: {len(files) * 2} checks passed")
 print("historical/dirty/bare snapshots and clean filtered worktree editor: OK")
