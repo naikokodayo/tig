@@ -1118,6 +1118,7 @@ impl Repository {
             std::collections::HashSet::new()
         };
         let parent_prefix = show_notes
+            && !options.merge
             && annotations.is_empty()
             && !revisions[..split]
                 .iter()
@@ -2626,6 +2627,43 @@ mod tests {
             input.iter().map(|c| c.subject.as_str()).collect::<Vec<_>>(),
             ["head", "base"]
         );
+    }
+
+    #[test]
+    fn merge_history_keeps_implicit_boundary_records_with_notes_enabled() {
+        let fixture = Fixture::new();
+        let repo = fixture.repo();
+        fs::write(fixture.0.join("file"), "base\n").unwrap();
+        repo.command(["add", "."]).unwrap();
+        repo.command(["commit", "-qm", "base"]).unwrap();
+        let branch = path(trim_lf(
+            &repo.command(["symbolic-ref", "--short", "HEAD"]).unwrap(),
+        ))
+        .unwrap()
+        .into_os_string();
+        repo.command(["checkout", "-qb", "topic"]).unwrap();
+        fs::write(fixture.0.join("file"), "topic\n").unwrap();
+        repo.command(["commit", "-qam", "topic"]).unwrap();
+        repo.command([OsStr::new("checkout"), &branch]).unwrap();
+        fs::write(fixture.0.join("file"), "head\n").unwrap();
+        repo.command(["commit", "-qam", "head"]).unwrap();
+        assert!(repo.command(["merge", "--no-edit", "topic"]).is_err());
+        let commits = repo
+            .history_ordered(
+                &["--merge".into(), "--".into(), "file".into()],
+                0,
+                "topo",
+                "yes",
+            )
+            .unwrap();
+        let native = repo
+            .command(["log", "--merge", "--boundary", "--format=%H", "--", "file"])
+            .unwrap();
+        assert_eq!(
+            commits.iter().map(|c| c.oid.as_str()).collect::<Vec<_>>(),
+            text(&native).split_terminator('\n').collect::<Vec<_>>()
+        );
+        assert!(commits.iter().any(|c| c.boundary));
     }
 
     #[test]
