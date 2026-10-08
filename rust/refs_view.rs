@@ -132,7 +132,7 @@ pub fn load(
         .ok()
         .map(|b| String::from_utf8_lossy(&b).trim().to_owned())
         .unwrap_or_default();
-    // Reuse the history record parser, but refs metadata has its own mailmap
+    // Reuse the fixed-field metadata parser, but refs metadata has its own mailmap
     // setting and does not need main-view decorations or revision filtering.
     let format = if config.bool_value("mailmap", true) {
         "--format=%H%x00%P%x00%aN%x00%aI%x00%s%x00%x00%aE%x00%cN%x00%cE%x00%cI%x00"

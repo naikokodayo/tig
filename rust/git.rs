@@ -159,6 +159,7 @@ struct HistoryWire {
     notes: bool,
     annotations: std::collections::HashSet<String>,
     metadata: Option<Command>,
+    parent_prefix: bool,
 }
 fn drain(
     mut pipe: impl std::io::Read + Send + 'static,
@@ -268,7 +269,7 @@ fn stop_history_child(child: &mut std::process::Child) {
     let _ = child.kill();
 }
 impl HistoryRefresh {
-    pub fn poll(&mut self, _repo: &Repository) -> Result<Option<Vec<Commit>>> {
+    pub fn poll(&mut self) -> Result<Option<Vec<Commit>>> {
         if !self
             .worker
             .as_ref()
@@ -541,12 +542,18 @@ pub fn classify_cli_args(cwd: &Path, args: &[String]) -> Result<Vec<String>> {
         i += 1;
     }
     let query = |first, second| {
-        run(
-            cwd,
-            ["rev-parse", first, second]
-                .into_iter()
-                .chain(remaining.iter().map(String::as_str)),
-        )
+        let args = ["rev-parse", first, second]
+            .into_iter()
+            .chain(remaining.iter().map(String::as_str));
+        if first == "--no-revs" {
+            let output = command_output(&mut git_command(cwd, args)?, None)?;
+            if !output.status.success() {
+                return Err(GitError("No revisions match the given arguments.".into()));
+            }
+            Ok(output.stdout)
+        } else {
+            run(cwd, args)
+        }
     };
     let files = query("--no-revs", "--no-flags")?;
     let flags = query("--flags", "--no-revs")?;
@@ -1110,18 +1117,36 @@ impl Repository {
         } else {
             std::collections::HashSet::new()
         };
-        let metadata = if annotations.is_empty() {
+        let parent_prefix = show_notes
+            && annotations.is_empty()
+            && !revisions[..split]
+                .iter()
+                .any(|arg| matches!(arg.as_str(), "--follow" | "--boundary" | "--stdin"))
+            && (split < revisions.len() || leading == split);
+        let metadata = if !show_notes {
             None
         } else {
             // C's unescaped %N cannot frame arbitrary note blobs. Keep its real
-            // log command, but obtain authoritative selection/parents/identities
-            // through a notes-free traversal when active note mappings exist.
+            // log command, but always obtain authoritative selection/parents/
+            // identities without notes. Ref mappings can change while Git runs.
             let mut metadata = args.clone();
             metadata[pretty_arg] = format!("{format}%x00%x03");
             if let Some(index) = notes_arg {
                 metadata.remove(index);
             }
-            metadata.insert(1, "--no-show-signature".into());
+            if parent_prefix {
+                metadata[0] = "rev-list".into();
+                metadata.insert(1, "--no-commit-header".into());
+                if !options.has_revision && !unborn {
+                    let boundary = metadata
+                        .iter()
+                        .position(|arg| arg == "--")
+                        .expect("history path boundary");
+                    metadata.insert(boundary, "HEAD".into());
+                }
+            } else {
+                metadata.insert(1, "--no-show-signature".into());
+            }
             Some(git_command(directory, metadata)?)
         };
         let mut command = git_command(directory, args)?;
@@ -1149,6 +1174,7 @@ impl Repository {
                 notes: show_notes,
                 annotations,
                 metadata,
+                parent_prefix,
             },
         ))
     }
@@ -1189,7 +1215,12 @@ impl Repository {
             .map(|command| run_command_with_input(command, None))
             .transpose()?;
         let mut result = if let Some(metadata) = metadata.as_deref() {
-            let (compact, prefixes) = compact_history(metadata)?;
+            let (compact, prefixes) = compact_history(metadata, wire.parent_prefix)?;
+            if prefixes.is_empty() && !bytes.is_empty() {
+                return Err(GitError(
+                    "History changed between notes and metadata queries".into(),
+                ));
+            }
             // Consume the actual C-format log too: every authoritative metadata
             // prefix must occur in its output in traversal order. Notes may contain
             // lookalike prefixes, but can never select or alter commit metadata.
@@ -1938,9 +1969,9 @@ pub fn parse_tree(bytes: &[u8]) -> Result<Vec<TreeEntry>> {
 /// Parse the compact upstream wire only when notes are known absent. Notes
 /// mappings require an authoritative notes-free traversal, not guessed delimiters.
 pub fn parse_history(bytes: &[u8]) -> Result<Vec<Commit>> {
-    parse_raw_history(&text(&compact_history(bytes)?.0))
+    parse_raw_history(&text(&compact_history(bytes, false)?.0))
 }
-fn compact_history(mut bytes: &[u8]) -> Result<(Vec<u8>, Vec<Vec<u8>>)> {
+fn compact_history(mut bytes: &[u8], parent_prefix: bool) -> Result<(Vec<u8>, Vec<Vec<u8>>)> {
     let mut compact = Vec::new();
     let mut prefixes = Vec::new();
     while !bytes.is_empty() {
@@ -1951,18 +1982,41 @@ fn compact_history(mut bytes: &[u8]) -> Result<(Vec<u8>, Vec<Vec<u8>>)> {
         let rest = fields[4]
             .strip_prefix(b"\x03")
             .ok_or_else(|| GitError("Unframed history notes".into()))?;
-        if !rest.is_empty() && rest != b"\n" && !rest.starts_with(b"\ncommit ") {
+        if !rest.is_empty()
+            && rest != b"\n"
+            && !(if parent_prefix {
+                rest.starts_with(b"\n")
+            } else {
+                rest.starts_with(b"\ncommit ")
+            })
+        {
             return Err(GitError("Malformed compact history boundary".into()));
         }
-        if !fields[0].starts_with(b"commit ") {
-            return Err(GitError("Missing compact history header".into()));
-        }
+        let start = if parent_prefix {
+            let offset = fields[0]
+                .windows(b"commit ".len())
+                .position(|w| w == b"commit ")
+                .ok_or_else(|| GitError("Missing compact history header".into()))?;
+            if fields[0][..offset]
+                .split(|b| b.is_ascii_whitespace())
+                .filter(|id| !id.is_empty())
+                .any(|id| !matches!(id.len(), 40 | 64) || !id.iter().all(u8::is_ascii_hexdigit))
+            {
+                return Err(GitError("Malformed traversal parent prefix".into()));
+            }
+            offset
+        } else {
+            if !fields[0].starts_with(b"commit ") {
+                return Err(GitError("Missing compact history header".into()));
+            }
+            0
+        };
         let before = compact.len();
         for (i, field) in fields[..4].iter().enumerate() {
             if i != 0 {
                 compact.push(0);
             }
-            compact.extend_from_slice(field);
+            compact.extend_from_slice(if i == 0 { &field[start..] } else { field });
         }
         let mut prefix = compact[before..].to_vec();
         prefix.push(0);
@@ -2551,6 +2605,30 @@ mod tests {
             .is_ok());
     }
     #[test]
+    fn note_free_authority_preserves_boundary_and_closed_stdin_selection() {
+        let fixture = Fixture::new();
+        let repo = fixture.repo();
+        for content in ["base", "head"] {
+            fs::write(fixture.0.join("file"), content).unwrap();
+            repo.command(["add", "."]).unwrap();
+            repo.command(["commit", "-qm", content]).unwrap();
+        }
+        let args = ["--boundary", "HEAD^..HEAD", "--", "file"].map(str::to_owned);
+        let boundary = repo.history_ordered(&args, 0, "topo", "yes").unwrap();
+        assert_eq!(boundary.len(), 2);
+        assert_eq!(boundary[0].subject, "head");
+        assert!(boundary[1].boundary);
+        assert_eq!(boundary[1].subject, "base");
+        let input = repo
+            .history_ordered(&["--stdin".into()], 0, "topo", "yes")
+            .unwrap();
+        assert_eq!(
+            input.iter().map(|c| c.subject.as_str()).collect::<Vec<_>>(),
+            ["head", "base"]
+        );
+    }
+
+    #[test]
     fn history_refresh_cancels_queries_without_blocking_poll() {
         let cancellation = std::sync::Arc::new(HistoryCancellation {
             cancelled: std::sync::atomic::AtomicBool::new(false),
@@ -2563,8 +2641,6 @@ mod tests {
             assert!(!output.status.success());
             Ok(Vec::new())
         });
-        let fixture = Fixture::new();
-        let repo = fixture.repo();
         let mut refresh = HistoryRefresh {
             worker: Some(worker),
             cancellation,
@@ -2575,7 +2651,7 @@ mod tests {
             std::thread::sleep(std::time::Duration::from_millis(5));
         }
         let started = std::time::Instant::now();
-        assert!(refresh.poll(&repo).unwrap().is_none());
+        assert!(refresh.poll().unwrap().is_none());
         let worker = refresh.worker.take().unwrap();
         drop(refresh);
         assert!(started.elapsed() < std::time::Duration::from_millis(500));
@@ -2608,7 +2684,17 @@ mod tests {
             )
             .unwrap(),
         ));
+        let (command, unborn, first_parent, mut wire) =
+            repo.history_command(&[], 0, "topo", "yes").unwrap();
         repo.command(["notes", "add", "-C", &note, "HEAD"]).unwrap();
+        let primary = run_command_with_input(command, None).unwrap();
+        let raced = repo
+            .finish_history(&primary, unborn, first_parent, &mut wire)
+            .unwrap();
+        assert_eq!(raced.len(), 2);
+        assert_eq!(raced[0].subject, "real head");
+        assert!(raced.iter().all(|c| c.author == "Test User"));
+
         let commits = repo.history_ordered(&[], 0, "topo", "yes").unwrap();
         assert_eq!(commits.len(), 2);
         assert_eq!(
@@ -2653,7 +2739,7 @@ mod tests {
         let mut refresh = repo.start_history(&[], "topo", "yes").unwrap();
         let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
         loop {
-            if let Some(commits) = refresh.poll(&repo).unwrap() {
+            if let Some(commits) = refresh.poll().unwrap() {
                 assert_eq!(commits.len(), 2);
                 assert_eq!(commits[0].subject, "real head");
                 break;

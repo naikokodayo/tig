@@ -5073,7 +5073,7 @@ fn run() -> Result<()> {
             }
             let mut completed = false;
             if let Some(refresh) = &mut history_refresh {
-                let result = refresh.refresh.poll(app.repo()?);
+                let result = refresh.refresh.poll();
                 match result {
                     Ok(None) => (),
                     result => {
