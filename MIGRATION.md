@@ -83,10 +83,12 @@ but creates a larger terminal-compatibility verification obligation.
 
 ## Evidence and verification
 
-- Current integrated 154-script checkpoint at `01c36f27`: C 152 pass / 2 skip;
-  Rust 148 pass / 4 fail / 2 skip. All 572 Rust assertions were reached:
-  566 pass, 6 fail. `main/search-preload-test` now passes; the four remaining
-  failing scripts are unchanged. See
+- Current integrated 154-script checkpoint at `4f05c300`: C 152 pass / 2 skip;
+  Rust 151 pass / 1 fail / 2 skip. All 572 Rust assertion checks were reached:
+  571 pass, 1 fail. The remaining failure expects C's truncated Unicode tree
+  path. The final paired run uses two jobs per phase; an earlier four-job run's
+  two original ten-second timeouts and their focused rechecks remain recorded.
+  Assertions and deadlines were unchanged. See
   [`migration/evidence/upstream-rust-only-current.json`](migration/evidence/upstream-rust-only-current.json).
 - C baseline: 572 assertions passed, 152 tests executed, 2 skipped. The ordinary
   shell inherited `init.defaultBranch=main`, causing 57 failures; rerunning with
@@ -667,24 +669,38 @@ Rust scripts than the preceding `86ce7680` snapshot. The parity gate remains
 
 ### Current strict paired snapshot
 
-At merged source `883c65be9397888a1684f0916966e98d176126d4`, the runner
+At merged source `4f05c3003810108fbf836124ef52d16d32edc662`, the runner
 attempted all 154 unchanged scripts with separately hashed C and Rust-only
-application/graph binaries. C passed 152, failed none, and skipped two. Rust
-passed 148, failed four, and skipped two: 566 actual assertions passed and six
-failed. The [current paired
+application/graph binaries, using two jobs in both phases. C passed 152, failed
+none, and skipped two. Rust passed 151, failed one, and skipped two: 571 actual
+assertion checks passed and one failed. The [current paired
 receipt](migration/evidence/upstream-rust-only-current.json) contains each
-script's original output, route and hashes.
-The four failing scripts are `diff/diff-highlight` (two assertions: a missing
-highlighter leaves the original diff visible and reports an error in Rust),
-`main/filter-args` (two exact internal Git trace assertions),
-`status/file-filter` (one exact internal Git trace assertion), and
-`tree/file-name` (one assertion expecting C's truncated Unicode path).
-The filter screens pass; matching C's internal Git command spelling would
-require replacing Rust's working argument classification, discovery and
-history parser, not a single display fix. `main/search-preload` now passes.
-Original assertions were not changed.
+script's original output, route and hashes, plus 123 source-input hashes.
+The only failing script is `tree/file-name`: one screen expects C's truncated
+Unicode path and missing metadata. Rust retains the complete path; this safety
+difference remains a failed original assertion, without an accepted exception.
+`diff/diff-highlight`, `main/filter-args`, and `status/file-filter` now pass.
+The merged slices execute and consume the actual classification, discovery and
+compact history commands, validate note-enabled history against a notes-free
+traversal, and retain cancelled jobs until their processes are reaped.
+All 154 original script bytes match the pinned upstream source.
+An earlier four-job run hit the original ten-second timeout in
+`main/show-changes` and `status/refresh`, leaving three screen files missing.
+Both scripts then passed a focused serial C/Rust recheck (20 assertions per
+side), followed by this complete two-job run. The receipt retains the earlier
+failure data; source, assertions and deadlines were unchanged. The cause of
+these timing failures was not isolated, and no application performance
+conclusion is drawn from these runs.
+Formatting, strict Clippy and all 133 Rust tests pass on integrated macOS main.
+Linux Rust 1.81 also passes all 133 tests and 23 supplementary checks across
+refresh, historical editing and highlighter failures, including non-UTF-8 paths
+and terminal restoration. The receipt records its tested commit and verifies
+the runtime inputs are identical to merged main. Linux root fixture extraction
+uses command-scoped `TAR_OPTIONS=--no-same-owner`, matching ordinary CI user
+ownership while retaining Git's ownership protection. All three main CI
+workflows pass. These checks do not close the full parity gate.
 `stage/split-chunk` now passes; its earlier failure was a display mismatch, not
-evidence of C index data loss in this script. A release build from only
+evidence of C index data loss in this script. The earlier release build from only
 `Cargo.toml`, `Cargo.lock`, `rust/`, and `tigrc` succeeded without the C source
 tree; original tests and C remain the parity reference. The gate remains **BLOCKED**;
 the end-to-end C/Rust benchmark has not begun.

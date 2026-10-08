@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source_commit": "883c65be9397888a1684f0916966e98d176126d4",
+  "source_commit": "4f05c3003810108fbf836124ef52d16d32edc662",
   "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
   "harness_sha256": {
     "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
@@ -5085,11 +5085,11 @@
       ],
       "binaries": {
         "tig": {
-          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/src/tig",
-          "sha256": "1c1c25f92c8ebd0bb0ad76b14fe3b6c6349db90d2bad83b4964da6ebb8c31fdb"
+          "path": "/Users/liuxu/.codex/worktrees/github-main-integration/tig/src/tig",
+          "sha256": "0064f694f24c087e59ae26178990f97ee3b657b033e2cbd4fd3d1f6b590d3872"
         },
         "test-graph": {
-          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/test/tools/test-graph",
+          "path": "/Users/liuxu/.codex/worktrees/github-main-integration/tig/test/tools/test-graph",
           "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
         }
       },
@@ -5105,7 +5105,7 @@
         "rust-test-binaries"
       ],
       "build_exit_code": 0,
-      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig)\n    Finished `release` profile [optimized] target(s) in 19.07s\n",
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/.codex/worktrees/github-main-integration/tig/target\"\ntest -x \"/Users/liuxu/.codex/worktrees/github-main-integration/tig/target/release/tig\"\ntest -x \"/Users/liuxu/.codex/worktrees/github-main-integration/tig/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.13s\n",
       "results": [
         {
           "script": "test/blame/blob-blame-test",
@@ -5411,13 +5411,10 @@
           "script_sha256": "eab9213bd2b38ed296eb372ed16d7f9397538ffb3b54f0bb1b36d7ccc7040b02",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "OK": 4,
-            "FAIL": 2
+            "OK": 6
           },
           "assertions": [
             {
@@ -5438,18 +5435,18 @@
             },
             {
               "id": "diff-highlight-misconfigured.screen#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "diff-highlight-misconfigured.stderr#1",
-              "status": "FAIL"
+              "status": "OK"
             }
           ],
           "receipt_path": "test/tmp/diff/diff-highlight-test/.test-result",
-          "receipt": "  [OK] diff-highlight-true.screen assertion\n  [OK] diff-highlight-true.stderr assertion\n  [OK] diff-highlight-custom.screen assertion\n  [OK] diff-highlight-custom.stderr assertion\n[FAIL] diff-highlight-misconfigured.screen != expected/diff-highlight-misconfigured.screen\n\u001b[1mdiff --git a/expected/diff-highlight-misconfigured.screen b/diff-highlight-misconfigured.screen\u001b[m\n\u001b[1mindex e314d0b..77927d3 100644\u001b[m\n\u001b[1m--- a/expected/diff-highlight-misconfigured.screen\u001b[m\n\u001b[1m+++ b/diff-highlight-misconfigured.screen\u001b[m\n\u001b[36m@@ -1,29 +1,29 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mcommit a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthor:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mAuthorDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommit:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\n\u001b[32m+\u001b[m\u001b[32mCommitDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\n  \u001b[m\n\u001b[32m+\u001b[m\u001b[32m    Add type parameter for js.Dynamic\u001b[m\n\u001b[32m+\u001b[m\u001b[32m---\u001b[m\n\u001b[32m+\u001b[m\u001b[32m common/src/main/scala/org/scalajs/benchmark/Benchmark.scala | 2 +-\u001b[m\n\u001b[32m+\u001b[m\u001b[32m 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[m\n  \u001b[m\n\u001b[32m+\u001b[m\u001b[32mdiff --git a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala b/commo\u001b[m\n\u001b[32m+\u001b[m\u001b[32mindex 65f914a..3aa4320 100644\u001b[m\n\u001b[32m+\u001b[m\u001b[32m--- a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+++ b/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\n\u001b[32m+\u001b[m\u001b[32m@@ -15,7 +15,7 @@ object Benchmark {\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   val benchmarks = js.Array[Benchmark]()\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   val benchmarkApps = js.Array[BenchmarkApp]()\u001b[m\n  \u001b[m\n\u001b[32m+\u001b[m\u001b[32m-  val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\n\u001b[32m+\u001b[m\u001b[32m+  val global = js.Dynamic.global.asInstanceOf[js.Dictionary[js.Any]]\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   global(\"runScalaJSBenchmarks\") = runBenchmarks _\u001b[m\n\u001b[32m+\u001b[m\u001b[32m   global(\"initScalaJSBenchmarkApps\") = initBenchmarkApps _\u001b[m\n  \u001b[m\n  \u001b[m\n  \u001b[m\n  \u001b[m\n  \u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-\u001b[m\n\u001b[31m-[diff]                                                                        0%\u001b[m\n\u001b[32m+\u001b[m\u001b[32m[diff] a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff - line 1 of 24              100%\u001b[m\n[FAIL] diff-highlight-misconfigured.stderr != expected/diff-highlight-misconfigured.stderr\n\u001b[1mdiff --git a/expected/diff-highlight-misconfigured.stderr b/diff-highlight-misconfigured.stderr\u001b[m\n\u001b[1mindex e69de29..f69c014 100644\u001b[m\n\u001b[1m--- a/expected/diff-highlight-misconfigured.stderr\u001b[m\n\u001b[1m+++ b/diff-highlight-misconfigured.stderr\u001b[m\n\u001b[36m@@ -0,0 +1 @@\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig warning: Failed to run the diff-highlight program: program-that-does-not-exist\u001b[m\n",
+          "receipt": "  [OK] diff-highlight-true.screen assertion\n  [OK] diff-highlight-true.stderr assertion\n  [OK] diff-highlight-custom.screen assertion\n  [OK] diff-highlight-custom.stderr assertion\n  [OK] diff-highlight-misconfigured.screen assertion\n  [OK] diff-highlight-misconfigured.stderr assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 2 out of 6 test(s)\r\n| [stderr] [diff-highlight-misconfigured] tig warning: Failed to run the diff-highlight program: program-that-does-not-exist\r\n|   [OK] diff-highlight-true.screen assertion\r\n|   [OK] diff-highlight-true.stderr assertion\r\n|   [OK] diff-highlight-custom.screen assertion\r\n|   [OK] diff-highlight-custom.stderr assertion\r\n| [FAIL] diff-highlight-misconfigured.screen != expected/diff-highlight-misconfigured.screen\r\n| \u001b[1mdiff --git a/expected/diff-highlight-misconfigured.screen b/diff-highlight-misconfigured.screen\u001b[m\r\n| \u001b[1mindex e314d0b..77927d3 100644\u001b[m\r\n| \u001b[1m--- a/expected/diff-highlight-misconfigured.screen\u001b[m\r\n| \u001b[1m+++ b/diff-highlight-misconfigured.screen\u001b[m\r\n| \u001b[36m@@ -1,29 +1,29 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mcommit a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mAuthor:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mAuthorDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mCommit:     Jonas Fonseca <jonas.fonseca@gmail.com>\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mCommitDate: Sat Mar 1 15:59:02 2014 -0500\u001b[m\r\n|   \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m    Add type parameter for js.Dynamic\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m---\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m common/src/main/scala/org/scalajs/benchmark/Benchmark.scala | 2 +-\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m 1 file changed, 1 insertion(+), 1 deletion(-)\u001b[m\r\n|   \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mdiff --git a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala b/commo\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mindex 65f914a..3aa4320 100644\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m--- a/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+++ b/common/src/main/scala/org/scalajs/benchmark/Benchmark.scala\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m@@ -15,7 +15,7 @@ object Benchmark {\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   val benchmarks = js.Array[Benchmark]()\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   val benchmarkApps = js.Array[BenchmarkApp]()\u001b[m\r\n|   \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m-  val global = js.Dynamic.global.asInstanceOf[js.Dictionary]\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m+  val global = js.Dynamic.global.asInstanceOf[js.Dictionary[js.Any]]\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   global(\"runScalaJSBenchmarks\") = runBenchmarks _\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m   global(\"initScalaJSBenchmarkApps\") = initBenchmarkApps _\u001b[m\r\n|   \u001b[m\r\n|   \u001b[m\r\n|   \u001b[m\r\n|   \u001b[m\r\n|   \u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-\u001b[m\r\n| \u001b[31m-[diff]                                                                        0%\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32m[diff] a1dcf1aaa11470978db1d5d8bcf9e16201eb70ff - line 1 of 24              100%\u001b[m\r\n| [FAIL] diff-highlight-misconfigured.stderr != expected/diff-highlight-misconfigured.stderr\r\n| \u001b[1mdiff --git a/expected/diff-highlight-misconfigured.stderr b/diff-highlight-misconfigured.stderr\u001b[m\r\n| \u001b[1mindex e69de29..f69c014 100644\u001b[m\r\n| \u001b[1m--- a/expected/diff-highlight-misconfigured.stderr\u001b[m\r\n| \u001b[1m+++ b/diff-highlight-misconfigured.stderr\u001b[m\r\n| \u001b[36m@@ -0,0 +1 @@\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mtig warning: Failed to run the diff-highlight program: program-that-does-not-exist\u001b[m\r\n"
+          "transcript": ""
         },
         {
           "script": "test/diff/diff-stat-split-test",
@@ -7159,22 +7156,19 @@
           "script_sha256": "71a55ff435f3cd25168a004233b7ea6c34e71137c9483a91e921aaae49e3c9c4",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "FAIL": 2,
-            "OK": 1
+            "OK": 3
           },
           "assertions": [
             {
               "id": "rev-parse.trace#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "log.trace#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "filtered.screen#1",
@@ -7182,10 +7176,10 @@
             }
           ],
           "receipt_path": "test/tmp/main/filter-args-test/.test-result",
-          "receipt": "[FAIL] rev-parse.trace != expected/rev-parse.trace\n\u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\n\u001b[1mindex c6d0c82..aba1ee8 100644\u001b[m\n\u001b[1m--- a/expected/rev-parse.trace\u001b[m\n\u001b[1m+++ b/rev-parse.trace\u001b[m\n\u001b[36m@@ -1,4 +1,5 @@\u001b[m\n\u001b[31m-git rev-parse --no-revs --no-flags -- common tracer\u001b[m\n\u001b[31m-git rev-parse --flags --no-revs -- common tracer\u001b[m\n\u001b[31m-git rev-parse --symbolic --revs-only -- common tracer\u001b[m\n\u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --symbolic-full-name @{upstream}\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\n[FAIL] log.trace != expected/log.trace\n\u001b[1mdiff --git a/expected/log.trace b/log.trace\u001b[m\n\u001b[1mindex a9795ce..d173664 100644\u001b[m\n\u001b[1m--- a/expected/log.trace\u001b[m\n\u001b[1m+++ b/log.trace\u001b[m\n\u001b[36m@@ -1 +1 @@\u001b[m\n\u001b[31m-git log --encoding=UTF-8 --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all --date=raw --parents --no-color --show-notes --pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s%x00%N%x03 -- common tracer\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit log --parents --no-show-signature --decorate=full --format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI%x00%N -z --show-notes --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all -- common tracer\u001b[m\u001b[41m \u001b[m\n  [OK] filtered.screen assertion\n",
+          "receipt": "  [OK] rev-parse.trace assertion\n  [OK] log.trace assertion\n  [OK] filtered.screen assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 2 out of 3 test(s)\r\n| [FAIL] rev-parse.trace != expected/rev-parse.trace\r\n| \u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\r\n| \u001b[1mindex c6d0c82..aba1ee8 100644\u001b[m\r\n| \u001b[1m--- a/expected/rev-parse.trace\u001b[m\r\n| \u001b[1m+++ b/rev-parse.trace\u001b[m\r\n| \u001b[36m@@ -1,4 +1,5 @@\u001b[m\r\n| \u001b[31m-git rev-parse --no-revs --no-flags -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --flags --no-revs -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --symbolic --revs-only -- common tracer\u001b[m\r\n| \u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --symbolic-full-name @{upstream}\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\r\n| [FAIL] log.trace != expected/log.trace\r\n| \u001b[1mdiff --git a/expected/log.trace b/log.trace\u001b[m\r\n| \u001b[1mindex a9795ce..d173664 100644\u001b[m\r\n| \u001b[1m--- a/expected/log.trace\u001b[m\r\n| \u001b[1m+++ b/log.trace\u001b[m\r\n| \u001b[36m@@ -1 +1 @@\u001b[m\r\n| \u001b[31m-git log --encoding=UTF-8 --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all --date=raw --parents --no-color --show-notes --pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s%x00%N%x03 -- common tracer\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit log --parents --no-show-signature --decorate=full --format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI%x00%N -z --show-notes --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all -- common tracer\u001b[m\u001b[41m \u001b[m\r\n|   [OK] filtered.screen assertion\r\n"
+          "transcript": ""
         },
         {
           "script": "test/main/git-alias-test",
@@ -8658,13 +8652,10 @@
           "script_sha256": "ada6618b55d4a2c054e4858f336bf67b389b17b98a11cb5404bd93ac9d818c80",
           "exit_code": 0,
           "timed_out": false,
-          "status": "fail",
-          "reasons": [
-            "failed_checks"
-          ],
+          "status": "pass",
+          "reasons": [],
           "checks": {
-            "OK": 5,
-            "FAIL": 1
+            "OK": 6
           },
           "assertions": [
             {
@@ -8677,7 +8668,7 @@
             },
             {
               "id": "rev-parse.trace#1",
-              "status": "FAIL"
+              "status": "OK"
             },
             {
               "id": "diff-index.trace#1",
@@ -8693,10 +8684,10 @@
             }
           ],
           "receipt_path": "test/tmp/status/file-filter-test/.test-result",
-          "receipt": "  [OK] status-path-filter.screen assertion\n  [OK] status-path-filter.stderr assertion\n[FAIL] rev-parse.trace != expected/rev-parse.trace\n\u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\n\u001b[1mindex 1d9a7db..7f44c12 100644\u001b[m\n\u001b[1m--- a/expected/rev-parse.trace\u001b[m\n\u001b[1m+++ b/rev-parse.trace\u001b[m\n\u001b[36m@@ -1,4 +1,4 @@\u001b[m\n\u001b[31m-git rev-parse --no-revs --no-flags subdir\u001b[m\n\u001b[31m-git rev-parse --flags --no-revs subdir\u001b[m\n\u001b[31m-git rev-parse --symbolic --revs-only subdir\u001b[m\n\u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\n  [OK] diff-index.trace assertion\n  [OK] diff-files.trace assertion\n  [OK] ls-files.trace assertion\n",
+          "receipt": "  [OK] status-path-filter.screen assertion\n  [OK] status-path-filter.stderr assertion\n  [OK] rev-parse.trace assertion\n  [OK] diff-index.trace assertion\n  [OK] diff-files.trace assertion\n  [OK] ls-files.trace assertion\n",
           "skip": "",
           "skipped_cases": {},
-          "transcript": "| Failed 1 out of 6 test(s)\r\n|   [OK] status-path-filter.screen assertion\r\n|   [OK] status-path-filter.stderr assertion\r\n| [FAIL] rev-parse.trace != expected/rev-parse.trace\r\n| \u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\r\n| \u001b[1mindex 1d9a7db..7f44c12 100644\u001b[m\r\n| \u001b[1m--- a/expected/rev-parse.trace\u001b[m\r\n| \u001b[1m+++ b/rev-parse.trace\u001b[m\r\n| \u001b[36m@@ -1,4 +1,4 @@\u001b[m\r\n| \u001b[31m-git rev-parse --no-revs --no-flags subdir\u001b[m\r\n| \u001b[31m-git rev-parse --flags --no-revs subdir\u001b[m\r\n| \u001b[31m-git rev-parse --symbolic --revs-only subdir\u001b[m\r\n| \u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\r\n|   [OK] diff-index.trace assertion\r\n|   [OK] diff-files.trace assertion\r\n|   [OK] ls-files.trace assertion\r\n"
+          "transcript": ""
         },
         {
           "script": "test/status/file-name-test",
@@ -10176,19 +10167,19 @@
       ],
       "binaries": {
         "tig": {
-          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/tig",
-          "sha256": "7063c26d48fbee99b9923e076c233c95abe96562d3a738cf7400699c25a08e34"
+          "path": "/Users/liuxu/.codex/worktrees/github-main-integration/tig/target/release/tig",
+          "sha256": "6c1c399d6a492f73bf40cc9666dc4b4c6caada4722b864d99844d60f3c66ba04"
         },
         "test-graph": {
-          "path": "/Users/liuxu/Documents/Codex/2026-09-26/https-github-com-anthropics-code-migration/outputs/tig/target/release/test-graph",
-          "sha256": "dd339d89441b1bbd707dc4b7802a2e3239aec9823a552ef03539788dbe5e5bc8"
+          "path": "/Users/liuxu/.codex/worktrees/github-main-integration/tig/target/release/test-graph",
+          "sha256": "a0c6083da6a22e2f4593e242eeb0ed1d61240b7e22ccbaf720fd6b87096f1dac"
         }
       },
       "binaries_unchanged": true,
       "summary": {
-        "pass": 148,
+        "pass": 151,
         "skip": 2,
-        "fail": 4
+        "fail": 1
       }
     }
   },
@@ -10402,7 +10393,7 @@
     {
       "script": "test/diff/diff-highlight-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "diff-highlight-true.screen#1",
@@ -10427,12 +10418,12 @@
         {
           "id": "diff-highlight-misconfigured.screen#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "diff-highlight-misconfigured.stderr#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         }
       ]
     },
@@ -11656,17 +11647,17 @@
     {
       "script": "test/main/filter-args-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "rev-parse.trace#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "log.trace#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "filtered.screen#1",
@@ -12782,7 +12773,7 @@
     {
       "script": "test/status/file-filter-test",
       "c_status": "pass",
-      "rust_status": "fail",
+      "rust_status": "pass",
       "assertions": [
         {
           "id": "status-path-filter.screen#1",
@@ -12797,7 +12788,7 @@
         {
           "id": "rev-parse.trace#1",
           "c": "OK",
-          "rust": "FAIL"
+          "rust": "OK"
         },
         {
           "id": "diff-index.trace#1",
@@ -14129,5 +14120,775 @@
         }
       ]
     }
-  ]
+  ],
+  "jobs": 2,
+  "verification_command": [
+    "python3",
+    "rust/tests/upstream-suite.py",
+    "--jobs",
+    "2",
+    "--output",
+    "migration/evidence/upstream-rust-only-current.json"
+  ],
+  "source_sha256": {
+    "Cargo.lock": "7f9d3e6d2f4d911c6d664fc0262cb8372c15107aef416a069d26b6c6f4a527ab",
+    "Cargo.toml": "2a4246632b36ca9defc3fb89312e983b474db8bf2775bf7699232041046a0a0a",
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "compat/ansidecl.h": "ad38622cd19e079228ce345d383cdf12cce71a869f89bb6b4bc2173829bb8ddb",
+    "compat/compat.h": "d855ca98c45a040cf1cde0f32c4ea681c143c609be56c278b42a8ab5ab635c22",
+    "compat/hashtab.c": "cf8b2e72616a833a3775208f619cd9db039c245d6365d3f645bc350537b8613e",
+    "compat/hashtab.h": "0751898241f5609e9a3768dff6680f3e30b44a5d36506c9eb9ca6021623eb0b0",
+    "compat/mkstemps.c": "2f96dc28b0f33618c6da01e5fb6afde9d3a029c988dc716c7d3182e4bceaf419",
+    "compat/setenv.c": "b2c56d2c4a76b1f432dadbb37185779e50c75aa0b3afc8965b1616e92ba9effb",
+    "compat/strndup.c": "3b0a8f6d54eff4227207f1ec9b7df2b587241cb655eeed8e65b3a74eaed17d51",
+    "compat/utf8proc.c": "b0df763ea34c8cceac9730ec20e8795c336bf21a3b4f7d2e56b88b07601f5b3d",
+    "compat/utf8proc.h": "3ec0d5c70b1171b236815a437b319163e6ada1570f4f9115bbdc497075b1b014",
+    "compat/utf8proc_data.c": "950e549dbfc853c4304425f3af1875e72fa9fc9697c273c763400c2da4e380a7",
+    "compat/wordexp.c": "1bfd138933548f3e869774a8c183b5a8d1507556d32ba20d44cd464cbcb87929",
+    "include/tig/apps.h": "e0d6e87c700abd65d3eacdb76b2f36391b467aae9ebcd18ad68e8269d20fd377",
+    "include/tig/argv.h": "e3fc263832c89cb45a6990f81e18efde74008f4531c3dc332b03e6c02e8bcb86",
+    "include/tig/blame.h": "314fd50e62281b9ed0ad63cdf685a33f8ecf41b4fac37643e9ee486bcf87f6f3",
+    "include/tig/blob.h": "99ac1cc6ed697521a3ee00c059463fc7c9d5e7fff2fca2c850c099d3ce7d1162",
+    "include/tig/diff.h": "1f6b143c35a328f41d0e6d7ccfe991b3f761e3137c70b59461dda549af952dbb",
+    "include/tig/display.h": "ef9c9cffdf2affb38576ecfb51ae3e6ed5f9f8528577819982c6863aaf7f5931",
+    "include/tig/draw.h": "ff2cc0bdaa825f017a3cf496ccc161266613b49997b68f6bbe4a068e89a6b481",
+    "include/tig/git.h": "1767a1943902c2d8592c47ee33817e9439d9fc1bcc53d1a3f32993dafe872d7a",
+    "include/tig/graph.h": "8da8aa8407ee991857246f23fd1640341c148b7d04ec1d03283364c6bc838c99",
+    "include/tig/grep.h": "b70cdaf20cfa5134219bcdae7fc157d7667ffd67955feae0c4df12c3942cb464",
+    "include/tig/help.h": "c207541276bd32c3c68ed1decd07d8399bd3e4ce78c0945980af84d4523bdc83",
+    "include/tig/io.h": "7526c1aa5e9baab9eecb94c62736e6c672d6e3127a98e3414e6091dafcebcfa0",
+    "include/tig/keys.h": "350c09f59056d1deef5fa3f067531eaa6364218382f8683e47908074be054f48",
+    "include/tig/line.h": "a51a49d0d887040c2d04828f6994a8cdf4f695279c18c501009e8f96ba27b065",
+    "include/tig/log.h": "9c36935d2e2aa5f61be527ecbcd39d581a86771341e4b915d80ac60ec067e63f",
+    "include/tig/main.h": "636ab53bb8bd6c9d85395bacc3becfe24796faefa304ca5ddc27fac4200b0148",
+    "include/tig/map.h": "f82984977ac43229173def29eb0a63a9381120c9c2e33eb83a268fee4b002732",
+    "include/tig/options.h": "8004c7e68a1c0a0b795cc8bba3f14d91e135cdac8890c10fc51585a59084565e",
+    "include/tig/pager.h": "328a10d9c497d6885327a8abd66450ff9ae361b72be92c74121e5390118942d9",
+    "include/tig/parse.h": "003e5b93048fde1a775072b8fc4281ea4ace09ca76f6ff4a9c06a27f0e97700d",
+    "include/tig/prompt.h": "4c9a1409c12e6a896fdb657d7ef18fbbe2e300cde89c23db39ce85b26e795ca0",
+    "include/tig/refdb.h": "0fd97c7d6c3f378610bb4b0f4a312e00cc850d6f3ba0976535caa8a3e1eaa043",
+    "include/tig/reflog.h": "1cc4329d09111312224ca188f66f15719d72c1b36ff621d4fcc57f46a2b0eb68",
+    "include/tig/refs.h": "b0685945b686de381a568dc4d66382157a5068f2441b2cd4c2c6b429b15b9c52",
+    "include/tig/repo.h": "e5d2a44ec82fc06276f82e352e6d4d43c4d5db344a69deff4285e4fed938f1e5",
+    "include/tig/request.h": "65f5dfce8fca028ff87f86949de623e30d4bf66d2eca0708893355b42c006b93",
+    "include/tig/search.h": "59c6f342f00cb2f6790664100b8edc7417f7f277cb9cbc9489c0da8c252eda36",
+    "include/tig/stage.h": "5e3cedbfb1b812ce477fbac9c76d89e03dde3eef00a8af4dca74cafe0dbcabc1",
+    "include/tig/stash.h": "166b9d3cac24cdcacff019300872df45aea9e9eeb1d7770ef969e599f4e57809",
+    "include/tig/status.h": "6be20029eb8c53f3795b8324535dcb7239d7187b3649a64faff27dae496ca186",
+    "include/tig/string.h": "28ea2fdb3078fe641f465cba24ec4fdb91507ec83d78502f1341587f9d90d223",
+    "include/tig/tig.h": "b3bd68b0ec52236e15750d37b41e8ba7e304e22733b1a7d863ff5e7fba604620",
+    "include/tig/tree.h": "4cecaeff99be0ccb23134d25fb9b447a5c334bbe0d10f0883d0f54e2777be159",
+    "include/tig/types.h": "1103d4116a0454991462173f0a60e37030233a30a2f9a0539065dfbeb862321f",
+    "include/tig/ui.h": "cf647c2364c24d83fb0712946e0bba43145776946a2f64db865f6fe439c6a68a",
+    "include/tig/util.h": "9dc77bf677d1d03e5fa655202f2c690702c0894f6f61561434527dcd1250d1f8",
+    "include/tig/view.h": "fefa46c91dfba697688d8f56c4e8139a9a4582355c7a230ed32d825ce8f42f3b",
+    "include/tig/watch.h": "ee834d19effee9360a2480d3087172ff7eeb8084d28ce6fd6216e9a9ec341141",
+    "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
+    "rust/blame_options.rs": "9541a99a6d38a03ba9a9710760a7950c725e68b6282b6051ae92c8210b924dcb",
+    "rust/blob_editor.rs": "70f69440bb6e9e1d537b3ee4b2f4868786a7e09f627737779e6fb79ae7b9b499",
+    "rust/commands.rs": "4ccff24976180c3cab67a33b5834911360b7fc60b4ed8d8ed34ebb04b5d45ed2",
+    "rust/config.rs": "fa3408de3f3ae2ef62300c446c687d8da506d854d97b31477ce85d95f3811783",
+    "rust/date.rs": "51d16041689246691bcfacc8a2f2654e39ae2a123c5aec770c449bfc6ced24f4",
+    "rust/file_finder.rs": "982467deb7b9369b1d2c8f2dd981fb27a384dfa252c8ac8cf9b778be99d89a78",
+    "rust/git.rs": "7519733e368ba479d35feeb9db11c46447544061b4b75f2bdaa0d1fb5afc5f05",
+    "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
+    "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+    "rust/grep.rs": "835e77161ee3a9b1c28e8050bddefaa84bc84a9c86eebb8e8a8ee76825f51b77",
+    "rust/help_view.rs": "4e493d2f6073c2b379361f1a9564b71bdd1d20fdc1e788c628d2a0ecf6dc60ec",
+    "rust/lib.rs": "4a12641eb6ee98eec473f7808d497f85d65ccfabc417efab26385be5ddcc2557",
+    "rust/line.rs": "db277d47a595ce2642455b09bd074bdfaad3204c26c7d52565692a7642726e69",
+    "rust/main.rs": "2fcf9d27de2d6442531ed9c5512522e9b1c45c7de66a0c5ed2f1134a243866de",
+    "rust/model.rs": "d00793ef4520c705b5e6b51c5820285c4f593bb29885e09705deac4609f88b0f",
+    "rust/options_catalog.rs": "8f070a0695a25a17329c29b002ff820c79eda73c6eab57ade9547ae623d86f5f",
+    "rust/patch.rs": "255874e94a4ffa35c71c2233083ae0d3018e675687a0a948dcebcbd550f86e46",
+    "rust/prompt.rs": "aa9878efbdb6135469e3e5593d028d55ad5ed66ce0c8baa269c282e076595bc5",
+    "rust/refs_view.rs": "c3f46da07e09ce6939ee2ba90a0030e787a26d946ec6b857a22cb0a0f8cecefd",
+    "rust/render.rs": "527340b05ebeb478ec2b1992e68c29265ead2b89e9192879676f9cd0c2efa05d",
+    "rust/request.rs": "d86fb0b900878ea116c17bd6a431b450d34999fd113770b6f9e0cb39ff88deb8",
+    "rust/status_ops.rs": "5e5f34a7a66387ec44cf14775e7f141262f01ab58fd5388dacbf303a3be4ef7b",
+    "rust/stdin_show.rs": "4930776c25c247e073c886749a787ae53c64f9c4faef626a006803f3d8825dd3",
+    "rust/trace.rs": "4fb87248de03495a20b7d4f3863c971c30000a07c1f688d55b2625b22bcf8c23",
+    "rust/tree_view.rs": "cbc6ce461b63617cfc8e0d9af890aaa15fea14c382f930cb99a55ffbdafddb51",
+    "rust/view_export.rs": "92b2fd6fe61198b2d832305b4dbec2899ee646fa446bdf6178d89092c3b97117",
+    "rust/watch.rs": "851c479af44000c515ee5949416cb3f114f62b1b98c610d967d4e8fab296c81c",
+    "src/apps.c": "43c3081ffad52b97e5673bad7c1188b18c1a8b871eabcf1a7cf7e6206354a6ff",
+    "src/argv.c": "d8de624659202094264d41b183035219965a315f917b67ebe23b5db5415cc514",
+    "src/blame.c": "55feb3aae006e3de2d567600c998d0b1f254bb3fab467f327d27079d93d72cc1",
+    "src/blob.c": "10c4f782f68ef140c38b853fd294f77534d9be05854689bb24fe711bfeec4c4b",
+    "src/diff.c": "af27dc07c813c77c1901b2f7dd91588497c7c173a58640c9f1c188387737c9e3",
+    "src/display.c": "004164acca5fcee1d0b05fe74a25f8a0089be333096ec9e41797bb82270d730d",
+    "src/draw.c": "a6f87bc1e2451194aecafd385bd088e9b24923b245ac36a0b538d4ee5cecb4c3",
+    "src/graph-v1.c": "5629db8249152f85bd7d7dcd07efa07548ac8a5831e9577a39103bbafb5a232e",
+    "src/graph-v2.c": "1adea5e85ba5149cc0ee9f19255498a2f84fa6e2bb158bda1af97374018f2a12",
+    "src/graph.c": "f4a7ba12f06e946da7b339fa07adff377ceb8f0aaf78947f4017735d278064b7",
+    "src/grep.c": "26797960107b316d6ffbcf5127399737dac391f07166d3da7332bd3be2a0fca5",
+    "src/help.c": "4d4dcaeafbaa6178c3449c29432454e753dd4aa395bb7a50cbbfde01a386cbb3",
+    "src/io.c": "a7415aa5a52399f9fb76645b214830e395fd974dd009f05ba02525356099fc6a",
+    "src/keys.c": "382b82cc6abe48124011de19f6aa3378339da218560ba2fe431f2312f8cd556c",
+    "src/line.c": "2ba4b35ddadb4fc772ee88146545bb151b3ca6dd6834f9e6d20dbb540535229e",
+    "src/log.c": "7f25d0ea4ad0c7c4373ed3a2146a415c3bbeb8afb0c8ef73ba4bab914015711b",
+    "src/main.c": "12f741ff7470fbd0b80dda514411a93bc6e60548edf8b6e17aa7a766e9bdad1e",
+    "src/map.c": "3e8de64e3adca21923f77e0fc52e69debef4b818d78db712f9d3f8038a5447ff",
+    "src/options.c": "f1c3816ea391f5c96489b34a521d4cf80f9be78da0fc6233857c7353ab00e448",
+    "src/pager.c": "aa7ae2909c8547e09f1cf319b1717212c9ef9c50b727887998aa765374ba8101",
+    "src/parse.c": "32fe063b2afc0b7e547204254f286b4c8bcbfb2b109272506180d008384ca93b",
+    "src/prompt.c": "6f358c75f49a784403462b09f67a25112545bb92d455e7b77e71dd293d9df203",
+    "src/refdb.c": "76bd9a8aad15799246b4ad81c3eee6454827e1491c80768e2e21c94d004f7fa5",
+    "src/reflog.c": "da6b3531e496c86c0764f5ac82fa8745726e4eab36090ce15a6a427f09eda3df",
+    "src/refs.c": "8ee8c3ca862fcbcc6750a8db4fd849631efcd6a64758cb3c8684589445ef0170",
+    "src/repo.c": "0ceb1ec9815ddfb96e6a2af5480f197026224ddd287a68516cb6c4d414ed7537",
+    "src/request.c": "3b85f8a4149264ee6f555adca8a7bbaf0083ee3288f8dcae03cb4229a886af90",
+    "src/search.c": "1b4f90f7ecb94d93ad631728237fab9a5955559b163eef29d541bcc468c74fa5",
+    "src/stage.c": "f5aebfe09715f0cae621e8647efe5d7c9b29d60e7b965da3bc7e67a5f07be5bf",
+    "src/stash.c": "5abf9761fcfc9f79675fd5966d95c9e7d6c7c5482fd981c0000b37d3b78ccbda",
+    "src/status.c": "783fe47be3ad6710cca5584ac8f66fb273813668f8803206ff0a14a8f2c7579a",
+    "src/string.c": "7cf5ae5399f82a12410cda95e7632ad21d20eec29ed44087918783532b0aac27",
+    "src/tig.c": "1c15c23b26b4aafcf0a9f27e6a605abb701ae75408d801b06d1addd7f87c55f0",
+    "src/tree.c": "92f70af66a7c8d4cc2bf5da5dd5e80f25227454f1553aa749b2fd3e6959db85e",
+    "src/types.c": "bf3ca3e087f249ae22dc4ce905f352341bee20baf522265d571d1fb0c38733d5",
+    "src/ui.c": "0bf2b96e6c20b783fbe14373895b9b3417244d54f911a52dda9f7240e758ea8f",
+    "src/util.c": "d046f1e185d540f2acd8b8926ee3aa9fd3d8d10b987fd7a9b1df4379ef11da0f",
+    "src/view.c": "61d005305e6074d89db95852f426da513e5f75052752b5546f8466964133471c",
+    "src/watch.c": "122588c5516075588c86fda5014c0cacef7d88026dea150df1b1b0bce1e224a7",
+    "tigrc": "aa897801785995fec07f43cedb3dee06cf2124e5bd1475d6e22ba7badfcded5b",
+    "rust/tests/main-refresh-pty.py": "bb4500fdccb78318f246d9453402be6f5fdebd3c03b93a956ebd87d50aeb1ad5",
+    "rust/tests/historical-editor.py": "aa92223e55def984015a5929ddbd48d9f286bf3850e71f5144e726283b1799bb",
+    "rust/tests/diff-highlight-failure.py": "24924204d42cea4888699a416891ff1f1bd802fcc8677650198c3a46638eb42a"
+  },
+  "original_scripts_unchanged_from": "7d841c9302456b8c8f0629a559344137dc4faa4f",
+  "earlier_attempt": {
+    "source_commit": "4f05c3003810108fbf836124ef52d16d32edc662",
+    "jobs": 4,
+    "summary": {
+      "c": {
+        "pass": 152,
+        "skip": 2
+      },
+      "rust": {
+        "pass": 149,
+        "skip": 2,
+        "fail": 3
+      }
+    },
+    "binaries": {
+      "c": {
+        "tig": {
+          "path": "/Users/liuxu/.codex/worktrees/github-main-integration/tig/src/tig",
+          "sha256": "0064f694f24c087e59ae26178990f97ee3b657b033e2cbd4fd3d1f6b590d3872"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/.codex/worktrees/github-main-integration/tig/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "rust": {
+        "tig": {
+          "path": "/Users/liuxu/.codex/worktrees/github-main-integration/tig/target/release/tig",
+          "sha256": "6c1c399d6a492f73bf40cc9666dc4b4c6caada4722b864d99844d60f3c66ba04"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/.codex/worktrees/github-main-integration/tig/target/release/test-graph",
+          "sha256": "a0c6083da6a22e2f4593e242eeb0ed1d61240b7e22ccbaf720fd6b87096f1dac"
+        }
+      }
+    },
+    "timing_exceptions": [
+      {
+        "script": "test/main/show-changes-test",
+        "script_sha256": "243aabd40fe83a59940f0289d19596d94d1cd7fccc088e3f1116f79b0e13b709",
+        "exit_code": 0,
+        "timed_out": false,
+        "status": "fail",
+        "reasons": [
+          "failed_checks"
+        ],
+        "checks": {
+          "FAIL": 2,
+          "OK": 8
+        },
+        "assertions": [
+          {
+            "id": "main-with-unstaged.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "main-with-unstaged-split.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "main-with-unstaged-and-staged-split.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "main-with-staged.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "main-with-staged-split.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "main-with-staged-and-unstaged.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "main-with-renamed.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "main-with-conflict.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "main-all-refs.screen#1",
+            "status": "FAIL"
+          }
+        ],
+        "receipt_path": "test/tmp/main/show-changes-test/.test-result",
+        "receipt": "[FAIL] Test timed out after 10 seconds\n  [OK] main-with-unstaged.screen assertion\n  [OK] main-with-unstaged-split.screen assertion\n  [OK] main-with-unstaged-and-staged-split.screen assertion\n  [OK] main-with-staged.screen assertion\n  [OK] main-with-staged-split.screen assertion\n  [OK] main-with-staged-and-unstaged.screen assertion\n  [OK] main-with-renamed.screen assertion\n  [OK] main-with-conflict.screen assertion\n[FAIL] main-all-refs.screen not found\n",
+        "skip": "",
+        "skipped_cases": {},
+        "transcript": "| Failed 2 out of 10 test(s)\r\n| [FAIL] Test timed out after 10 seconds\r\n|   [OK] main-with-unstaged.screen assertion\r\n|   [OK] main-with-unstaged-split.screen assertion\r\n|   [OK] main-with-unstaged-and-staged-split.screen assertion\r\n|   [OK] main-with-staged.screen assertion\r\n|   [OK] main-with-staged-split.screen assertion\r\n|   [OK] main-with-staged-and-unstaged.screen assertion\r\n|   [OK] main-with-renamed.screen assertion\r\n|   [OK] main-with-conflict.screen assertion\r\n| [FAIL] main-all-refs.screen not found\r\n"
+      },
+      {
+        "script": "test/status/refresh-test",
+        "script_sha256": "8da82f46fb86373992e5546fadbff84a17eaef025b7d0f39966dd005025dd6a5",
+        "exit_code": 0,
+        "timed_out": false,
+        "status": "fail",
+        "reasons": [
+          "failed_checks"
+        ],
+        "checks": {
+          "FAIL": 3,
+          "OK": 9
+        },
+        "assertions": [
+          {
+            "id": "status-with-unstaged.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "status-after-add-a.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "status-after-add-all.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "status-after-commit.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "status-after-reset-soft.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "status-after-reset-a-and-bc.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "status-after-checkout-bc.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "status-after-reset-hard.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "status-after-touch-new-file.screen#1",
+            "status": "OK"
+          },
+          {
+            "id": "status-after-rm-a.screen#1",
+            "status": "FAIL"
+          },
+          {
+            "id": "status-after-checkout-a.screen#1",
+            "status": "FAIL"
+          }
+        ],
+        "receipt_path": "test/tmp/status/refresh-test/.test-result",
+        "receipt": "[FAIL] Test timed out after 10 seconds\n  [OK] status-with-unstaged.screen assertion\n  [OK] status-after-add-a.screen assertion\n  [OK] status-after-add-all.screen assertion\n  [OK] status-after-commit.screen assertion\n  [OK] status-after-reset-soft.screen assertion\n  [OK] status-after-reset-a-and-bc.screen assertion\n  [OK] status-after-checkout-bc.screen assertion\n  [OK] status-after-reset-hard.screen assertion\n  [OK] status-after-touch-new-file.screen assertion\n[FAIL] status-after-rm-a.screen not found\n[FAIL] status-after-checkout-a.screen not found\n",
+        "skip": "",
+        "skipped_cases": {},
+        "transcript": "| Failed 3 out of 12 test(s)\r\n| [FAIL] Test timed out after 10 seconds\r\n|   [OK] status-with-unstaged.screen assertion\r\n|   [OK] status-after-add-a.screen assertion\r\n|   [OK] status-after-add-all.screen assertion\r\n|   [OK] status-after-commit.screen assertion\r\n|   [OK] status-after-reset-soft.screen assertion\r\n|   [OK] status-after-reset-a-and-bc.screen assertion\r\n|   [OK] status-after-checkout-bc.screen assertion\r\n|   [OK] status-after-reset-hard.screen assertion\r\n|   [OK] status-after-touch-new-file.screen assertion\r\n| [FAIL] status-after-rm-a.screen not found\r\n| [FAIL] status-after-checkout-a.screen not found\r\n"
+      }
+    ],
+    "focused_recheck": {
+      "source_commit": "4f05c3003810108fbf836124ef52d16d32edc662",
+      "jobs": 1,
+      "results": {
+        "c": [
+          {
+            "script": "test/main/show-changes-test",
+            "script_sha256": "243aabd40fe83a59940f0289d19596d94d1cd7fccc088e3f1116f79b0e13b709",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 9
+            },
+            "assertions": [
+              {
+                "id": "main-with-unstaged.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-unstaged-split.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-unstaged-and-staged-split.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-staged.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-staged-split.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-staged-and-unstaged.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-renamed.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-conflict.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-all-refs.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/main/show-changes-test/.test-result",
+            "receipt": "  [OK] main-with-unstaged.screen assertion\n  [OK] main-with-unstaged-split.screen assertion\n  [OK] main-with-unstaged-and-staged-split.screen assertion\n  [OK] main-with-staged.screen assertion\n  [OK] main-with-staged-split.screen assertion\n  [OK] main-with-staged-and-unstaged.screen assertion\n  [OK] main-with-renamed.screen assertion\n  [OK] main-with-conflict.screen assertion\n  [OK] main-all-refs.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/status/refresh-test",
+            "script_sha256": "8da82f46fb86373992e5546fadbff84a17eaef025b7d0f39966dd005025dd6a5",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 11
+            },
+            "assertions": [
+              {
+                "id": "status-with-unstaged.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-add-a.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-add-all.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-commit.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-reset-soft.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-reset-a-and-bc.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-checkout-bc.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-reset-hard.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-touch-new-file.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-rm-a.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-checkout-a.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/status/refresh-test/.test-result",
+            "receipt": "  [OK] status-with-unstaged.screen assertion\n  [OK] status-after-add-a.screen assertion\n  [OK] status-after-add-all.screen assertion\n  [OK] status-after-commit.screen assertion\n  [OK] status-after-reset-soft.screen assertion\n  [OK] status-after-reset-a-and-bc.screen assertion\n  [OK] status-after-checkout-bc.screen assertion\n  [OK] status-after-reset-hard.screen assertion\n  [OK] status-after-touch-new-file.screen assertion\n  [OK] status-after-rm-a.screen assertion\n  [OK] status-after-checkout-a.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          }
+        ],
+        "rust": [
+          {
+            "script": "test/main/show-changes-test",
+            "script_sha256": "243aabd40fe83a59940f0289d19596d94d1cd7fccc088e3f1116f79b0e13b709",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 9
+            },
+            "assertions": [
+              {
+                "id": "main-with-unstaged.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-unstaged-split.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-unstaged-and-staged-split.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-staged.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-staged-split.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-staged-and-unstaged.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-renamed.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-with-conflict.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "main-all-refs.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/main/show-changes-test/.test-result",
+            "receipt": "  [OK] main-with-unstaged.screen assertion\n  [OK] main-with-unstaged-split.screen assertion\n  [OK] main-with-unstaged-and-staged-split.screen assertion\n  [OK] main-with-staged.screen assertion\n  [OK] main-with-staged-split.screen assertion\n  [OK] main-with-staged-and-unstaged.screen assertion\n  [OK] main-with-renamed.screen assertion\n  [OK] main-with-conflict.screen assertion\n  [OK] main-all-refs.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          },
+          {
+            "script": "test/status/refresh-test",
+            "script_sha256": "8da82f46fb86373992e5546fadbff84a17eaef025b7d0f39966dd005025dd6a5",
+            "exit_code": 0,
+            "timed_out": false,
+            "status": "pass",
+            "reasons": [],
+            "checks": {
+              "OK": 11
+            },
+            "assertions": [
+              {
+                "id": "status-with-unstaged.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-add-a.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-add-all.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-commit.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-reset-soft.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-reset-a-and-bc.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-checkout-bc.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-reset-hard.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-touch-new-file.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-rm-a.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-after-checkout-a.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt_path": "test/tmp/status/refresh-test/.test-result",
+            "receipt": "  [OK] status-with-unstaged.screen assertion\n  [OK] status-after-add-a.screen assertion\n  [OK] status-after-add-all.screen assertion\n  [OK] status-after-commit.screen assertion\n  [OK] status-after-reset-soft.screen assertion\n  [OK] status-after-reset-a-and-bc.screen assertion\n  [OK] status-after-checkout-bc.screen assertion\n  [OK] status-after-reset-hard.screen assertion\n  [OK] status-after-touch-new-file.screen assertion\n  [OK] status-after-rm-a.screen assertion\n  [OK] status-after-checkout-a.screen assertion\n",
+            "skip": "",
+            "skipped_cases": {},
+            "transcript": ""
+          }
+        ]
+      },
+      "summary": {
+        "c": {
+          "pass": 2
+        },
+        "rust": {
+          "pass": 2
+        }
+      }
+    },
+    "interpretation": "The first four-job run hit original ten-second timeouts in main/show-changes and status/refresh. Both scripts passed separately, then the entire paired suite passed them with two jobs. Source, original assertions and deadlines were unchanged. The cause of the timing failures was not isolated; these results do not establish application performance."
+  },
+  "local_validation": {
+    "source_commit": "4f05c3003810108fbf836124ef52d16d32edc662",
+    "platform": "Darwin arm64",
+    "tools": {
+      "cargo": "cargo 1.81.0",
+      "rustc": "rustc 1.81.0 (eeb90cda1 2024-09-04) (Homebrew)",
+      "cc": "Apple clang version 21.0.0 (clang-2100.1.1.101)"
+    },
+    "checks": [
+      {
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "command": [
+          "cargo",
+          "test",
+          "--locked",
+          "--all-targets"
+        ],
+        "exit_code": 0,
+        "passed": 133,
+        "failed": 0,
+        "ignored": 0,
+        "log_sha256": "1621c1b379f22753eb5d6980bb39fa551c060be2d7a20a888b10bc87c081d246"
+      },
+      {
+        "command": [
+          "cargo",
+          "clippy",
+          "--locked",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "log_sha256": "b40456f758c15aae4b6d4a87f342d5e0cad43e020bfc18f9c043caabacfc01b9"
+      }
+    ],
+    "judge_self_test": {
+      "tested_source_commit": "b3b45792505c4089c3db361b651abc7b1a323774",
+      "current_harness_files_identical": true,
+      "harness_sha256": {
+        "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+        "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+        "rust/tests/upstream-suite.py": "40f68213956d46c2611e10ac1ebe48c72d1bb6a24443705a2db452d92d1a7663"
+      },
+      "exit_code": 0,
+      "injections_rejected": [
+        "nonzero",
+        "wrong-output",
+        "timeout",
+        "good-receipt-then-exit-or-timeout",
+        "missing-receipt-exit-zero",
+        "foreign-helper",
+        "missing-make-with-stale-pass-report"
+      ],
+      "log_sha256": "9fa516e9e068a05bed6ba585dbb1ff919391ed9a09ce3c322ee274896738d591"
+    }
+  },
+  "linux_supplementary": {
+    "integrated_source_commit": "4f05c3003810108fbf836124ef52d16d32edc662",
+    "tested_source_commit": "8488120b0640fde79b302cd39c395f5f45f5532a",
+    "runtime_and_assertion_files_identical_to_integrated_main": true,
+    "source_sha256": {
+      "Cargo.lock": "7f9d3e6d2f4d911c6d664fc0262cb8372c15107aef416a069d26b6c6f4a527ab",
+      "Cargo.toml": "2a4246632b36ca9defc3fb89312e983b474db8bf2775bf7699232041046a0a0a",
+      "rust/bin/test-graph.rs": "ebdf51675ccc24f067d10a154d164f0139238bcfbce9c51fec630a45257dc191",
+      "rust/blame_options.rs": "9541a99a6d38a03ba9a9710760a7950c725e68b6282b6051ae92c8210b924dcb",
+      "rust/blob_editor.rs": "70f69440bb6e9e1d537b3ee4b2f4868786a7e09f627737779e6fb79ae7b9b499",
+      "rust/commands.rs": "4ccff24976180c3cab67a33b5834911360b7fc60b4ed8d8ed34ebb04b5d45ed2",
+      "rust/config.rs": "fa3408de3f3ae2ef62300c446c687d8da506d854d97b31477ce85d95f3811783",
+      "rust/date.rs": "51d16041689246691bcfacc8a2f2654e39ae2a123c5aec770c449bfc6ced24f4",
+      "rust/file_finder.rs": "982467deb7b9369b1d2c8f2dd981fb27a384dfa252c8ac8cf9b778be99d89a78",
+      "rust/git.rs": "7519733e368ba479d35feeb9db11c46447544061b4b75f2bdaa0d1fb5afc5f05",
+      "rust/graph.rs": "ff221b393586b7ba7975525ba82d5d7a845ed24c916293cff210d0741d657a21",
+      "rust/graph_v1.rs": "02a7a0f1fd8deadd7fe7b876a162208de9f66aecb29cecce10d6f28b43be84a7",
+      "rust/grep.rs": "835e77161ee3a9b1c28e8050bddefaa84bc84a9c86eebb8e8a8ee76825f51b77",
+      "rust/help_view.rs": "4e493d2f6073c2b379361f1a9564b71bdd1d20fdc1e788c628d2a0ecf6dc60ec",
+      "rust/lib.rs": "4a12641eb6ee98eec473f7808d497f85d65ccfabc417efab26385be5ddcc2557",
+      "rust/line.rs": "db277d47a595ce2642455b09bd074bdfaad3204c26c7d52565692a7642726e69",
+      "rust/main.rs": "2fcf9d27de2d6442531ed9c5512522e9b1c45c7de66a0c5ed2f1134a243866de",
+      "rust/model.rs": "d00793ef4520c705b5e6b51c5820285c4f593bb29885e09705deac4609f88b0f",
+      "rust/options_catalog.rs": "8f070a0695a25a17329c29b002ff820c79eda73c6eab57ade9547ae623d86f5f",
+      "rust/patch.rs": "255874e94a4ffa35c71c2233083ae0d3018e675687a0a948dcebcbd550f86e46",
+      "rust/prompt.rs": "aa9878efbdb6135469e3e5593d028d55ad5ed66ce0c8baa269c282e076595bc5",
+      "rust/refs_view.rs": "c3f46da07e09ce6939ee2ba90a0030e787a26d946ec6b857a22cb0a0f8cecefd",
+      "rust/render.rs": "527340b05ebeb478ec2b1992e68c29265ead2b89e9192879676f9cd0c2efa05d",
+      "rust/request.rs": "d86fb0b900878ea116c17bd6a431b450d34999fd113770b6f9e0cb39ff88deb8",
+      "rust/status_ops.rs": "5e5f34a7a66387ec44cf14775e7f141262f01ab58fd5388dacbf303a3be4ef7b",
+      "rust/stdin_show.rs": "4930776c25c247e073c886749a787ae53c64f9c4faef626a006803f3d8825dd3",
+      "rust/tests/diff-highlight-failure.py": "24924204d42cea4888699a416891ff1f1bd802fcc8677650198c3a46638eb42a",
+      "rust/tests/historical-editor.py": "aa92223e55def984015a5929ddbd48d9f286bf3850e71f5144e726283b1799bb",
+      "rust/tests/main-refresh-pty.py": "bb4500fdccb78318f246d9453402be6f5fdebd3c03b93a956ebd87d50aeb1ad5",
+      "rust/trace.rs": "4fb87248de03495a20b7d4f3863c971c30000a07c1f688d55b2625b22bcf8c23",
+      "rust/tree_view.rs": "cbc6ce461b63617cfc8e0d9af890aaa15fea14c382f930cb99a55ffbdafddb51",
+      "rust/view_export.rs": "92b2fd6fe61198b2d832305b4dbec2899ee646fa446bdf6178d89092c3b97117",
+      "rust/watch.rs": "851c479af44000c515ee5949416cb3f114f62b1b98c610d967d4e8fab296c81c",
+      "tigrc": "aa897801785995fec07f43cedb3dee06cf2124e5bd1475d6e22ba7badfcded5b"
+    },
+    "binaries": {
+      "src/tig": "63cd5b3d32da95b6f18f52ba4c57954d4b832b9709b2e5ab97003820e2c726bc",
+      "test/tools/test-graph": "ae2aefcede2d8c98c5b831f413b36c91d4d1d3eb600fb8bfa0d230813a984c04",
+      "target/release/tig": "5cde5324273d61fdd8141187f226203c96996a27fbbd6548739cc88e2f8dbff7",
+      "target/release/test-graph": "79f8e2aec989c9f5407e34c74c92d7d3c7e5bdbbe6ef7c6f4cd5393bfdc9e940"
+    },
+    "platform": "Linux aarch64",
+    "tools": {
+      "git": "git version 2.39.5",
+      "cargo": "cargo 1.81.0 (2dbb1af80 2024-08-20)",
+      "rustc": "rustc 1.81.0 (eeb90cda1 2024-09-04)",
+      "python3": "Python 3.11.2"
+    },
+    "environment": {
+      "TAR_OPTIONS": "--no-same-owner",
+      "reason": "root container must extract original fixtures with current-user ownership, matching non-root CI; Git safe.directory protection unchanged"
+    },
+    "results": {
+      "rust_tests": {
+        "passed": 133,
+        "failed": 0,
+        "ignored": 0
+      },
+      "main_refresh_pty": {
+        "passed": 10,
+        "covers": "stop/replacement/failure/focus/resize/quit, pipe drainage and terminal restoration"
+      },
+      "historical_editor": {
+        "passed": 6,
+        "non_utf8_paths": "verified"
+      },
+      "diff_highlight": {
+        "passed": 7,
+        "checks": [
+          "missing",
+          "empty-failure",
+          "partial-failure",
+          "early-close",
+          "stderr-success",
+          "c-terminal-restored",
+          "rust-terminal-restored"
+        ],
+        "skips": []
+      }
+    },
+    "checks_exit_code": 0,
+    "log_sha256": "8dd107b662d43272275f02ec921add1ded6dc04c6815f2a16b86c3d3357d2f65",
+    "verification_commands": [
+      [
+        "cargo",
+        "test",
+        "--locked",
+        "--all-targets"
+      ],
+      [
+        "cargo",
+        "build",
+        "--locked",
+        "--release",
+        "--bins"
+      ],
+      [
+        "python3",
+        "rust/tests/main-refresh-pty.py",
+        "target/release/tig"
+      ],
+      [
+        "python3",
+        "rust/tests/historical-editor.py",
+        "target/release/tig"
+      ],
+      [
+        "python3",
+        "rust/tests/diff-highlight-failure.py",
+        "target/release/tig"
+      ]
+    ]
+  },
+  "main_ci": {
+    "source_commit": "4f05c3003810108fbf836124ef52d16d32edc662",
+    "workflows": [
+      {
+        "name": "Rust migration checkpoint",
+        "run_id": 37776429874,
+        "conclusion": "success",
+        "url": "https://github.com/naikokodayo/tig/actions/runs/37776429874"
+      },
+      {
+        "name": "Linux",
+        "run_id": 37776429738,
+        "conclusion": "success",
+        "url": "https://github.com/naikokodayo/tig/actions/runs/37776429738"
+      },
+      {
+        "name": "macOS",
+        "run_id": 37776429769,
+        "conclusion": "success",
+        "url": "https://github.com/naikokodayo/tig/actions/runs/37776429769"
+      }
+    ]
+  },
+  "build_configuration_sha256": {
+    "contrib/config.make-Darwin": "3853a012c3bb348e07652ac7c65f58f4105eedf8d49def100b007e16e0f9c054"
+  },
+  "binary_versions": {
+    "c": [
+      "tig version 2.6.1-434-gb3b45792",
+      "ncursesw version 6.5.20240427",
+      "readline version 8.3",
+      "PCRE2 version 10.47 2025-10-21"
+    ],
+    "rust": [
+      "tig-rs 0.1.0 (upstream Tig 2.6.1; migration in progress; readline-style prompt history and completion)"
+    ]
+  }
 }
