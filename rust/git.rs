@@ -256,12 +256,12 @@ fn stop_history_child(child: &mut std::process::Child) {
     {
         // Native group signalling avoids first-party unsafe FFI. The isolated
         // leader remains unreaped until all inherited output pipes reach EOF.
-        let mut signal = Command::new("/bin/kill");
-        signal.arg("-KILL");
-        #[cfg(target_os = "linux")]
-        signal.arg("--"); // procps kill otherwise interprets -PID as an option.
-        let _ = signal
+        // POSIX sh supplies kill even in minimal Git/Rust images without
+        // /bin/kill. Only the owned numeric PID crosses the argv boundary.
+        let _ = Command::new("/bin/sh")
+            .args(["-c", "command kill -KILL \"$1\"", "tig-history-cancel"])
             .arg(format!("-{}", child.id()))
+            .stdin(Stdio::null())
             .stdout(Stdio::null())
             .stderr(Stdio::null())
             .status();
