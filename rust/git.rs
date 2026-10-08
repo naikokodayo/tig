@@ -385,6 +385,110 @@ impl HistoryOptions {
     }
 }
 
+/// Let Git split implicit filenames from revisions before views consume arguments.
+/// Explicit path arguments stay intact, including embedded LF bytes.
+pub fn classify_cli_args(cwd: &Path, args: &[String]) -> Result<Vec<String>> {
+    if args.is_empty() {
+        return Ok(Vec::new());
+    }
+    let mut revisions = Vec::new();
+    let mut remaining = Vec::new();
+    let mut i = 0;
+    while i < args.len() {
+        let arg = &args[i];
+        if matches!(arg.as_str(), "--" | "--end-of-options") {
+            remaining.extend_from_slice(&args[i..]);
+            break;
+        }
+        // Keep separate option values as one argv pair; Git's rev-parse does not
+        // understand log's value-taking options (and may interpret values as paths).
+        let takes_value = matches!(
+            arg.as_str(),
+            "--since"
+                | "--after"
+                | "--until"
+                | "--before"
+                | "--author"
+                | "--committer"
+                | "--grep"
+                | "--grep-reflog"
+                | "--max-count"
+                | "--skip"
+                | "--min-parents"
+                | "--max-parents"
+                | "--glob"
+                | "--exclude"
+                | "-n"
+                | "-G"
+                | "-S"
+                | "-L"
+        );
+        if crate::config::is_revision_flag(arg) || takes_value {
+            revisions.push(arg.clone());
+            if takes_value {
+                i += 1;
+                revisions.push(
+                    args.get(i)
+                        .ok_or_else(|| GitError("Missing Git option value".into()))?
+                        .clone(),
+                );
+            }
+        } else {
+            remaining.push(arg.clone());
+        }
+        i += 1;
+    }
+    let query = |first, second| {
+        run(
+            cwd,
+            ["rev-parse", first, second]
+                .into_iter()
+                .chain(remaining.iter().map(String::as_str)),
+        )
+    };
+    let files = query("--no-revs", "--no-flags")?;
+    let flags = query("--flags", "--no-revs")?;
+    let symbolic = query("--symbolic", "--revs-only")?;
+    // Once Git reaches an implicit filename, the rest of argv is paths.
+    // Match that whole suffix, never split its LF protocol into filename bytes.
+    let encoded = |args: &[String]| -> Vec<u8> {
+        args.iter()
+            .flat_map(|arg| arg.bytes().chain([b'\n']))
+            .collect()
+    };
+    let paths = if let Some(separator) = remaining.iter().position(|arg| arg == "--") {
+        let paths = &remaining[separator + 1..];
+        if files != encoded(paths) {
+            return Err(GitError("Git returned unexpected explicit paths".into()));
+        }
+        paths.to_vec()
+    } else if files.is_empty() {
+        Vec::new()
+    } else {
+        let first = (0..remaining.len())
+            .find(|&i| files == encoded(&remaining[i..]))
+            .ok_or_else(|| GitError("Git returned unexpected implicit paths".into()))?;
+        remaining[first..].to_vec()
+    };
+    // Revision ranges may be expanded by Git. Retain the user's option boundary.
+    if remaining.iter().any(|arg| arg == "--end-of-options") {
+        return Ok(args.to_vec());
+    }
+    let lines = |bytes: &[u8]| -> Result<Vec<String>> {
+        String::from_utf8(bytes.to_vec())
+            .map_err(|_| GitError("Non-UTF-8 Git revision argument".into()))
+            .map(|s| s.split_terminator('\n').map(str::to_owned).collect())
+    };
+    let mut result = lines(&flags)?;
+    result.extend(revisions);
+    result.extend(lines(&symbolic)?);
+    if !paths.is_empty() || remaining.iter().any(|arg| arg == "--") {
+        result.push("--".into());
+        result.extend(paths);
+    }
+    Ok(result)
+}
+
 impl Repository {
     /// Load the NUL-delimited grep protocol without guessing revisions from labels.
     pub fn grep(
@@ -542,18 +646,85 @@ impl Repository {
 
     pub fn discover(start: impl AsRef<Path>) -> Result<Self> {
         let start = start.as_ref();
-        let git_dir = path(trim_lf(&run(start, ["rev-parse", "--absolute-git-dir"])?))?;
-        let bare = trim_lf(&run(start, ["rev-parse", "--is-bare-repository"])?) == b"true";
+        let mut command = git_command(
+            start,
+            [
+                "rev-parse",
+                "--git-dir",
+                "--is-inside-work-tree",
+                "--show-cdup",
+                "--show-prefix",
+                "HEAD",
+                "--symbolic-full-name",
+                "HEAD",
+            ],
+        )?;
+        // An unborn HEAD fails after Git has already emitted the repository fields.
+        let output = crate::trace::output(&mut command).map_err(|e| GitError(e.to_string()))?;
+        let bytes = &output.stdout;
+        let markers: Vec<_> = [(&b"\ntrue\n"[..], true), (&b"\nfalse\n"[..], false)]
+            .into_iter()
+            .flat_map(|(marker, inside)| {
+                bytes
+                    .windows(marker.len())
+                    .enumerate()
+                    .filter_map(move |(offset, value)| {
+                        (value == marker).then_some(((offset, marker.len()), inside))
+                    })
+            })
+            .collect();
+        // A repository pathname can itself contain the LF-delimited boolean.
+        // Query each pathname separately in that ambiguous case; never truncate it.
+        if markers.len() > 1 {
+            let git_dir = path(trim_lf(&run(start, ["rev-parse", "--absolute-git-dir"])?))?;
+            let bare = trim_lf(&run(start, ["rev-parse", "--is-bare-repository"])?) == b"true";
+            let root = if bare {
+                git_dir.clone()
+            } else {
+                path(trim_lf(&run(start, ["rev-parse", "--show-toplevel"])?))?
+            };
+            return Ok(Self {
+                root,
+                git_dir,
+                bare,
+                invocation: start.canonicalize().map_err(|e| GitError(e.to_string()))?,
+            });
+        }
+        let &(separator, inside) = markers.first().ok_or_else(|| {
+            GitError(format!(
+                "Could not discover repository: {}",
+                text(&output.stderr).trim()
+            ))
+        })?;
+        let (offset, length) = separator;
+        let invocation = start.canonicalize().map_err(|e| GitError(e.to_string()))?;
+        let git_dir = invocation
+            .join(path(&bytes[..offset])?)
+            .canonicalize()
+            .map_err(|e| GitError(e.to_string()))?;
+        let cdup = bytes[offset + length..]
+            .split(|b| *b == b'\n')
+            .next()
+            .ok_or_else(|| GitError("Missing repository root".into()))?;
+        let bare = !inside
+            && cdup.is_empty()
+            && trim_lf(&run(start, ["config", "--bool", "core.bare"])?) == b"true";
         let root = if bare {
             git_dir.clone()
-        } else {
+        } else if !inside {
+            // Explicit external worktrees can contain LF in the absolute cdup.
             path(trim_lf(&run(start, ["rev-parse", "--show-toplevel"])?))?
+        } else {
+            invocation
+                .join(path(cdup)?)
+                .canonicalize()
+                .map_err(|e| GitError(e.to_string()))?
         };
         Ok(Self {
             root,
             git_dir,
             bare,
-            invocation: start.canonicalize().map_err(|e| GitError(e.to_string()))?,
+            invocation,
         })
     }
     /// Git returns an empty prefix when an explicit worktree is outside the cwd.
@@ -576,6 +747,18 @@ impl Repository {
         run(&self.root, args)
     }
     pub fn revision(&self, revision: &str) -> Result<String> {
+        if revision == "HEAD" {
+            let output = run_with_input(
+                &self.root,
+                ["cat-file", "--batch-check=%(objectname)"],
+                Some(b"HEAD^{commit}\n"),
+            )?;
+            let oid = trim_lf(&output);
+            if matches!(oid.len(), 40 | 64) && oid.iter().all(u8::is_ascii_hexdigit) {
+                return Ok(text(oid));
+            }
+            return Err(GitError("HEAD does not resolve to a commit".into()));
+        }
         let spec = format!("{revision}^{{commit}}");
         Ok(text(trim_lf(&self.command([
             "rev-parse",
@@ -706,10 +889,7 @@ impl Repository {
     ) -> Result<Vec<Commit>> {
         let mut result = parse_history(bytes)?;
         let references = self.refs()?;
-        let upstream = self
-            .command(["rev-parse", "--symbolic-full-name", "@{upstream}"])
-            .map(|b| text(trim_lf(&b)))
-            .unwrap_or_default();
+        let upstream = self.upstream()?;
         decorate_history(&mut result, &references, &upstream);
         if first_parent {
             for commit in &mut result {
@@ -759,15 +939,12 @@ impl Repository {
             selectors.push(text(row[10]));
         }
         let mut commits = parse_history(&metadata)?;
-        let upstream = self
-            .command(["rev-parse", "--symbolic-full-name", "@{upstream}"])
-            .map(|b| text(trim_lf(&b)))
-            .unwrap_or_default();
+        let upstream = self.upstream()?;
         decorate_history(&mut commits, &self.refs()?, &upstream);
         Ok((commits, selectors))
     }
     fn is_unborn(&self) -> Result<bool> {
-        match self.revision("HEAD") {
+        match self.command(["cat-file", "-e", "HEAD^{commit}"]) {
             Ok(_) => Ok(false),
             Err(error) => {
                 let branch = self.command(["symbolic-ref", "--quiet", "HEAD"])?;
@@ -778,6 +955,13 @@ impl Repository {
                 Ok(true)
             }
         }
+    }
+    fn upstream(&self) -> Result<String> {
+        let output = self.command(["for-each-ref", "--format=%(HEAD)%00%(upstream)"])?;
+        Ok(output
+            .split(|b| *b == b'\n')
+            .find_map(|row| row.strip_prefix(b"*\0").map(text))
+            .unwrap_or_default())
     }
     pub fn refs(&self) -> Result<Vec<Reference>> {
         if let Some(command) = std::env::var_os("TIG_LS_REMOTE").filter(|s| !s.is_empty()) {
@@ -1906,6 +2090,90 @@ mod tests {
         assert_eq!(repo.grep_blob(&from_head).unwrap(), b"needle old\n");
         assert_eq!(repo.grep_blob(&from_index).unwrap(), b"needle old\n");
     }
+    #[test]
+    fn cli_classification_preserves_filters_boundaries_and_path_bytes() {
+        let fixture = Fixture::new();
+        let repo = fixture.repo();
+        fs::write(fixture.0.join("file\nname"), "base").unwrap();
+        fs::create_dir(fixture.0.join("subdir")).unwrap();
+        fs::write(fixture.0.join("subdir/file"), "base").unwrap();
+        repo.command(["add", "."]).unwrap();
+        repo.command(["commit", "-qm", "base"]).unwrap();
+        let classify = |args: &[&str]| {
+            classify_cli_args(
+                &fixture.0,
+                &args.iter().map(|arg| (*arg).to_owned()).collect::<Vec<_>>(),
+            )
+            .unwrap()
+        };
+        assert_eq!(
+            classify(&["--exclude=refs/heads/other", "--all", "--", "subdir"]),
+            ["--exclude=refs/heads/other", "--all", "--", "subdir"]
+        );
+        assert_eq!(classify(&["subdir"]), ["--", "subdir"]);
+        for name in ["a", "b", "a\nb"] {
+            fs::write(fixture.0.join(name), "base").unwrap();
+        }
+        repo.command(["add", "."]).unwrap();
+        repo.command(["commit", "-qm", "ambiguous LF boundaries"])
+            .unwrap();
+        assert_eq!(classify(&["a", "b", "a\nb"]), ["--", "a", "b", "a\nb"]);
+
+        assert_eq!(
+            classify(&["HEAD", "file\nname"]),
+            ["HEAD", "--", "file\nname"]
+        );
+        assert_eq!(
+            classify(&["--", "file\nname", "--output=sentinel"]),
+            ["--", "file\nname", "--output=sentinel"]
+        );
+        assert_eq!(
+            classify(&["--grep", "base\nbody", "HEAD"]),
+            ["--grep", "base\nbody", "HEAD"]
+        );
+        assert_eq!(
+            classify(&["--end-of-options", "HEAD", "--", "file\nname"]),
+            ["--end-of-options", "HEAD", "--", "file\nname"]
+        );
+        assert!(classify_cli_args(&fixture.0, &["missing-revision".into()]).is_err());
+        let sub = Repository::discover(fixture.0.join("subdir")).unwrap();
+        assert_eq!(sub.root, repo.root);
+        assert_eq!(sub.git_dir, repo.git_dir);
+        assert_eq!(sub.prefix().unwrap(), Path::new("subdir"));
+    }
+    #[test]
+    fn discovery_preserves_repository_directory_newlines() {
+        let fixture = Fixture::new();
+        let directory = fixture.0.join("prefix\ntrue\nname");
+        fs::create_dir(&directory).unwrap();
+        run(&directory, ["init", "--quiet"]).unwrap();
+        let child = directory.join("sub\nfalse\nname");
+        fs::create_dir(&child).unwrap();
+        let discovered = Repository::discover(&child).unwrap();
+        assert_eq!(discovered.root, directory.canonicalize().unwrap());
+        assert_eq!(
+            discovered.git_dir,
+            directory.join(".git").canonicalize().unwrap()
+        );
+        assert_eq!(discovered.prefix().unwrap(), Path::new("sub\nfalse\nname"));
+    }
+    #[test]
+    fn discovery_accepts_unborn_and_bare_repositories() {
+        let fixture = Fixture::new();
+        let repo = fixture.repo();
+        assert!(!repo.bare);
+        assert!(repo.history(&[], 0).unwrap().is_empty());
+        let bare = fixture.0.join("bare.git");
+        repo.command([OsStr::new("init"), OsStr::new("--bare"), bare.as_os_str()])
+            .unwrap();
+        let discovered = Repository::discover(&bare).unwrap();
+        assert!(discovered.bare);
+        assert_eq!(discovered.root, bare.canonicalize().unwrap());
+        assert_eq!(discovered.root, discovered.git_dir);
+        assert!(discovered.history(&[], 0).unwrap().is_empty());
+        assert!(Repository::discover(std::env::temp_dir()).is_err());
+    }
+
     #[test]
     fn history_keeps_control_subjects_and_multiline_option_values() {
         let f = Fixture::new();

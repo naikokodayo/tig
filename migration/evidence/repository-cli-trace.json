@@ -1,0 +1,860 @@
+{
+  "schema": 1,
+  "source_commit": "0ddeb70ea5bf5314a9eb0aa5a28e276345ac594f",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "40f68213956d46c2611e10ac1ebe48c72d1bb6a24443705a2db452d92d1a7663"
+  },
+  "rust_complete": false,
+  "parity_gate": "BLOCKED",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/main/all-arg-test",
+          "script_sha256": "75f118364ab7237a1719bce081b672599097d9820d5bf959ec7238731492a60c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "final.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "detached.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/all-arg-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] stderr assertion\n  [OK] final.screen assertion\n  [OK] detached.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/commit-order-edge-case-test",
+          "script_sha256": "305a58baac2652a97ffd98afa2d10638c65e13be778867a23d0897c0a6acac24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "ensure-topo-order-with-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "graph-supports-date-order.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/commit-order-edge-case-test/.test-result",
+          "receipt": "  [OK] ensure-topo-order-with-graph.screen assertion\n  [OK] graph-supports-date-order.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/default-test",
+          "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-ref-format.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-remotes-hidden.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/default-test/.test-result",
+          "receipt": "  [OK] main-default.screen assertion\n  [OK] main-ref-format.screen assertion\n  [OK] main-remotes-hidden.screen assertion\n  [OK] main-no-refs.screen assertion\n  [OK] main-no-graph.screen assertion\n  [OK] main-with-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/filter-args-test",
+          "script_sha256": "71a55ff435f3cd25168a004233b7ea6c34e71137c9483a91e921aaae49e3c9c4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "rev-parse.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "log.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "filtered.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/filter-args-test/.test-result",
+          "receipt": "  [OK] rev-parse.trace assertion\n  [OK] log.trace assertion\n  [OK] filtered.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/git-alias-test",
+          "script_sha256": "6376a028dd925590fdb854ef9b7b979e032c7a05e2d265b2c30c53f0105b3155",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "alias-vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/git-alias-test/.test-result",
+          "receipt": "  [OK] alias-vars assertion\n  [OK] main.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/file-filter-test",
+          "script_sha256": "ada6618b55d4a2c054e4858f336bf67b389b17b98a11cb5404bd93ac9d818c80",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "status-path-filter.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-path-filter.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "rev-parse.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-index.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-files.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "ls-files.trace#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/file-filter-test/.test-result",
+          "receipt": "  [OK] status-path-filter.screen assertion\n  [OK] status-path-filter.stderr assertion\n  [OK] rev-parse.trace assertion\n  [OK] diff-index.trace assertion\n  [OK] diff-files.trace assertion\n  [OK] ls-files.trace assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/src/tig",
+          "sha256": "515e7d44d84328b4a782add0b1c167ebfd9aadc27a1c863509c2f12ec576b31d"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 6
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/target/release/test-graph\"\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo)\n    Finished `release` profile [optimized] target(s) in 22.35s\n",
+      "results": [
+        {
+          "script": "test/main/all-arg-test",
+          "script_sha256": "75f118364ab7237a1719bce081b672599097d9820d5bf959ec7238731492a60c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "final.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "detached.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/all-arg-test/.test-result",
+          "receipt": "  [OK] vars_assert_count assertion\n  [OK] vars assertion\n  [OK] stderr assertion\n  [OK] final.screen assertion\n  [OK] detached.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/commit-order-edge-case-test",
+          "script_sha256": "305a58baac2652a97ffd98afa2d10638c65e13be778867a23d0897c0a6acac24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "ensure-topo-order-with-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "graph-supports-date-order.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/commit-order-edge-case-test/.test-result",
+          "receipt": "  [OK] ensure-topo-order-with-graph.screen assertion\n  [OK] graph-supports-date-order.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/default-test",
+          "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-ref-format.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-remotes-hidden.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-diff.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/default-test/.test-result",
+          "receipt": "  [OK] main-default.screen assertion\n  [OK] main-ref-format.screen assertion\n  [OK] main-remotes-hidden.screen assertion\n  [OK] main-no-refs.screen assertion\n  [OK] main-no-graph.screen assertion\n  [OK] main-with-diff.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/main/filter-args-test",
+          "script_sha256": "71a55ff435f3cd25168a004233b7ea6c34e71137c9483a91e921aaae49e3c9c4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "fail",
+          "reasons": [
+            "failed_checks"
+          ],
+          "checks": {
+            "OK": 2,
+            "FAIL": 1
+          },
+          "assertions": [
+            {
+              "id": "rev-parse.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "log.trace#1",
+              "status": "FAIL"
+            },
+            {
+              "id": "filtered.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/filter-args-test/.test-result",
+          "receipt": "  [OK] rev-parse.trace assertion\n[FAIL] log.trace != expected/log.trace\n\u001b[1mdiff --git a/expected/log.trace b/log.trace\u001b[m\n\u001b[1mindex a9795ce..d173664 100644\u001b[m\n\u001b[1m--- a/expected/log.trace\u001b[m\n\u001b[1m+++ b/log.trace\u001b[m\n\u001b[36m@@ -1 +1 @@\u001b[m\n\u001b[31m-git log --encoding=UTF-8 --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all --date=raw --parents --no-color --show-notes --pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s%x00%N%x03 -- common tracer\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit log --parents --no-show-signature --decorate=full --format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI%x00%N -z --show-notes --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all -- common tracer\u001b[m\u001b[41m \u001b[m\n  [OK] filtered.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": "| Failed 1 out of 3 test(s)\r\n|   [OK] rev-parse.trace assertion\r\n| [FAIL] log.trace != expected/log.trace\r\n| \u001b[1mdiff --git a/expected/log.trace b/log.trace\u001b[m\r\n| \u001b[1mindex a9795ce..d173664 100644\u001b[m\r\n| \u001b[1m--- a/expected/log.trace\u001b[m\r\n| \u001b[1m+++ b/log.trace\u001b[m\r\n| \u001b[36m@@ -1 +1 @@\u001b[m\r\n| \u001b[31m-git log --encoding=UTF-8 --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all --date=raw --parents --no-color --show-notes --pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s%x00%N%x03 -- common tracer\u001b[m\r\n| \u001b[32m+\u001b[m\u001b[32mgit log --parents --no-show-signature --decorate=full --format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI%x00%N -z --show-notes --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all -- common tracer\u001b[m\u001b[41m \u001b[m\r\n|   [OK] filtered.screen assertion\r\n"
+        },
+        {
+          "script": "test/main/git-alias-test",
+          "script_sha256": "6376a028dd925590fdb854ef9b7b979e032c7a05e2d265b2c30c53f0105b3155",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "alias-vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/main/git-alias-test/.test-result",
+          "receipt": "  [OK] alias-vars assertion\n  [OK] main.screen assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        },
+        {
+          "script": "test/status/file-filter-test",
+          "script_sha256": "ada6618b55d4a2c054e4858f336bf67b389b17b98a11cb5404bd93ac9d818c80",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "status-path-filter.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-path-filter.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "rev-parse.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-index.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-files.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "ls-files.trace#1",
+              "status": "OK"
+            }
+          ],
+          "receipt_path": "test/tmp/status/file-filter-test/.test-result",
+          "receipt": "  [OK] status-path-filter.screen assertion\n  [OK] status-path-filter.stderr assertion\n  [OK] rev-parse.trace assertion\n  [OK] diff-index.trace assertion\n  [OK] diff-files.trace assertion\n  [OK] ls-files.trace assertion\n",
+          "skip": "",
+          "skipped_cases": {},
+          "transcript": ""
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/target/release/tig",
+          "sha256": "2b2f8eb773fbc86daf7e1cd613c79b2887f063f0e3e11d2733858d3e185f4ae5"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/target/release/test-graph",
+          "sha256": "b5cffd40d31f644eeb947b14c4eb2e0163258ef6a944b0277045cb1afff7bfb0"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 5,
+        "fail": 1
+      }
+    }
+  },
+  "mapping": [
+    {
+      "script": "test/main/all-arg-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "vars_assert_count#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "vars#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "final.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "detached.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/commit-order-edge-case-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "ensure-topo-order-with-graph.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "graph-supports-date-order.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/default-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "main-default.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-ref-format.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-remotes-hidden.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-no-refs.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-no-graph.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main-with-diff.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/filter-args-test",
+      "c_status": "pass",
+      "rust_status": "fail",
+      "assertions": [
+        {
+          "id": "rev-parse.trace#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "log.trace#1",
+          "c": "OK",
+          "rust": "FAIL"
+        },
+        {
+          "id": "filtered.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/main/git-alias-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "alias-vars#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "main.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    },
+    {
+      "script": "test/status/file-filter-test",
+      "c_status": "pass",
+      "rust_status": "pass",
+      "assertions": [
+        {
+          "id": "status-path-filter.screen#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "status-path-filter.stderr#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "rev-parse.trace#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-index.trace#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "diff-files.trace#1",
+          "c": "OK",
+          "rust": "OK"
+        },
+        {
+          "id": "ls-files.trace#1",
+          "c": "OK",
+          "rust": "OK"
+        }
+      ]
+    }
+  ],
+  "slice": "Git CLI classification and repository discovery; history wire format explicitly deferred",
+  "source_sha256": {
+    "rust/config.rs": "fa3408de3f3ae2ef62300c446c687d8da506d854d97b31477ce85d95f3811783",
+    "rust/git.rs": "63c6353238e60d012e5d5b39b0564fd08b7f30162f19b7347df796f5407df5a7",
+    "rust/main.rs": "b9377bc86df82f92e563b6eeb7eda3536f20972d966128710441aeb623ec51ec"
+  },
+  "validation": [
+    {
+      "name": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--check"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "name": "unit",
+      "command": [
+        "cargo",
+        "test",
+        "--all-targets"
+      ],
+      "exit_code": 0,
+      "output": "\nrunning 100 tests\ntest blob_editor::tests::private_snapshot_preserves_bytes_and_cleans_up ... ok\ntest config::tests::cli_preserves_git_arguments_and_separator ... ok\ntest blame_options::tests::only_read_only_porcelain_compatible_flags ... ok\ntest config::tests::cli_keeps_native_blame_paths_and_rejects_other_native_arguments ... ok\ntest config::tests::command_quotes_comments_continuations_and_sequences ... ok\ntest commands::tests::expansion_preserves_arguments_and_requires_known_variables ... ok\ntest config::tests::config_diagnostics_recover_without_changing_prompt_errors ... ok\ntest config::tests::diff_cli_switches_update_shared_config_without_eating_paths_or_filter_values ... ok\ntest config::tests::original_compatibility_diagnostics_apply_supported_replacements ... ok\ntest config::tests::original_view_column_fixture_and_atomic_errors ... ok\ntest config::tests::append_colors_and_numeric_boundaries ... ok\ntest config::tests::prefixed_legacy_colors_keep_the_callers_view ... ok\ntest config::tests::config_enum_error_order_and_date_column_boundary ... ok\ntest config::tests::source_cycles_missing_and_recovery ... ok\ntest config::tests::source_summaries_belong_only_to_files_with_direct_errors ... ok\ntest config::tests::original_main_default_toggle_sequence ... ok\ntest date::tests::tig_dates_and_relative_boundaries ... ok\ntest file_finder::tests::filtering_selection_and_lossless_labels ... ok\ntest config::tests::upstream_defaults_and_overrides ... ok\ntest config::tests::typed_toggles_validate_and_preserve_state ... ok\ntest git::tests::blame_porcelain_keeps_dates_and_historical_path ... ok\ntest git::tests::compact_raw_history_and_untrusted_fields ... ok\ntest config::tests::show_revision_respects_end_of_options_and_path_separator ... ok\ntest commands::tests::launched_nonzero_exit_is_distinct_from_spawn_failure ... ok\ntest config::tests::saved_options_round_trip_and_never_overwrite ... ok\ntest git::tests::filtered_refs_feed_history_and_replacement_decorations ... ok\ntest git::tests::discovery_preserves_repository_directory_newlines ... ok\ntest git::tests::applying_mailbox_without_head_name_uses_current_branch ... ok\ntest git::tests::configured_commit_order_changes_real_history ... ok\ntest git::tests::branch_status_tracks_upstream_and_detached_tags ... ok\ntest git::tests::history_option_values_and_paths_do_not_become_graph_flags ... ok\ntest git::tests::nul_parsers_preserve_paths_and_reject_truncation ... ok\ntest git::tests::discovery_accepts_unborn_and_bare_repositories ... ok\ntest git::tests::raw_date_fixture_and_invalid_headers ... ok\ntest commands::tests::list_variables_keep_argv_boundaries_and_prompt_input_literal ... ok\ntest git::tests::history_keeps_control_subjects_and_multiline_option_values ... ok\ntest git::tests::filtered_status_preserves_paths_renames_and_conflicts ... ok\ntest graph::golden_tests::upstream_graph_fixtures ... ok\ntest graph::tests::linear_merge_and_boundary ... ok\ntest graph::tests::raw_parents_and_colors ... ok\ntest graph_v1::tests::boundary_root_and_octopus ... ok\ntest graph_v1::tests::merge_and_shared_ancestor ... ok\ntest graph_v1::tests::merge_in_right_column_retains_v1_metadata ... ok\ntest grep::tests::context_merges_ranges_and_keeps_separator_like_paths ... ok\ntest grep::tests::grep_filename_uses_cells_and_the_configured_delimiter ... ok\ntest grep::tests::grep_nul_fields_preserve_colons_newlines_and_revision_paths ... ok\ntest grep::tests::patterns_options_and_paths_have_distinct_roles ... ok\ntest grep::tests::short_clusters_preserve_values_and_boundaries ... ok\ntest help_view::tests::default_and_collapsed_help_follow_active_bindings ... ok\ntest help_view::tests::user_commands_and_key_names_are_searchable ... ok\ntest line::tests::metadata_matches_reference ... ok\ntest options_catalog::tests::metadata_matches_reference ... ok\ntest git::tests::grep_hits_keep_their_original_blob_after_head_or_index_moves ... ok\ntest git::tests::cli_classification_preserves_filters_boundaries_and_path_bytes ... ok\ntest file_finder::tests::real_git_snapshot_and_errors ... ok\ntest patch::tests::malformed_and_unsupported_patches_fail ... ok\ntest git::tests::path_filtered_history_connects_visible_commits ... ok\ntest patch::tests::executable_mode_selection_keeps_checked_index_updates ... ok\ntest patch::tests::configured_diff_prefix_cannot_stage_a_different_path ... ok\ntest patch::tests::deleted_file_line_unstage_preserves_bytes_and_rejects_stale_index ... ok\ntest git::tests::worktree_diff_preserves_conflict_and_configured_prefixes_without_changing_index ... ok\ntest git::tests::history_notes_follow_selected_ref_without_leaking_into_fields ... ok\ntest patch::tests::mode_only_selection_and_stale_index_are_checked ... ok\ntest git::tests::show_applies_context_and_word_diff_without_changing_history ... ok\ntest patch::tests::replacement_selection_and_no_newline_markers ... ok\ntest refs_view::tests::tig_reference_numeric_order ... ok\ntest render::diff_export_drops_only_file_header_tab_delimiters ... ok\ntest render::diff_stat_cells_preserve_paths_and_binary_boundaries ... ok\ntest patch::tests::unprefixed_patch_cannot_stage_same_named_root_file ... ok\ntest patch::tests::worktree_revert_accepts_selected_split_hunk ... ok\ntest render::tests::auto_graphics_respects_locale_precedence ... ok\ntest render::tests::blame_uses_configured_dates_columns_and_rename_paths ... ok\ntest render::tests::pane_fields_keep_full_text_and_distinguish_live_line_graphics ... ok\ntest render::tests::dates_email_and_overrides ... ok\ntest render::tests::reference_formats_and_graph_switches ... ok\ntest render::tests::unicode_padding_clipping_and_controls ... ok\ntest render::tests::zero_wall_time_is_blank_without_rejecting_unix_zero ... ok\ntest request::tests::metadata_matches_reference ... ok\ntest render::tests::upstream_width_fixture ... ok\ntest render::tests::configured_truncation_delimiters_and_fallbacks ... ok\ntest patch::tests::text_rename_selection_validates_both_paths_and_preserves_index_on_failure ... ok\ntest patch::tests::worktree_revert_changes_only_selected_hunk_and_refuses_stale_or_symlink ... ok\ntest git::tests::real_repository_roundtrip_and_literal_staging ... ok\ntest patch::tests::single_line_hunk_reverse_and_failure_are_index_only ... ok\ntest stdin_show::tests::stdin_preserves_revision_and_literal_path_boundaries ... ok\ntest refs_view::tests::refs_metadata_filter_and_columns ... ok\ntest tree_view::tests::modes_units_and_history_paths ... ok\ntest trace::tests::trace_records_actual_commands_appends_and_never_changes_exit_status ... ok\ntest status_ops::tests::failed_checkout_retains_original_file_and_index ... ok\ntest view_export::tests::diagnostic_format_and_exclusive_destination ... ok\ntest view_export::tests::log_cells_follow_log_read_not_diff_read ... ok\ntest tree_view::tests::quoted_git_path_keeps_unicode_name_and_history ... ok\ntest patch::tests::partial_blocks_and_split_hunks_keep_context_markers_and_index_safety ... ok\ntest status_ops::tests::invalid_targets_and_locked_index_worktree_revert_are_safe ... ok\ntest status_ops::tests::conflict_deletion_is_explicit_and_stale_index_is_refused ... ok\ntest status_ops::tests::cancellation_stale_state_and_normal_revert_preserve_index_and_recovery ... ok\ntest status_ops::tests::conflicts_require_choice_and_keep_original_worktree_and_stages ... ok\ntest stdin_show::tests::forwards_bytes_paths_and_large_input_without_mutating_repository ... ok\ntest tree_view::tests::upstream_tree_screen_rows ... ok\ntest commands::tests::selected_branch_never_uses_an_unrelated_checked_out_branch ... ok\n\ntest result: ok. 100 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.45s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 26 tests\ntest tests::changes_follow_index_order_and_do_not_stage_unmerged_entries ... ok\ntest editor_tests::maps_stat_and_patch_rows_to_file_and_new_line ... ok\ntest editor_tests::deleted_diff_line_uses_old_path_and_old_hunk_count ... ok\ntest tests::diff_reload_tracks_source_line_within_the_same_file ... ok\ntest editor_tests::patch_header_delimiters_preserve_spaces_and_quoted_tabs ... ok\ntest editor_tests::preserves_literal_prefixes_and_ignores_commit_body ... ok\ntest tests::diff_stat_jump_ignores_commit_message_bars ... ok\ntest editor_tests::aggregate_stage_stats_jump_to_matching_patch_and_file ... ok\ntest tests::log_message_cannot_replace_selected_commit ... ok\ntest tests::diff_line_column_and_title_leave_patch_rows_intact ... ok\ntest prompt::tests::completes_actions_options_variables_and_paths ... ok\ntest editor_tests::blame_context_preserves_worktree_path_and_failed_navigation ... ok\ntest tests::explicit_diff_detaches_parent_and_vertical_split_reserves_separator ... ok\ntest tests::terminal_content_is_safe_and_cell_clipped ... ok\ntest tests::failed_grep_query_keeps_previous_arguments ... ok\ntest tests::titles_split_focus_close_and_refresh_keep_context ... ok\ntest tests::search_highlights_rendered_suffixes_without_empty_match_loops ... ok\ntest tests::nested_grep_tree_cannot_open_root_relative_tree_view ... ok\ntest tests::unclosed_binding_argument_cannot_become_a_valid_toggle ... ok\ntest tests::failed_highlighter_keeps_the_original_diff ... ok\ntest tests::wrapped_pager_rows_preserve_source_and_navigation ... ok\ntest tests::grep_tree_expression_reads_blob_from_its_own_tree ... ok\ntest editor_tests::moving_head_cannot_change_the_displayed_edit_target ... ok\ntest tests::first_tree_open_uses_invocation_directory_once ... ok\ntest tests::staging_last_untracked_file_refreshes_synthetic_main_parent ... ok\ntest tests::main_graph_uses_history_traversal_options ... ok\n\ntest result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.88s\n\n\nrunning 2 tests\ntest linked_worktree_and_bare_refs ... ok\ntest real_git_changes_and_deadlines ... ok\n\ntest result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.36s\n\n   Compiling tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.11s\n     Running unittests rust/lib.rs (target/debug/deps/tig_rs-bfc2a83b947c89ab)\n     Running unittests rust/bin/test-graph.rs (target/debug/deps/test_graph-e998ad216534fc56)\n     Running unittests rust/main.rs (target/debug/deps/tig-2faa8a96f34cf1a6)\n     Running tests/watch.rs (target/debug/deps/watch-d9d4f62d5b03b20b)\n"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "output": "    Checking tig-rs v0.1.0 (/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.06s\n"
+    },
+    {
+      "name": "aliases",
+      "command": [
+        "python3",
+        "rust/tests/git-alias.py"
+      ],
+      "exit_code": 0,
+      "output": "C LIMITATION: implicit alias path rejected: sub dir base\nC LIMITATION: implicit alias path rejected: 子目录 base\nC LIMITATION: implicit alias path rejected: -leading base\nC LIMITATION: implicit alias path rejected: sub dir worktree\nC LIMITATION: implicit alias path rejected: 子目录 worktree\nC LIMITATION: implicit alias path rejected: -leading worktree\nPASS /Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/src/tig: normal/linked worktree, direct/alias, spaces/Unicode/options/parent paths\nPASS /Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/target/release/tig: normal/linked worktree, direct/alias, spaces/Unicode/options/parent paths\nPASS 142 real-PTY cases; invalid prefixes rejected before display\n"
+    },
+    {
+      "name": "show_paths",
+      "command": [
+        "python3",
+        "rust/tests/show-pathspec.py"
+      ],
+      "exit_code": 0,
+      "output": "src: one: pass\nsrc: multiple: pass\nsrc: option-like: pass\nsrc: renamed space: pass\nsrc: shell metachar: pass\nsrc: dot pathspec: pass\nrelease: one: pass\nrelease: multiple: pass\nrelease: option-like: pass\nrelease: renamed space: pass\nrelease: shell metachar: pass\nrelease: dot pathspec: pass\n"
+    },
+    {
+      "name": "commit_order",
+      "command": [
+        "python3",
+        "rust/tests/commit-order-filter.py"
+      ],
+      "exit_code": 0,
+      "output": "{\"c\": [\"2014-02-01 22:35 -0600 Benjamin Bergman More featuresA\", \"2014-02-01 22:36 -0600 Benjamin Bergman More master\"], \"rust\": [\"2014-02-01 22:35 -0600 Benjamin Bergman More featuresA\", \"2014-02-01 22:36 -0600 Benjamin Bergman More master\"]}\n"
+    }
+  ],
+  "independent_reviews": [
+    "Reviewer 1: LF-delimited repository path finding fixed; final no remaining findings.",
+    "Reviewer 2: LF filename classification collision fixed; final no remaining findings. Both read-only with fresh contexts."
+  ],
+  "baseline": {
+    "source_commit": "b3b45792505c4089c3db361b651abc7b1a323774",
+    "runs": {
+      "c": {
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/src/tig",
+            "sha256": "515e7d44d84328b4a782add0b1c167ebfd9aadc27a1c863509c2f12ec576b31d"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/test/tools/test-graph",
+            "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+          }
+        },
+        "summary": {
+          "pass": 2
+        },
+        "results": [
+          {
+            "script": "test/main/filter-args-test",
+            "assertions": [
+              {
+                "id": "rev-parse.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "log.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "filtered.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt": "  [OK] rev-parse.trace assertion\n  [OK] log.trace assertion\n  [OK] filtered.screen assertion\n"
+          },
+          {
+            "script": "test/status/file-filter-test",
+            "assertions": [
+              {
+                "id": "status-path-filter.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-path-filter.stderr#1",
+                "status": "OK"
+              },
+              {
+                "id": "rev-parse.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-index.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-files.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "ls-files.trace#1",
+                "status": "OK"
+              }
+            ],
+            "receipt": "  [OK] status-path-filter.screen assertion\n  [OK] status-path-filter.stderr assertion\n  [OK] rev-parse.trace assertion\n  [OK] diff-index.trace assertion\n  [OK] diff-files.trace assertion\n  [OK] ls-files.trace assertion\n"
+          }
+        ]
+      },
+      "rust": {
+        "binaries": {
+          "tig": {
+            "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/target/release/tig",
+            "sha256": "41bf9859e914781d1b45672dd2802891f92751bb3357d1a368eb9821615dc6da"
+          },
+          "test-graph": {
+            "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/target/release/test-graph",
+            "sha256": "dd339d89441b1bbd707dc4b7802a2e3239aec9823a552ef03539788dbe5e5bc8"
+          }
+        },
+        "summary": {
+          "fail": 2
+        },
+        "results": [
+          {
+            "script": "test/main/filter-args-test",
+            "assertions": [
+              {
+                "id": "rev-parse.trace#1",
+                "status": "FAIL"
+              },
+              {
+                "id": "log.trace#1",
+                "status": "FAIL"
+              },
+              {
+                "id": "filtered.screen#1",
+                "status": "OK"
+              }
+            ],
+            "receipt": "[FAIL] rev-parse.trace != expected/rev-parse.trace\n\u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\n\u001b[1mindex c6d0c82..aba1ee8 100644\u001b[m\n\u001b[1m--- a/expected/rev-parse.trace\u001b[m\n\u001b[1m+++ b/rev-parse.trace\u001b[m\n\u001b[36m@@ -1,4 +1,5 @@\u001b[m\n\u001b[31m-git rev-parse --no-revs --no-flags -- common tracer\u001b[m\n\u001b[31m-git rev-parse --flags --no-revs -- common tracer\u001b[m\n\u001b[31m-git rev-parse --symbolic --revs-only -- common tracer\u001b[m\n\u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --symbolic-full-name @{upstream}\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\n[FAIL] log.trace != expected/log.trace\n\u001b[1mdiff --git a/expected/log.trace b/log.trace\u001b[m\n\u001b[1mindex a9795ce..d173664 100644\u001b[m\n\u001b[1m--- a/expected/log.trace\u001b[m\n\u001b[1m+++ b/log.trace\u001b[m\n\u001b[36m@@ -1 +1 @@\u001b[m\n\u001b[31m-git log --encoding=UTF-8 --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all --date=raw --parents --no-color --show-notes --pretty=format:commit %m %H %P%x00%aN <%aE> %ad%x00%cN <%cE> %cd%x00%s%x00%N%x03 -- common tracer\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit log --parents --no-show-signature --decorate=full --format=%m%H%x00%P%x00%aN%x00%aI%x00%s%x00%D%x00%aE%x00%cN%x00%cE%x00%cI%x00%N -z --show-notes --topo-order --exclude=refs/remotes/origin/* --exclude=refs/heads/master --all -- common tracer\u001b[m\u001b[41m \u001b[m\n  [OK] filtered.screen assertion\n"
+          },
+          {
+            "script": "test/status/file-filter-test",
+            "assertions": [
+              {
+                "id": "status-path-filter.screen#1",
+                "status": "OK"
+              },
+              {
+                "id": "status-path-filter.stderr#1",
+                "status": "OK"
+              },
+              {
+                "id": "rev-parse.trace#1",
+                "status": "FAIL"
+              },
+              {
+                "id": "diff-index.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "diff-files.trace#1",
+                "status": "OK"
+              },
+              {
+                "id": "ls-files.trace#1",
+                "status": "OK"
+              }
+            ],
+            "receipt": "  [OK] status-path-filter.screen assertion\n  [OK] status-path-filter.stderr assertion\n[FAIL] rev-parse.trace != expected/rev-parse.trace\n\u001b[1mdiff --git a/expected/rev-parse.trace b/rev-parse.trace\u001b[m\n\u001b[1mindex 1d9a7db..7f44c12 100644\u001b[m\n\u001b[1m--- a/expected/rev-parse.trace\u001b[m\n\u001b[1m+++ b/rev-parse.trace\u001b[m\n\u001b[36m@@ -1,4 +1,4 @@\u001b[m\n\u001b[31m-git rev-parse --no-revs --no-flags subdir\u001b[m\n\u001b[31m-git rev-parse --flags --no-revs subdir\u001b[m\n\u001b[31m-git rev-parse --symbolic --revs-only subdir\u001b[m\n\u001b[31m-git rev-parse --git-dir --is-inside-work-tree --show-cdup --show-prefix HEAD --symbolic-full-name HEAD\u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --absolute-git-dir\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --is-bare-repository\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --show-toplevel\u001b[m\u001b[41m \u001b[m\n\u001b[32m+\u001b[m\u001b[32mgit rev-parse --verify --end-of-options HEAD^{commit}\u001b[m\u001b[41m \u001b[m\n  [OK] diff-index.trace assertion\n  [OK] diff-files.trace assertion\n  [OK] ls-files.trace assertion\n"
+          }
+        ]
+      }
+    }
+  },
+  "limitations": [
+    "Selected-script gate intentionally BLOCKED by main/filter-args-test log.trace only; no skipped or missing assertions.",
+    "Ambiguous LF repository path fields use genuine separate Git path queries; external worktrees use a lossless toplevel query.",
+    "Not a full 154-script integrated checkpoint."
+  ]
+}
