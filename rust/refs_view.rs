@@ -2,7 +2,7 @@
 //! Refs view preparation. The synthetic first row selects all history.
 use crate::{
     config::Config,
-    git::{parse_history, GitError, Repository, Result},
+    git::{parse_nul_commit_metadata, GitError, Repository, Result},
     model::{Commit, Reference},
     render,
 };
@@ -139,7 +139,7 @@ pub fn load(
     } else {
         "--format=%H%x00%P%x00%an%x00%aI%x00%s%x00%x00%ae%x00%cn%x00%ce%x00%cI%x00"
     };
-    let history = parse_history(&repo.command([
+    let history = parse_nul_commit_metadata(&repo.command([
         "log",
         "--no-show-signature",
         "--no-color",
