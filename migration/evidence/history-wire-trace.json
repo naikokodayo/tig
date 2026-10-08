@@ -1,0 +1,3300 @@
+{
+  "schema": 1,
+  "source_commit": "8488120b0640fde79b302cd39c395f5f45f5532a",
+  "scope": "Original scripts and assertions; C baseline followed by Rust application AND graph helper",
+  "harness_sha256": {
+    "Makefile": "1cb476086637eb2fa7cb9978e16277b3ffca15f92ccd2b05ea701f67104352e5",
+    "test/tools/libtest.sh": "c3519de59358319ccd935021307ca2c1bb526c7510bb5bc9be3eb1d185ca1049",
+    "rust/tests/upstream-suite.py": "40f68213956d46c2611e10ac1ebe48c72d1bb6a24443705a2db452d92d1a7663"
+  },
+  "rust_complete": false,
+  "parity_gate": "PASS_SELECTED_SCRIPTS",
+  "script_timeout_seconds": 120,
+  "environment": {
+    "platform": "Darwin arm64",
+    "git": "git version 2.50.1 (Apple Git-155)",
+    "init.defaultBranch": "master",
+    "TEST_OPTS": "",
+    "pty_rows": 30,
+    "pty_columns": 80
+  },
+  "runs": {
+    "c": {
+      "build_command": [
+        "make",
+        "src/tig",
+        "test/tools/test-graph"
+      ],
+      "build_exit_code": 0,
+      "build_log": "make: `src/tig' is up to date.\nmake: `test/tools/test-graph' is up to date.\n",
+      "results": [
+        {
+          "script": "test/log/diff-stat-test",
+          "script_sha256": "c315cbf3e114e901c2694ac64cabc1106c9751e03f5f5803ef2780bc7fb2f2b6",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "diff-stat.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-stat-after-refresh.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/log/log-graph-test",
+          "script_sha256": "00ead28a91fff660b42ff158a90aac70b66642e4d9ed6c30d5475387cef0cf52",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "log-graph.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/log/pretty-format-test",
+          "script_sha256": "fef3b9a3e6ead1c9cc199f7978a6cdc1f7620825b547e72234a23e89eea24922",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "log-pretty-format-override.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "log-pretty-raw.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "log-pretty-full.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "log-pretty-fuller.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/log/start-on-line-test",
+          "script_sha256": "ac043b2f88440d38873705d0c1c3dded4da1191507a4dda0196fb66e15eadcc7",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/log/submodule-test",
+          "script_sha256": "c674fa891da51458f71bf89ee16691b8b7d4d871a07b32028298e9d1c3d046f9",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "log-submodule.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "log-submodule-diff.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/all-arg-test",
+          "script_sha256": "75f118364ab7237a1719bce081b672599097d9820d5bf959ec7238731492a60c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "final.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "detached.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/author-name-change-test",
+          "script_sha256": "cf98937433b79471867f6fe6526b2d932e17a5019ca8fc8a2f69995dc6bcc38f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/boundary-test",
+          "script_sha256": "74e2e050399801013310584dee78409edf18779f387853bd1df039e8d697fb07",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "merge-view.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/branch-var-test",
+          "script_sha256": "2ed95c116b403b74c4389b9940dd5b928572db92a1de25ca1c3f6e4c3e969aa4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/commit-order-edge-case-test",
+          "script_sha256": "305a58baac2652a97ffd98afa2d10638c65e13be778867a23d0897c0a6acac24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "ensure-topo-order-with-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "graph-supports-date-order.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/commit-title-overflow-test",
+          "script_sha256": "6725bacb3bf45a7d4465bab47aaa916fc6ddc013492174d5ab94dc8550b62f54",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-commit-titles.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/date-test",
+          "script_sha256": "b050de02b7fcb48d19e400aa43e9ac5256450674b2555717ecfff6497873f955",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "default-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "local-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "relative-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "relative-compact-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-short-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-tz-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "no-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-date.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/default-test",
+          "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-ref-format.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-remotes-hidden.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-diff.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/emoji-test",
+          "script_sha256": "51ed42b7aba3e56404e0dee7b1a9a18f1cee925419feb2a665f103572853764f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "emoji-commit-titles-col-46.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-46.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-unset.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-unset.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-300.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-300.stderr#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/escape-control-characters-test",
+          "script_sha256": "f0afbbd19bf33724e569022ba500c4e159857aab1a4680bf293c443e25c431e3",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/filter-args-test",
+          "script_sha256": "71a55ff435f3cd25168a004233b7ea6c34e71137c9483a91e921aaae49e3c9c4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "rev-parse.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "log.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "filtered.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/git-alias-test",
+          "script_sha256": "6376a028dd925590fdb854ef9b7b979e032c7a05e2d265b2c30c53f0105b3155",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "alias-vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/goto-test",
+          "script_sha256": "2ec9c12269d3ffd14b14e643a8a328096a7ff04a768c8cdf2948b5a4e3238ff0",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "commit-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-1-back.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-2.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-2-again.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-5.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-5-still.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-3.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/graph-argument-test",
+          "script_sha256": "dec2e0ff1c54fbc34224b177df4e30d786473f12bde2800dd9f6b278a30675db",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "follow.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "follow.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-parent.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-parent.stderr#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/jump-ends-test",
+          "script_sha256": "72446dd77ed40b9215b369c063233e7daa934f3ce106f1fedbe01fb644dcbd5c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-goto-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-1.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-1.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-2.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-2.stderr#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/mailmap-test",
+          "script_sha256": "83d27512940a1a35f0d9089321a5fbf5267ae55a6c636da9b6406f4448ed1b1c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "mailmapped.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mailmapped-diff.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/main-options-test",
+          "script_sha256": "dddb92e5a6a90488359c6a2f47eb84415b22308e52940f206bca268593db4fe0",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "with-10-lines.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/merge-test",
+          "script_sha256": "57723b9fd6ed6157ecaeaa6efd30ad1ead43a4ccf039eec3ec6971351cab7d71",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-with-conflict.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/no-matching-commmits-test",
+          "script_sha256": "e1bf5d04ecaf3a855b65548e2a6ebe1697bc787597cfa5b97927acec79ed7bfe",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "tig-did-not-exit-as-expected#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/no-merges-test",
+          "script_sha256": "dce74d5e289a5e7830f96e1ccede6b85bb17a5b5d7da32ba72789e0857e82a47",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "no-merges.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/pretty-raw-test",
+          "script_sha256": "03a00e6802091e2f011df0e405fa3f586dcd37e868a42145734e6b75932d3c94",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-pretty-raw.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/refresh-periodic-test",
+          "script_sha256": "f7d8f6eb6ae2ba733d210d52f5140d14ce23a765961fa8a8c561dfe257e5446c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commiting-change-and-sleeping-hello.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commiting-change-and-sleeping-world.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/refresh-test",
+          "script_sha256": "299ee5ce1fc8fd738059aa30604c50411c876e8c0a7035684056f85b94b79111",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-all.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-soft.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-a-and-bc.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-hard.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-tag.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/search-preload-test",
+          "script_sha256": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/search-test",
+          "script_sha256": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-search-author.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-empty.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-find-next.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title-no-match.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-time.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-smart-case.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/show-changes-after-rename-test",
+          "script_sha256": "667f4b735c4588dff1445d4901d899c1bbfdfc278713d54c1b38182d725ef2b4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "default.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/show-changes-test",
+          "script_sha256": "243aabd40fe83a59940f0289d19596d94d1cd7fccc088e3f1116f79b0e13b709",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 9
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-and-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-and-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-renamed.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-all-refs.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/start-on-line-test",
+          "script_sha256": "09118ca562b3167b5ced4913185fe7e8b99062f40e7ce4a9a97091a92219187d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/stdin-test",
+          "script_sha256": "5b3882f86125941300e9d641670dba620ee0a2bfa69af5405e240f1f0a15eda7",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-stdin.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/submodule-test",
+          "script_sha256": "ae7a945fee6bf5676a0435fb3335e92ca8c2f61f823e9a188ed06f36f91c340b",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main-submodule.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-submodule-diff.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/unbind-default-quit-key-test",
+          "script_sha256": "7853b856078605aebae6dd66f193eefb32320c2439ab3077020deac54bf4baf3",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "work-dir/gh-483-main-q-noquit#1",
+              "status": "OK"
+            },
+            {
+              "id": "work-dir/gh-483-generic-qb-executed#1",
+              "status": "OK"
+            },
+            {
+              "id": "work-dir/gh-483-main-qa-executed#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/untracked-test",
+          "script_sha256": "1903b8792865653883d9590fcd7f876a94823fa89e350b7e1d81c32d365ea13f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/update-unstaged-changes-test",
+          "script_sha256": "241f169bbd0c507256bb23b2a56963cd1dafd3325a642693d7f21c5ef871ce8c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/vertical-lines-test",
+          "script_sha256": "70db7c2628291db5ea02a0a15759bcf547790067ea981b15e068c6ea738fd5fc",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "main-verticals-ascii.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-verticals-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-verticals-utf8.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/view-split-test",
+          "script_sha256": "1893d1cec14ce3191fe06aca35c9f3e71891bb61f40b8cedb645bc52b82a16f4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "main-vsplit-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-vsplit-25-75.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-hsplit-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-hsplit-50-50.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/reflog/default-test",
+          "script_sha256": "700459540642c895a717fa943a46a0df031eb4b135dec7b63562009e26d4a89e",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "reflog-default.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/branch-checkout-test",
+          "script_sha256": "90cdd097756de3865295522f27b5919fd5e84f9dd9b1a7f0991edbbb7057d3d1",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 7
+          },
+          "assertions": [
+            {
+              "id": "19455fa3642af6a6a7d527dd043caf5a70eaad2d.refinfo#1",
+              "status": "OK"
+            },
+            {
+              "id": "this_is_really_a_long_long_long_long_long_long_long_branch.head#1",
+              "status": "OK"
+            },
+            {
+              "id": "a3f25ca556c1cef1ef3a0704f5deaec8687c84b9.refinfo#1",
+              "status": "OK"
+            },
+            {
+              "id": "this_is_really_a_long_long_long_long_long_long_long_tag.head#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-init.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-checked-out-branch.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-checked-out-tag.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/branch-tag-test",
+          "script_sha256": "4759456f345044d023f8d542128bdcbea9fb5d22f3c8ebcfaefe605a218502bc",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "refs-initial.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/branch-var-test",
+          "script_sha256": "bc039b2d994df5e32261605e8fc9320cd5b22dedf2cc83b1a4d325884eac1066",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/default-test",
+          "script_sha256": "fa6f469aa8cceb5487604f8d8e9ca02154eb6190592a533470bd729918fefcb5",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "refs-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-with-line-number.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/filter-test",
+          "script_sha256": "a1f75f010b847def15a56cb1ef134be855bee05825aa1b898492103f8d06ae75",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/refresh-test",
+          "script_sha256": "96400babf8380c040d74c79aa707ce39985b813f179d385ce6620302c382080c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "refs-initial.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-after-move-add.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-after-delete-reset.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/replace-test",
+          "script_sha256": "a18e6d147af235955df8f41888e07c27211a3c8bd711bc61c7cd20b1aaa6697c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/start-on-line-test",
+          "script_sha256": "e518cd18ff4891b3099f76d3ee8f09e60de1431af603740b09bdbcef034b9f11",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/worktree-test",
+          "script_sha256": "52e7a5bb711284896590077360af4a1708abb8bb990fe64685338d454ccbfb86",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "worktree.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/stash/start-on-line-test",
+          "script_sha256": "e457e5a5e298db8d6d337ada5f5b6bfbe2a4e7026ba2ee51b249c87b3f95847d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/status/file-filter-test",
+          "script_sha256": "ada6618b55d4a2c054e4858f336bf67b389b17b98a11cb5404bd93ac9d818c80",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "status-path-filter.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-path-filter.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "rev-parse.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-index.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-files.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "ls-files.trace#1",
+              "status": "OK"
+            }
+          ]
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/src/tig",
+          "sha256": "515e7d44d84328b4a782add0b1c167ebfd9aadc27a1c863509c2f12ec576b31d"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/test/tools/test-graph",
+          "sha256": "48bf41175c4a603ec9a5b335fdc8e7f2f0f90b79b99df7a509202686880b7849"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 52
+      }
+    },
+    "rust": {
+      "build_command": [
+        "make",
+        "rust-test-binaries"
+      ],
+      "build_exit_code": 0,
+      "build_log": "cargo build --locked --release --bins --target-dir \"/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/target\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/target/release/tig\"\ntest -x \"/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/target/release/test-graph\"\n    Finished `release` profile [optimized] target(s) in 0.28s\n",
+      "results": [
+        {
+          "script": "test/log/diff-stat-test",
+          "script_sha256": "c315cbf3e114e901c2694ac64cabc1106c9751e03f5f5803ef2780bc7fb2f2b6",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "diff-stat.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-stat-after-refresh.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/log/log-graph-test",
+          "script_sha256": "00ead28a91fff660b42ff158a90aac70b66642e4d9ed6c30d5475387cef0cf52",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "log-graph.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/log/pretty-format-test",
+          "script_sha256": "fef3b9a3e6ead1c9cc199f7978a6cdc1f7620825b547e72234a23e89eea24922",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "log-pretty-format-override.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "log-pretty-raw.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "log-pretty-full.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "log-pretty-fuller.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/log/start-on-line-test",
+          "script_sha256": "ac043b2f88440d38873705d0c1c3dded4da1191507a4dda0196fb66e15eadcc7",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/log/submodule-test",
+          "script_sha256": "c674fa891da51458f71bf89ee16691b8b7d4d871a07b32028298e9d1c3d046f9",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "log-submodule.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "log-submodule-diff.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/all-arg-test",
+          "script_sha256": "75f118364ab7237a1719bce081b672599097d9820d5bf959ec7238731492a60c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "final.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "detached.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/author-name-change-test",
+          "script_sha256": "cf98937433b79471867f6fe6526b2d932e17a5019ca8fc8a2f69995dc6bcc38f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/boundary-test",
+          "script_sha256": "74e2e050399801013310584dee78409edf18779f387853bd1df039e8d697fb07",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "merge-view.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/branch-var-test",
+          "script_sha256": "2ed95c116b403b74c4389b9940dd5b928572db92a1de25ca1c3f6e4c3e969aa4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/commit-order-edge-case-test",
+          "script_sha256": "305a58baac2652a97ffd98afa2d10638c65e13be778867a23d0897c0a6acac24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "ensure-topo-order-with-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "graph-supports-date-order.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/commit-title-overflow-test",
+          "script_sha256": "6725bacb3bf45a7d4465bab47aaa916fc6ddc013492174d5ab94dc8550b62f54",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-commit-titles.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/date-test",
+          "script_sha256": "b050de02b7fcb48d19e400aa43e9ac5256450674b2555717ecfff6497873f955",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "default-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "local-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "relative-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "relative-compact-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-short-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-tz-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "no-date.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "custom-date.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/default-test",
+          "script_sha256": "2723ac8a6d571c56306131310a86dabb90af64e18336e71758dca53d6c3abc24",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "main-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-ref-format.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-remotes-hidden.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-no-graph.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-diff.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/emoji-test",
+          "script_sha256": "51ed42b7aba3e56404e0dee7b1a9a18f1cee925419feb2a665f103572853764f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "emoji-commit-titles-col-46.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-46.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-unset.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-unset.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-300.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "emoji-commit-titles-col-300.stderr#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/escape-control-characters-test",
+          "script_sha256": "f0afbbd19bf33724e569022ba500c4e159857aab1a4680bf293c443e25c431e3",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/filter-args-test",
+          "script_sha256": "71a55ff435f3cd25168a004233b7ea6c34e71137c9483a91e921aaae49e3c9c4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "rev-parse.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "log.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "filtered.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/git-alias-test",
+          "script_sha256": "6376a028dd925590fdb854ef9b7b979e032c7a05e2d265b2c30c53f0105b3155",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "alias-vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/goto-test",
+          "script_sha256": "2ec9c12269d3ffd14b14e643a8a328096a7ff04a768c8cdf2948b5a4e3238ff0",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "commit-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-1-back.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-2.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-2-again.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-5.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-5-still.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "unstaged-changes.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "commit-3.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/graph-argument-test",
+          "script_sha256": "dec2e0ff1c54fbc34224b177df4e30d786473f12bde2800dd9f6b278a30675db",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "follow.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "follow.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-parent.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "first-parent.stderr#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/jump-ends-test",
+          "script_sha256": "72446dd77ed40b9215b369c063233e7daa934f3ce106f1fedbe01fb644dcbd5c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-goto-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-1.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-1.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-1.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-2.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-goto-max-plus-2.stderr#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/mailmap-test",
+          "script_sha256": "83d27512940a1a35f0d9089321a5fbf5267ae55a6c636da9b6406f4448ed1b1c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "mailmapped.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "mailmapped-diff.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/main-options-test",
+          "script_sha256": "dddb92e5a6a90488359c6a2f47eb84415b22308e52940f206bca268593db4fe0",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "with-10-lines.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/merge-test",
+          "script_sha256": "57723b9fd6ed6157ecaeaa6efd30ad1ead43a4ccf039eec3ec6971351cab7d71",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-with-conflict.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/no-matching-commmits-test",
+          "script_sha256": "e1bf5d04ecaf3a855b65548e2a6ebe1697bc787597cfa5b97927acec79ed7bfe",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "tig-did-not-exit-as-expected#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/no-merges-test",
+          "script_sha256": "dce74d5e289a5e7830f96e1ccede6b85bb17a5b5d7da32ba72789e0857e82a47",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "no-merges.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/pretty-raw-test",
+          "script_sha256": "03a00e6802091e2f011df0e405fa3f586dcd37e868a42145734e6b75932d3c94",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-pretty-raw.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/refresh-periodic-test",
+          "script_sha256": "f7d8f6eb6ae2ba733d210d52f5140d14ce23a765961fa8a8c561dfe257e5446c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 5
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commiting-change-and-sleeping-hello.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commiting-change-and-sleeping-world.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/refresh-test",
+          "script_sha256": "299ee5ce1fc8fd738059aa30604c50411c876e8c0a7035684056f85b94b79111",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-a.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-add-all.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-commit.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-soft.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-a-and-bc.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-reset-hard.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-after-tag.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/search-preload-test",
+          "script_sha256": "d7606097421f5add291c1bdb95b947feb0421b2e9f9a636d0499879cefd76215",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "stderr#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/search-test",
+          "script_sha256": "890a9529f8b868916427fb5302e0b0dbe18fc183f68fe5dcba441c2839250d41",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 8
+          },
+          "assertions": [
+            {
+              "id": "main-search-author.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-empty.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-author-find-next.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-title-no-match.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-time.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-search-smart-case.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/show-changes-after-rename-test",
+          "script_sha256": "667f4b735c4588dff1445d4901d899c1bbfdfc278713d54c1b38182d725ef2b4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "default.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/show-changes-test",
+          "script_sha256": "243aabd40fe83a59940f0289d19596d94d1cd7fccc088e3f1116f79b0e13b709",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 9
+          },
+          "assertions": [
+            {
+              "id": "main-with-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-unstaged-and-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-split.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-staged-and-unstaged.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-renamed.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-with-conflict.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-all-refs.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/start-on-line-test",
+          "script_sha256": "09118ca562b3167b5ced4913185fe7e8b99062f40e7ce4a9a97091a92219187d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/stdin-test",
+          "script_sha256": "5b3882f86125941300e9d641670dba620ee0a2bfa69af5405e240f1f0a15eda7",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "main-stdin.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/submodule-test",
+          "script_sha256": "ae7a945fee6bf5676a0435fb3335e92ca8c2f61f823e9a188ed06f36f91c340b",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main-submodule.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-submodule-diff.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/unbind-default-quit-key-test",
+          "script_sha256": "7853b856078605aebae6dd66f193eefb32320c2439ab3077020deac54bf4baf3",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "work-dir/gh-483-main-q-noquit#1",
+              "status": "OK"
+            },
+            {
+              "id": "work-dir/gh-483-generic-qb-executed#1",
+              "status": "OK"
+            },
+            {
+              "id": "work-dir/gh-483-main-qa-executed#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/untracked-test",
+          "script_sha256": "1903b8792865653883d9590fcd7f876a94823fa89e350b7e1d81c32d365ea13f",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/update-unstaged-changes-test",
+          "script_sha256": "241f169bbd0c507256bb23b2a56963cd1dafd3325a642693d7f21c5ef871ce8c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "start.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "result.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/vertical-lines-test",
+          "script_sha256": "70db7c2628291db5ea02a0a15759bcf547790067ea981b15e068c6ea738fd5fc",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "main-verticals-ascii.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-verticals-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-verticals-utf8.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/main/view-split-test",
+          "script_sha256": "1893d1cec14ce3191fe06aca35c9f3e71891bb61f40b8cedb645bc52b82a16f4",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 4
+          },
+          "assertions": [
+            {
+              "id": "main-vsplit-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-vsplit-25-75.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-hsplit-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main-hsplit-50-50.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/reflog/default-test",
+          "script_sha256": "700459540642c895a717fa943a46a0df031eb4b135dec7b63562009e26d4a89e",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "reflog-default.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/branch-checkout-test",
+          "script_sha256": "90cdd097756de3865295522f27b5919fd5e84f9dd9b1a7f0991edbbb7057d3d1",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 7
+          },
+          "assertions": [
+            {
+              "id": "19455fa3642af6a6a7d527dd043caf5a70eaad2d.refinfo#1",
+              "status": "OK"
+            },
+            {
+              "id": "this_is_really_a_long_long_long_long_long_long_long_branch.head#1",
+              "status": "OK"
+            },
+            {
+              "id": "a3f25ca556c1cef1ef3a0704f5deaec8687c84b9.refinfo#1",
+              "status": "OK"
+            },
+            {
+              "id": "this_is_really_a_long_long_long_long_long_long_long_tag.head#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-init.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-checked-out-branch.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-checked-out-tag.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/branch-tag-test",
+          "script_sha256": "4759456f345044d023f8d542128bdcbea9fb5d22f3c8ebcfaefe605a218502bc",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "refs-initial.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/branch-var-test",
+          "script_sha256": "bc039b2d994df5e32261605e8fc9320cd5b22dedf2cc83b1a4d325884eac1066",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "vars_assert_count#1",
+              "status": "OK"
+            },
+            {
+              "id": "vars#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/default-test",
+          "script_sha256": "fa6f469aa8cceb5487604f8d8e9ca02154eb6190592a533470bd729918fefcb5",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "refs-default.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-with-line-number.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/filter-test",
+          "script_sha256": "a1f75f010b847def15a56cb1ef134be855bee05825aa1b898492103f8d06ae75",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/refresh-test",
+          "script_sha256": "96400babf8380c040d74c79aa707ce39985b813f179d385ce6620302c382080c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 3
+          },
+          "assertions": [
+            {
+              "id": "refs-initial.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-after-move-add.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "refs-after-delete-reset.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/replace-test",
+          "script_sha256": "a18e6d147af235955df8f41888e07c27211a3c8bd711bc61c7cd20b1aaa6697c",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 2
+          },
+          "assertions": [
+            {
+              "id": "refs.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "main.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/start-on-line-test",
+          "script_sha256": "e518cd18ff4891b3099f76d3ee8f09e60de1431af603740b09bdbcef034b9f11",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/refs/worktree-test",
+          "script_sha256": "52e7a5bb711284896590077360af4a1708abb8bb990fe64685338d454ccbfb86",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "worktree.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/stash/start-on-line-test",
+          "script_sha256": "e457e5a5e298db8d6d337ada5f5b6bfbe2a4e7026ba2ee51b249c87b3f95847d",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 1
+          },
+          "assertions": [
+            {
+              "id": "position.screen#1",
+              "status": "OK"
+            }
+          ]
+        },
+        {
+          "script": "test/status/file-filter-test",
+          "script_sha256": "ada6618b55d4a2c054e4858f336bf67b389b17b98a11cb5404bd93ac9d818c80",
+          "exit_code": 0,
+          "timed_out": false,
+          "status": "pass",
+          "reasons": [],
+          "checks": {
+            "OK": 6
+          },
+          "assertions": [
+            {
+              "id": "status-path-filter.screen#1",
+              "status": "OK"
+            },
+            {
+              "id": "status-path-filter.stderr#1",
+              "status": "OK"
+            },
+            {
+              "id": "rev-parse.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-index.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "diff-files.trace#1",
+              "status": "OK"
+            },
+            {
+              "id": "ls-files.trace#1",
+              "status": "OK"
+            }
+          ]
+        }
+      ],
+      "binaries": {
+        "tig": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/target/release/tig",
+          "sha256": "9badee4a0269baa5aaa47b44cb66b5244e2f0b9b3f8aeda8649951c658d5b459"
+        },
+        "test-graph": {
+          "path": "/Users/liuxu/Documents/Codex/2026-10-07/tig-github-trace/repo/target/release/test-graph",
+          "sha256": "a0c6083da6a22e2f4593e242eeb0ed1d61240b7e22ccbaf720fd6b87096f1dac"
+        }
+      },
+      "binaries_unchanged": true,
+      "summary": {
+        "pass": 52
+      }
+    }
+  },
+  "source_sha256": {
+    "rust/git.rs": "7519733e368ba479d35feeb9db11c46447544061b4b75f2bdaa0d1fb5afc5f05",
+    "rust/main.rs": "2fcf9d27de2d6442531ed9c5512522e9b1c45c7de66a0c5ed2f1134a243866de",
+    "rust/model.rs": "d00793ef4520c705b5e6b51c5820285c4f593bb29885e09705deac4609f88b0f",
+    "rust/refs_view.rs": "c3f46da07e09ce6939ee2ba90a0030e787a26d946ec6b857a22cb0a0f8cecefd",
+    "rust/tests/main-refresh-pty.py": "bb4500fdccb78318f246d9453402be6f5fdebd3c03b93a956ebd87d50aeb1ad5"
+  },
+  "checks": [
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": "pass"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "--all-targets"
+      ],
+      "exit_code": 0,
+      "log_sha256": "c7bd0b4255d0e07f55821a6a1d130eb20a4652adae8b48800c05ce289f782a91",
+      "result": "133 passed: 105 library, 26 application, 2 integration; zero failed/ignored"
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "log_sha256": "4c347712971424e912616e7a41da8b0f264329ca95ea36d1d20301a93bc118a1",
+      "result": "pass"
+    },
+    {
+      "command": [
+        "python3",
+        "rust/tests/main-refresh-pty.py",
+        "target/release/tig"
+      ],
+      "exit_code": 0,
+      "log_sha256": "a6c96a6e4331e68f50217937bc0585fb0e1f89223a3299daa1bbc5f150749cb9",
+      "result": "PASS: R/z responds in 0.140s, navigation stays live, drains both pipes, reaps child, retains old rows\nPASS: next R successfully replaces the retained history\nPASS: failed Git refresh retains the last successful rows\nPASS: split R/z responds in 0.103s and retains both panes\nPASS: completed split refresh replaces only the main pane\nPASS: failed split refresh retains both panes\nPASS: changing split focus cancels and reaps the stale refresh\nPASS: resizing split panes cancels and reaps the stale refresh\nPASS: closing the child pane keeps the refreshed main view\nPASS: quitting after split refresh restores the terminal"
+    },
+    {
+      "command": [
+        "python3",
+        "rust/tests/git-alias.py"
+      ],
+      "exit_code": 0,
+      "log_sha256": "74b74c296565ed3dd04fa72819797b27b3a2076e9d4c6001d62bffb08e156f09",
+      "result": "142 real PTY cases passed"
+    },
+    {
+      "command": [
+        "python3",
+        "rust/tests/stdin-show.py"
+      ],
+      "exit_code": 0,
+      "log_sha256": "2476097e57e70093ec78191ba9dd58623fe018cf6593e1e06f644c04596fe160",
+      "result": "all recorded cases passed; expected invalid/injection exits retained"
+    }
+  ],
+  "stdin_cases": [
+    {
+      "case": "many-commits",
+      "mode": "c",
+      "git_calls": 10,
+      "seconds": 0.20706845800000018
+    },
+    {
+      "case": "many-commits",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "many-commits",
+      "mode": "rust",
+      "git_calls": 21,
+      "seconds": 0.3967377500000002
+    },
+    {
+      "case": "many-commits",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "tagged-blob-text",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "tagged-blob-text",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "tagged-blob-text",
+      "intentional_difference": "Do not describe invalid commit-shaped blob prose with an unrelated tag",
+      "c_export": "View: diff\nRef: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nDimensions: height=28 width=80\nPosition: offset=0 column=0 lineno=0\nline[  0] type=commit selected=1\nline[  0] cells=1 text=[commit aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]\nline[  1] type=pp-refs selected=0\nline[  1] cells=1 text=[Refs: v1-2-g22cf092]\nline[  2] type=default selected=0\nline[  2] cells=1 text=[valid blob data]\n",
+      "rust_export": "View: diff\nRef: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nDimensions: height=28 width=80\nPosition: offset=0 column=0 lineno=0\nline[  0] type=commit selected=1\nline[  0] cells=1 text=[commit aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]\nline[  1] type=default selected=0\nline[  1] cells=1 text=[valid blob data]\n",
+      "c_refresh": "View: diff\nRef: 22cf092b4840cf9ada8cba696a0653c1b3b0b418\nDimensions: height=28 width=80\nPosition: offset=0 column=0 lineno=0\nline[  0] type=commit selected=1\nline[  0] cells=1 text=[commit 22cf092b4840cf9ada8cba696a0653c1b3b0b418]\nline[  1] type=pp-refs selected=0\nline[  1] cells=1 text=[Refs: [master]]\nline[  2] type= selected=0\nline[  2] cells=1 text=[Author:     Tester <test@example.com>]\nline[  3] type= selected=0\nline[  3] cells=1 text=[AuthorDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  4] type= selected=0\nline[  4] cells=1 text=[Commit:     Tester <test@example.com>]\nline[  5] type= selected=0\nline[  5] cells=1 text=[CommitDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  6] type=default selected=0\nline[  6] cells=1 text=[]\nline[  7] type=default selected=0\nline[  7] cells=1 text=[    third]\nline[  8] type=diff-start selected=0\nline[  8] cells=1 text=[---]\nline[  9] type=diff-stat selected=0\nline[  9] cells=4 text=[ --output=literal ][| 2 ][+][-]\nline[ 10] type=diff-stat selected=0\nline[ 10] cells=4 text=[ sub/space name   ][| 3 ][++][-]\nline[ 11] type=default selected=0\nline[ 11] cells=1 text=[ 2 files changed, 3 insertions(+), 2 deletions(-)]\nline[ 12] type=default selected=0\nline[ 12] cells=1 text=[]\nline[ 13] type=diff-header selected=0\nline[ 13] cells=1 text=[diff --git a/--output=literal b/--output=literal]\nline[ 14] type=diff-index selected=0\nline[ 14] cells=1 text=[index e019be0..234496b 100644]\nline[ 15] type=diff-del-file selected=0\nline[ 15] cells=1 text=[--- a/--output=literal]\nline[ 16] type=diff-add-file selected=0\nline[ 16] cells=1 text=[+++ b/--output=literal]\nline[ 17] type=diff-chunk selected=0\nline[ 17] cells=2 text=[@@ -1 +1 @@][]\nline[ 18] type=diff-del selected=0\nline[ 18] cells=1 text=[-second]\nline[ 19] type=diff-add selected=0\nline[ 19] cells=1 text=[+third]\nline[ 20] type=diff-header selected=0\nline[ 20] cells=1 text=[diff --git a/sub/space name b/sub/space name]\nline[ 21] type=diff-index selected=0\nline[ 21] cells=1 text=[index 476a325..77f533b 100644]\nline[ 22] type=diff-del-file selected=0\nline[ 22] cells=1 text=[--- a/sub/space name]\nline[ 23] type=diff-add-file selected=0\nline[ 23] cells=1 text=[+++ b/sub/space name]\nline[ 24] type=diff-chunk selected=0\nline[ 24] cells=2 text=[@@ -1,2 +1,3 @@][]\nline[ 25] type=default selected=0\nline[ 25] cells=1 text=[ line]\nline[ 26] type=diff-del selected=0\nline[ 26] cells=1 text=[-second]\nline[ 27] type=diff-add selected=0\nline[ 27] cells=1 text=[+line]\nline[ 28] type=diff-add selected=0\nline[ 28] cells=1 text=[+third]\n",
+      "rust_refresh": "View: diff\nRef: 22cf092b4840cf9ada8cba696a0653c1b3b0b418\nDimensions: height=28 width=80\nPosition: offset=0 column=0 lineno=0\nline[  0] type=commit selected=1\nline[  0] cells=1 text=[commit 22cf092b4840cf9ada8cba696a0653c1b3b0b418]\nline[  1] type=pp-refs selected=0\nline[  1] cells=1 text=[Refs: [master], v1-2-g22cf092]\nline[  2] type= selected=0\nline[  2] cells=1 text=[Author:     Tester <test@example.com>]\nline[  3] type= selected=0\nline[  3] cells=1 text=[AuthorDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  4] type= selected=0\nline[  4] cells=1 text=[Commit:     Tester <test@example.com>]\nline[  5] type= selected=0\nline[  5] cells=1 text=[CommitDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  6] type=default selected=0\nline[  6] cells=1 text=[]\nline[  7] type=default selected=0\nline[  7] cells=1 text=[    third]\nline[  8] type=diff-start selected=0\nline[  8] cells=1 text=[---]\nline[  9] type=diff-stat selected=0\nline[  9] cells=4 text=[ --output=literal ][| 2 ][+][-]\nline[ 10] type=diff-stat selected=0\nline[ 10] cells=4 text=[ sub/space name   ][| 3 ][++][-]\nline[ 11] type=default selected=0\nline[ 11] cells=1 text=[ 2 files changed, 3 insertions(+), 2 deletions(-)]\nline[ 12] type=default selected=0\nline[ 12] cells=1 text=[]\nline[ 13] type=diff-header selected=0\nline[ 13] cells=1 text=[diff --git a/--output=literal b/--output=literal]\nline[ 14] type=diff-index selected=0\nline[ 14] cells=1 text=[index e019be0..234496b 100644]\nline[ 15] type=diff-del-file selected=0\nline[ 15] cells=1 text=[--- a/--output=literal]\nline[ 16] type=diff-add-file selected=0\nline[ 16] cells=1 text=[+++ b/--output=literal]\nline[ 17] type=diff-chunk selected=0\nline[ 17] cells=2 text=[@@ -1 +1 @@][]\nline[ 18] type=diff-del selected=0\nline[ 18] cells=1 text=[-second]\nline[ 19] type=diff-add selected=0\nline[ 19] cells=1 text=[+third]\nline[ 20] type=diff-header selected=0\nline[ 20] cells=1 text=[diff --git a/sub/space name b/sub/space name]\nline[ 21] type=diff-index selected=0\nline[ 21] cells=1 text=[index 476a325..77f533b 100644]\nline[ 22] type=diff-del-file selected=0\nline[ 22] cells=1 text=[--- a/sub/space name]\nline[ 23] type=diff-add-file selected=0\nline[ 23] cells=1 text=[+++ b/sub/space name]\nline[ 24] type=diff-chunk selected=0\nline[ 24] cells=2 text=[@@ -1,2 +1,3 @@][]\nline[ 25] type=default selected=0\nline[ 25] cells=1 text=[ line]\nline[ 26] type=diff-del selected=0\nline[ 26] cells=1 text=[-second]\nline[ 27] type=diff-add selected=0\nline[ 27] cells=1 text=[+line]\nline[ 28] type=diff-add selected=0\nline[ 28] cells=1 text=[+third]\n"
+    },
+    {
+      "case": "blob-commit-text",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "blob-commit-text",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-all",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-all",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-some",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-some",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-at-eol",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-at-eol",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-no",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "ignore-space-no",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "tagged-range",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "tagged-range",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "mailmap-no",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "mailmap-no",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "mailmap-yes",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "mailmap-yes",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "notes",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "notes",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "one",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "one",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-tree",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-tree",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-second-tree",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-second-tree",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-blame",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-blame",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "empty",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "empty",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "duplicate",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "duplicate",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "no-newline",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "no-newline",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-second-stat",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-second-stat",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "navigate-second-stat",
+      "intentional_difference": "C jumps to first commit; Rust stays in selected second commit",
+      "c_export": "View: diff\nRef: Changes to '--output=literal'\nDimensions: height=28 width=80\nPosition: offset=0 column=0 lineno=13\nline[  0] type=commit selected=0\nline[  0] cells=1 text=[commit 22cf092b4840cf9ada8cba696a0653c1b3b0b418]\nline[  1] type=pp-refs selected=0\nline[  1] cells=1 text=[Refs: [master]]\nline[  2] type= selected=0\nline[  2] cells=1 text=[Author:     Tester <test@example.com>]\nline[  3] type= selected=0\nline[  3] cells=1 text=[AuthorDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  4] type= selected=0\nline[  4] cells=1 text=[Commit:     Tester <test@example.com>]\nline[  5] type= selected=0\nline[  5] cells=1 text=[CommitDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  6] type=default selected=0\nline[  6] cells=1 text=[]\nline[  7] type=default selected=0\nline[  7] cells=1 text=[    third]\nline[  8] type=diff-start selected=0\nline[  8] cells=1 text=[---]\nline[  9] type=diff-stat selected=0\nline[  9] cells=4 text=[ --output=literal ][| 2 ][+][-]\nline[ 10] type=diff-stat selected=0\nline[ 10] cells=4 text=[ sub/space name   ][| 3 ][++][-]\nline[ 11] type=default selected=0\nline[ 11] cells=1 text=[ 2 files changed, 3 insertions(+), 2 deletions(-)]\nline[ 12] type=default selected=0\nline[ 12] cells=1 text=[]\nline[ 13] type=diff-header selected=1\nline[ 13] cells=1 text=[diff --git a/--output=literal b/--output=literal]\nline[ 14] type=diff-index selected=0\nline[ 14] cells=1 text=[index e019be0..234496b 100644]\nline[ 15] type=diff-del-file selected=0\nline[ 15] cells=1 text=[--- a/--output=literal]\nline[ 16] type=diff-add-file selected=0\nline[ 16] cells=1 text=[+++ b/--output=literal]\nline[ 17] type=diff-chunk selected=0\nline[ 17] cells=2 text=[@@ -1 +1 @@][]\nline[ 18] type=diff-del selected=0\nline[ 18] cells=1 text=[-second]\nline[ 19] type=diff-add selected=0\nline[ 19] cells=1 text=[+third]\nline[ 20] type=diff-header selected=0\nline[ 20] cells=1 text=[diff --git a/sub/space name b/sub/space name]\nline[ 21] type=diff-index selected=0\nline[ 21] cells=1 text=[index 476a325..77f533b 100644]\nline[ 22] type=diff-del-file selected=0\nline[ 22] cells=1 text=[--- a/sub/space name]\nline[ 23] type=diff-add-file selected=0\nline[ 23] cells=1 text=[+++ b/sub/space name]\nline[ 24] type=diff-chunk selected=0\nline[ 24] cells=2 text=[@@ -1,2 +1,3 @@][]\nline[ 25] type=default selected=0\nline[ 25] cells=1 text=[ line]\nline[ 26] type=diff-del selected=0\nline[ 26] cells=1 text=[-second]\nline[ 27] type=diff-add selected=0\nline[ 27] cells=1 text=[+line]\nline[ 28] type=diff-add selected=0\nline[ 28] cells=1 text=[+third]\nline[ 29] type=default selected=0\nline[ 29] cells=1 text=[]\nline[ 30] type=commit selected=0\nline[ 30] cells=1 text=[commit 1cb4427c7e43554925f82174d82b50e5cc064e3a]\nline[ 31] type= selected=0\nline[ 31] cells=1 text=[Author:     Tester <test@example.com>]\nline[ 32] type= selected=0\nline[ 32] cells=1 text=[AuthorDate: Wed Jan 1 00:00:00 2020 +0000]\nline[ 33] type= selected=0\nline[ 33] cells=1 text=[Commit:     Tester <test@example.com>]\nline[ 34] type= selected=0\nline[ 34] cells=1 text=[CommitDate: Wed Jan 1 00:00:00 2020 +0000]\nline[ 35] type=default selected=0\nline[ 35] cells=1 text=[]\nline[ 36] type=default selected=0\nline[ 36] cells=1 text=[    second]\nline[ 37] type=diff-start selected=0\nline[ 37] cells=1 text=[---]\nline[ 38] type=diff-stat selected=1\nline[ 38] cells=4 text=[ --output=literal ][| 2 ][+][-]\nline[ 39] type=diff-stat selected=0\nline[ 39] cells=4 text=[ sub/space name   ][| 3 ][++][-]\nline[ 40] type=default selected=0\nline[ 40] cells=1 text=[ 2 files changed, 3 insertions(+), 2 deletions(-)]\nline[ 41] type=default selected=0\nline[ 41] cells=1 text=[]\nline[ 42] type=diff-header selected=0\nline[ 42] cells=1 text=[diff --git a/--output=literal b/--output=literal]\nline[ 43] type=diff-index selected=0\nline[ 43] cells=1 text=[index 9c59e24..e019be0 100644]\nline[ 44] type=diff-del-file selected=0\nline[ 44] cells=1 text=[--- a/--output=literal]\nline[ 45] type=diff-add-file selected=0\nline[ 45] cells=1 text=[+++ b/--output=literal]\nline[ 46] type=diff-chunk selected=0\nline[ 46] cells=2 text=[@@ -1 +1 @@][]\nline[ 47] type=diff-del selected=0\nline[ 47] cells=1 text=[-first]\nline[ 48] type=diff-add selected=0\nline[ 48] cells=1 text=[+second]\nline[ 49] type=diff-header selected=0\nline[ 49] cells=1 text=[diff --git a/sub/space name b/sub/space name]\nline[ 50] type=diff-index selected=0\nline[ 50] cells=1 text=[index 9c59e24..476a325 100644]\nline[ 51] type=diff-del-file selected=0\nline[ 51] cells=1 text=[--- a/sub/space name]\nline[ 52] type=diff-add-file selected=0\nline[ 52] cells=1 text=[+++ b/sub/space name]\nline[ 53] type=diff-chunk selected=0\nline[ 53] cells=2 text=[@@ -1 +1,2 @@][]\nline[ 54] type=diff-del selected=0\nline[ 54] cells=1 text=[-first]\nline[ 55] type=diff-add selected=0\nline[ 55] cells=1 text=[+line]\nline[ 56] type=diff-add selected=0\nline[ 56] cells=1 text=[+second]\n",
+      "rust_export": "View: diff\nRef: Changes to '--output=literal'\nDimensions: height=28 width=80\nPosition: offset=22 column=0 lineno=42\nline[  0] type=commit selected=0\nline[  0] cells=1 text=[commit 22cf092b4840cf9ada8cba696a0653c1b3b0b418]\nline[  1] type=pp-refs selected=0\nline[  1] cells=1 text=[Refs: [master]]\nline[  2] type= selected=0\nline[  2] cells=1 text=[Author:     Tester <test@example.com>]\nline[  3] type= selected=0\nline[  3] cells=1 text=[AuthorDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  4] type= selected=0\nline[  4] cells=1 text=[Commit:     Tester <test@example.com>]\nline[  5] type= selected=0\nline[  5] cells=1 text=[CommitDate: Wed Jan 1 00:00:00 2020 +0000]\nline[  6] type=default selected=0\nline[  6] cells=1 text=[]\nline[  7] type=default selected=0\nline[  7] cells=1 text=[    third]\nline[  8] type=diff-start selected=0\nline[  8] cells=1 text=[---]\nline[  9] type=diff-stat selected=0\nline[  9] cells=4 text=[ --output=literal ][| 2 ][+][-]\nline[ 10] type=diff-stat selected=0\nline[ 10] cells=4 text=[ sub/space name   ][| 3 ][++][-]\nline[ 11] type=default selected=0\nline[ 11] cells=1 text=[ 2 files changed, 3 insertions(+), 2 deletions(-)]\nline[ 12] type=default selected=0\nline[ 12] cells=1 text=[]\nline[ 13] type=diff-header selected=0\nline[ 13] cells=1 text=[diff --git a/--output=literal b/--output=literal]\nline[ 14] type=diff-index selected=0\nline[ 14] cells=1 text=[index e019be0..234496b 100644]\nline[ 15] type=diff-del-file selected=0\nline[ 15] cells=1 text=[--- a/--output=literal]\nline[ 16] type=diff-add-file selected=0\nline[ 16] cells=1 text=[+++ b/--output=literal]\nline[ 17] type=diff-chunk selected=0\nline[ 17] cells=2 text=[@@ -1 +1 @@][]\nline[ 18] type=diff-del selected=0\nline[ 18] cells=1 text=[-second]\nline[ 19] type=diff-add selected=0\nline[ 19] cells=1 text=[+third]\nline[ 20] type=diff-header selected=0\nline[ 20] cells=1 text=[diff --git a/sub/space name b/sub/space name]\nline[ 21] type=diff-index selected=0\nline[ 21] cells=1 text=[index 476a325..77f533b 100644]\nline[ 22] type=diff-del-file selected=0\nline[ 22] cells=1 text=[--- a/sub/space name]\nline[ 23] type=diff-add-file selected=0\nline[ 23] cells=1 text=[+++ b/sub/space name]\nline[ 24] type=diff-chunk selected=0\nline[ 24] cells=2 text=[@@ -1,2 +1,3 @@][]\nline[ 25] type=default selected=0\nline[ 25] cells=1 text=[ line]\nline[ 26] type=diff-del selected=0\nline[ 26] cells=1 text=[-second]\nline[ 27] type=diff-add selected=0\nline[ 27] cells=1 text=[+line]\nline[ 28] type=diff-add selected=0\nline[ 28] cells=1 text=[+third]\nline[ 29] type=default selected=0\nline[ 29] cells=1 text=[]\nline[ 30] type=commit selected=0\nline[ 30] cells=1 text=[commit 1cb4427c7e43554925f82174d82b50e5cc064e3a]\nline[ 31] type= selected=0\nline[ 31] cells=1 text=[Author:     Tester <test@example.com>]\nline[ 32] type= selected=0\nline[ 32] cells=1 text=[AuthorDate: Wed Jan 1 00:00:00 2020 +0000]\nline[ 33] type= selected=0\nline[ 33] cells=1 text=[Commit:     Tester <test@example.com>]\nline[ 34] type= selected=0\nline[ 34] cells=1 text=[CommitDate: Wed Jan 1 00:00:00 2020 +0000]\nline[ 35] type=default selected=0\nline[ 35] cells=1 text=[]\nline[ 36] type=default selected=0\nline[ 36] cells=1 text=[    second]\nline[ 37] type=diff-start selected=0\nline[ 37] cells=1 text=[---]\nline[ 38] type=diff-stat selected=0\nline[ 38] cells=4 text=[ --output=literal ][| 2 ][+][-]\nline[ 39] type=diff-stat selected=0\nline[ 39] cells=4 text=[ sub/space name   ][| 3 ][++][-]\nline[ 40] type=default selected=0\nline[ 40] cells=1 text=[ 2 files changed, 3 insertions(+), 2 deletions(-)]\nline[ 41] type=default selected=0\nline[ 41] cells=1 text=[]\nline[ 42] type=diff-header selected=1\nline[ 42] cells=1 text=[diff --git a/--output=literal b/--output=literal]\nline[ 43] type=diff-index selected=0\nline[ 43] cells=1 text=[index 9c59e24..e019be0 100644]\nline[ 44] type=diff-del-file selected=0\nline[ 44] cells=1 text=[--- a/--output=literal]\nline[ 45] type=diff-add-file selected=0\nline[ 45] cells=1 text=[+++ b/--output=literal]\nline[ 46] type=diff-chunk selected=0\nline[ 46] cells=2 text=[@@ -1 +1 @@][]\nline[ 47] type=diff-del selected=0\nline[ 47] cells=1 text=[-first]\nline[ 48] type=diff-add selected=0\nline[ 48] cells=1 text=[+second]\nline[ 49] type=diff-header selected=0\nline[ 49] cells=1 text=[diff --git a/sub/space name b/sub/space name]\nline[ 50] type=diff-index selected=0\nline[ 50] cells=1 text=[index 9c59e24..476a325 100644]\nline[ 51] type=diff-del-file selected=0\nline[ 51] cells=1 text=[--- a/sub/space name]\nline[ 52] type=diff-add-file selected=0\nline[ 52] cells=1 text=[+++ b/sub/space name]\nline[ 53] type=diff-chunk selected=0\nline[ 53] cells=2 text=[@@ -1 +1,2 @@][]\nline[ 54] type=diff-del selected=0\nline[ 54] cells=1 text=[-first]\nline[ 55] type=diff-add selected=0\nline[ 55] cells=1 text=[+line]\nline[ 56] type=diff-add selected=0\nline[ 56] cells=1 text=[+second]\n"
+    },
+    {
+      "case": "context",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "context",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "range",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "range",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "exclude",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "exclude",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "large",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "large",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "cli-path",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "cli-path",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "stdin-path",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "stdin-path",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "literal-option-path",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "literal-option-path",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "subdir-cli",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "subdir-cli",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "subdir-stdin",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "subdir-stdin",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "two-paths",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "two-paths",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "combined-revisions",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "combined-revisions",
+      "mode": "rust",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "invalid",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "invalid",
+      "mode": "rust",
+      "exit": 1,
+      "pass": true
+    },
+    {
+      "case": "format-injection",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "format-injection",
+      "mode": "rust",
+      "exit": 1,
+      "pass": true
+    },
+    {
+      "case": "output-injection",
+      "mode": "c",
+      "exit": 0,
+      "pass": true
+    },
+    {
+      "case": "output-injection",
+      "mode": "rust",
+      "exit": 1,
+      "pass": true
+    },
+    {
+      "case": "nul-injection",
+      "mode": "rust",
+      "exit": 1,
+      "pass": true
+    }
+  ],
+  "independent_reviews": [
+    {
+      "reviewer": "review_history",
+      "source_sha256": {
+        "rust/git.rs": "7519733e368ba479d35feeb9db11c46447544061b4b75f2bdaa0d1fb5afc5f05",
+        "rust/main.rs": "2fcf9d27de2d6442531ed9c5512522e9b1c45c7de66a0c5ed2f1134a243866de",
+        "rust/model.rs": "d00793ef4520c705b5e6b51c5820285c4f593bb29885e09705deac4609f88b0f",
+        "rust/refs_view.rs": "c3f46da07e09ce6939ee2ba90a0030e787a26d946ec6b857a22cb0a0f8cecefd",
+        "rust/tests/main-refresh-pty.py": "bb4500fdccb78318f246d9453402be6f5fdebd3c03b93a956ebd87d50aeb1ad5"
+      },
+      "result": "No remaining material finding; read-only review of final cancellation, resize, deadline and PTY buffering changes"
+    },
+    {
+      "reviewer": "review_history_second",
+      "source_sha256": {
+        "rust/git.rs": "7519733e368ba479d35feeb9db11c46447544061b4b75f2bdaa0d1fb5afc5f05",
+        "rust/main.rs": "2fcf9d27de2d6442531ed9c5512522e9b1c45c7de66a0c5ed2f1134a243866de",
+        "rust/model.rs": "d00793ef4520c705b5e6b51c5820285c4f593bb29885e09705deac4609f88b0f",
+        "rust/refs_view.rs": "c3f46da07e09ce6939ee2ba90a0030e787a26d946ec6b857a22cb0a0f8cecefd",
+        "rust/tests/main-refresh-pty.py": "bb4500fdccb78318f246d9453402be6f5fdebd3c03b93a956ebd87d50aeb1ad5"
+      },
+      "result": "No remaining material finding; read-only review of final cancellation, resize, deadline and PTY buffering changes"
+    }
+  ],
+  "supplementary_stress": {
+    "result": "200 runs; 200 pass; 0 fail",
+    "scope": "200 executions of real compiled library test, each covers immediate startup and ready descendant. Before final commit; production cancellation implementation identical, final test later tightened recv timeout to original total 5s deadline. Not claimed as final-commit full-suite run."
+  },
+  "prior_exceptions": [
+    {
+      "source_commit": "0fea7acbb25ba4131aa7af56f3db90f5f6e719f6",
+      "script": "test/main/no-matching-commmits-test",
+      "assertions": [
+        {
+          "id": "stderr#1",
+          "status": "FAIL"
+        },
+        {
+          "id": "tig-did-not-exit-as-expected#1",
+          "status": "OK"
+        }
+      ],
+      "raw_receipt": "[FAIL] stderr != expected/stderr\n\u001b[1mdiff --git a/expected/stderr b/stderr\u001b[m\n\u001b[1mindex f0fa825..6d1affd 100644\u001b[m\n\u001b[1m--- a/expected/stderr\u001b[m\n\u001b[1m+++ b/stderr\u001b[m\n\u001b[36m@@ -1 +1,3 @@\u001b[m\n\u001b[31m-tig: No revisions match the given arguments.\u001b[m\n\u001b[32m+\u001b[m\u001b[32mtig: git exited with exit status: 128: fatal: ambiguous argument 'some-ref-that-does-not-exist': unknown revision or path not in the working tree.\u001b[m\n\u001b[32m+\u001b[m\u001b[32mUse '--' to separate paths from revisions, like this:\u001b[m\n\u001b[32m+\u001b[m\u001b[32m'git <command> [<revision>...] -- [<file>...]'\u001b[m\n  [OK] tig-did-not-exit-as-expected does not exist\n"
+    },
+    {
+      "ci_url": "https://github.com/naikokodayo/tig/actions/runs/37713915699",
+      "reason": "Linux negative-PGID helper invocation failure; replaced by POSIX sh kill builtin",
+      "log_sha256": "703e50a928a495d6b6acceb54656e248d31773ca7ee159bdd9db37cd072b18bf",
+      "raw_failure_lines": [
+        "rust (ubuntu-latest)\tFormat, tests and lint\t2026-10-08T01:38:46.2450351Z test git::tests::history_refresh_cancels_queries_without_blocking_poll ... FAILED",
+        "rust (ubuntu-latest)\tFormat, tests and lint\t2026-10-08T01:38:46.2452058Z thread 'git::tests::history_refresh_cancels_queries_without_blocking_poll' panicked at rust/git.rs:2697:13:",
+        "rust (ubuntu-latest)\tFormat, tests and lint\t2026-10-08T01:38:46.2452556Z assertion failed: started.elapsed() < std::time::Duration::from_secs(5)",
+        "rust (ubuntu-latest)\tFormat, tests and lint\t2026-10-08T01:38:46.2453994Z test result: FAILED. 104 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.28s"
+      ]
+    },
+    {
+      "ci_url": "https://github.com/naikokodayo/tig/actions/runs/37744996388",
+      "reason": "macOS startup-fork race under one-shot group signal; fixed by worker leader-first repeated signalling before EOF/reap",
+      "log_sha256": "e28cca1acdf456d0676da00079cf47fe68b38a8844005611b03cc81970217ea3",
+      "raw_failure_lines": [
+        "rust (macos-latest)\tFormat, tests and lint\t2026-10-08T07:42:29.6196960Z test git::tests::history_refresh_cancels_queries_without_blocking_poll ... FAILED",
+        "rust (macos-latest)\tFormat, tests and lint\t2026-10-08T07:42:30.1778140Z thread 'git::tests::history_refresh_cancels_queries_without_blocking_poll' panicked at rust/git.rs:2700:13:",
+        "rust (macos-latest)\tFormat, tests and lint\t2026-10-08T07:42:30.1779030Z assertion failed: started.elapsed() < std::time::Duration::from_secs(5)",
+        "rust (macos-latest)\tFormat, tests and lint\t2026-10-08T07:42:30.1780810Z test result: FAILED. 104 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.94s"
+      ]
+    },
+    {
+      "scope": "Uncommitted lifecycle PTY attempt",
+      "reason": "Old PTY focus assertion required immediate synchronous reap; changed to wait for background completion within existing 2s response budget. Fast failure frame was discarded by delayed() and now buffered. Raw logs retained in work; successful final run above replaces neither production race evidence nor original unit deadlines.",
+      "log_sha256": "06ff8d0b82fec72c89c552f0fa9393125dfbb1beb9b5ad43f1c96fb532175b82"
+    }
+  ],
+  "limitations": [
+    "Selected 52 scripts only, not full 154-script integrated checkpoint; parent owns merge/full suite.",
+    "Inherited main mailmap=no uses mapped identities, unchanged by this slice.",
+    "Concurrent note ref changes can leave sampled annotation flags until next refresh; commit metadata comes from trusted notes-free traversal.",
+    "Note-enabled history needs a supplementary traversal; benchmark after parity.",
+    "Resize during cancellation intentionally retains last successful rows, which can retain formatting at previous width until next refresh.",
+    "Unix process-group/pipe cleanup validated on macOS locally and Linux/macOS CI separately; no universal containment guarantee for processes deliberately escaping their group."
+  ],
+  "source_ci": {
+    "source_commit": "8488120b0640fde79b302cd39c395f5f45f5532a",
+    "rust_checks": [
+      {
+        "link": "https://github.com/naikokodayo/tig/actions/runs/37774949871/job/113303352133",
+        "name": "rust (macos-latest)",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/naikokodayo/tig/actions/runs/37774945622/job/113303337907",
+        "name": "rust (macos-latest)",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/naikokodayo/tig/actions/runs/37774949871/job/113303351861",
+        "name": "rust (ubuntu-latest)",
+        "state": "SUCCESS"
+      },
+      {
+        "link": "https://github.com/naikokodayo/tig/actions/runs/37774945622/job/113303337634",
+        "name": "rust (ubuntu-latest)",
+        "state": "SUCCESS"
+      }
+    ],
+    "scope": "Linux and macOS, push and pull_request jobs; remaining C CI is checked at final PR head separately."
+  },
+  "stdin_summary": {
+    "recorded_assertions": 67,
+    "pass": 67,
+    "case_names": 34,
+    "unexpected_failures": 0
+  }
+}
