@@ -5059,333 +5059,376 @@ fn run() -> Result<()> {
         return result;
     }
     app.center_selection();
-    let mut terminal = Terminal::open(&app.config)?;
-    let mut key_sequence = String::new();
     let mut history_refresh: Option<PendingHistoryRefresh> = None;
-    loop {
-        if app.finder.is_some() {
-            terminal.find_file(&mut app)?;
-        }
-        terminal.draw(&mut app)?;
-        let event = loop {
-            if let Some(event) = terminal.read_tick()? {
-                break event;
+    let mut retired_histories: Vec<(PendingHistoryRefresh, bool)> = Vec::new();
+    let result = (|| -> Result<()> {
+        let mut terminal = Terminal::open(&app.config)?;
+        let mut key_sequence = String::new();
+        loop {
+            if app.finder.is_some() {
+                terminal.find_file(&mut app)?;
             }
-            let mut completed = false;
-            if let Some(refresh) = &mut history_refresh {
-                let result = refresh.refresh.poll();
-                match result {
-                    Ok(None) => (),
-                    result => {
-                        let pending = history_refresh.take().expect("completed history job");
-                        completed = true;
-                        let result = result
-                            .map_err(|e| -> Box<dyn std::error::Error> { Box::new(e) })
-                            .and_then(|commits| {
-                                let (vertical, parent, child) = app.pane_sizes();
-                                let width = if app.split && app.other.is_some() && vertical {
-                                    if app.parent_focused {
-                                        parent
+            terminal.draw(&mut app)?;
+            let event = loop {
+                if let Some(event) = terminal.read_tick()? {
+                    break event;
+                }
+                let mut completed = false;
+                let mut stopped = false;
+                retired_histories.retain_mut(|(job, notify)| {
+                    if matches!(job.refresh.poll(), Ok(None)) {
+                        true
+                    } else {
+                        stopped |= *notify;
+                        false
+                    }
+                });
+                if stopped && history_refresh.is_none() {
+                    app.message = "Loading stopped".into();
+                    completed = true;
+                }
+                if let Some(refresh) = &mut history_refresh {
+                    let result = refresh.refresh.poll();
+                    match result {
+                        Ok(None) => (),
+                        result => {
+                            let pending = history_refresh.take().expect("completed history job");
+                            completed = true;
+                            let result = result
+                                .map_err(|e| -> Box<dyn std::error::Error> { Box::new(e) })
+                                .and_then(|commits| {
+                                    let (vertical, parent, child) = app.pane_sizes();
+                                    let width = if app.split && app.other.is_some() && vertical {
+                                        if app.parent_focused {
+                                            parent
+                                        } else {
+                                            child
+                                        }
                                     } else {
-                                        child
-                                    }
-                                } else {
-                                    app.width
-                                };
-                                app.main_content(commits.expect("completed history"), width)
-                            });
-                        match result {
-                            Ok(mut view) => {
-                                view.args = app.view.args.clone();
-                                view.revision = app.view.revision.clone();
-                                view.path = app.view.path.clone();
-                                view.selected =
-                                    app.view.selected.min(view.rows.len().saturating_sub(1));
-                                view.top = app.view.top;
-                                view.left = app.view.left;
-                                view.history = app.view.history.clone();
-                                app.view = view;
-                                app.message.clear();
-                            }
-                            Err(error) => {
-                                if pending.periodic {
-                                    app.watch.retry();
+                                        app.width
+                                    };
+                                    app.main_content(commits.expect("completed history"), width)
+                                });
+                            match result {
+                                Ok(mut view) => {
+                                    view.args = app.view.args.clone();
+                                    view.revision = app.view.revision.clone();
+                                    view.path = app.view.path.clone();
+                                    view.selected =
+                                        app.view.selected.min(view.rows.len().saturating_sub(1));
+                                    view.top = app.view.top;
+                                    view.left = app.view.left;
+                                    view.history = app.view.history.clone();
+                                    app.view = view;
+                                    app.message.clear();
                                 }
-                                app.message = error.to_string();
+                                Err(error) => {
+                                    if pending.periodic {
+                                        app.watch.retry();
+                                    }
+                                    app.message = error.to_string();
+                                }
                             }
                         }
                     }
                 }
-            }
-            let mut watch_error = false;
-            let changed = if history_refresh.is_none() {
-                match app.poll_watch() {
-                    Ok(changed) => changed,
-                    Err(error) => {
-                        app.message = error.to_string();
-                        watch_error = true;
-                        false
+                let mut watch_error = false;
+                let changed = if history_refresh.is_none() {
+                    match app.poll_watch() {
+                        Ok(changed) => changed,
+                        Err(error) => {
+                            app.message = error.to_string();
+                            watch_error = true;
+                            false
+                        }
+                    }
+                } else {
+                    false
+                };
+                if changed {
+                    match app.refresh_periodic() {
+                        Ok(Some(refresh)) => {
+                            history_refresh = Some(PendingHistoryRefresh {
+                                refresh,
+                                periodic: true,
+                            });
+                            app.message = "Loading history (z to stop)".into();
+                        }
+                        Ok(None) => (),
+                        Err(error) => {
+                            app.watch.retry();
+                            app.message = error.to_string();
+                        }
                     }
                 }
+                if completed || changed || watch_error {
+                    terminal.draw(&mut app)?;
+                }
+            };
+            let action = match event {
+                Event::Resize(w, h) => {
+                    for (_, notify) in &mut retired_histories {
+                        *notify = false;
+                    }
+                    let interrupted = if let Some(pending) = history_refresh.take() {
+                        if pending.periodic {
+                            app.watch.retry();
+                        }
+                        pending.refresh.cancel();
+                        retired_histories.push((pending, false));
+                        true
+                    } else {
+                        !retired_histories.is_empty()
+                    };
+                    if interrupted {
+                        app.message.clear();
+                    }
+                    app.width = w as usize;
+                    app.height = h as usize;
+                    if !interrupted {
+                        if let Err(error) = app.refresh_after_command() {
+                            app.message = error.to_string();
+                        }
+                    }
+                    continue;
+                }
+                Event::Mouse(m)
+                    if matches!(
+                        m.kind,
+                        MouseEventKind::Down(_)
+                            | MouseEventKind::Up(_)
+                            | MouseEventKind::ScrollUp
+                            | MouseEventKind::ScrollDown
+                    ) =>
+                {
+                    key_sequence.clear();
+                    let Some(action) = app.mouse_action(m) else {
+                        continue;
+                    };
+                    Some(action.into())
+                }
+                Event::Key(k) => {
+                    if !key_sequence.is_empty() && k.code == KeyCode::Esc {
+                        key_sequence.clear();
+                        app.message.clear();
+                        continue;
+                    }
+                    key_sequence.push_str(&key_name(k.code, k.modifiers));
+                    if app
+                        .config
+                        .key_sequence_pending(&app.view.name, &key_sequence)
+                    {
+                        app.message = format!("Keys: {key_sequence}");
+                        continue;
+                    }
+                    app.binding(&key_sequence)
+                }
+                _ => continue,
+            };
+            key_sequence.clear();
+            let Some(action) = action else {
+                app.message = "Unknown key, press h for help".into();
+                continue;
+            };
+            // Navigation can use the retained rows while the replacement is loading.
+            // Other actions may change the view/context, so discard their stale job.
+            let navigates = action.starts_with("move-")
+                || action.starts_with("scroll-")
+                || action.starts_with(":goto ")
+                || matches!(
+                    action.as_str(),
+                    "next"
+                        | "previous"
+                        | "find-next"
+                        | "find-prev"
+                        | "search"
+                        | "search-back"
+                        | "parent"
+                        | "back"
+                );
+            if action != "stop-loading" {
+                for (_, notify) in &mut retired_histories {
+                    *notify = false;
+                }
+            }
+            let cancelled = if !navigates {
+                history_refresh.take().is_some_and(|job| {
+                    if job.periodic && action != "stop-loading" {
+                        app.watch.retry();
+                    }
+                    job.refresh.cancel();
+                    retired_histories.push((job, action == "stop-loading"));
+                    true
+                })
             } else {
                 false
             };
-            if changed {
-                match app.refresh_periodic() {
-                    Ok(Some(refresh)) => {
-                        history_refresh = Some(PendingHistoryRefresh {
-                            refresh,
-                            periodic: true,
-                        });
-                        app.message = "Loading history (z to stop)".into();
-                    }
-                    Ok(None) => (),
-                    Err(error) => {
-                        app.watch.retry();
-                        app.message = error.to_string();
-                    }
-                }
-            }
-            if completed || changed || watch_error {
-                terminal.draw(&mut app)?;
-            }
-        };
-        let action = match event {
-            Event::Resize(w, h) => {
-                let interrupted = history_refresh
-                    .take()
-                    .is_some_and(|pending| pending.periodic);
-                if interrupted {
-                    app.watch.retry();
-                    app.message.clear();
-                }
-                app.width = w as usize;
-                app.height = h as usize;
-                if !interrupted {
-                    if let Err(error) = app.refresh_after_command() {
-                        app.message = error.to_string();
-                    }
+            app.message.clear();
+            if action == "stop-loading" {
+                if cancelled {
+                    app.message = "Stopping history".into();
                 }
                 continue;
             }
-            Event::Mouse(m)
-                if matches!(
-                    m.kind,
-                    MouseEventKind::Down(_)
-                        | MouseEventKind::Up(_)
-                        | MouseEventKind::ScrollUp
-                        | MouseEventKind::ScrollDown
-                ) =>
-            {
-                key_sequence.clear();
-                let Some(action) = app.mouse_action(m) else {
-                    continue;
-                };
-                Some(action.into())
-            }
-            Event::Key(k) => {
-                if !key_sequence.is_empty() && k.code == KeyCode::Esc {
-                    key_sequence.clear();
-                    app.message.clear();
-                    continue;
-                }
-                key_sequence.push_str(&key_name(k.code, k.modifiers));
-                if app
-                    .config
-                    .key_sequence_pending(&app.view.name, &key_sequence)
-                {
-                    app.message = format!("Keys: {key_sequence}");
-                    continue;
-                }
-                app.binding(&key_sequence)
-            }
-            _ => continue,
-        };
-        key_sequence.clear();
-        let Some(action) = action else {
-            app.message = "Unknown key, press h for help".into();
-            continue;
-        };
-        // Navigation can use the retained rows while the replacement is loading.
-        // Other actions may change the view/context, so discard their stale job.
-        let navigates = action.starts_with("move-")
-            || action.starts_with("scroll-")
-            || action.starts_with(":goto ")
-            || matches!(
-                action.as_str(),
-                "next"
-                    | "previous"
-                    | "find-next"
-                    | "find-prev"
-                    | "search"
-                    | "search-back"
-                    | "parent"
-                    | "back"
-            );
-        let cancelled = !navigates
-            && history_refresh.take().is_some_and(|job| {
-                if job.periodic && action != "stop-loading" {
-                    app.watch.retry();
-                }
-                true
-            });
-        app.message.clear();
-        if action == "stop-loading" {
-            if cancelled {
-                app.message = "Loading stopped".into();
-            }
-            continue;
-        }
-        // ponytail: only the focused main view refresh is asynchronous;
-        // initial loads and general streaming need a broader view lifecycle.
-        if action == "refresh" && app.view.name == "main" && !app.view.from_stdin {
-            match app.start_history_refresh() {
-                Ok(refresh) => {
-                    history_refresh = Some(PendingHistoryRefresh {
-                        refresh,
-                        periodic: false,
-                    });
-                    app.message = "Loading history (z to stop)".into();
-                }
-                Err(error) => app.message = error.to_string(),
-            }
-            continue;
-        }
-        if action == "search" || action == "search-back" {
-            if let Some(s) =
-                terminal.prompt(&mut app, if action == "search" { "/" } else { "?" })?
-            {
-                if !s.is_empty() {
-                    app.search = s;
-                }
-                app.find(action == "search-back");
-            }
-        } else if action == "view-grep" {
-            if let Some(s) = terminal.prompt(&mut app, "grep: ")? {
-                if let Err(e) = app.grep_query(&s) {
-                    app.message = e.to_string();
-                }
-            }
-        } else if action == "prompt" {
-            if let Some(s) = terminal.prompt(&mut app, ":")? {
-                let result = if matches!(s.as_str(), "g" | "view-grep") {
-                    terminal
-                        .prompt(&mut app, "grep: ")?
-                        .map_or(Ok(()), |query| app.grep_query(&query))
-                        .map(|()| true)
-                } else {
-                    if !read_command_prompts(&mut terminal, &mut app, &s)? {
-                        continue;
+            // ponytail: only the focused main view refresh is asynchronous;
+            // initial loads and general streaming need a broader view lifecycle.
+            if action == "refresh" && app.view.name == "main" && !app.view.from_stdin {
+                match app.start_history_refresh() {
+                    Ok(refresh) => {
+                        history_refresh = Some(PendingHistoryRefresh {
+                            refresh,
+                            periodic: false,
+                        });
+                        app.message = "Loading history (z to stop)".into();
                     }
-                    terminal.action(&mut app, &format!(":{s}"))
-                };
-                match result {
+                    Err(error) => app.message = error.to_string(),
+                }
+                continue;
+            }
+            if action == "search" || action == "search-back" {
+                if let Some(s) =
+                    terminal.prompt(&mut app, if action == "search" { "/" } else { "?" })?
+                {
+                    if !s.is_empty() {
+                        app.search = s;
+                    }
+                    app.find(action == "search-back");
+                }
+            } else if action == "view-grep" {
+                if let Some(s) = terminal.prompt(&mut app, "grep: ")? {
+                    if let Err(e) = app.grep_query(&s) {
+                        app.message = e.to_string();
+                    }
+                }
+            } else if action == "prompt" {
+                if let Some(s) = terminal.prompt(&mut app, ":")? {
+                    let result = if matches!(s.as_str(), "g" | "view-grep") {
+                        terminal
+                            .prompt(&mut app, "grep: ")?
+                            .map_or(Ok(()), |query| app.grep_query(&query))
+                            .map(|()| true)
+                    } else {
+                        if !read_command_prompts(&mut terminal, &mut app, &s)? {
+                            continue;
+                        }
+                        terminal.action(&mut app, &format!(":{s}"))
+                    };
+                    match result {
+                        Ok(false) => break,
+                        Ok(true) => (),
+                        Err(e) => app.message = e.to_string(),
+                    }
+                }
+            } else {
+                if !read_command_prompts(&mut terminal, &mut app, &action)? {
+                    continue;
+                }
+                match terminal.action(&mut app, &action) {
                     Ok(false) => break,
                     Ok(true) => (),
                     Err(e) => app.message = e.to_string(),
                 }
             }
-        } else {
-            if !read_command_prompts(&mut terminal, &mut app, &action)? {
-                continue;
-            }
-            match terminal.action(&mut app, &action) {
-                Ok(false) => break,
-                Ok(true) => (),
-                Err(e) => app.message = e.to_string(),
-            }
-        }
-        if let Some(plan) = &app.pending_revert {
-            let prompt = plan.prompt();
-            let answer = terminal.prompt(&mut app, &prompt)?;
-            let confirmed =
-                answer.is_some_and(|answer| matches!(answer.as_str(), "y" | "Y" | "yes"));
-            if let Err(error) = app.finish_revert(confirmed) {
-                app.message = error.to_string();
-            }
-        }
-        if let Some(command) = app.pending_command.take() {
-            let _blob_editor = app.pending_blob_editor.take();
-            let mergetool = app.pending_mergetool.take();
-            let confirmed = if command.confirm {
-                let answer = terminal.prompt(
-                    &mut app,
-                    &format!(
-                        "Run {}{}? [y/N] ",
-                        command.display(),
-                        if command.exit { " and exit" } else { "" }
-                    ),
-                )?;
-                answer.is_some_and(|answer| matches!(answer.as_str(), "y" | "Y" | "yes"))
-            } else {
-                true
-            };
-            if !confirmed {
-                continue;
-            }
-            if let Some(plan) = &mergetool {
-                if let Err(error) = plan.check(app.repo()?) {
+            if let Some(plan) = &app.pending_revert {
+                let prompt = plan.prompt();
+                let answer = terminal.prompt(&mut app, &prompt)?;
+                let confirmed =
+                    answer.is_some_and(|answer| matches!(answer.as_str(), "y" | "Y" | "yes"));
+                if let Err(error) = app.finish_revert(confirmed) {
                     app.message = error.to_string();
+                }
+            }
+            if let Some(command) = app.pending_command.take() {
+                let _blob_editor = app.pending_blob_editor.take();
+                let mergetool = app.pending_mergetool.take();
+                let confirmed = if command.confirm {
+                    let answer = terminal.prompt(
+                        &mut app,
+                        &format!(
+                            "Run {}{}? [y/N] ",
+                            command.display(),
+                            if command.exit { " and exit" } else { "" }
+                        ),
+                    )?;
+                    answer.is_some_and(|answer| matches!(answer.as_str(), "y" | "Y" | "yes"))
+                } else {
+                    true
+                };
+                if !confirmed {
                     continue;
                 }
-            }
-            let result = if command.silent || command.echo {
-                if command.silent && !command.echo {
-                    command.run_allow_nonzero(app.repo()?, true, true)
-                } else {
-                    command.run(app.repo()?, true, true)
-                }
-            } else {
-                drop(terminal);
-                let result = command.run(app.repo()?, true, false);
-                if result.is_err() || (!command.quick && !command.exit) {
-                    use std::io::{BufRead, BufReader};
-                    let mut tty = fs::OpenOptions::new()
-                        .read(true)
-                        .write(true)
-                        .open("/dev/tty")?;
-                    if let Err(error) = &result {
-                        writeln!(tty, "{error}")?;
-                    }
-                    write!(tty, "Press Enter to continue")?;
-                    tty.flush()?;
-                    BufReader::new(tty).read_line(&mut String::new())?;
-                }
-                terminal = Terminal::open(&app.config)?;
-                result
-            };
-            match result {
-                Ok(output) => {
-                    if command.exit {
-                        break;
-                    }
-                    let refresh = if mergetool.is_some() {
-                        app.refresh_views()
-                    } else {
-                        app.refresh_after_command()
-                    };
-                    if let Err(error) = refresh {
+                if let Some(plan) = &mergetool {
+                    if let Err(error) = plan.check(app.repo()?) {
                         app.message = error.to_string();
-                    } else if command.echo {
-                        app.message = String::from_utf8_lossy(&output.stdout)
-                            .lines()
-                            .next()
-                            .unwrap_or_default()
-                            .to_owned();
+                        continue;
                     }
                 }
-                Err(error) => {
-                    if mergetool.is_some() {
-                        let _ = app.refresh_views();
+                let result = if command.silent || command.echo {
+                    if command.silent && !command.echo {
+                        command.run_allow_nonzero(app.repo()?, true, true)
                     } else {
-                        let _ = app.refresh_after_command();
+                        command.run(app.repo()?, true, true)
                     }
-                    app.message = error.to_string();
+                } else {
+                    drop(terminal);
+                    let result = command.run(app.repo()?, true, false);
+                    if result.is_err() || (!command.quick && !command.exit) {
+                        use std::io::{BufRead, BufReader};
+                        let mut tty = fs::OpenOptions::new()
+                            .read(true)
+                            .write(true)
+                            .open("/dev/tty")?;
+                        if let Err(error) = &result {
+                            writeln!(tty, "{error}")?;
+                        }
+                        write!(tty, "Press Enter to continue")?;
+                        tty.flush()?;
+                        BufReader::new(tty).read_line(&mut String::new())?;
+                    }
+                    terminal = Terminal::open(&app.config)?;
+                    result
+                };
+                match result {
+                    Ok(output) => {
+                        if command.exit {
+                            break;
+                        }
+                        let refresh = if mergetool.is_some() {
+                            app.refresh_views()
+                        } else {
+                            app.refresh_after_command()
+                        };
+                        if let Err(error) = refresh {
+                            app.message = error.to_string();
+                        } else if command.echo {
+                            app.message = String::from_utf8_lossy(&output.stdout)
+                                .lines()
+                                .next()
+                                .unwrap_or_default()
+                                .to_owned();
+                        }
+                    }
+                    Err(error) => {
+                        if mergetool.is_some() {
+                            let _ = app.refresh_views();
+                        } else {
+                            let _ = app.refresh_after_command();
+                        }
+                        app.message = error.to_string();
+                    }
                 }
             }
         }
+        Ok(())
+    })(); // Terminal drops on every exit/error before joining retired queries.
+    if let Some(job) = history_refresh {
+        job.refresh.cancel();
+        job.refresh.finish();
     }
-    Ok(())
+    for (job, _) in retired_histories {
+        job.refresh.finish();
+    }
+    result
 }
 fn main() {
     if let Err(e) = run() {

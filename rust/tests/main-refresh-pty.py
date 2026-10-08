@@ -76,8 +76,13 @@ os.execv({real_git!r}, [{real_git!r}, *sys.argv[1:]])
                                stdin=slave, stdout=slave, stderr=slave,
                                preexec_fn=controlling_tty)
 
+    buffered = bytearray()
+
     def until(needle, seconds=5):
-        output = bytearray()
+        output = bytearray(buffered)
+        buffered.clear()
+        if needle in output:
+            return bytes(output)
         deadline = time.monotonic() + seconds
         while time.monotonic() < deadline:
             if not select.select([fd], [], [], max(0, deadline - time.monotonic()))[0]:
@@ -102,7 +107,7 @@ os.execv({real_git!r}, [{real_git!r}, *sys.argv[1:]])
         deadline = time.monotonic() + 5
         while not (root / 'pid').exists() and time.monotonic() < deadline:
             if select.select([fd], [], [], .01)[0]:
-                os.read(fd, 65536)
+                buffered.extend(os.read(fd, 65536))
         assert (root / 'pid').exists(), 'Git pipes were not drained'
         return int((root / 'pid').read_text())
 
@@ -112,6 +117,17 @@ os.execv({real_git!r}, [{real_git!r}, *sys.argv[1:]])
         except ProcessLookupError:
             return
         raise AssertionError(f'Git child {pid} is still alive or unreaped')
+
+    def await_reaped(pid):
+        # Focus and resize remain responsive while background cleanup finishes.
+        deadline = time.monotonic() + 2
+        while time.monotonic() < deadline:
+            try:
+                reaped(pid)
+                return
+            except AssertionError:
+                time.sleep(.01)
+        reaped(pid)
 
     try:
         until(b'refresh-old-screen')
@@ -171,7 +187,7 @@ os.execv({real_git!r}, [{real_git!r}, *sys.argv[1:]])
         pid = delayed()
         os.write(fd, b'\t')
         until(b'[diff]')
-        reaped(pid)
+        await_reaped(pid)
         print('PASS: changing split focus cancels and reaps the stale refresh')
         os.write(fd, b'\t')
         until(b'[main]')
@@ -179,7 +195,7 @@ os.execv({real_git!r}, [{real_git!r}, *sys.argv[1:]])
         fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack('HHHH', 24, 100, 0, 0))
         os.kill(process.pid, signal.SIGWINCH)
         time.sleep(.2)
-        reaped(pid)
+        await_reaped(pid)
         print('PASS: resizing split panes cancels and reaps the stale refresh')
         (root / 'mode').unlink()
         os.write(fd, b'\tq')

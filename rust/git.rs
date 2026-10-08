@@ -134,6 +134,14 @@ fn run_command_with_input(mut command: Command, input: Option<&[u8]>) -> Result<
     } else {
         command_output(&mut command, None)?
     };
+    if HISTORY_PROCESS.with(|state| {
+        state
+            .borrow()
+            .as_ref()
+            .is_some_and(|process| process.cancelled.load(std::sync::atomic::Ordering::Acquire))
+    }) {
+        return Err(GitError("History refresh cancelled".into()));
+    }
     if !output.status.success() {
         return Err(GitError(format!(
             "git exited with {}: {}",
@@ -215,6 +223,11 @@ fn command_output(command: &mut Command, input: Option<&[u8]>) -> Result<std::pr
                 .lock()
                 .map_err(|_| GitError("History process lock poisoned".into()))?;
             let child = slot.as_mut().expect("active history query");
+            if cancellation.cancelled.load(Ordering::Acquire) {
+                // A child may finish forking after the first group signal. Keep
+                // its leader unreaped and retry until inherited pipes close.
+                stop_history_child(child);
+            }
             // Keep the leader PID unreaped while descendants may hold pipes;
             // cancellation can then safely address its isolated process group.
             if stdout.is_finished()
@@ -252,6 +265,7 @@ fn command_output(command: &mut Command, input: Option<&[u8]>) -> Result<std::pr
     Ok(output)
 }
 fn stop_history_child(child: &mut std::process::Child) {
+    let _ = child.kill();
     #[cfg(unix)]
     {
         // Native group signalling avoids first-party unsafe FFI. The isolated
@@ -266,9 +280,20 @@ fn stop_history_child(child: &mut std::process::Child) {
             .stderr(Stdio::null())
             .status();
     }
-    let _ = child.kill();
 }
 impl HistoryRefresh {
+    pub fn cancel(&self) {
+        self.cancellation
+            .cancelled
+            .store(true, std::sync::atomic::Ordering::Release);
+    }
+    /// Join only after the interactive terminal is restored, or poll completes.
+    pub fn finish(mut self) {
+        self.cancel();
+        if let Some(worker) = self.worker.take() {
+            let _ = worker.join();
+        }
+    }
     pub fn poll(&mut self) -> Result<Option<Vec<Commit>>> {
         if !self
             .worker
@@ -287,17 +312,7 @@ impl HistoryRefresh {
 }
 impl Drop for HistoryRefresh {
     fn drop(&mut self) {
-        self.cancellation
-            .cancelled
-            .store(true, std::sync::atomic::Ordering::Release);
-        if let Ok(mut slot) = self.cancellation.child.lock() {
-            if let Some(child) = slot.as_mut() {
-                stop_history_child(child);
-                // Match the UI's stopped-loading guarantee: reap the leader
-                // before returning, while readers finish off the UI thread.
-                let _ = child.wait();
-            }
-        }
+        self.cancel();
     }
 }
 // Both history decorations and the refs view use the same filtered ref records.
@@ -2671,52 +2686,54 @@ mod tests {
 
     #[test]
     fn history_refresh_cancels_queries_without_blocking_poll() {
-        let cancellation = std::sync::Arc::new(HistoryCancellation {
-            cancelled: std::sync::atomic::AtomicBool::new(false),
-            child: std::sync::Mutex::new(None),
-        });
-        let fixture = Fixture::new();
-        let ready = fixture.0.join("descendant-ready");
-        let marker = ready.clone();
-        let process = cancellation.clone();
-        let worker = std::thread::spawn(move || {
-            HISTORY_PROCESS.with(|state| *state.borrow_mut() = Some(process));
-            let output = command_output(
-                Command::new("sh")
-                    .args([
-                        "-c",
-                        "sleep 30 & printf '%s\\n' \"$!\" > \"$1\"; wait",
-                        "tig-cancel-fixture",
-                    ])
-                    .arg(marker),
-                None,
-            )?;
-            assert!(!output.status.success());
-            Ok(Vec::new())
-        });
-        let mut refresh = HistoryRefresh {
-            worker: Some(worker),
-            cancellation,
-        };
-        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
-        // Exercise cancellation after the pipe-owning descendant actually exists,
-        // rather than racing the shell's startup fork under a busy CI scheduler.
-        while refresh.cancellation.child.lock().unwrap().is_none()
-            || !fs::read(&ready).is_ok_and(|bytes| bytes.ends_with(b"\n"))
-        {
-            assert!(std::time::Instant::now() < deadline);
-            std::thread::sleep(std::time::Duration::from_millis(5));
+        // Cover both cancellation during the shell's startup fork and after its
+        // pipe-owning descendant exists. Timing assertions stay identical.
+        for wait_for_descendant in [false, true] {
+            let cancellation = std::sync::Arc::new(HistoryCancellation {
+                cancelled: std::sync::atomic::AtomicBool::new(false),
+                child: std::sync::Mutex::new(None),
+            });
+            let fixture = Fixture::new();
+            let ready = fixture.0.join("descendant-ready");
+            let marker = ready.clone();
+            let process = cancellation.clone();
+            let (completed, completion) = std::sync::mpsc::channel();
+            let worker = std::thread::spawn(move || {
+                HISTORY_PROCESS.with(|state| *state.borrow_mut() = Some(process));
+                let output = command_output(
+                    Command::new("sh")
+                        .args([
+                            "-c",
+                            "sleep 30 & printf '%s\\n' \"$!\" > \"$1\"; wait",
+                            "tig-cancel-fixture",
+                        ])
+                        .arg(marker),
+                    None,
+                )?;
+                assert!(!output.status.success());
+                completed.send(()).unwrap();
+                Ok(Vec::new())
+            });
+            let mut refresh = HistoryRefresh {
+                worker: Some(worker),
+                cancellation,
+            };
+            let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+            while refresh.cancellation.child.lock().unwrap().is_none()
+                || (wait_for_descendant
+                    && !fs::read(&ready).is_ok_and(|bytes| bytes.ends_with(b"\n")))
+            {
+                assert!(std::time::Instant::now() < deadline);
+                std::thread::sleep(std::time::Duration::from_millis(5));
+            }
+            let started = std::time::Instant::now();
+            assert!(refresh.poll().unwrap().is_none());
+            drop(refresh);
+            assert!(started.elapsed() < std::time::Duration::from_millis(500));
+            completion
+                .recv_timeout(std::time::Duration::from_secs(5).saturating_sub(started.elapsed()))
+                .unwrap();
         }
-        let started = std::time::Instant::now();
-        assert!(refresh.poll().unwrap().is_none());
-        let worker = refresh.worker.take().unwrap();
-        drop(refresh);
-        assert!(started.elapsed() < std::time::Duration::from_millis(500));
-        while !worker.is_finished() {
-            assert!(started.elapsed() < std::time::Duration::from_secs(5));
-            std::thread::sleep(std::time::Duration::from_millis(5));
-        }
-        assert!(worker.join().unwrap().is_ok());
     }
 
     #[test]
